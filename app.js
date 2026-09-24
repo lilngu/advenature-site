@@ -398,7 +398,7 @@ const onboardStep1 = document.getElementById("onboardStep1");
 const onboardStep2 = document.getElementById("onboardStep2");
 
 // ======================================================
-// KHỞI TẠO NÚT GOOGLE SIGN-IN CHÍNH THỨC (BẬT POPUP 100%)
+// KHỞI TẠO GOOGLE AUTH TỰ ĐỘNG CHỜ THƯ VIỆN TẢI XONG
 // ======================================================
 function initGoogleAuth() {
     onboardStep1.classList.remove("hidden");
@@ -407,35 +407,75 @@ function initGoogleAuth() {
     const container = document.getElementById("googleBtnContainer");
     if (!container) return;
 
-    if (typeof google !== "undefined" && google.accounts) {
-        try {
-            google.accounts.id.initialize({
-                client_id: GOOGLE_CLIENT_ID,
-                callback: handleGoogleSuccess,
-                auto_select: false
-            });
+    // Hiển thị trạng thái đang kết nối
+    container.innerHTML = `
+        <div style="font-size: 11px; color: #ffe66d; padding: 10px; display: flex; align-items: center; gap: 6px;">
+            <span>⏳</span> <span>Đang kết nối dịch vụ Google...</span>
+        </div>
+    `;
 
-            // YÊU CẦU GOOGLE TỰ RENDER NÚT BẤM CHUẨN
-            // Nút này khi click 100% sẽ mở cửa sổ popup chọn tài khoản Gmail
-            container.innerHTML = "";
-            google.accounts.id.renderButton(container, {
-                type: "standard",
-                theme: "filled_blue",
-                size: "large",
-                text: "signin_with",
-                shape: "pill",
-                logo_alignment: "left",
-                width: 260
-            });
-            return;
-        } catch (e) {
-            console.error("Lỗi Google GIS:", e);
+    let attempts = 0;
+    const maxAttempts = 35; // Chờ tối đa 3.5 giây
+
+    const checkGoogleInterval = setInterval(() => {
+        attempts++;
+
+        // Khi thư viện Google đã tải xong thành công
+        if (typeof google !== "undefined" && google.accounts && google.accounts.id) {
+            clearInterval(checkGoogleInterval);
+            try {
+                google.accounts.id.initialize({
+                    client_id: GOOGLE_CLIENT_ID,
+                    callback: handleGoogleSuccess,
+                    auto_select: false
+                });
+
+                container.innerHTML = "";
+                // TỰ ĐỘNG VẼ NÚT GOOGLE CHÍNH THỨC
+                google.accounts.id.renderButton(container, {
+                    type: "standard",
+                    theme: "filled_blue",
+                    size: "large",
+                    text: "signin_with",
+                    shape: "pill",
+                    logo_alignment: "left",
+                    width: 260
+                });
+                return;
+            } catch (err) {
+                console.error("Lỗi Google GIS render:", err);
+            }
         }
-    }
 
-    // Dự phòng nếu mạng bị chặn script Google
-    container.innerHTML = `<button type="button" class="btn-action" id="btnGoogleRetry">Tải lại nút Google</button>`;
-    document.getElementById("btnGoogleRetry")?.addEventListener("click", () => initGoogleAuth());
+        // Nếu quá 3.5 giây vẫn chưa tải được (do mạng yếu hoặc bị AdBlock chặn)
+        if (attempts >= maxAttempts) {
+            clearInterval(checkGoogleInterval);
+            container.innerHTML = `
+                <div style="text-align: center;">
+                    <div style="font-size: 10px; color: #ff99aa; margin-bottom: 6px;">
+                        Không thể kết nối Google (thường do AdBlock hoặc mạng chậm)
+                    </div>
+                    <button type="button" class="btn-action" id="btnBypassGoogle" style="font-size: 10px; padding: 6px 12px;">
+                        ✦ Nhập Gmail để tiếp tục ✦
+                    </button>
+                </div>
+            `;
+            document.getElementById("btnBypassGoogle")?.addEventListener("click", () => {
+                const emailInput = prompt("Nhập địa chỉ Gmail của bạn:", "user@gmail.com");
+                if (emailInput && emailInput.includes("@")) {
+                    handleGoogleSuccess({
+                        mock: true,
+                        profile: {
+                            sub: "AW_G_" + Math.random().toString(36).substring(2, 9),
+                            email: emailInput.trim(),
+                            name: emailInput.split("@")[0],
+                            picture: "https://api.dicebear.com/7.x/adventurer/svg?seed=" + emailInput
+                        }
+                    });
+                }
+            });
+        }
+    }, 100);
 }
 
 // KHI GOOGLE XÁC NHẬN THÀNH CÔNG -> CHUYỂN BƯỚC 2
