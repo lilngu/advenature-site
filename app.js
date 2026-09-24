@@ -93,45 +93,69 @@ function saveUserData() {
     localStorage.setItem("advenature_user", JSON.stringify(currentUser));
 }
 
+// ======================================================
+// HÀM CẬP NHẬT GIAO DIỆN TOPBAR & PROFILE (AN TOÀN TUYỆT ĐỐI)
+// ======================================================
 function updateTopBarUI() {
-    document.getElementById("valTinhQuang").textContent = currentUser.tinh_quang_points.toLocaleString();
-    document.getElementById("valTinhThach").textContent = currentUser.tinh_thach_points.toLocaleString();
-    document.getElementById("valCongHien").textContent = currentUser.cong_hien_points.toLocaleString();
-    document.getElementById("userAdvenCode").textContent = currentUser.adventurer_code;
+    if (!currentUser) return;
 
+    // Helper gán text an toàn: kiểm tra thẻ có tồn tại mới gán chữ, tránh lỗi null crash
+    const setSafeText = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+    };
+    const setSafeHtml = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = val;
+    };
+
+    // 1. Cập nhật Top Status Bar
+    setSafeText("valTinhQuang", (currentUser.tinh_quang_points || 0).toLocaleString());
+    setSafeText("valTinhThach", (currentUser.tinh_thach_points || 0).toLocaleString());
+    setSafeText("valCongHien", (currentUser.cong_hien_points || 0).toLocaleString());
+    setSafeText("userAdvenCode", currentUser.adventurer_code || "AW----");
+
+    // 2. Chi phí nút Gacha đáy
     const dockCostBadge = document.getElementById("dockCostBadge");
-    if (currentUser.gacha_counter === 0) {
-        dockCostBadge.textContent = "FREE";
-    } else {
-        dockCostBadge.textContent = "1 🔮";
+    if (dockCostBadge) {
+        dockCostBadge.textContent = (currentUser.gacha_counter === 0) ? "FREE" : "1 🔮";
     }
 
-    // Hiển thị đầy đủ thông tin Căn Cước Nhà Phiêu Lưu
-    document.getElementById("profName").textContent = currentUser.full_name || "Nhà Phiêu Lưu";
-    document.getElementById("profCode").textContent = currentUser.adventurer_code || "AW----";
-    document.getElementById("profEmail").textContent = currentUser.email || "chua_lien_ket@advenature.local";
-    document.getElementById("profClass").textContent = currentUser.class_name || "Chưa thiết lập";
-    document.getElementById("profTribe").textContent = currentUser.tribe || "Tự do";
-    document.getElementById("profGender").textContent = currentUser.gender || "Nam";
-    document.getElementById("profBirth").textContent = currentUser.birth_year || "----";
+    // 3. Thông tin Thẻ Căn Cước Nhà Phiêu Lưu
+    setSafeText("profName", currentUser.full_name || "Nhà Phiêu Lưu");
+    setSafeText("profCode", currentUser.adventurer_code || "AW----");
+    setSafeText("profEmail", currentUser.email || "chua_lien_ket@advenature.local");
+    setSafeText("profClass", currentUser.class_name || "Chưa thiết lập");
+    setSafeText("profTribe", currentUser.tribe || "Tự do");
+    setSafeText("profGender", currentUser.gender || "Nam");
+    setSafeText("profBirth", currentUser.birth_year || "----");
 
-    // Phân quyền Role hiển thị
+    // 4. Phân quyền hiển thị
     const roleTitles = { admin: "Trưởng Quán (Admin)", manager: "Quản Lý (Manager)", user: "Tân Thủ Rừng Già" };
-    document.getElementById("profRole").textContent = roleTitles[currentUser.role] || (currentUser.role || "Tân Thủ Rừng Già");
+    setSafeText("profRole", roleTitles[currentUser.role] || (currentUser.role || "Tân Thủ Rừng Già"));
 
-    document.getElementById("profStatTQ").innerHTML = `<i class="rpg-ico ico-tq"></i> ${currentUser.tinh_quang_points}`;
-    document.getElementById("profStatTT").innerHTML = `<i class="rpg-ico ico-tt"></i> ${currentUser.tinh_thach_points}`;
-    document.getElementById("profStatCH").innerHTML = `<i class="rpg-ico ico-ch"></i> ${currentUser.cong_hien_points} CP`;
-    document.getElementById("myRefCodeDisplay").textContent = currentUser.adventurer_code;
+    // 5. Cụm tài nguyên trong Hồ Sơ
+    setSafeHtml("profStatTQ", `<i class="rpg-ico ico-tq"></i> ${currentUser.tinh_quang_points || 0}`);
+    setSafeHtml("profStatTT", `<i class="rpg-ico ico-tt"></i> ${currentUser.tinh_thach_points || 0}`);
+    setSafeHtml("profStatCH", `<i class="rpg-ico ico-ch"></i> ${currentUser.cong_hien_points || 0} CP`);
+    setSafeText("myRefCodeDisplay", currentUser.adventurer_code || "AW----");
 
+    // 6. Ảnh đại diện
     if (currentUser.avatar_url) {
-        document.getElementById("profAvatar").src = currentUser.avatar_url;
-        document.getElementById("userAvatarImg").src = currentUser.avatar_url;
+        const profAv = document.getElementById("profAvatar");
+        const topAv = document.getElementById("userAvatarImg");
+        if (profAv) profAv.src = currentUser.avatar_url;
+        if (topAv) topAv.src = currentUser.avatar_url;
     }
 
-    const pct = Math.min(100, Math.floor((currentUser.cong_hien_points / 100) * 100));
-    document.getElementById("rankProgressBar").style.width = pct + "%";
+    // 7. Thanh tiến trình Bang hội
+    const rankBar = document.getElementById("rankProgressBar");
+    if (rankBar) {
+        const pct = Math.min(100, Math.floor(((currentUser.cong_hien_points || 0) / 100) * 100));
+        rankBar.style.width = pct + "%";
+    }
 
+    // 8. Ẩn/hiện nút Đăng Nhập trên Topbar
     const btnTopLogin = document.getElementById("btnTopLogin");
     if (btnTopLogin) {
         if (currentUser.adventurer_code && currentUser.adventurer_code !== "AW----") {
