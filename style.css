@@ -691,3 +691,14 @@ body, html {
     border-color: #ff3366;
     color: #ff99aa;
 }
+
+/* Đảm bảo Logo luôn nhận chạm cảm ứng, không bị zoom khi bấm nhanh */
+#adminTriggerLogo {
+    pointer-events: auto !important;
+    touch-action: manipulation; /* Tắt double-tap-to-zoom để bấm nhanh không bị miss */
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    position: relative;
+    z-index: 99999; /* Đẩy lên cao nhất trên thanh topbar */
+}

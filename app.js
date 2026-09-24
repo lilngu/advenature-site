@@ -840,32 +840,50 @@ new QRCode(document.getElementById("userProfileQr"), {
 });
 
 // ======================================================
-// KHỐI CODE THÊM MỚI: LOGIC ADMIN GOD-MODE & FAST GACHA
+// SỬA LẠI: BỘ BẮT SỰ KIỆN ADMIN TOUCH & CLICK SIÊU NHẠY
 // ======================================================
 let logoClickCount = 0;
 let logoClickTimer = null;
 let isFastGachaEnabled = false;
 
-const brandLogo = document.querySelector(".brand-logo");
+const brandLogo = document.getElementById("adminTriggerLogo");
 const adminModal = document.getElementById("adminGodModal");
 const closeAdminModal = document.getElementById("closeAdminModal");
 
-// Bấm liên tục 5 lần vào Logo để mở Admin Tool
-brandLogo.style.cursor = "pointer";
-brandLogo.addEventListener("click", () => {
+function handleAdminTrigger(e) {
+    if (e) e.preventDefault(); // Ngăn trình duyệt zoom hoặc cuộn
     logoClickCount++;
+    
+    // Tạo hiệu ứng nháy nhẹ logo để bạn biết ngón tay đã chạm trúng
+    if (brandLogo) {
+        brandLogo.style.opacity = "0.4";
+        setTimeout(() => { brandLogo.style.opacity = "1"; }, 100);
+    }
+
     clearTimeout(logoClickTimer);
-    logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 1500);
+    // Nâng thời gian chờ lên 2.5 giây để bạn bấm thoải mái không bị vội
+    logoClickTimer = setTimeout(() => { 
+        logoClickCount = 0; 
+    }, 2500);
 
     if (logoClickCount >= 5) {
         logoClickCount = 0;
-        adminModal.classList.remove("hidden");
+        if (adminModal) {
+            adminModal.classList.remove("hidden");
+        }
     }
-});
+}
 
-closeAdminModal.addEventListener("click", () => {
-    adminModal.classList.add("hidden");
-});
+if (brandLogo) {
+    // Dùng pointerdown để nhận tín hiệu ngay khi ngón tay vừa chạm xuống mặt kính
+    brandLogo.addEventListener("pointerdown", handleAdminTrigger);
+}
+
+if (closeAdminModal) {
+    closeAdminModal.addEventListener("click", () => {
+        adminModal.classList.add("hidden");
+    });
+}
 
 // 1. Bơm tài nguyên
 document.getElementById("admAddTQ").addEventListener("click", () => {
