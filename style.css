@@ -1254,6 +1254,7 @@ body, html {
     width: 100% !important;
     height: 100% !important;
     cursor: grab;
+    mix-blend-mode: screen;
 }
 #gem3dPreviewContainer canvas:active { cursor: grabbing; }
 

@@ -743,13 +743,15 @@ document.querySelectorAll(".filter-btn").forEach(btn => {
 });
 
 // ======================================================
-// MINI THREE.JS PREVIEW CHO TỪNG VIÊN ĐÁ KHI CLICK
+// MINI THREE.JS PREVIEW (ĐÃ BỔ SUNG BLOOM GLOW & EDGES)
 // ======================================================
 let previewRenderer = null;
+let previewComposer = null; // Thêm bộ hậu kỳ Bloom
 let previewScene = null;
 let previewCamera = null;
 let previewControls = null;
 let previewMesh = null;
+let previewPointLight = null; // Đèn mang màu sắc viên đá
 let isPreviewActive = false;
 
 const gemPreviewModal = document.getElementById("gemPreviewModal");
@@ -760,13 +762,22 @@ function initMiniGem3D() {
 
     previewScene = new THREE.Scene();
     previewCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-    previewCamera.position.set(0, 0.5, 4.5);
+    previewCamera.position.set(0, 0.4, 4.2);
 
-    previewRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    previewRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
     previewRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     previewRenderer.setSize(170, 170);
     previewRenderer.outputColorSpace = THREE.SRGBColorSpace;
+    previewRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+    previewRenderer.toneMappingExposure = 1.2;
     gem3dContainer.appendChild(previewRenderer.domElement);
+
+    // TÍCH HỢP EFFECT COMPOSER & UNREAL BLOOM CHO KHUNG PREVIEW
+    previewComposer = new EffectComposer(previewRenderer);
+    previewComposer.addPass(new RenderPass(previewScene, previewCamera));
+    // Độ rực phát sáng (Bloom strength: 1.4)
+    previewComposer.addPass(new UnrealBloomPass(new THREE.Vector2(170, 170), 1.4, 0.5, 0.1));
+    previewComposer.addPass(new OutputPass());
 
     previewControls = new OrbitControls(previewCamera, previewRenderer.domElement);
     previewControls.enableZoom = false;
@@ -774,22 +785,16 @@ function initMiniGem3D() {
     previewControls.enableDamping = true;
     previewControls.dampingFactor = 0.08;
 
-    previewScene.add(new THREE.AmbientLight(0xffffff, 0.8));
-    const dirLight = new THREE.DirectionalLight(0xffffff, 2.5);
+    // Hệ thống đèn tạo khối 3D
+    previewScene.add(new THREE.AmbientLight(0x443366, 0.6));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 2.0);
     dirLight.position.set(4, 5, 3);
     previewScene.add(dirLight);
 
-    function animatePreview() {
-        if (!isPreviewActive) return;
-        requestAnimationFrame(animatePreview);
-        if (previewMesh) {
-            previewMesh.rotation.y += 0.01;
-            previewMesh.rotation.x += 0.005;
-        }
-        previewControls.update();
-        previewRenderer.render(previewScene, previewCamera);
-    }
-    animatePreview();
+    // Đèn điểm phát sáng tâm cảnh
+    previewPointLight = new THREE.PointLight(0xffffff, 4.0, 10);
+    previewPointLight.position.set(0, 0.5, 1.5);
+    previewScene.add(previewPointLight);
 }
 
 function openGemPreviewModal(gemData) {
@@ -807,7 +812,7 @@ function openGemPreviewModal(gemData) {
         ? `Đã mở khóa! Khoáng thạch chứa linh lực nguyên tố tinh khiết bậc ${gemData.face} diện thể.`
         : "Biến thể huyền bí này chưa được khai mở. Hãy triệu hồi tại Bệ Đá Tinh Quang để thu thập vào bộ sưu tập!";
 
-    // Xóa mô hình cũ trong mini scene
+    // Xóa mô hình cũ
     if (previewMesh) {
         previewScene.remove(previewMesh);
         if (previewMesh.geometry) previewMesh.geometry.dispose();
@@ -815,7 +820,7 @@ function openGemPreviewModal(gemData) {
         previewMesh = null;
     }
 
-    // Tái tạo hình thái 3D viên đá chuẩn xác theo mã
+    // Tái tạo hình thái 3D viên đá
     const shape = SHAPE_STYLES.find(s => s.id === gemData.shapeId) || SHAPE_STYLES[0];
     const points = [];
     const phi = Math.PI * (Math.sqrt(5) - 1);
@@ -837,45 +842,59 @@ function openGemPreviewModal(gemData) {
     const geo = new ConvexGeometry(points);
     geo.computeVertexNormals();
 
+    // Cập nhật đèn tâm cảnh theo màu của viên đá
+    if (gemData.isUnlocked) {
+        previewPointLight.color.setHex(gemData.color);
+        previewPointLight.intensity = 5.0;
+    } else {
+        previewPointLight.intensity = 0;
+    }
+
+    // Vật liệu đa giác phát quang
     const mat = new THREE.MeshStandardMaterial({
-        color: gemData.isUnlocked ? gemData.color : 0x222233,
+        color: gemData.isUnlocked ? gemData.color : 0x1a162b,
         emissive: gemData.isUnlocked ? gemData.emissive : 0x000000,
         emissiveIntensity: gemData.isUnlocked ? 0.45 : 0,
-        roughness: gemData.isUnlocked ? 0.2 : 0.8,
+        roughness: gemData.isUnlocked ? 0.18 : 0.8,
         metalness: 0.35,
         flatShading: true,
-        wireframe: !gemData.isUnlocked // Nếu chưa mở khóa thì hiện khung lưới bí ẩn
+        wireframe: !gemData.isUnlocked
     });
 
     previewMesh = new THREE.Mesh(geo, mat);
-    previewMesh.add(new THREE.LineSegments(
-        new THREE.EdgesGeometry(geo),
-        new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: gemData.isUnlocked ? 0.7 : 0.2 })
-    ));
+
+    // ĐƯỜNG VIỀN PHÁT SÁNG TRẮNG BẮT MẮT (CRYSTAL EDGES)
+    const edgesGeometry = new THREE.EdgesGeometry(geo);
+    const edgesMaterial = new THREE.LineBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: gemData.isUnlocked ? 0.85 : 0.25
+    });
+    previewMesh.add(new THREE.LineSegments(edgesGeometry, edgesMaterial));
     previewScene.add(previewMesh);
 
-    // Kích hoạt render và mở modal
+    // Kích hoạt Render Loop qua Composer
     isPreviewActive = true;
     gemPreviewModal.classList.remove("hidden");
-    previewCamera.position.set(0, 0.5, 4.5);
+    previewCamera.position.set(0, 0.4, 4.2);
     previewControls.target.set(0, 0, 0);
 
-    // Tiếp tục vòng lặp render mini
     function loop() {
         if (!isPreviewActive) return;
         requestAnimationFrame(loop);
         if (previewMesh) {
-            previewMesh.rotation.y += 0.01;
-            previewMesh.rotation.x += 0.005;
+            previewMesh.rotation.y += 0.009;
+            previewMesh.rotation.x += 0.004;
         }
         previewControls.update();
-        previewRenderer.render(previewScene, previewCamera);
+        // RENDER QUA BỘ LỌC PHÁT SÁNG COMPOSER
+        previewComposer.render();
     }
     loop();
 }
 
 document.getElementById("closeGemPreviewModal").addEventListener("click", () => {
-    isPreviewActive = false; // Tắt vòng lặp render mini để tiết kiệm pin
+    isPreviewActive = false; // Ngủ đông khi đóng modal để tiết kiệm pin
     gemPreviewModal.classList.add("hidden");
 });
 
