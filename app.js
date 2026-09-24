@@ -542,22 +542,31 @@ function initGoogleAuth() {
 }
 
 // ======================================================
-// XỬ LÝ GOOGLE AUTH THÔNG MINH (TỰ ĐỘNG PHÂN BIỆT MỚI / CŨ)
+// XỬ LÝ GOOGLE AUTH THÔNG MINH (ĐÃ FIX TRIỆT ĐỂ LỖI DÒNG 557)
 // ======================================================
 async function handleGoogleSuccess(response) {
     if (response.mock) {
         tempGoogleProfile = response.profile;
     } else {
+        // Giải mã JWT Payload từ Google Token
         const base64Url = response.credential.split('.')[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
         const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
         tempGoogleProfile = JSON.parse(jsonPayload);
     }
 
-    googleBtnText.textContent = `⏳ Đang kiểm tra tài khoản: ${tempGoogleProfile.name}...`;
+    // Hiển thị trạng thái an toàn trên khung chứa nút Google (KHÔNG dùng googleBtnText cũ)
+    const container = document.getElementById("googleBtnContainer");
+    if (container) {
+        container.innerHTML = `
+            <div style="font-size: 11px; color: #4cc9f0; padding: 10px; text-align: center;">
+                <span>⏳</span> Đang kiểm tra tài khoản <b>${tempGoogleProfile.name}</b>...
+            </div>
+        `;
+    }
 
     try {
-        // GỬI LÊN WORKER ĐỂ KIỂM TRA XEM CÓ PHẢI TÀI KHOẢN CŨ ĐÃ TỪNG ĐĂNG KÝ
+        // Gửi lên Worker kiểm tra xem đây là người cũ hay người mới
         const res = await fetch(`${API_URL}/api/auth/google-login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -568,7 +577,7 @@ async function handleGoogleSuccess(response) {
         });
         const data = await res.json();
 
-        // TRƯỜNG HỢP 1: ĐÂY LÀ NGƯỜI CŨ ĐÃ CÓ TÀI KHOẢN
+        // TRƯỜNG HỢP 1: NGƯỜI CŨ ĐÃ CÓ TÀI KHOẢN TRONG D1
         if (data.success && !data.isNewUser) {
             currentUser = data.user;
             saveUserData();
@@ -576,7 +585,7 @@ async function handleGoogleSuccess(response) {
             renderInventoryGems();
             renderInventory5x5();
 
-            // Đóng Modal ngay lập tức, KHÔNG BẮT ĐIỀN LẠI BƯỚC 2!
+            // Đóng Modal ngay lập tức, KHÔNG bắt điền lại thông tin!
             onboardingModal.classList.add("hidden");
             if (claimContainer) claimContainer.classList.add("hidden");
             lootText.classList.remove("show");
@@ -586,15 +595,18 @@ async function handleGoogleSuccess(response) {
             return;
         }
 
-        // TRƯỜNG HỢP 2: ĐÂY LÀ NGƯỜI MỚI TOANH -> Chuyển sang Bước 2 để khai báo hồ sơ
+        // TRƯỜNG HỢP 2: NGƯỜI MỚI TOANH -> Chuyển sang Bước 2 để điền hồ sơ lần đầu
         onboardStep1.classList.add("hidden");
         onboardStep2.classList.remove("hidden");
-        document.getElementById("googleBadgeVerified").textContent = `✓ Đã xác thực: ${tempGoogleProfile.email}`;
-        document.getElementById("obName").value = tempGoogleProfile.name || "";
+        const badge = document.getElementById("googleBadgeVerified");
+        if (badge) badge.textContent = `✓ Đã xác thực: ${tempGoogleProfile.email}`;
+        const nameInput = document.getElementById("obName");
+        if (nameInput) nameInput.value = tempGoogleProfile.name || "";
         renderAvatarOptions();
 
     } catch (err) {
-        // Nếu lỗi mạng thì chuyển sang Bước 2 để nhập
+        console.error("Lỗi xác thực:", err);
+        // Nếu lỗi kết nối thì chuyển sang Bước 2 cho người dùng nhập
         onboardStep1.classList.add("hidden");
         onboardStep2.classList.remove("hidden");
         renderAvatarOptions();
