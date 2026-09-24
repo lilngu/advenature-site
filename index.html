@@ -35,29 +35,29 @@
             <div class="currency-group">
                 <div class="currency-pill">
                     <span class="curr-label">Điểm Tinh Quang</span>
-                    <span class="curr-val">⭐ <span id="valTinhQuang">12,450</span></span>
+                    <span class="curr-val">🔮 <span id="valTinhQuang">1</span></span>
                 </div>
                 <div class="currency-pill">
                     <span class="curr-label">Tinh Thạch</span>
-                    <span class="curr-val">💎 <span id="valTinhThach">380</span></span>
+                    <span class="curr-val">💎 <span id="valTinhThach">0</span></span>
                 </div>
             </div>
 
             <div class="user-avatar-frame" id="btnProfileQuick">
                 <img src="https://i.ibb.co/3k5f3Kz/avatar-default.png" alt="Avatar" id="userAvatarImg" class="avatar-img">
-                <div class="level-badge">Lv. 42</div>
-                <span class="player-name" id="userDisplayName">Kael</span>
+                <div class="level-badge" id="userAdvCode">AW---</div>
+                <span class="player-name" id="userDisplayName">Nhà Phiêu Lưu</span>
             </div>
         </header>
 
         <!-- SUB TITLE -->
-        <div class="tab-indicator">Home Gacha</div>
+        <div class="tab-indicator">Loot Box Tinh Quang</div>
 
         <!-- MÀN HÌNH 1: GACHA VIEW (Bệ đá & nút Triệu Hồi) -->
         <main id="gacha-view" class="view-panel active">
             <div class="crystal-title-box">
-                <span class="crystal-icon">🔮</span>
-                <span class="crystal-name" id="crystalNameHeader">Magic Crystal</span>
+                <span class="crystal-icon">✨</span>
+                <span class="crystal-name" id="crystalNameHeader">KHOÁNG THẠCH TINH NGUYÊN</span>
             </div>
 
             <div id="lootText"></div>
@@ -66,24 +66,23 @@
                 <button id="gachaButton" class="btn-summon">
                     <span class="summon-icon">🔮</span>
                     <span class="summon-text">TRIỆU HỒI (1x)</span>
-                    <span class="summon-cost">💎 300</span>
+                    <span class="summon-cost">🔮 1 Điểm</span>
                 </button>
                 
                 <div id="claimContainer" class="hidden">
-                    <button id="claimButton" class="btn-claim">✦ THU THẬP VÀO TÚI ✦</button>
+                    <button id="claimButton" class="btn-claim magic-btn">✦ THU THẬP VÀO TÚI ✦</button>
                 </div>
             </div>
         </main>
 
-        <!-- BOTTOM ARC WHEEL DOCK (Thanh điều hướng dưới đáy) -->
+       <!-- BOTTOM ARC WHEEL DOCK (Thanh điều hướng dưới đáy) -->
         <footer class="rpg-dock">
             <button class="dock-btn sub-left nav-btn" data-target="quest-view">
                 <div class="dock-icon-ring ring-secondary">
                     <span class="dock-ico">📜</span>
-                    <span class="badge-dot"></span>
                 </div>
                 <span class="dock-label">Nhiệm Vụ</span>
-                <span class="dock-sub">3 Active</span>
+                <span class="dock-sub" id="dockQuestSub">Điểm danh</span>
             </button>
 
             <button class="dock-btn mid-left nav-btn" data-target="inventory-view">
@@ -91,7 +90,7 @@
                     <span class="dock-ico">🎒</span>
                 </div>
                 <span class="dock-label">Túi Đồ</span>
-                <span class="dock-sub">158 Items</span>
+                <span class="dock-sub" id="dockInvSub">0 Món</span>
             </button>
 
             <button class="dock-btn center-core nav-btn active" data-target="gacha-view">
@@ -106,19 +105,17 @@
             <button class="dock-btn mid-right nav-btn" data-target="shop-view">
                 <div class="dock-icon-ring ring-primary">
                     <span class="dock-ico">🛒</span>
-                    <span class="badge-count">7</span>
                 </div>
                 <span class="dock-label">Shop</span>
-                <span class="dock-sub">7 Offers</span>
+                <span class="dock-sub">Gói Tân Thủ</span>
             </button>
 
             <button class="dock-btn sub-right nav-btn" data-target="profile-view">
                 <div class="dock-icon-ring ring-secondary">
                     <span class="dock-ico">🛡️</span>
-                    <span class="badge-dot"></span>
                 </div>
-                <span class="dock-label">Nhà Phiêu Lưu</span>
-                <span class="dock-sub">Stats</span>
+                <span class="dock-label">Hồ Sơ</span>
+                <span class="dock-sub">Chi Tiết</span>
             </button>
         </footer>
     </div>

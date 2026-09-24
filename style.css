@@ -322,3 +322,52 @@
     0% { box-shadow: 0 0 12px rgba(255, 216, 117, 0.4); }
     100% { box-shadow: 0 0 25px rgba(255, 216, 117, 0.8), 0 0 10px #7c6cff; }
 }
+/* Nút Thu Thập */
+.btn-claim {
+    background: linear-gradient(180deg, #ffe66d 0%, #d48b00 100%);
+    color: #120c02;
+    font-weight: bold;
+    border: 1px solid #fff;
+    border-radius: 20px;
+    padding: 10px 24px;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(255, 230, 109, 0.6);
+    letter-spacing: 1px;
+    animation: pulseBtn 1.5s infinite alternate;
+}
+
+@keyframes pulseBtn {
+    0% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 230, 109, 0.4); }
+    100% { transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 230, 109, 0.8); }
+}
+
+/* Lớp phủ màn hình tính năng */
+.view-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 15;
+    pointer-events: none;
+}
+.view-panel.active {
+    pointer-events: auto;
+}
+
+/* Modal Popup Túi đồ */
+#inventory-view {
+    background: rgba(3, 4, 15, 0.92);
+    backdrop-filter: blur(10px);
+}
+#inventory-view .panel-container {
+    margin-top: 70px;
+    margin-bottom: 140px;
+    height: calc(100% - 210px);
+}
+.close-panel-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    color: #fff;
+    cursor: pointer;
+}
