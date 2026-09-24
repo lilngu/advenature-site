@@ -483,6 +483,41 @@ claimBtn.addEventListener("click", () => {
     }, 3000);
 });
 
+// ======================================================
+// KHỐI CODE BỊ THIẾU: ĐIỀU KHIỂN BÃO HẠT VORTEX
+// ======================================================
+function updateParticles(elapsed, progress) {
+    const positions = particleGeometry.attributes.position.array;
+    const totalTime = clock.getElapsedTime();
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+        const p = particleData[i];
+        const wanderX = p.baseX + Math.sin(totalTime * p.driftSpeed + p.phaseX) * p.driftRadius;
+        const wanderY = p.baseY + Math.cos(totalTime * p.driftSpeed * 0.8 + p.phaseY) * p.driftRadius;
+        const wanderZ = p.baseZ + Math.sin(totalTime * p.driftSpeed * 1.2 + p.phaseZ) * p.driftRadius;
+
+        if (state === STATE.IDLE) {
+            positions[i * 3]     = wanderX;
+            positions[i * 3 + 1] = wanderY;
+            positions[i * 3 + 2] = wanderZ;
+        } else if (state === STATE.GACHA) {
+            const currentAngle = p.angle + (elapsed * p.vortexSpeed) * (1 + progress * 2.5);
+            const collapse = Math.max(0, (progress - 0.45) / 0.55);
+            const currentRadius = THREE.MathUtils.lerp(p.radius, 0.25, collapse);
+            const verticalWave = Math.sin(elapsed * 4 + p.random * 10) * 0.3 * (1 - collapse);
+
+            positions[i * 3]     = Math.cos(currentAngle) * currentRadius;
+            positions[i * 3 + 1] = Math.sin(currentAngle * 1.5) * currentRadius * 0.35 + verticalWave;
+            positions[i * 3 + 2] = Math.sin(currentAngle * 1.5) * currentRadius;
+        } else {
+            // Khi ở trạng thái xem đá (LOOT), hạt trôi nhẹ xung quanh
+            positions[i * 3]     = Math.cos(p.angle + elapsed * 0.5) * (p.radius * 0.4);
+            positions[i * 3 + 1] = wanderY * 0.5;
+            positions[i * 3 + 2] = Math.sin(p.angle + elapsed * 0.5) * (p.radius * 0.4);
+        }
+    }
+    particleGeometry.attributes.position.needsUpdate = true;
+}
 // Three.js Loop Animations
 function updateCore(elapsed, progress) {
     if (state === STATE.GACHA) {
@@ -510,15 +545,25 @@ function updateState(now) {
     const elapsed = (now - stateStart) / 1000;
     let shakeStrength = 0;
 
+    // 1. Kiểm tra an toàn cả biến module lẫn biến window
+    const fastGachaActive = (typeof isFastGachaEnabled !== "undefined" && isFastGachaEnabled) || window.isFastGachaEnabled;
+
     // Hỗ trợ Fast Gacha cho Admin: Bỏ qua chờ đợi, hiện đá ngay lập tức
-    if (window.isFastGachaEnabled && (state === STATE.GACHA || state === STATE.CORE)) {
+    if (fastGachaActive && (state === STATE.GACHA || state === STATE.CORE)) {
         coreMaterial.opacity = 0;
         coreGlowMaterial.opacity = 0;
         coreGroup.scale.setScalar(0);
+        coreGroup.position.set(0, 0, 0);
+        
         state = STATE.LOOT;
         stateStart = now;
         lootText.classList.add("show");
         claimContainer.classList.remove("hidden");
+
+        // Trả lại trạng thái background & camera chuẩn ngay khi bỏ qua animation
+        app3dCanvas.style.transform = "";
+        camera.position.set(0, 1.2, 8);
+        controls.target.set(0, 0.2, 0);
         return;
     }
 
@@ -552,14 +597,17 @@ function updateState(now) {
             lootText.classList.add("show");
             claimContainer.classList.remove("hidden");
             
-            // Đặt lại góc camera chuẩn 1 lần duy nhất khi đá bung ra
+            // Đặt lại góc camera chuẩn 1 lần duy nhất khi đá bung ra (cho phép OrbitControls xoay tự do sau đó)
             camera.position.set(0, 1.2, 8);
             controls.target.set(0, 0.2, 0);
         }
     } else if (state === STATE.LOOT && lootBox) {
+        // Duy trì hạt bụi sao trôi nhẹ nhàng xung quanh viên đá
+        updateParticles(elapsed, 0);
         lootBox.rotation.y += 0.008;
         lootBox.scale.lerp(new THREE.Vector3(1, 1, 1), 0.08);
     } else if (state === STATE.CLAIMED && lootBox) {
+        updateParticles(elapsed, 0);
         lootBox.position.y -= 0.04;
         lootBox.scale.multiplyScalar(0.94);
     }
