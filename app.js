@@ -776,7 +776,12 @@ function initMiniGem3D() {
     previewComposer = new EffectComposer(previewRenderer);
     previewComposer.addPass(new RenderPass(previewScene, previewCamera));
     // Độ rực phát sáng (Bloom strength: 1.4)
-    previewComposer.addPass(new UnrealBloomPass(new THREE.Vector2(170, 170), 1.4, 0.5, 0.1));
+    previewComposer.addPass(new UnrealBloomPass(
+        new THREE.Vector2(170, 170), 
+        0.7,  // [1] Cường độ Bloom (Strength): Giảm từ 1.4 xuống 0.7 (giảm 50% độ chói)
+        0.4,  // [2] Bán kính tỏa sáng (Radius): Giảm từ 0.5 xuống 0.4 để quầng sáng gọn gàng
+        0.3   // [3] Ngưỡng sáng (Threshold): Tăng từ 0.1 lên 0.3 (chỉ viền thực sự sáng mới phát quang, giữ rõ khối đá)
+    ));
     previewComposer.addPass(new OutputPass());
 
     previewControls = new OrbitControls(previewCamera, previewRenderer.domElement);
@@ -845,7 +850,7 @@ function openGemPreviewModal(gemData) {
     // Cập nhật đèn tâm cảnh theo màu của viên đá
     if (gemData.isUnlocked) {
         previewPointLight.color.setHex(gemData.color);
-        previewPointLight.intensity = 5.0;
+        previewPointLight.intensity = 2.0; //độ sáng đèn chiếu
     } else {
         previewPointLight.intensity = 0;
     }
@@ -854,7 +859,7 @@ function openGemPreviewModal(gemData) {
     const mat = new THREE.MeshStandardMaterial({
         color: gemData.isUnlocked ? gemData.color : 0x1a162b,
         emissive: gemData.isUnlocked ? gemData.emissive : 0x000000,
-        emissiveIntensity: gemData.isUnlocked ? 0.45 : 0,
+        emissiveIntensity: gemData.isUnlocked ? 0.2 : 0, //tự phát sáng bề mặt
         roughness: gemData.isUnlocked ? 0.18 : 0.8,
         metalness: 0.35,
         flatShading: true,
@@ -868,7 +873,7 @@ function openGemPreviewModal(gemData) {
     const edgesMaterial = new THREE.LineBasicMaterial({
         color: 0xffffff,
         transparent: true,
-        opacity: gemData.isUnlocked ? 0.85 : 0.25
+        opacity: gemData.isUnlocked ? 0.8 : 0.25 //độ sáng viền
     });
     previewMesh.add(new THREE.LineSegments(edgesGeometry, edgesMaterial));
     previewScene.add(previewMesh);
