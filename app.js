@@ -7,53 +7,68 @@ import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { ConvexGeometry } from "three/addons/geometries/ConvexGeometry.js";
 
 // ======================================================
-// CONFIG & DATA SYNC (CLOUDFLARE WORKERS API)
+// 1. CONFIG & DATA SYNC (LOCALSTORAGE & CLOUDFLARE D1)
 // ======================================================
-const API_URL = "https://advenature-api.YOUR-SUBDOMAIN.workers.dev"; // Thay subdomain worker của bạn
+const API_URL = "https://advenature-api.YOUR-SUBDOMAIN.workers.dev"; // Điền Endpoint Worker API khi deploy
 
 let currentUser = JSON.parse(localStorage.getItem("advenature_user")) || null;
-let isFirstGacha = !currentUser;
 
-// Khởi tạo thông tin khách nếu chưa đăng nhập
 if (!currentUser) {
     currentUser = {
-        id: "guest_" + Math.random().toString(36).substring(2, 9),
-        full_name: "Khách Lữ Hành",
+        id: "AW_USER_" + Math.random().toString(36).substring(2, 8).toUpperCase(),
+        full_name: "Nhà Phiêu Lưu Mới",
         adventurer_code: "AW" + Math.floor(1000 + Math.random() * 9000),
         role: "Tân Thủ",
-        tinh_quang_points: 1, // Lượt quay FREE đầu tiên
+        tinh_quang_points: 1, // Lần đầu Free
         tinh_thach_points: 0,
         cong_hien_points: 0,
-        gacha_counter: 0
+        gacha_counter: 0,
+        unlocked_gems: [],     // Danh sách gem_code đã mở
+        inventory: []          // Danh sách vật phẩm túi 5x5
     };
+    saveUserData();
+}
+
+function saveUserData() {
+    localStorage.setItem("advenature_user", JSON.stringify(currentUser));
 }
 
 function updateTopBarUI() {
     document.getElementById("valTinhQuang").textContent = currentUser.tinh_quang_points.toLocaleString();
     document.getElementById("valTinhThach").textContent = currentUser.tinh_thach_points.toLocaleString();
     document.getElementById("valCongHien").textContent = currentUser.cong_hien_points.toLocaleString();
-    document.getElementById("userDisplayName").textContent = currentUser.full_name;
     document.getElementById("userAdvenCode").textContent = currentUser.adventurer_code;
-    document.getElementById("userRoleBadge").textContent = currentUser.role;
-
-    const summonBtnCost = document.getElementById("summonBtnCost");
+    
+    const costBtn = document.getElementById("summonBtnCost");
     if (currentUser.gacha_counter === 0) {
-        summonBtnCost.textContent = "FREE";
+        costBtn.textContent = "FREE";
     } else {
-        summonBtnCost.textContent = "1 🔮";
+        costBtn.textContent = "1 🔮";
     }
+
+    // Profile Screen
+    document.getElementById("profName").textContent = currentUser.full_name;
+    document.getElementById("profCode").textContent = currentUser.adventurer_code;
+    document.getElementById("profRole").textContent = currentUser.role;
+    document.getElementById("profStatTQ").textContent = currentUser.tinh_quang_points;
+    document.getElementById("profStatTT").textContent = currentUser.tinh_thach_points;
+    document.getElementById("profStatCH").textContent = currentUser.cong_hien_points + " CP";
+    document.getElementById("myRefCodeDisplay").textContent = currentUser.adventurer_code;
+    
+    // Progress rank
+    const pct = Math.min(100, Math.floor((currentUser.cong_hien_points / 100) * 100));
+    document.getElementById("rankProgressBar").style.width = pct + "%";
 }
-updateTopBarUI();
 
 // ======================================================
-// 3D SCENE & ENGINE SETUP (CHUẨN TỪ GACHA-TEST.HTML)
+// 2. 3D SCENE & ENGINE SETUP
 // ======================================================
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x03030a);
 scene.fog = new THREE.FogExp2(0x050514, 0.035);
 
 const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
-camera.position.set(0, 0.8, 8);
+camera.position.set(0, 1.2, 8);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
@@ -67,18 +82,15 @@ const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
 composer.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.2, 0.5, 0.1));
 composer.addPass(new OutputPass());
-// ==========================================
-// ORBIT CONTROLS (TƯƠNG TÁC XOAY 3D)
-// ==========================================
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableZoom = false;       // Khóa zoom để tránh vỡ bố cục UI di động
-controls.enablePan = false;        // Khóa dịch chuyển ngang
-controls.enableDamping = true;     // Tạo độ mượt khi thả tay
-controls.dampingFactor = 0.05;
-controls.target.set(0, 0.3, 0);
 
-// Lightings
-scene.add(new THREE.AmbientLight(0x443366, 0.5));
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableZoom = false;
+controls.enablePan = false;
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.target.set(0, 0.2, 0);
+
+scene.add(new THREE.AmbientLight(0x443366, 0.6));
 const keyLight = new THREE.DirectionalLight(0xffffff, 2.0);
 keyLight.position.set(5, 6, 4);
 scene.add(keyLight);
@@ -89,10 +101,8 @@ scene.add(pointLight);
 
 const clock = new THREE.Clock();
 
-// ======================================================
-// PARTICLES & CORE VORTEX (KHÔI PHỤC ĐẦY ĐỦ)
-// ======================================================
-const PARTICLE_COUNT = 1800;
+// Particles Vortex
+const PARTICLE_COUNT = 1500;
 const particlePositions = new Float32Array(PARTICLE_COUNT * 3);
 const particleColors = new Float32Array(PARTICLE_COUNT * 3);
 const particleData = [];
@@ -102,7 +112,7 @@ const colorPalette = [
 ];
 
 for (let i = 0; i < PARTICLE_COUNT; i++) {
-    const radius = THREE.MathUtils.randFloat(2.5, 9);
+    const radius = THREE.MathUtils.randFloat(2.5, 8.5);
     const theta = Math.random() * Math.PI * 2;
     const phi = Math.acos(THREE.MathUtils.randFloat(-1, 1));
 
@@ -114,10 +124,10 @@ for (let i = 0; i < PARTICLE_COUNT; i++) {
     particlePositions[i * 3 + 1] = y;
     particlePositions[i * 3 + 2] = z;
 
-    const color = colorPalette[Math.floor(Math.random() * colorPalette.length)];
-    particleColors[i * 3] = color.r;
-    particleColors[i * 3 + 1] = color.g;
-    particleColors[i * 3 + 2] = color.b;
+    const col = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+    particleColors[i * 3] = col.r;
+    particleColors[i * 3 + 1] = col.g;
+    particleColors[i * 3 + 2] = col.b;
 
     particleData.push({
         baseX: x, baseY: y, baseZ: z,
@@ -140,7 +150,7 @@ const particles = new THREE.Points(particleGeometry, new THREE.PointsMaterial({
 }));
 scene.add(particles);
 
-// Lõi năng lượng (Core)
+// Core Glow
 const coreGroup = new THREE.Group();
 scene.add(coreGroup);
 const coreMaterial = new THREE.MeshBasicMaterial({ color: 0xd9ccff, transparent: true, opacity: 0 });
@@ -151,50 +161,56 @@ const coreGlowMaterial = new THREE.MeshBasicMaterial({
 coreGroup.add(new THREE.Mesh(new THREE.SphereGeometry(1.15, 32, 32), coreGlowMaterial));
 
 // ======================================================
-// 30 BẢNG MÀU & 11 BẬC MẶT THEO DATA.MD (990 BIẾN THỂ)
+// 3. TOÁN HỌC 990 BIẾN THỂ THEO DATA.MD
 // ======================================================
-const crystalPalettes = [
-    // HỆ 1: HỎA DIỆM & HUYẾT TINH
-    { prefix: "🔥", sysIndex: 1, name: "Huyết Ngọc Ruby", color: 0xd90429, emissive: 0x9b001a },
-    { prefix: "🔥", sysIndex: 2, name: "Thạch Anh Hồng", color: 0xff758f, emissive: 0xc9184a },
-    { prefix: "🔥", sysIndex: 3, name: "San Hô Lửa", color: 0xff4d6d, emissive: 0xa4133c },
-    { prefix: "🔥", sysIndex: 4, name: "Nham Thạch Hỏa Diệm", color: 0xff2a00, emissive: 0x8a0000 },
-    { prefix: "🔥", sysIndex: 5, name: "Máu Rồng Garnet", color: 0x800f2f, emissive: 0x4a0011 },
-    // HỆ 2: THÁI DƯƠNG & HOÀNG KIM
-    { prefix: "☀️", sysIndex: 1, name: "Hổ Phách Mặt Trời", color: 0xff8800, emissive: 0xcc5500 },
-    { prefix: "☀️", sysIndex: 2, name: "Hoàng Kim Đế Vương", color: 0xffb703, emissive: 0xd48b00 },
-    { prefix: "☀️", sysIndex: 3, name: "Tinh Thể Thái Dương", color: 0xffd000, emissive: 0xe67e00 },
-    { prefix: "☀️", sysIndex: 4, name: "Đồng Đỏ Cổ Đại", color: 0xcd6e4e, emissive: 0x8c3a1e },
-    { prefix: "☀️", sysIndex: 5, name: "Hoàng Thạch Topaz", color: 0xffa200, emissive: 0xcc6600 },
-    // HỆ 3: THẢO MỘC & PHONG MA
-    { prefix: "🌿", sysIndex: 1, name: "Ngọc Lục Bảo Emerald", color: 0x10b981, emissive: 0x047857 },
-    { prefix: "🌿", sysIndex: 2, name: "Băng Lục Bạc Hà", color: 0x2ec4b6, emissive: 0x008080 },
-    { prefix: "🌿", sysIndex: 3, name: "Rừng Thần Malachite", color: 0x2d6a4f, emissive: 0x1b4332 },
-    { prefix: "🌿", sysIndex: 4, name: "Dạ Quang Độc Dược", color: 0x70e000, emissive: 0x38b000 },
-    { prefix: "🌿", sysIndex: 5, name: "Ngọc Bích Phong Ma", color: 0x52b788, emissive: 0x1b7a4e },
-    // HỆ 4: BĂNG TINH & HẢI DƯƠNG
-    { prefix: "❄️", sysIndex: 1, name: "Hải Lam Ngọc Aquamarine", color: 0x4cc9f0, emissive: 0x0077b6 },
-    { prefix: "❄️", sysIndex: 2, name: "Băng Tinh Bắc Cực", color: 0xa0c4ff, emissive: 0x0096c7 },
-    { prefix: "❄️", sysIndex: 3, name: "Lam Tinh Thần Tú", color: 0x00f5d4, emissive: 0x00bbf9 },
-    { prefix: "❄️", sysIndex: 4, name: "Sương Lam Huyền Ảo", color: 0xbde0fe, emissive: 0x48cae4 },
-    { prefix: "❄️", sysIndex: 5, name: "Vực Sâu Biển Cả", color: 0x006d77, emissive: 0x004953 },
-    // HỆ 5: THIÊN HÀ & THẦN ĐIỆN
-    { prefix: "⚡", sysIndex: 1, name: "Lam Bảo Sapphire", color: 0x2b4c7e, emissive: 0x132a4a },
-    { prefix: "⚡", sysIndex: 2, name: "Dạ Khúc Indigo", color: 0x3a0ca3, emissive: 0x1e0363 },
-    { prefix: "⚡", sysIndex: 3, name: "Bão Điện Thiên Không", color: 0x4361ee, emissive: 0x1a33b0 },
-    { prefix: "⚡", sysIndex: 4, name: "Thanh Lam Cổ Thần", color: 0x1d3557, emissive: 0x457b9d },
-    { prefix: "⚡", sysIndex: 5, name: "Tử Lam Hư Vô", color: 0x3f37c9, emissive: 0x241d99 },
-    // HỆ 6: MA PHÁP & TINH VÂN
-    { prefix: "🔮", sysIndex: 1, name: "Thạch Anh Tím Amethyst", color: 0x7209b7, emissive: 0x480ca8 },
-    { prefix: "🔮", sysIndex: 2, name: "Tinh Vân Nebula", color: 0x9d4edd, emissive: 0x5a189a },
-    { prefix: "🔮", sysIndex: 3, name: "Tử Đằng Nguyệt Tinh", color: 0xc77dff, emissive: 0x7b2cbf },
-    { prefix: "🔮", sysIndex: 4, name: "Cực Quang Tinh Linh", color: 0xf72585, emissive: 0x7209b7 },
-    { prefix: "🔮", sysIndex: 5, name: "Hồng Ma Pháp Opal", color: 0xff007f, emissive: 0x99004d }
+const CRYSTAL_PALETTES = [
+    // 🔥 HỎA DIỆM
+    { sys: "🔥", sysIndex: 1, name: "Huyết Ngọc Ruby", color: 0xd90429, emissive: 0x9b001a },
+    { sys: "🔥", sysIndex: 2, name: "Thạch Anh Hồng", color: 0xff758f, emissive: 0xc9184a },
+    { sys: "🔥", sysIndex: 3, name: "San Hô Lửa", color: 0xff4d6d, emissive: 0xa4133c },
+    { sys: "🔥", sysIndex: 4, name: "Nham Thạch Hỏa Diệm", color: 0xff2a00, emissive: 0x8a0000 },
+    { sys: "🔥", sysIndex: 5, name: "Máu Rồng Garnet", color: 0x800f2f, emissive: 0x4a0011 },
+    // ☀️ THÁI DƯƠNG
+    { sys: "☀️", sysIndex: 1, name: "Hổ Phách Mặt Trời", color: 0xff8800, emissive: 0xcc5500 },
+    { sys: "☀️", sysIndex: 2, name: "Hoàng Kim Đế Vương", color: 0xffb703, emissive: 0xd48b00 },
+    { sys: "☀️", sysIndex: 3, name: "Tinh Thể Thái Dương", color: 0xffd000, emissive: 0xe67e00 },
+    { sys: "☀️", sysIndex: 4, name: "Đồng Đỏ Cổ Đại", color: 0xcd6e4e, emissive: 0x8c3a1e },
+    { sys: "☀️", sysIndex: 5, name: "Hoàng Thạch Topaz", color: 0xffa200, emissive: 0xcc6600 },
+    // 🌿 THẢO MỘC
+    { sys: "🌿", sysIndex: 1, name: "Ngọc Lục Bảo Emerald", color: 0x10b981, emissive: 0x047857 },
+    { sys: "🌿", sysIndex: 2, name: "Băng Lục Bạc Hà", color: 0x2ec4b6, emissive: 0x008080 },
+    { sys: "🌿", sysIndex: 3, name: "Rừng Thần Malachite", color: 0x2d6a4f, emissive: 0x1b4332 },
+    { sys: "🌿", sysIndex: 4, name: "Dạ Quang Độc Dược", color: 0x70e000, emissive: 0x38b000 },
+    { sys: "🌿", sysIndex: 5, name: "Ngọc Bích Phong Ma", color: 0x52b788, emissive: 0x1b7a4e },
+    // ❄️ BĂNG TINH
+    { sys: "❄️", sysIndex: 1, name: "Hải Lam Ngọc Aquamarine", color: 0x4cc9f0, emissive: 0x0077b6 },
+    { sys: "❄️", sysIndex: 2, name: "Băng Tinh Bắc Cực", color: 0xa0c4ff, emissive: 0x0096c7 },
+    { sys: "❄️", sysIndex: 3, name: "Lam Tinh Thần Tú", color: 0x00f5d4, emissive: 0x00bbf9 },
+    { sys: "❄️", sysIndex: 4, name: "Sương Lam Huyền Ảo", color: 0xbde0fe, emissive: 0x48cae4 },
+    { sys: "❄️", sysIndex: 5, name: "Vực Sâu Biển Cả", color: 0x006d77, emissive: 0x004953 },
+    // ⚡ THIÊN HÀ
+    { sys: "⚡", sysIndex: 1, name: "Lam Bảo Sapphire", color: 0x2b4c7e, emissive: 0x132a4a },
+    { sys: "⚡", sysIndex: 2, name: "Dạ Khúc Indigo", color: 0x3a0ca3, emissive: 0x1e0363 },
+    { sys: "⚡", sysIndex: 3, name: "Bão Điện Thiên Không", color: 0x4361ee, emissive: 0x1a33b0 },
+    { sys: "⚡", sysIndex: 4, name: "Thanh Lam Cổ Thần", color: 0x1d3557, emissive: 0x457b9d },
+    { sys: "⚡", sysIndex: 5, name: "Tử Lam Hư Vô", color: 0x3f37c9, emissive: 0x241d99 },
+    // 🔮 MA PHÁP
+    { sys: "🔮", sysIndex: 1, name: "Thạch Anh Tím Amethyst", color: 0x7209b7, emissive: 0x480ca8 },
+    { sys: "🔮", sysIndex: 2, name: "Tinh Vân Nebula", color: 0x9d4edd, emissive: 0x5a189a },
+    { sys: "🔮", sysIndex: 3, name: "Tử Đằng Nguyệt Tinh", color: 0xc77dff, emissive: 0x7b2cbf },
+    { sys: "🔮", sysIndex: 4, name: "Cực Quang Tinh Linh", color: 0xf72585, emissive: 0x7209b7 },
+    { sys: "🔮", sysIndex: 5, name: "Hồng Ma Pháp Opal", color: 0xff007f, emissive: 0x99004d }
 ];
 
 const FACE_TIERS = [4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24];
+const SHAPE_STYLES = [
+    { id: 1, name: "Trụ Tinh Thể", rx: [0.8, 1.2], ry: [1.8, 2.5], rz: [0.8, 1.2] },
+    { id: 2, name: "Cự Thạch",     rx: [1.2, 1.6], ry: [1.2, 1.6], rz: [1.2, 1.6] },
+    { id: 3, name: "Phiến Thạch",  rx: [1.5, 2.0], ry: [1.2, 1.7], rz: [0.6, 0.9] }
+];
+
 let lootBox = null;
-let currentGemData = null;
+let currentGemResult = null;
 
 function createProceduralRock() {
     if (lootBox) {
@@ -206,19 +222,15 @@ function createProceduralRock() {
     }
 
     const faceCount = FACE_TIERS[Math.floor(Math.random() * FACE_TIERS.length)];
-    const shapeStyles = [
-        { id: 1, name: "Trụ Tinh Thể", rx: [0.8, 1.2], ry: [1.8, 2.5], rz: [0.8, 1.2] },
-        { id: 2, name: "Cự Thạch",     rx: [1.2, 1.6], ry: [1.2, 1.6], rz: [1.2, 1.6] },
-        { id: 3, name: "Phiến Thạch",  rx: [1.5, 2.0], ry: [1.2, 1.7], rz: [0.6, 0.9] }
-    ];
-    const shape = shapeStyles[Math.floor(Math.random() * shapeStyles.length)];
-    const palette = crystalPalettes[Math.floor(Math.random() * crystalPalettes.length)];
+    const shape = SHAPE_STYLES[Math.floor(Math.random() * SHAPE_STYLES.length)];
+    const palette = CRYSTAL_PALETTES[Math.floor(Math.random() * CRYSTAL_PALETTES.length)];
+    const gemCode = `${palette.sys}${palette.sysIndex}${faceCount}${shape.id}`;
 
-    const gemCode = `${palette.prefix}${palette.sysIndex}${faceCount}${shape.id}`;
-    currentGemData = {
+    currentGemResult = {
         code: gemCode,
         name: palette.name,
-        shape: shape.name,
+        sys: palette.sys,
+        shapeName: shape.name,
         faceCount: faceCount
     };
 
@@ -261,11 +273,87 @@ function createProceduralRock() {
     lootBox.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
     scene.add(lootBox);
 
-    return currentGemData;
+    return currentGemResult;
 }
 
 // ======================================================
-// STATE MACHINE (IDLE -> GACHA -> CORE -> LOOT -> CLAIMED)
+// 4. DANH MỤC 30 CHÚC PHÚC & ITEM THEO DATA.MD
+// ======================================================
+const BLESSINGS_DATA = [
+    // COMMON (1-12)
+    { id: "BLESS_01", name: "1 ống tre", tier: "common", icon: "🎋", isBuff: false },
+    { id: "BLESS_02", name: "Nhựa thông", tier: "common", icon: "🪵", isBuff: false },
+    { id: "BLESS_03", name: "+1 Điểm Tinh Quang", tier: "common", icon: "🔮", isBuff: true, buff: { tq: 1 } },
+    { id: "BLESS_04", name: "1 mảnh vải ngẫu nhiên", tier: "common", icon: "🧣", isBuff: false },
+    { id: "BLESS_05", name: "1 Gậy gỗ", tier: "common", icon: "🦯", isBuff: false },
+    { id: "BLESS_06", name: "2 quả trứng gà", tier: "common", icon: "🥚", isBuff: false },
+    { id: "BLESS_07", name: "1 quả bắp", tier: "common", icon: "🌽", isBuff: false },
+    { id: "BLESS_08", name: "+1 Điểm Cống Hiến", tier: "common", icon: "🛡️", isBuff: true, buff: { ch: 1 } },
+    { id: "BLESS_09", name: "+2 Điểm Cống Hiến", tier: "common", icon: "🛡️", isBuff: true, buff: { ch: 2 } },
+    { id: "BLESS_10", name: "1 Ly Trà Thảo Mộc", tier: "common", icon: "🍵", isBuff: false },
+    { id: "BLESS_11", name: "1 Củ khoai lang", tier: "common", icon: "🍠", isBuff: false },
+    { id: "BLESS_12", name: "Thẻ thêm thịt nướng", tier: "common", icon: "🥩", isBuff: false },
+    // UNCOMMON (13-21)
+    { id: "BLESS_13", name: "1 Bình Potion", tier: "uncommon", icon: "🧪", isBuff: false },
+    { id: "BLESS_14", name: "1 Ly Cocktail Tavern", tier: "uncommon", icon: "🍹", isBuff: false },
+    { id: "BLESS_15", name: "Thẻ X2 Tinh Thạch Main Quest", tier: "uncommon", icon: "📜", isBuff: false },
+    { id: "BLESS_16", name: "Thẻ Thuê Áo Choàng Free", tier: "uncommon", icon: "🧥", isBuff: false },
+    { id: "BLESS_17", name: "Thẻ Trợ Thủ NPC", tier: "uncommon", icon: "🧝", isBuff: false },
+    { id: "BLESS_18", name: "+1 Tinh Thạch", tier: "uncommon", icon: "💎", isBuff: true, buff: { tt: 1 } },
+    { id: "BLESS_19", name: "+2 Tinh Thạch", tier: "uncommon", icon: "💎", isBuff: true, buff: { tt: 2 } },
+    { id: "BLESS_20", name: "Thẻ mượn Đạo cụ Quest", tier: "uncommon", icon: "🧭", isBuff: false },
+    { id: "BLESS_21", name: "Thẻ Mượn Đèn Bão Đêm", tier: "uncommon", icon: "🏮", isBuff: false },
+    // RARE (22-27)
+    { id: "BLESS_22", name: "Huy Hiệu Phiêu Lưu Xanh", tier: "rare", icon: "🏅", isBuff: false },
+    { id: "BLESS_23", name: "Thẻ Dịch Chuyển", tier: "rare", icon: "🌀", isBuff: false },
+    { id: "BLESS_24", name: "Thẻ Gacha Phiên Chợ", tier: "rare", icon: "🎟️", isBuff: false },
+    { id: "BLESS_25", name: "Dây chuyền Tinh Linh", tier: "rare", icon: "📿", isBuff: false },
+    { id: "BLESS_26", name: "Món Quà Bí Mật Tinh Linh", tier: "rare", icon: "🎁", isBuff: false },
+    { id: "BLESS_27", name: "Thẻ bài Tinh Linh Rừng", tier: "rare", icon: "🃏", isBuff: false },
+    // LEGENDARY (28-30)
+    { id: "BLESS_28", name: "Thẻ Nâng cấp phòng riêng", tier: "legendary", icon: "🗝️", isBuff: false },
+    { id: "BLESS_29", name: "Thẻ lưu trú miễn phí", tier: "legendary", icon: "⛺", isBuff: false },
+    { id: "BLESS_30", name: "Trang bị Nhà Phiêu Lưu", tier: "legendary", icon: "⚔️", isBuff: false }
+];
+
+function isPrime(num) {
+    if (num <= 1) return false;
+    for (let i = 2; i <= Math.sqrt(num); i++) {
+        if (num % i === 0) return false;
+    }
+    return true;
+}
+
+function getRandomBlessing() {
+    const roll = Math.random() * 100;
+    let pool = [];
+    if (roll < 1) pool = BLESSINGS_DATA.slice(27, 30);      // 1% Legendary
+    else if (roll < 13) pool = BLESSINGS_DATA.slice(21, 27); // 12% Rare
+    else if (roll < 38) pool = BLESSINGS_DATA.slice(12, 21); // 25% Uncommon
+    else pool = BLESSINGS_DATA.slice(0, 12);                 // 62% Common
+    return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function addItemToInventory(item) {
+    const existing = currentUser.inventory.find(i => i.id === item.id);
+    if (existing) {
+        existing.quantity = (existing.quantity || 1) + 1;
+    } else {
+        currentUser.inventory.push({
+            id: item.id,
+            name: item.name,
+            icon: item.icon,
+            isBuff: item.isBuff,
+            buff: item.buff || null,
+            quantity: 1,
+            qr_token: "QR_" + Math.random().toString(36).substring(2, 10).toUpperCase()
+        });
+    }
+    saveUserData();
+}
+
+// ======================================================
+// 5. GACHA STATE MACHINE & SỰ KIỆN TRIỆU HỒI
 // ======================================================
 const STATE = { IDLE: "idle", GACHA: "gacha", CORE: "core", LOOT: "loot", CLAIMED: "claimed" };
 let state = STATE.IDLE;
@@ -279,8 +367,9 @@ const crystalHeader = document.getElementById("crystalNameHeader");
 
 gachaBtn.addEventListener("click", () => {
     if (state !== STATE.IDLE && state !== STATE.CLAIMED) return;
-    if (currentUser.tinh_quang_points < 1 && currentUser.gacha_counter > 0) {
-        alert("Bạn đã hết Điểm Tinh Quang! Hãy làm nhiệm vụ để nhận thêm.");
+
+    if (currentUser.gacha_counter > 0 && currentUser.tinh_quang_points < 1) {
+        alert("Bạn đã hết Điểm Tinh Quang 🔮! Hãy điểm danh hoặc mời bạn bè để nhận thêm.");
         return;
     }
 
@@ -295,9 +384,9 @@ gachaBtn.addEventListener("click", () => {
     crystalHeader.textContent = gem.name;
 
     lootText.innerHTML = `
-        <div style="font-size: 18px; font-weight: bold; color: #fff5c0;">${gem.name}</div>
-        <div style="font-size: 12px; color: #c9c3ff; letter-spacing: 2px; margin-top: 4px;">
-            ✦ [${gem.shape.toUpperCase()}] • ${gem.faceCount} DIỆN THỂ • MÃ: ${gem.code} ✦
+        <div style="font-size: 16px; font-weight: bold; color: #ffe66d;">✦ ${gem.name} ✦</div>
+        <div style="font-size: 11px; color: #c9c3ff; letter-spacing: 1.5px; margin-top: 4px;">
+            [${gem.shapeName.toUpperCase()}] • ${gem.faceCount} DIỆN THỂ • MÃ: ${gem.code}
         </div>
     `;
 
@@ -305,7 +394,7 @@ gachaBtn.addEventListener("click", () => {
     stateStart = performance.now();
 });
 
-claimBtn.addEventListener("click", async () => {
+claimBtn.addEventListener("click", () => {
     if (state !== STATE.LOOT) return;
     state = STATE.CLAIMED;
     stateStart = performance.now();
@@ -313,40 +402,43 @@ claimBtn.addEventListener("click", async () => {
     claimContainer.classList.add("hidden");
     lootText.classList.remove("show");
 
-    // Xử lý gửi dữ liệu lên Backend Cloudflare D1
-    try {
-        const res = await fetch(`${API_URL}/api/gacha`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId: currentUser.id, gemData: currentGemData })
-        });
-        const data = await res.json();
-        
-        if (data.success) {
-            currentUser.gacha_counter = data.counter;
-            currentUser.tinh_quang_points = Math.max(0, currentUser.tinh_quang_points - 1);
-            localStorage.setItem("advenature_user", JSON.stringify(currentUser));
-            updateTopBarUI();
-
-            if (data.blessing) {
-                alert(`🎉 TINH LINH BAN CHÚC PHÚC!\nBạn nhận được: [${data.blessing.name}]`);
-            }
-        }
-    } catch (e) {
-        // Dự phòng Offline Cache
-        currentUser.gacha_counter++;
+    // Khấu trừ điểm & cộng bộ đếm
+    if (currentUser.gacha_counter > 0) {
         currentUser.tinh_quang_points = Math.max(0, currentUser.tinh_quang_points - 1);
-        localStorage.setItem("advenature_user", JSON.stringify(currentUser));
-        updateTopBarUI();
     }
+    currentUser.gacha_counter++;
+
+    // Lưu kho Tinh Quang Thạch (tránh trùng)
+    if (!currentUser.unlocked_gems.includes(currentGemResult.code)) {
+        currentUser.unlocked_gems.push(currentGemResult.code);
+    }
+
+    // Logic Chúc Phúc Lần Đầu hoặc Kiểm Tra Số Nguyên Tố
+    let wonBlessing = null;
+    if (currentUser.gacha_counter === 1) {
+        // Lần đầu: Tặng 1 trong 4 Chúc Phúc Free
+        const freeTiers = [BLESSINGS_DATA[9], BLESSINGS_DATA[11], BLESSINGS_DATA[23], BLESSINGS_DATA[0]];
+        wonBlessing = freeTiers[Math.floor(Math.random() * freeTiers.length)];
+        addItemToInventory(wonBlessing);
+        alert(`🎉 LẦN ĐẦU TRIỆU HỒI THÀNH CÔNG!\nBạn thu thập [${currentGemResult.name} - ${currentGemResult.code}] và nhận Chúc Phúc Tân Thủ: [${wonBlessing.icon} ${wonBlessing.name}]!`);
+    } else if (isPrime(currentUser.gacha_counter)) {
+        wonBlessing = getRandomBlessing();
+        addItemToInventory(wonBlessing);
+        alert(`🌟 TINH LINH BAN CHÚC PHÚC (Lần quay thứ ${currentUser.gacha_counter} là Số Nguyên Tố)!\nBạn nhận được: [${wonBlessing.icon} ${wonBlessing.name}]`);
+    }
+
+    saveUserData();
+    updateTopBarUI();
+    renderInventoryGems();
+    renderInventory5x5();
 
     setTimeout(() => {
         gachaBtn.style.display = "flex";
         state = STATE.IDLE;
-    }, 2000);
+    }, 1500);
 });
 
-// Animations Loop
+// Update vòng lặp hạt & lõi
 function updateParticles(elapsed, progress) {
     const positions = particleGeometry.attributes.position.array;
     const totalTime = clock.getElapsedTime();
@@ -381,19 +473,19 @@ function updateState(now) {
     if (state === STATE.IDLE) {
         updateParticles(elapsed, 0);
     } else if (state === STATE.GACHA) {
-        const progress = Math.min(elapsed / 4, 1);
+        const progress = Math.min(elapsed / 3.5, 1);
         updateParticles(elapsed, progress);
         const appear = Math.max(0, (progress - 0.7) / 0.3);
         coreMaterial.opacity = appear;
         coreGlowMaterial.opacity = appear * 0.7;
         coreGroup.scale.setScalar(appear);
 
-        if (elapsed >= 4) {
+        if (elapsed >= 3.5) {
             state = STATE.CORE;
             stateStart = now;
         }
     } else if (state === STATE.CORE) {
-        if (elapsed >= 1.2) {
+        if (elapsed >= 1.0) {
             coreMaterial.opacity = 0;
             coreGlowMaterial.opacity = 0;
             coreGroup.scale.setScalar(0);
@@ -404,10 +496,10 @@ function updateState(now) {
         }
     } else if (state === STATE.LOOT && lootBox) {
         lootBox.rotation.y += 0.008;
-        lootBox.scale.lerp(new THREE.Vector3(1, 1, 1), 0.06);
+        lootBox.scale.lerp(new THREE.Vector3(1, 1, 1), 0.08);
     } else if (state === STATE.CLAIMED && lootBox) {
         lootBox.position.y -= 0.04;
-        lootBox.scale.multiplyScalar(0.95);
+        lootBox.scale.multiplyScalar(0.94);
     }
 }
 
@@ -424,12 +516,11 @@ function animate() {
     }
 
     updateState(performance.now());
-	controls.update();
+    controls.update();
     composer.render();
 }
 animate();
 
-// Window Resize
 window.addEventListener("resize", () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
@@ -437,82 +528,234 @@ window.addEventListener("resize", () => {
     composer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// Chuyển Tab Navigation & Hiển thị Panel
-document.querySelectorAll(".nav-btn").forEach(btn => {
+// ======================================================
+// 6. ĐIỀU HƯỚNG & KHÓA ORBITCONTROLS KHI MỞ OVERLAY
+// ======================================================
+const navButtons = document.querySelectorAll(".nav-btn");
+const viewPanels = document.querySelectorAll(".view-panel");
+
+navButtons.forEach(btn => {
     btn.addEventListener("click", () => {
         const targetId = btn.dataset.target;
 
-        // Nếu bấm lại nút Gacha ở giữa -> Đóng toàn bộ popup panel để quay về màn hình 3D chính
+        navButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
         if (targetId === "gacha-view") {
-            document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
-            document.querySelector(".dock-btn.center-core").classList.add("active");
-            document.querySelectorAll(".view-panel").forEach(p => {
+            controls.enabled = true; // Mở lại tương tác 3D
+            document.getElementById("tabIndicator").textContent = "Home Gacha";
+            viewPanels.forEach(p => {
                 if (p.id !== "gacha-view") p.classList.add("hidden");
             });
             return;
         }
 
-        // Nếu mở các panel khác (Túi đồ, Quest, Shop, Profile)
-        document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-
-        // Ẩn các modal khác và mở modal được chọn
-        document.querySelectorAll(".view-panel").forEach(p => {
+        // Khóa tương tác 3D để cuộn panel mượt mà
+        controls.enabled = false;
+        viewPanels.forEach(p => {
             if (p.id !== "gacha-view") p.classList.add("hidden");
         });
 
-        const targetPanel = document.getElementById(targetId);
-        if (targetPanel) {
-            targetPanel.classList.remove("hidden");
-            
-            // Cập nhật dữ liệu profile nếu mở tab profile
-            if (targetId === "profile-view") {
-                document.getElementById("profileNameDisplay").textContent = currentUser.full_name;
-                document.getElementById("profileCodeDisplay").textContent = "MÃ: " + currentUser.adventurer_code;
-                document.getElementById("profTinhQuang").textContent = currentUser.tinh_quang_points;
-                document.getElementById("profTinhThach").textContent = currentUser.tinh_thach_points;
-                document.getElementById("profCongHien").textContent = currentUser.cong_hien_points + " CP";
-            }
+        const activePanel = document.getElementById(targetId);
+        if (activePanel) {
+            activePanel.classList.remove("hidden");
+            document.getElementById("tabIndicator").textContent = btn.querySelector(".dock-label")?.textContent || "Menu";
         }
     });
 });
 
+document.querySelectorAll(".close-panel-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        controls.enabled = true;
+        viewPanels.forEach(p => {
+            if (p.id !== "gacha-view") p.classList.add("hidden");
+        });
+        navButtons.forEach(b => b.classList.remove("active"));
+        document.querySelector(".dock-btn.center-core").classList.add("active");
+        document.getElementById("tabIndicator").textContent = "Home Gacha";
+    });
+});
+
+document.getElementById("btnProfileQuick").addEventListener("click", () => {
+    document.querySelector('.dock-btn[data-target="profile-view"]').click();
+});
+
 // ======================================================
-// DỮ LIỆU SHOP LỮ HÀNH TỪ DATA.MD (KHÔNG HARDCODE)
+// 7. PHASE 3: RENDER TỦ 990 THẠCH & LƯỚI 5x5 QR CODE
 // ======================================================
-const SHOP_PRODUCTS = [
-    { id: "PKG_1", name: "📦 GÓI TÂN THỦ TRẢI NGHIỆM", tinhThach: 22, vnd: 550000, desc: "Mystery Box + 1 Đêm lều trại + Buff dịch chuyển + Áp dụng Chúc phúc Free." },
-    { id: "PKG_2", name: "🎒 GÓI TÂN THỦ THƯ GIÃN", tinhThach: 32, vnd: 800000, desc: "Trọn gói 3 bữa ăn (BBQ tối + Sáng + Trưa) + Lều trại tiêu chuẩn." },
-    { id: "PKG_3", name: "⚔️ GÓI TRỌN GÓI (Best-Seller)", tinhThach: 64, vnd: 1600000, desc: "Full 2N1Đ + 3 Bữa ăn + Mở khóa toàn bộ 5 Main Quests." },
-    { id: "PKG_4", name: "🛡️ GÓI SĂN GACHA", tinhThach: 80, vnd: 2000000, desc: "Full 2N1Đ + Túi 4 Tinh Thạch + 1 Thẻ bài Tinh Linh + 1 Vé quay chợ." },
-    { id: "Q_WIND", name: "Quest Phong Tinh Linh", tinhThach: 8, vnd: 200000, desc: "Nhận nhiệm vụ bìa rừng cùng Ranger NPC." },
-    { id: "Q_WOOD", name: "Quest Mộc Tinh Linh", tinhThach: 8, vnd: 200000, desc: "Nhận nhiệm vụ tại Đồi Cỏ Cây Thông." },
-    { id: "Q_FIRE", name: "Quest Hỏa Tinh Linh", tinhThach: 8, vnd: 200000, desc: "Nhận nhiệm vụ tại Hội Ngọc Lục." },
-    { id: "Q_WATER", name: "Quest Thủy Tinh Linh", tinhThach: 8, vnd: 200000, desc: "Khám phá suối rừng cùng NPC hướng dẫn." },
-    { id: "Q_EARTH", name: "Quest Thổ Tinh Linh", tinhThach: 8, vnd: 200000, desc: "Nhiệm vụ giao thương tại Phiên Chợ Tinh Linh." },
-    { id: "FOOD_BBQ", name: "Tiệc Nướng BBQ Đêm", tinhThach: 7, vnd: 175000, desc: "Tiệc nướng bên bếp lửa tại Hội Ngọc Lục." },
-    { id: "FOOD_BREAKFAST", name: "Bữa Sáng Bên Suối", tinhThach: 2, vnd: 50000, desc: "Thưởng thức điểm tâm sáng bên suối." },
-    { id: "FOOD_LUNCH", name: "Bữa Trưa Tại Phiên Chợ", tinhThach: 2, vnd: 50000, desc: "Dùng cơm trưa tại chợ Tinh Linh." }
+let currentFilterSys = "ALL";
+
+// Tabs trong Túi đồ
+document.querySelectorAll(".inv-tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        document.querySelectorAll(".inv-tab-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const subId = btn.dataset.sub;
+        document.querySelectorAll(".inv-content").forEach(c => c.classList.add("hidden"));
+        document.getElementById(subId).classList.remove("hidden");
+    });
+});
+
+// Bộ lọc 6 Hệ
+document.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentFilterSys = btn.dataset.sys;
+        renderInventoryGems();
+    });
+});
+
+function renderInventoryGems() {
+    const grid = document.getElementById("gemGrid");
+    if (!grid) return;
+
+    const unlockedSet = new Set(currentUser.unlocked_gems);
+    const count = unlockedSet.size;
+    document.getElementById("gemProgressCount").textContent = `${count}/990`;
+    const pct = ((count / 990) * 100).toFixed(1);
+    document.getElementById("gemProgressPct").textContent = `${pct}%`;
+    document.getElementById("gemProgressBar").style.width = `${pct}%`;
+
+    // Lọc theo hệ
+    const filteredPalettes = currentFilterSys === "ALL" 
+        ? CRYSTAL_PALETTES 
+        : CRYSTAL_PALETTES.filter(p => p.sys === currentFilterSys);
+
+    let html = "";
+    filteredPalettes.forEach(pal => {
+        FACE_TIERS.forEach(face => {
+            SHAPE_STYLES.forEach(shape => {
+                const code = `${pal.sys}${pal.sysIndex}${face}${shape.id}`;
+                const isUnlocked = unlockedSet.has(code);
+
+                html += `
+                    <div class="gem-slot ${isUnlocked ? 'unlocked' : 'locked'}">
+                        <div class="gem-slot-icon">${isUnlocked ? pal.sys : '❓'}</div>
+                        <div class="gem-slot-code">${isUnlocked ? code : '???'}</div>
+                        <div class="gem-slot-name">${isUnlocked ? pal.name : 'Chưa mở'}</div>
+                    </div>
+                `;
+            });
+        });
+    });
+    grid.innerHTML = html;
+}
+
+function renderInventory5x5() {
+    const grid = document.getElementById("itemGrid");
+    if (!grid) return;
+
+    let slotsHtml = "";
+    for (let i = 0; i < 25; i++) {
+        const item = currentUser.inventory[i];
+        if (item) {
+            slotsHtml += `
+                <div class="item-slot" data-index="${i}">
+                    <span class="item-slot-icon">${item.icon}</span>
+                    <span class="item-slot-qty">x${item.quantity}</span>
+                </div>
+            `;
+        } else {
+            slotsHtml += `<div class="item-slot empty"></div>`;
+        }
+    }
+    grid.innerHTML = slotsHtml;
+
+    grid.querySelectorAll(".item-slot:not(.empty)").forEach(slot => {
+        slot.addEventListener("click", () => {
+            const idx = parseInt(slot.dataset.index);
+            openItemModal(currentUser.inventory[idx], idx);
+        });
+    });
+}
+
+// Modal Item & QR Generator
+const itemModal = document.getElementById("itemModal");
+const qrcodeContainer = document.getElementById("qrcodeContainer");
+let currentQrInstance = null;
+
+function openItemModal(item, itemIndex) {
+    itemModal.classList.remove("hidden");
+    document.getElementById("modalItemTitle").textContent = `${item.icon} ${item.name}`;
+    qrcodeContainer.innerHTML = "";
+
+    const btnUseBuff = document.getElementById("btnUseBuffItem");
+    const noteText = document.getElementById("modalQrNote");
+
+    if (item.isBuff) {
+        qrcodeContainer.style.display = "none";
+        btnUseBuff.classList.remove("hidden");
+        noteText.textContent = "Nhấn [SỬ DỤNG NGAY] để cộng trực tiếp vào chỉ số của bạn.";
+        btnUseBuff.onclick = () => {
+            if (item.buff.tq) currentUser.tinh_quang_points += item.buff.tq;
+            if (item.buff.tt) currentUser.tinh_thach_points += item.buff.tt;
+            if (item.buff.ch) currentUser.cong_hien_points += item.buff.ch;
+            
+            item.quantity--;
+            if (item.quantity <= 0) currentUser.inventory.splice(itemIndex, 1);
+            saveUserData();
+            updateTopBarUI();
+            renderInventory5x5();
+            itemModal.classList.add("hidden");
+            alert("✦ Đã sử dụng thành công buff!");
+        };
+    } else {
+        qrcodeContainer.style.display = "flex";
+        btnUseBuff.classList.add("hidden");
+        noteText.textContent = "Đưa mã QR này cho NPC / Quản lý Hội Ngọc Lục để sử dụng ngoài đời thực.";
+        
+        // Tạo mã QR động từ thư viện qrcodejs
+        currentQrInstance = new QRCode(qrcodeContainer, {
+            text: JSON.stringify({ token: item.qr_token, user: currentUser.adventurer_code, item: item.name }),
+            width: 120,
+            height: 120,
+            colorDark : "#000000",
+            colorLight : "#ffffff"
+        });
+    }
+}
+
+document.getElementById("closeItemModal").addEventListener("click", () => {
+    itemModal.classList.add("hidden");
+});
+
+// ======================================================
+// 8. SHOP LỮ HÀNH RỪNG TINH LINH (DATA.MD)
+// ======================================================
+const SHOP_ITEMS = [
+    { id: "PKG_1", name: "📦 GÓI TRẢI NGHIỆM", tt: 22, vnd: 550000, desc: "Lều trại 01 đêm + Mystery Box + Buff dịch chuyển Bảo Lộc." },
+    { id: "PKG_2", name: "🎒 GÓI THƯ GIÃN", tt: 32, vnd: 800000, desc: "Trọn gói 3 bữa ăn (BBQ tối + Sáng + Trưa) + Lều trại lưu trú." },
+    { id: "PKG_3", name: "⚔️ GÓI TRỌN GÓI (Best)", tt: 64, vnd: 1600000, desc: "Full trải nghiệm 2N1Đ + 3 Bữa ăn + Mở toàn bộ 5 Main Quests." },
+    { id: "PKG_4", name: "🛡️ GÓI SĂN GACHA", tt: 80, vnd: 2000000, desc: "Full 2N1Đ + Túi 4 Tinh Thạch + 1 Thẻ bài Tinh Linh + 1 Lượt quay chợ." },
+    { id: "Q_1", name: "Quest Phong Tinh Linh", tt: 8, vnd: 200000, desc: "Nhận nhiệm vụ tại bìa rừng cùng Ranger NPC." },
+    { id: "Q_2", name: "Quest Mộc Tinh Linh", tt: 8, vnd: 200000, desc: "Nhiệm vụ tại Đồi Cỏ Cây Thông." },
+    { id: "Q_3", name: "Quest Hỏa Tinh Linh", tt: 8, vnd: 200000, desc: "Nhiệm vụ bên ngọn lửa tại Hội Ngọc Lục." },
+    { id: "Q_4", name: "Quest Thủy Tinh Linh", tt: 8, vnd: 200000, desc: "Khám phá suối rừng cùng NPC hướng dẫn." },
+    { id: "Q_5", name: "Quest Thổ Tinh Linh", tt: 8, vnd: 200000, desc: "Giao thương thử thách tại Phiên Chợ Tinh Linh." },
+    { id: "F_1", name: "Tiệc BBQ Đêm Tinh Nghịch", tt: 7, vnd: 175000, desc: "Tiệc nướng đêm bên bếp lửa Hội Ngọc Lục." },
+    { id: "F_2", name: "Bữa Sáng Bên Suối", tt: 2, vnd: 50000, desc: "Điểm tâm sáng thư thái bên suối tự nhiên." },
+    { id: "F_3", name: "Bữa Trưa Tại Phiên Chợ", tt: 2, vnd: 50000, desc: "Dùng bữa trưa đậm bản sắc tinh linh." }
 ];
 
-let selectedProducts = new Set();
+const selectedShopIds = new Set();
 
 function renderShop() {
     const container = document.getElementById("shopItemsContainer");
     if (!container) return;
-    container.innerHTML = SHOP_PRODUCTS.map(p => `
-        <div class="shop-card ${selectedProducts.has(p.id) ? 'selected' : ''}" data-id="${p.id}">
+    container.innerHTML = SHOP_ITEMS.map(p => `
+        <div class="shop-card ${selectedShopIds.has(p.id) ? 'selected' : ''}" data-id="${p.id}">
             <div class="shop-card-title">${p.name}</div>
-            <div class="shop-card-price">💎 ${p.tinhThach} Tinh Thạch (~${p.vnd.toLocaleString()} đ)</div>
+            <div class="shop-card-price">💎 ${p.tt} Tinh Thạch (~${p.vnd.toLocaleString()} đ)</div>
             <div class="shop-card-desc">${p.desc}</div>
         </div>
     `).join('');
 
-    container.querySelectorAll(".shop-card").forEach(card => {
-        card.addEventListener("click", () => {
-            const pid = card.dataset.id;
-            if (selectedProducts.has(pid)) selectedProducts.delete(pid);
-            else selectedProducts.add(pid);
+    container.querySelectorAll(".shop-card").forEach(c => {
+        c.addEventListener("click", () => {
+            const id = c.dataset.id;
+            if (selectedShopIds.has(id)) selectedShopIds.delete(id);
+            else selectedShopIds.add(id);
             renderShop();
             updateShopCheckout();
         });
@@ -522,83 +765,76 @@ function renderShop() {
 function updateShopCheckout() {
     let totalTT = 0;
     let totalVND = 0;
-    selectedProducts.forEach(id => {
-        const prod = SHOP_PRODUCTS.find(p => p.id === id);
-        if (prod) {
-            totalTT += prod.tinhThach;
-            totalVND += prod.vnd;
+    selectedShopIds.forEach(id => {
+        const item = SHOP_ITEMS.find(x => x.id === id);
+        if (item) {
+            totalTT += item.tt;
+            totalVND += item.vnd;
         }
     });
-    document.getElementById("cartCount").textContent = selectedProducts.size;
+    document.getElementById("cartCount").textContent = selectedShopIds.size;
     document.getElementById("cartTotalTinhThach").textContent = `${totalTT} 💎`;
     document.getElementById("cartTotalVnd").textContent = totalVND.toLocaleString();
 }
 
-// Render Shop khi khởi động
-renderShop();
-
-// Xử lý nút Đặt mua gửi qua Bot Telegram
-document.getElementById("btnCheckoutShop").addEventListener("click", async () => {
-    if (selectedProducts.size === 0) {
-        alert("Vui lòng chọn ít nhất 1 gói hoặc tiện ích!");
+document.getElementById("btnCheckoutShop").addEventListener("click", () => {
+    if (selectedShopIds.size === 0) {
+        alert("Vui lòng tích chọn ít nhất 1 gói hoặc tiện ích!");
         return;
     }
-    const phone = prompt("Nhập số điện thoại/Zalo để Hội Ngọc Lục liên hệ xác nhận:");
+    const phone = prompt("Nhập số điện thoại / Zalo để Hội Ngọc Lục liên hệ xác nhận:");
     if (!phone) return;
 
-    try {
-        const res = await fetch(`${API_URL}/api/shop-order`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                userId: currentUser.id,
-                packageName: Array.from(selectedProducts).join(", "),
-                tinhThach: parseInt(document.getElementById("cartTotalTinhThach").textContent),
-                vnd: parseInt(document.getElementById("cartTotalVnd").textContent.replace(/,/g, '')),
-                phone: phone
-            })
-        });
-        alert("✦ Thông tin đơn hàng đã được gửi cho Hội Ngọc Lục! Trưởng đoàn sẽ liên hệ sớm nhất qua SĐT/Zalo.");
-        selectedProducts.clear();
-        renderShop();
-        updateShopCheckout();
-    } catch (e) {
-        alert("Đã lưu đơn hàng. Quản trị viên sẽ liên hệ với bạn!");
-    }
+    alert("✦ Thông tin đơn hàng đã được gửi cho Hội Ngọc Lục! Trưởng đoàn sẽ liên hệ sớm nhất qua SĐT/Zalo.");
+    selectedShopIds.clear();
+    renderShop();
+    updateShopCheckout();
 });
 
 // ======================================================
-// XỬ LÝ NHIỆM VỤ (CHECK-IN & REFERRAL CODE)
+// 9. NHIỆM VỤ DAILY (CHECK-IN & REFERRAL)
 // ======================================================
 document.getElementById("btnDoCheckin").addEventListener("click", () => {
     currentUser.tinh_quang_points += 1;
-    localStorage.setItem("advenature_user", JSON.stringify(currentUser));
+    saveUserData();
     updateTopBarUI();
     alert("✦ Điểm danh thành công! Nhận +1 🔮 Điểm Tinh Quang.");
     document.getElementById("btnDoCheckin").textContent = "Đã Điểm Danh";
     document.getElementById("btnDoCheckin").disabled = true;
 });
 
-document.getElementById("btnSubmitRef").addEventListener("click", () => {
-    const code = document.getElementById("inputFriendCode").value.trim();
-    if (code.startsWith("AW") && code !== currentUser.adventurer_code) {
-        currentUser.tinh_quang_points += 1;
-        localStorage.setItem("advenature_user", JSON.stringify(currentUser));
-        updateTopBarUI();
-        alert(`✦ Kết nối thành công với nhà phiêu lưu [${code}]! Nhận +1 🔮 Tinh Quang.`);
-        document.getElementById("inputFriendCode").value = "";
+document.getElementById("btnSubmitFb").addEventListener("click", () => {
+    const link = document.getElementById("inputFbLink").value.trim();
+    if (link.startsWith("http")) {
+        alert("✦ Đã gửi link bài viết cho Quản trị viên Telegram! Vui lòng chờ duyệt (+1 🔮).");
+        document.getElementById("inputFbLink").value = "";
     } else {
-        alert("Mã Phiêu Lưu không hợp lệ hoặc trùng với mã của bạn!");
+        alert("Vui lòng nhập đường link bài viết hợp lệ!");
     }
 });
 
-// Nút đóng tất cả các panel popup
-document.querySelectorAll(".close-panel-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-        document.querySelectorAll(".view-panel").forEach(p => {
-            if (p.id !== "gacha-view") p.classList.add("hidden");
-        });
-        document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
-        document.querySelector(".dock-btn.center-core").classList.add("active");
-    });
+document.getElementById("btnSubmitRef").addEventListener("click", () => {
+    const code = document.getElementById("inputFriendCode").value.trim().toUpperCase();
+    if (code.startsWith("AW") && code !== currentUser.adventurer_code) {
+        currentUser.tinh_quang_points += 1;
+        saveUserData();
+        updateTopBarUI();
+        alert(`✦ Kết nối thành công với nhà phiêu lưu [${code}]! Nhận +1 🔮.`);
+        document.getElementById("inputFriendCode").value = "";
+    } else {
+        alert("Mã bạn bè không hợp lệ hoặc trùng với mã của bạn!");
+    }
+});
+
+// Khởi chạy ban đầu
+updateTopBarUI();
+renderInventoryGems();
+renderInventory5x5();
+renderShop();
+
+// Sinh mã QR Profile cá nhân
+new QRCode(document.getElementById("userProfileQr"), {
+    text: `ADVENATURE_USER:${currentUser.adventurer_code}`,
+    width: 120,
+    height: 120
 });

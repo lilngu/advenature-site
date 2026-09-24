@@ -2,16 +2,14 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Advenature - Loot Box Tinh Quang</title>
     <link rel="stylesheet" href="style.css">
     
-    <!-- Google Identity Services SDK -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <!-- QRCode Lib (Dùng cho QR túi đồ offline) -->
+    <!-- QRCode JS (Xác thực Offline) -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
-    <!-- Importmap cho Three.js -->
+    <!-- Importmap Three.js Engine -->
     <script type="importmap">
     {
         "imports": {
@@ -23,19 +21,18 @@
 </head>
 <body>
 
-    <!-- 1. KHUNG CHỨA TOÀN BỘ GAME & GACHA 3D THEO MẪU MỚI -->
     <div id="game-container">
-        <!-- Nền 3D Canvas -->
+        <!-- Canvas 3D Background -->
         <div id="app-3d"></div>
 
-        <!-- TOP STATUS BAR -->
+        <!-- TOP STATUS BAR (LAYER 10) -->
         <header class="rpg-topbar">
-            <div class="brand-logo">ADVENATURE</div>
+            <div class="brand-logo">✦ ADVENATURE</div>
             
             <div class="currency-group">
                 <div class="currency-pill">
-                    <span class="curr-label">Điểm Tinh Quang</span>
-                    <span class="curr-val">🔮 <span id="valTinhQuang">0</span></span>
+                    <span class="curr-label">Tinh Quang</span>
+                    <span class="curr-val">🔮 <span id="valTinhQuang">1</span></span>
                 </div>
                 <div class="currency-pill">
                     <span class="curr-label">Tinh Thạch</span>
@@ -50,55 +47,51 @@
             <div class="user-avatar-frame" id="btnProfileQuick">
                 <img src="https://api.dicebear.com/7.x/bottts/svg?seed=advenature" alt="Avatar" id="userAvatarImg" class="avatar-img">
                 <div class="level-badge" id="userAdvenCode">AW----</div>
-                <span class="player-name" id="userDisplayName">Khách Lữ Hành</span>
             </div>
         </header>
 
-        <!-- SUB TITLE -->
-        <div class="tab-indicator">Home Gacha</div>
+        <!-- SUB INDICATOR -->
+        <div class="tab-indicator" id="tabIndicator">Home Gacha</div>
 
-        <!-- MÀN HÌNH 1: GACHA VIEW (Bệ đá & nút Triệu Hồi) -->
+        <!-- MÀN HÌNH 1: GACHA VIEWPORT (Bệ triệu hồi 3D) -->
         <main id="gacha-view" class="view-panel active">
             <div class="crystal-title-box">
                 <span class="crystal-icon">🔮</span>
                 <span class="crystal-name" id="crystalNameHeader">Magic Crystal</span>
             </div>
 
-            <div id="lootText"></div>
+            <div id="lootText" class="loot-card"></div>
 
             <div class="summon-zone">
                 <button id="gachaButton" class="btn-summon">
-                    <span class="summon-icon">🔮</span>
+                    <span class="summon-icon">✦</span>
                     <span class="summon-text" id="summonBtnText">GACHA TINH QUANG</span>
-                    <span class="summon-cost" id="summonBtnCost">1 🔮</span>
+                    <span class="summon-cost" id="summonBtnCost">FREE</span>
                 </button>
                 
-                <div id="claimContainer" class="hidden" style="margin-top: 10px;">
-                    <button id="claimButton" class="btn-summon" style="border-color: #ffe66d; box-shadow: 0 0 20px #ffe66d88;">
+                <div id="claimContainer" class="hidden">
+                    <button id="claimButton" class="btn-summon btn-claim">
                         <span class="summon-text">✦ THU THẬP VÀO TÚI ✦</span>
                     </button>
                 </div>
             </div>
         </main>
 
-        <!-- BOTTOM ARC WHEEL DOCK (Thanh điều hướng dưới đáy) -->
-        <!-- BOTTOM ARC WHEEL DOCK -->
+        <!-- BOTTOM ARC WHEEL DOCK (LAYER 30) -->
         <footer class="rpg-dock">
             <button class="dock-btn sub-left nav-btn" data-target="quest-view">
-                <div class="dock-icon-ring ring-secondary">
+                <div class="dock-icon-ring">
                     <span class="dock-ico">📜</span>
-                    <span class="badge-dot hidden" id="questDot"></span>
+                    <span class="badge-dot" id="questDot"></span>
                 </div>
                 <span class="dock-label">Nhiệm Vụ</span>
-                <span class="dock-sub" id="questSubText">Điểm danh</span>
             </button>
 
             <button class="dock-btn mid-left nav-btn" data-target="inventory-view">
-                <div class="dock-icon-ring ring-primary">
+                <div class="dock-icon-ring">
                     <span class="dock-ico">🎒</span>
                 </div>
                 <span class="dock-label">Túi Đồ</span>
-                <span class="dock-sub" id="invSubCount">0 Items</span>
             </button>
 
             <button class="dock-btn center-core nav-btn active" data-target="gacha-view">
@@ -111,92 +104,95 @@
             </button>
 
             <button class="dock-btn mid-right nav-btn" data-target="shop-view">
-                <div class="dock-icon-ring ring-primary">
+                <div class="dock-icon-ring">
                     <span class="dock-ico">🛒</span>
                     <span class="badge-count">Hot</span>
                 </div>
                 <span class="dock-label">Shop</span>
-                <span class="dock-sub">Hội Lữ Hành</span>
             </button>
 
             <button class="dock-btn sub-right nav-btn" data-target="profile-view">
-                <div class="dock-icon-ring ring-secondary">
+                <div class="dock-icon-ring">
                     <span class="dock-ico">🛡️</span>
-                    <span class="badge-dot hidden" id="profileDot"></span>
                 </div>
-                <span class="dock-label">Nhà Phiêu Lưu</span>
-                <span class="dock-sub" id="userRoleBadge">Tân Thủ</span>
+                <span class="dock-label">Hồ Sơ</span>
             </button>
         </footer>
     </div>
 
-   <!-- 2. MÀN HÌNH TÚI TRỮ VẬT (INVENTORY) -->
-    <section id="inventory-view" class="view-panel hidden">
+    <!-- 2. PANEL: TÚI TRỮ VẬT (INVENTORY - 2 TAB) -->
+    <section id="inventory-view" class="view-panel hidden overlay-panel">
         <div class="panel-container">
-            <span class="close-panel-btn">&times;</span>
-            <h2 class="section-title">🎒 TÚI TRỮ VẬT NHÀ PHIÊU LƯU</h2>
+            <div class="panel-header">
+                <h2 class="section-title">🎒 TÚI TRỮ VẬT NHÀ PHIÊU LƯU</h2>
+                <span class="close-panel-btn">&times;</span>
+            </div>
+            
             <div class="inv-tabs">
                 <button class="inv-tab-btn active" data-sub="sub-gems">Tinh Quang Thạch (<span id="gemProgressCount">0/990</span>)</button>
-                <button class="inv-tab-btn" data-sub="sub-items">Túi Đồ & Thẻ (5x5)</button>
+                <button class="inv-tab-btn" data-sub="sub-items">Vật Phẩm & Thẻ (5x5)</button>
             </div>
 
-            <!-- Tab 1: Tủ 990 Thạch -->
+            <!-- Tab A: Tủ 990 Thạch -->
             <div id="sub-gems" class="inv-content active">
-                <div class="progress-bar-container">
-                    <div id="gemProgressBar" class="progress-fill" style="width: 0%;"></div>
+                <div class="progress-box">
+                    <div class="progress-label">Tiến trình sưu tầm: <span id="gemProgressPct">0%</span></div>
+                    <div class="progress-bar-container">
+                        <div id="gemProgressBar" class="progress-fill" style="width: 0%;"></div>
+                    </div>
                 </div>
-                <!-- Bộ lọc 6 Hệ -->
+
+                <!-- Lọc 6 Hệ -->
                 <div class="filter-bar" id="gemFilterBar">
                     <button class="filter-btn active" data-sys="ALL">Tất cả</button>
                     <button class="filter-btn" data-sys="🔥">🔥 Hỏa</button>
                     <button class="filter-btn" data-sys="☀️">☀️ Dương</button>
                     <button class="filter-btn" data-sys="🌿">🌿 Mộc</button>
                     <button class="filter-btn" data-sys="❄️">❄️ Băng</button>
-                    <button class="filter-btn" data-sys="⚡">⚡ Lôi</button>
+                    <button class="filter-btn" data-sys="⚡">⚡ Thiên Hà</button>
                     <button class="filter-btn" data-sys="🔮">🔮 Ma Pháp</button>
                 </div>
                 <div id="gemGrid" class="gem-grid-layout"></div>
             </div>
 
-            <!-- Tab 2: Lưới 5x5 Vật Phẩm -->
+            <!-- Tab B: Lưới 5x5 Vật Phẩm -->
             <div id="sub-items" class="inv-content hidden">
                 <div id="itemGrid" class="grid-5x5"></div>
             </div>
         </div>
     </section>
 
-    <!-- 3. MÀN HÌNH NHIỆM VỤ (QUESTS) -->
-    <section id="quest-view" class="view-panel hidden">
+    <!-- 3. PANEL: NHIỆM VỤ DAILY -->
+    <section id="quest-view" class="view-panel hidden overlay-panel">
         <div class="panel-container">
-            <span class="close-panel-btn">&times;</span>
-            <h2 class="section-title">📜 TRẠM NHIỆM VỤ TINH LINH</h2>
+            <div class="panel-header">
+                <h2 class="section-title">📜 TRẠM NHIỆM VỤ TINH LINH</h2>
+                <span class="close-panel-btn">&times;</span>
+            </div>
             <div class="quest-list">
-                <!-- Nhiệm vụ 1: Điểm danh -->
                 <div class="quest-card">
                     <div class="quest-info">
-                        <h4>✦ Trạm Điểm Danh Hàng Ngày</h4>
-                        <p>Nhận 1 🔮 Tinh Quang mỗi ngày. Chuỗi 7 ngày thưởng thêm +1 🔮</p>
-                        <div class="streak-indicator" id="streakDisplay">Chuỗi: 0/7 ngày</div>
+                        <h4>✦ Trạm Điểm Danh Tinh Linh</h4>
+                        <p>Nhận 1 🔮/ngày. Chuỗi 7 ngày thưởng thêm +1 🔮</p>
+                        <div class="streak-badge" id="streakDisplay">Chuỗi: 1/7 ngày</div>
                     </div>
                     <button class="btn-action" id="btnDoCheckin">Điểm Danh</button>
                 </div>
 
-                <!-- Nhiệm vụ 2: Truyền tin FB -->
                 <div class="quest-card">
                     <div class="quest-info">
                         <h4>✦ Truyền Tin Cộng Đồng</h4>
-                        <p>Đăng bài chia sẻ trên Group Advenature, nộp link để nhận +1 🔮</p>
+                        <p>Đăng bài chia sẻ Facebook Group, gửi link chờ duyệt (+1 🔮)</p>
                         <input type="text" id="inputFbLink" class="rpg-input" placeholder="Dán link bài viết Facebook...">
                     </div>
                     <button class="btn-action" id="btnSubmitFb">Gửi Duyệt</button>
                 </div>
 
-                <!-- Nhiệm vụ 3: Kết nối bạn bè -->
                 <div class="quest-card">
                     <div class="quest-info">
                         <h4>✦ Kết Nối Nhà Phiêu Lưu</h4>
-                        <p>Chia sẻ mã <b id="myRefCodeDisplay">AW----</b>. Cả 2 cùng nhận +1 🔮</p>
-                        <input type="text" id="inputFriendCode" class="rpg-input" placeholder="Nhập mã AWxxxx của bạn bè...">
+                        <p>Mã của bạn: <b id="myRefCodeDisplay" style="color:#ffe66d;">AW----</b> (+1 🔮 cho cả 2)</p>
+                        <input type="text" id="inputFriendCode" class="rpg-input" placeholder="Nhập mã AWxxxx bạn bè...">
                     </div>
                     <button class="btn-action" id="btnSubmitRef">Xác Nhận</button>
                 </div>
@@ -204,37 +200,38 @@
         </div>
     </section>
 
-    <!-- 4. MÀN HÌNH SHOP LỮ HÀNH (ĐỦ DỮ LIỆU DATA.MD) -->
-    <section id="shop-view" class="view-panel hidden">
+    <!-- 4. PANEL: SHOP LỮ HÀNH -->
+    <section id="shop-view" class="view-panel hidden overlay-panel">
         <div class="panel-container">
-            <span class="close-panel-btn">&times;</span>
-            <h2 class="section-title">🛒 SHOP LỮ HÀNH RỪNG TINH LINH</h2>
-            <p class="shop-subtitle">Chọn gói hoặc tiện ích để đăng ký trải nghiệm thực địa</p>
-            
-            <div class="shop-grid" id="shopItemsContainer">
-                <!-- 12 Sản phẩm chuẩn data.md sẽ được JS render tự động tại đây -->
+            <div class="panel-header">
+                <h2 class="section-title">🛒 SHOP LỮ HÀNH RỪNG TINH LINH</h2>
+                <span class="close-panel-btn">&times;</span>
             </div>
+            <p class="shop-subtitle">Chọn gói hoặc tiện ích thực địa để kích hoạt hành trình</p>
+            
+            <div class="shop-grid" id="shopItemsContainer"></div>
 
-            <!-- Thanh tổng kết giỏ hàng dính đáy panel -->
             <div class="shop-checkout-bar">
                 <div class="checkout-summary">
                     <div>Đã chọn: <b id="cartCount">0</b> mục</div>
-                    <div>Tổng: <b id="cartTotalTinhThach" style="color:#92d4ff;">0 💎</b> (~<span id="cartTotalVnd">0</span> VNĐ)</div>
+                    <div>Tổng: <b id="cartTotalTinhThach" style="color:#4cc9f0;">0 💎</b> (~<span id="cartTotalVnd">0</span> đ)</div>
                 </div>
-                <button class="btn-summon" id="btnCheckoutShop" style="padding: 6px 18px; font-size: 12px;">✦ ĐẶT MUA ✦</button>
+                <button class="btn-summon btn-buy" id="btnCheckoutShop">✦ ĐẶT MUA ✦</button>
             </div>
         </div>
     </section>
 
-    <!-- 5. MÀN HÌNH NHÀ PHIÊU LƯU (PROFILE) -->
-    <section id="profile-view" class="view-panel hidden">
+    <!-- 5. PANEL: HỒ SƠ NHÀ PHIÊU LƯU -->
+    <section id="profile-view" class="view-panel hidden overlay-panel">
         <div class="panel-container text-center">
-            <span class="close-panel-btn">&times;</span>
-            <h2 class="section-title">🛡️ THẺ NHÀ PHIÊU LƯU</h2>
+            <div class="panel-header">
+                <h2 class="section-title">🛡️ CĂN CƯỚC NHÀ PHIÊU LƯU</h2>
+                <span class="close-panel-btn">&times;</span>
+            </div>
             
             <div class="passport-card">
                 <div class="passport-header">
-                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=advenature" id="profAvatar" class="avatar-large">
+                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=advenature" id="profAvatar" class="avatar-large" alt="Avatar">
                     <div class="passport-meta">
                         <h3 id="profName">Nhà Phiêu Lưu</h3>
                         <div class="passport-badge" id="profCode">AW----</div>
@@ -245,7 +242,7 @@
                 <div class="passport-stats">
                     <div class="stat-box">
                         <span>🔮 Tinh Quang</span>
-                        <b id="profStatTQ">0</b>
+                        <b id="profStatTQ">1</b>
                     </div>
                     <div class="stat-box">
                         <span>💎 Tinh Thạch</span>
@@ -257,35 +254,34 @@
                     </div>
                 </div>
 
-                <!-- Thanh tiến trình Cống Hiến Bang Hội -->
                 <div class="rank-progress-box">
                     <div class="rank-label">
-                        <span>Bậc Bang Hội: <b>Tập Sự</b></span>
-                        <span>Cần: 100 CP</span>
+                        <span>Bậc Bang Hội: <b id="profRankTitle">Tập Sự</b></span>
+                        <span id="profRankNeed">Cần 100 CP</span>
                     </div>
                     <div class="progress-bar-container">
                         <div class="progress-fill" id="rankProgressBar" style="width: 0%;"></div>
                     </div>
                 </div>
 
-                <div id="userQrBox" class="qr-box" style="margin: 15px auto;"></div>
-                <div class="qr-note">Mã QR Định Danh Nhà Phiêu Lưu</div>
+                <div id="userProfileQr" class="qr-box"></div>
+                <div class="qr-note">Quét để kết nối với Nhà Phiêu Lưu khác</div>
             </div>
         </div>
     </section>
 
-    <!-- 3. MODAL QR OFFLINE (GIỮ LẠI) -->
+    <!-- POPUP MODAL: ITEM & QR OFFLINE (LAYER 50) -->
     <div id="itemModal" class="modal-overlay hidden">
         <div class="modal-box">
             <span class="close-modal" id="closeItemModal">&times;</span>
             <h3 id="modalItemTitle">Tên Vật Phẩm</h3>
             <p id="modalItemDesc">Mô tả vật phẩm...</p>
-            <div id="qrcode" class="qr-box"></div>
-            <p class="qr-note">Đưa mã này cho NPC / Quản lý Hội Ngọc Lục để sử dụng</p>
+            <div id="qrcodeContainer" class="qr-box"></div>
+            <button id="btnUseBuffItem" class="btn-action hidden" style="width: 100%; margin-top: 10px;">SỬ DỤNG NGAY</button>
+            <p class="qr-note" id="modalQrNote">Đưa mã QR này cho NPC / Trưởng Quán Hội Ngọc Lục để đổi lấy vật phẩm thực tế</p>
         </div>
     </div>
 
-    <!-- Import logic JS -->
     <script type="module" src="app.js"></script>
 </body>
 </html>
