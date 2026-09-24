@@ -509,11 +509,15 @@ function updateParticles(elapsed, progress) {
             positions[i * 3]     = Math.cos(currentAngle) * currentRadius;
             positions[i * 3 + 1] = Math.sin(currentAngle * 1.5) * currentRadius * 0.35 + verticalWave;
             positions[i * 3 + 2] = Math.sin(currentAngle * 1.5) * currentRadius;
-        } else {
-            // Khi ở trạng thái xem đá (LOOT), hạt trôi nhẹ xung quanh
-            positions[i * 3]     = Math.cos(p.angle + elapsed * 0.5) * (p.radius * 0.4);
-            positions[i * 3 + 1] = wanderY * 0.5;
-            positions[i * 3 + 2] = Math.sin(p.angle + elapsed * 0.5) * (p.radius * 0.4);
+         } else {
+            // Chỉ cho 25% lượng hạt (i % 4 === 0) bay lơ lửng gần viên ngọc
+            // 75% còn lại tản rộng ra không gian nền xa để không che khuất khối đá
+            const isNearGem = (i % 4 === 0);
+            const orbitRadius = isNearGem ? (2.2 + p.random * 1.5) : (p.radius * 1.5);
+
+            positions[i * 3]     = Math.cos(p.angle + elapsed * 0.25) * orbitRadius;
+            positions[i * 3 + 1] = wanderY * (isNearGem ? 0.6 : 1.2);
+            positions[i * 3 + 2] = Math.sin(p.angle + elapsed * 0.25) * orbitRadius;
         }
     }
     particleGeometry.attributes.position.needsUpdate = true;
@@ -570,6 +574,8 @@ function updateState(now) {
     if (state === STATE.IDLE) {
         updateParticles(elapsed, 0);
     } else if (state === STATE.GACHA) {
+		  particles.material.opacity = THREE.MathUtils.lerp(particles.material.opacity, 0.9, 0.05);
+        particles.material.size = THREE.MathUtils.lerp(particles.material.size, 0.07, 0.05);
         const progress = Math.min(elapsed / 3.5, 1);
         updateParticles(elapsed, progress);
         updateCore(elapsed, progress);
@@ -601,11 +607,14 @@ function updateState(now) {
             camera.position.set(0, 1.2, 8);
             controls.target.set(0, 0.2, 0);
         }
-    } else if (state === STATE.LOOT && lootBox) {
-        // Duy trì hạt bụi sao trôi nhẹ nhàng xung quanh viên đá
+     } else if (state === STATE.LOOT && lootBox) {
         updateParticles(elapsed, 0);
         lootBox.rotation.y += 0.008;
         lootBox.scale.lerp(new THREE.Vector3(1, 1, 1), 0.08);
+
+        // THÊM 2 DÒNG NÀY: Thu nhỏ kích thước và giảm độ sáng để tôn vinh viên ngọc 3D
+        particles.material.opacity = THREE.MathUtils.lerp(particles.material.opacity, 0.35, 0.05);
+        particles.material.size = THREE.MathUtils.lerp(particles.material.size, 0.04, 0.05);
     } else if (state === STATE.CLAIMED && lootBox) {
         updateParticles(elapsed, 0);
         lootBox.position.y -= 0.04;
