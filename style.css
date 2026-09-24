@@ -820,7 +820,7 @@ body, html {
     .core-glow-ring { width: 120px; height: 120px; }
 }
 /* RESPONSIVE: TABLET & PC (> 768px) */
-@media (min-width: 7680x) {
+@media (min-width: 768px) {
     .rpg-dock { height: 190px; }
     
     .dock-btn.sub-left { bottom: 0px; left: 10%; }

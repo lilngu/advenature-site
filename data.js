@@ -54,6 +54,11 @@ export const SHAPE_STYLES = [
 
 // 3. DANH MỤC 30 CHÚC PHÚC TINH LINH
 export const BLESSINGS_DATA = [
+     // ✦ 4 Chúc Phúc Free Tân Thủ (Đồng bộ với worker.js)
+    { id: "BLESS_FREE_TEA", name: "CHÚC PHÚC TÂN THỦ: Thưởng Trà Thảo Mộc", tier: "common", iconClass: "ico-item-10", isBuff: false, desc: "Thưởng thức ly trà thảo mộc tự nhiên ngắm bình minh bên suối." },
+    { id: "BLESS_FREE_BREAKFAST", name: "CHÚC PHÚC TÂN THỦ: Thẻ Bữa Sáng Bên Suối", tier: "common", iconClass: "ico-food", isBuff: false, desc: "Phiếu ăn sáng tiêu chuẩn bên suối tự nhiên Rừng Tinh Linh." },
+    { id: "BLESS_FREE_BBQ", name: "CHÚC PHÚC TÂN THỦ: Vé BBQ Đêm Tinh Nghịch", tier: "common", iconClass: "ico-item-12", isBuff: false, desc: "Thêm 01 phần thịt nướng cao cấp bên bếp lửa hồng Hội Ngọc Lục." },
+    { id: "BLESS_FREE_GACHA", name: "CHÚC PHÚC TÂN THỦ: Vé Gacha Phiên Chợ", tier: "rare", iconClass: "ico-item-24", isBuff: false, desc: "01 lượt quay may mắn 100% trúng quà độc bản tại Phiên Chợ Tinh Linh." },
     // Common (1-12)
     { id: "BLESS_01", name: "1 ống tre", tier: "common", iconClass: "ico-item-01", isBuff: false, desc: "Ống tre rừng nguyên sinh dùng trữ nước hoặc thủ công." },
     { id: "BLESS_02", name: "Nhựa thông", tier: "common", iconClass: "ico-item-02", isBuff: false, desc: "Nhựa thông khô nhóm lửa thắp sáng lều trại ban đêm." },

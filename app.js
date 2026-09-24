@@ -59,7 +59,8 @@ async function syncUserDataFromBackend() {
             currentUser.cong_hien_points = data.user.cong_hien_points;
             currentUser.gacha_counter = data.user.gacha_counter;
             currentUser.role = data.user.role || currentUser.role;
-            currentUser.unlocked_gems = data.user.unlocked_gems || [];
+            const serverGems = Array.isArray(data.user.unlocked_gems) ? data.user.unlocked_gems : [];
+            currentUser.unlocked_gems = Array.from(new Set([...currentUser.unlocked_gems, ...serverGems]));
 
             // Ánh xạ iconClass và mô tả từ BLESSINGS_DATA cho từng món đồ từ D1
             if (data.user.inventory) {
@@ -164,6 +165,16 @@ function updateTopBarUI() {
             btnTopLogin.classList.remove("hidden");
         }
     }
+    // app.js: Thêm vào cuối hàm updateTopBarUI()
+const profQrContainer = document.getElementById("userProfileQr");
+if (profQrContainer && typeof QRCode !== "undefined") {
+    profQrContainer.innerHTML = "";
+    new QRCode(profQrContainer, {
+        text: `ADVENATURE_USER:${currentUser.adventurer_code || "AW----"}`,
+        width: 100,
+        height: 100
+    });
+}
 }
 
 // ======================================================
@@ -483,6 +494,9 @@ document.querySelectorAll(".btn-gender-opt").forEach(btn => {
 const btnGoogleCustom = document.getElementById("btnGoogleCustom");
 const onboardStep1 = document.getElementById("onboardStep1");
 const onboardStep2 = document.getElementById("onboardStep2");
+// app.js: Bổ sung khai báo 2 phần tử modal còn thiếu
+const onboardingModal = document.getElementById("onboardingModal");
+const btnCompleteRegister = document.getElementById("btnCompleteRegister");
 
 // ======================================================
 // KHỞI TẠO GOOGLE AUTH TỰ ĐỘNG CHỜ THƯ VIỆN TẢI XONG
@@ -646,6 +660,15 @@ document.getElementById("btnTopLogin")?.addEventListener("click", () => {
 // BẤM NÚT THU THẬP VÀO TÚI
 claimBtn.addEventListener("click", () => {
     if (state !== STATE.LOOT) return;
+
+     if (currentGemResult && currentGemResult.code) {
+        if (!Array.isArray(currentUser.unlocked_gems)) currentUser.unlocked_gems = [];
+        if (!currentUser.unlocked_gems.includes(currentGemResult.code)) {
+            currentUser.unlocked_gems.push(currentGemResult.code);
+            saveUserData();
+            renderInventoryGems();
+        }
+    }
 
     if (currentUser.gacha_counter === 0) {
         initGoogleAuth();
@@ -1026,6 +1049,9 @@ document.querySelectorAll(".inv-tab-btn").forEach(btn => {
         const subId = btn.dataset.sub;
         document.querySelectorAll(".inv-content").forEach(c => c.classList.add("hidden"));
         document.getElementById(subId).classList.remove("hidden");
+        if (subId === "sub-gems") {
+            renderInventoryGems();
+        }
     });
 });
 
@@ -1184,12 +1210,26 @@ function renderInventoryGems() {
     const grid = document.getElementById("gemGrid");
     if (!grid) return;
 
+    // Đảm bảo unlocked_gems luôn là mảng, tránh lỗi null
+    if (!Array.isArray(currentUser.unlocked_gems)) {
+        currentUser.unlocked_gems = [];
+    }
+
     const unlockedSet = new Set(currentUser.unlocked_gems);
     const count = unlockedSet.size;
-    document.getElementById("gemProgressCount").textContent = `${count}/990`;
+
+    // SỬA TẠI ĐÂY: Cập nhật chuẩn xác cho cả Topbar và Nút bấm Tab
+    const topbarCountEl = document.getElementById("topbarGemCount");
+    if (topbarCountEl) topbarCountEl.textContent = count; // Hiển thị số đá đã có trên Topbar
+
+    const tabCountEl = document.getElementById("tabGemProgressCount");
+    if (tabCountEl) tabCountEl.textContent = `${count}/990`; // Hiển thị tỉ lệ trên nút Tab
+
     const pct = ((count / 990) * 100).toFixed(1);
-    document.getElementById("gemProgressPct").textContent = `${pct}%`;
-    document.getElementById("gemProgressBar").style.width = `${pct}%`;
+    const pctEl = document.getElementById("gemProgressPct");
+    if (pctEl) pctEl.textContent = `${pct}%`;
+    const barEl = document.getElementById("gemProgressBar");
+    if (barEl) barEl.style.width = `${pct}%`;
 
     const filteredPalettes = currentFilterSys === "ALL" 
         ? CRYSTAL_PALETTES 
@@ -1503,12 +1543,11 @@ document.getElementById("btnSubmitFb")?.addEventListener("click", () => {
     }
 });
 
-document.getElementById("btnSubmitRef")?.addEventListener("click", () => {
+document.getElementById("btnSubmitRef")?.addEventListener("click", async () => {
     const code = document.getElementById("inputFriendCode").value.trim().toUpperCase();
     if (code.startsWith("AW") && code !== currentUser.adventurer_code) {
-        currentUser.tinh_quang_points += 1;
-        saveUserData();
-        updateTopBarUI();
+        // GỌI HÀM ĐỒNG BỘ LÊN CLOUDFLARE D1
+        await syncPointsToBackend(1, 0, 0);
         alert(`✦ Kết nối thành công với nhà phiêu lưu [${code}]! Nhận +1 🔮.`);
         document.getElementById("inputFriendCode").value = "";
     } else {
@@ -1534,16 +1573,15 @@ function showQuizQuestion() {
     `).join('');
 
     ansBox.querySelectorAll(".btn-quiz-ans").forEach(btn => {
-        btn.addEventListener("click", () => {
+        btn.addEventListener("click", async () => {
             const chosen = parseInt(btn.dataset.idx);
             if (chosen === qData.c) {
                 currentQuizIdx++;
                 if (currentQuizIdx < QUIZ_LIST.length) {
                     showQuizQuestion();
                 } else {
-                    currentUser.tinh_quang_points += 1;
-                    saveUserData();
-                    updateTopBarUI();
+                    // GỌI HÀM ĐỒNG BỘ LÊN CLOUDFLARE D1
+                    await syncPointsToBackend(1, 0, 0);
                     quizModal.classList.add("hidden");
                     alert("🎉 XUẤT SẮC! Bạn đã giải mã toàn bộ tri thức Rừng Tinh Linh, nhận +1 🔮 Tinh Quang!");
                 }
@@ -1725,9 +1763,3 @@ updateTopBarUI();
 renderInventoryGems();
 renderInventory5x5();
 renderShop();
-
-new QRCode(document.getElementById("userProfileQr"), {
-    text: `ADVENATURE_USER:${currentUser.adventurer_code}`,
-    width: 100,
-    height: 100
-});
