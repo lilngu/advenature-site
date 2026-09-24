@@ -44,6 +44,51 @@ if (!currentUser) {
     saveUserData();
 }
 
+// ======================================================
+// PHASE 3: ĐỒNG BỘ DỮ LIỆU TỪ D1 KHI MỞ TRANG HOẶC VÀO TÚI ĐỒ
+// ======================================================
+async function syncUserDataFromBackend() {
+    if (!currentUser || !currentUser.id || currentUser.id.startsWith("AW_USER_")) return;
+
+    try {
+        const res = await fetch(`${API_URL}/api/user/sync?userId=${currentUser.id}`);
+        const data = await res.json();
+        if (data.success && data.user) {
+            currentUser.tinh_quang_points = data.user.tinh_quang_points;
+            currentUser.tinh_thach_points = data.user.tinh_thach_points;
+            currentUser.cong_hien_points = data.user.cong_hien_points;
+            currentUser.gacha_counter = data.user.gacha_counter;
+            currentUser.role = data.user.role || currentUser.role;
+            currentUser.unlocked_gems = data.user.unlocked_gems || [];
+
+            // Ánh xạ iconClass và mô tả từ BLESSINGS_DATA cho từng món đồ từ D1
+            if (data.user.inventory) {
+                currentUser.inventory = data.user.inventory.map(invItem => {
+                    const masterItem = BLESSINGS_DATA.find(b => b.id === invItem.item_code);
+                    return {
+                        id: invItem.item_code,
+                        name: invItem.item_name,
+                        iconClass: masterItem ? masterItem.iconClass : "ico-item-01",
+                        tier: masterItem ? masterItem.tier : "common",
+                        desc: masterItem ? masterItem.desc : "Vật phẩm lưu trữ thực địa.",
+                        isBuff: masterItem ? masterItem.isBuff : false,
+                        buff: masterItem ? masterItem.buff : null,
+                        quantity: invItem.quantity || 1,
+                        qr_token: invItem.qr_token
+                    };
+                });
+            }
+
+            saveUserData();
+            updateTopBarUI();
+            renderInventoryGems();
+            renderInventory5x5();
+        }
+    } catch (e) {
+        console.warn("Chưa đồng bộ được với D1 (chế độ offline):", e);
+    }
+}
+
 function saveUserData() {
     localStorage.setItem("advenature_user", JSON.stringify(currentUser));
 }
@@ -522,11 +567,13 @@ claimBtn.addEventListener("click", () => {
 // BƯỚC 2: HOÀN TẤT & LƯU HỒ SƠ
 btnCompleteRegister.addEventListener("click", async () => {
     const obName = document.getElementById("obName").value.trim();
+    const obPhone = document.getElementById("obPhone") ? document.getElementById("obPhone").value.trim() : ""; // Đọc SĐT
     const obBirth = document.getElementById("obBirthYear").value.trim();
     const obClass = document.getElementById("obClass").value.trim();
     const obTribe = document.getElementById("obTribe").value.trim();
 
     if (!obName) { alert("Vui lòng nhập Tên Nhà Phiêu Lưu!"); return; }
+    if (!obPhone) { alert("Vui lòng nhập Số điện thoại / Zalo!"); return; } // Bắt buộc
     if (!obBirth) { alert("Vui lòng nhập Năm sinh!"); return; }
     if (!obClass) { alert("Vui lòng nhập Chức nghiệp của bạn!"); return; }
     if (!obTribe) { alert("Vui lòng nhập Bộ tộc của bạn!"); return; }
@@ -541,6 +588,7 @@ btnCompleteRegister.addEventListener("click", async () => {
             body: JSON.stringify({
                 googleUser: tempGoogleProfile,
                 adventurerName: obName,
+                phoneNumber: obPhone, // Gửi SĐT lên Worker
                 birthYear: obBirth,
                 gender: currentGender,
                 className: obClass,
@@ -827,7 +875,9 @@ navButtons.forEach(btn => {
 
         navButtons.forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
-
+        if (targetId === "inventory-view") {
+            syncUserDataFromBackend(); // Kéo dữ liệu D1 mới nhất về túi đồ
+        }
         if (targetId === "gacha-view") {
             controls.enabled = true;
             document.getElementById("tabIndicator").textContent = "Home Gacha";
@@ -1135,46 +1185,119 @@ function renderInventory5x5() {
 const itemModal = document.getElementById("itemModal");
 const qrcodeContainer = document.getElementById("qrcodeContainer");
 
+// ======================================================
+// PHASE 3: XỬ LÝ SỬ DỤNG ITEM BUFF & MÃ QR ĐỘNG THỰC ĐỊA
+// ======================================================
+let qrCheckPollTimer = null;
+
 function openItemModal(item, itemIndex) {
+    if (qrCheckPollTimer) clearInterval(qrCheckPollTimer);
+
     itemModal.classList.remove("hidden");
     document.getElementById("modalItemTitle").innerHTML = `<i class="item-ico ${item.iconClass}"></i> ${item.name}`;
-    document.getElementById("modalItemDesc").textContent = item.desc || "Vật phẩm lưu trữ trong túi đồ.";
-    qrcodeContainer.innerHTML = "";
-
+    document.getElementById("modalItemDesc").textContent = item.desc || "Vật phẩm dã ngoại thuộc Hội Ngọc Lục.";
+    
+    const qrWrapper = document.getElementById("qrWrapperOffline");
+    const qrcodeContainer = document.getElementById("qrcodeContainer");
     const btnUseBuff = document.getElementById("btnUseBuffItem");
     const noteText = document.getElementById("modalQrNote");
+    const tokenTxt = document.getElementById("modalQrTokenTxt");
 
+    qrcodeContainer.innerHTML = "";
+
+    // TRƯỜNG HỢP 1: VẬT PHẨM BUFF ĐIỂM TRỰC TIẾP
     if (item.isBuff) {
-        qrcodeContainer.style.display = "none";
+        qrWrapper.classList.add("hidden");
         btnUseBuff.classList.remove("hidden");
-        noteText.textContent = "Nhấn [SỬ DỤNG NGAY] để cộng chỉ số trực tiếp vào tài khoản.";
-        btnUseBuff.onclick = () => {
-            if (item.buff?.tq) currentUser.tinh_quang_points += item.buff.tq;
-            if (item.buff?.tt) currentUser.tinh_thach_points += item.buff.tt;
-            if (item.buff?.ch) currentUser.cong_hien_points += item.buff.ch;
-            
-            item.quantity--;
-            if (item.quantity <= 0) currentUser.inventory.splice(itemIndex, 1);
-            saveUserData();
-            updateTopBarUI();
-            renderInventory5x5();
-            itemModal.classList.add("hidden");
-            alert("✦ Đã sử dụng thành công buff!");
+        noteText.textContent = "Nhấn nút dưới để tiêu thụ vật phẩm và cộng chỉ số vào tài khoản của bạn.";
+
+        btnUseBuff.onclick = async () => {
+            btnUseBuff.textContent = "Đang áp dụng...";
+            btnUseBuff.disabled = true;
+
+            try {
+                // Gọi API Worker để trừ item và cộng điểm an toàn trên D1
+                const res = await fetch(`${API_URL}/api/inventory/use-buff`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ userId: currentUser.id, itemCode: item.id })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    currentUser.tinh_quang_points = data.points.tinh_quang_points;
+                    currentUser.tinh_thach_points = data.points.tinh_thach_points;
+                    currentUser.cong_hien_points = data.points.cong_hien_points;
+
+                    // Cập nhật số lượng ở client
+                    item.quantity--;
+                    if (item.quantity <= 0) currentUser.inventory.splice(itemIndex, 1);
+
+                    saveUserData();
+                    updateTopBarUI();
+                    renderInventory5x5();
+                    itemModal.classList.add("hidden");
+
+                    const buffMsg = [];
+                    if (data.buffApplied.tq) buffMsg.push(`+${data.buffApplied.tq} 🔮 Tinh Quang`);
+                    if (data.buffApplied.tt) buffMsg.push(`+${data.buffApplied.tt} 💎 Tinh Thạch`);
+                    if (data.buffApplied.ch) buffMsg.push(`+${data.buffApplied.ch} 🛡️ Cống Hiến`);
+                    alert(`✦ SỬ DỤNG THÀNH CÔNG!\nBạn nhận được: ${buffMsg.join(", ")}`);
+                } else {
+                    alert(data.error || "Không thể sử dụng vật phẩm này!");
+                }
+            } catch (err) {
+                alert("Lỗi kết nối máy chủ!");
+            } finally {
+                btnUseBuff.textContent = "✦ SỬ DỤNG BUFF NGAY ✦";
+                btnUseBuff.disabled = false;
+            }
         };
-    } else {
-        qrcodeContainer.style.display = "flex";
+    } 
+    // TRƯỜNG HỢP 2: VẬT PHẨM DỊCH VỤ / QUY ĐỔI THỰC ĐỊA (MÃ QR ĐỘNG)
+    else {
+        qrWrapper.classList.remove("hidden");
         btnUseBuff.classList.add("hidden");
-        noteText.textContent = "Đưa mã QR cho Quản lý / NPC Hội Ngọc Lục để sử dụng offline.";
-        
+        noteText.textContent = "Đưa mã QR này cho Quản lý / NPC Ranger Hội Ngọc Lục quét tại khu dã ngoại.";
+        tokenTxt.textContent = `MÃ: ${item.qr_token || 'QR_TOKEN'}`;
+
+        // Sinh mã QR động bằng thư viện qrcodejs
         new QRCode(qrcodeContainer, {
-            text: JSON.stringify({ token: item.qr_token, user: currentUser.adventurer_code, item: item.name }),
-            width: 110,
-            height: 110,
+            text: JSON.stringify({
+                token: item.qr_token,
+                code: currentUser.adventurer_code,
+                item: item.id,
+                name: item.name
+            }),
+            width: 120,
+            height: 120,
             colorDark: "#000000",
             colorLight: "#ffffff"
         });
+
+        // Lắng nghe trạng thái quét thời gian thực (chuẩn bị sẵn cho Phase 5 Miniapp)
+        qrCheckPollTimer = setInterval(async () => {
+            try {
+                const checkRes = await fetch(`${API_URL}/api/inventory/check-qr?token=${item.qr_token}`);
+                const checkData = await checkRes.json();
+                if (checkData.success && checkData.isUsed) {
+                    clearInterval(qrCheckPollTimer);
+                    alert(`🎉 XÁC THỰC THÀNH CÔNG TẠI THỰC ĐỊA!\nQuản lý đã xác nhận vật phẩm [${item.name}].`);
+                    item.quantity--;
+                    if (item.quantity <= 0) currentUser.inventory.splice(itemIndex, 1);
+                    saveUserData();
+                    renderInventory5x5();
+                    itemModal.classList.add("hidden");
+                }
+            } catch (e) {}
+        }, 3000);
     }
 }
+
+document.getElementById("closeItemModal").addEventListener("click", () => {
+    if (qrCheckPollTimer) clearInterval(qrCheckPollTimer);
+    itemModal.classList.add("hidden");
+});
 document.getElementById("closeItemModal").addEventListener("click", () => itemModal.classList.add("hidden"));
 
 const selectedShopIds = new Set();

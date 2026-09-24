@@ -40,7 +40,7 @@
                 </div>
                 <div class="currency-pill">
                     <span class="curr-label">Tinh Thạch</span>
-                    <span class="curr-val"><i class="rpg-ico ico-tt"></i> <span id="valTinhThach">0</span></span>
+                    <span class="curr-val"><i class="rpg-ico ico-tt"></i> <span id="gemProgressCount">0</span></span>
                 </div>
                 <div class="currency-pill">
                     <span class="curr-label">Cống Hiến</span>
@@ -408,6 +408,10 @@
                     <label class="onboard-lbl">Bộ tộc:</label>
                     <input type="text" id="obTribe" class="rpg-input" placeholder="VD: Rừng Sương Mù, Gió Tây...">
                 </div>
+                <div class="onboard-form-group">
+                    <label class="onboard-lbl">Số điện thoại (Zalo liên hệ):</label>
+                    <input type="tel" id="obPhone" class="rpg-input" placeholder="VD: 0912345678">
+                </div>
 
                 <button id="btnCompleteRegister" class="btn-summon btn-claim" style="width: 100%; margin-top: 10px; padding: 10px; font-size: 12px;">
                     ✦ HOÀN TẤT & THU THẬP VÀO TÚI ✦
@@ -489,15 +493,38 @@
             </div>
         </div>
     </div>
-    <!-- 9. MODAL QR OFFLINE / BUFF ITEM -->
+    <!-- ====================================================== -->
+    <!-- MODAL RPG: CHI TIẾT VẬT PHẨM & MÃ QR OFFLINE (PHASE 3) -->
+    <!-- ====================================================== -->
     <div id="itemModal" class="modal-overlay hidden">
-        <div class="modal-box rpg-glass-box">
+        <div class="modal-box rpg-glass-box" style="max-width: 320px;">
             <span class="close-modal" id="closeItemModal">&times;</span>
-            <h3 id="modalItemTitle" style="color: #ffe66d; font-size: 14px;">Tên Vật Phẩm</h3>
-            <p id="modalItemDesc" style="font-size: 11px; color: #a8a4c2; margin: 6px 0;">Mô tả vật phẩm...</p>
-            <div id="qrcodeContainer" class="qr-box"></div>
-            <button id="btnUseBuffItem" class="btn-action hidden" style="width: 100%; margin-top: 10px;">SỬ DỤNG NGAY</button>
-            <p class="qr-note" id="modalQrNote">Đưa mã QR cho Trưởng Quán Hội Ngọc Lục để sử dụng offline.</p>
+            
+            <div id="modalItemHeader" style="margin-bottom: 8px;">
+                <h3 id="modalItemTitle" style="color: #ffe66d; font-size: 14px; margin-bottom: 4px;">Tên Vật Phẩm</h3>
+                <span id="modalItemBadge" class="qr-status-badge">VẬT PHẨM THỰC ĐỊA</span>
+            </div>
+
+            <p id="modalItemDesc" style="font-size: 10px; color: #c9c3ff; margin-bottom: 12px; line-height: 1.35;">Mô tả vật phẩm...</p>
+
+            <!-- KHUNG HIỂN THỊ MÃ QR ĐỘNG OFFLINE -->
+            <div id="qrWrapperOffline" class="qr-ticket-box">
+                <div class="qr-scanner-glow"></div>
+                <div id="qrcodeContainer" class="qr-box" style="margin: 6px auto;"></div>
+                <div class="qr-token-txt" id="modalQrTokenTxt">MÃ: QR_XXXXXXXX</div>
+                <div class="qr-live-status" id="qrLiveStatus">
+                    <span class="status-dot-pulse"></span> <span>Sẵn sàng xác thực thực địa</span>
+                </div>
+            </div>
+
+            <!-- NÚT SỬ DỤNG DÀNH CHO ITEM BUFF ĐIỂM TRỰC TIẾP -->
+            <button id="btnUseBuffItem" class="btn-summon btn-claim hidden" style="width: 100%; margin-top: 10px; font-size: 12px; padding: 10px;">
+                ✦ SỬ DỤNG BUFF NGAY ✦
+            </button>
+
+            <p class="qr-note" id="modalQrNote" style="margin-top: 8px;">
+                Đưa mã này cho Trưởng Hội / NPC tại Hội Ngọc Lục để đổi lấy dịch vụ thực tế.
+            </p>
         </div>
     </div>
 
