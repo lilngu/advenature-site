@@ -7,24 +7,24 @@ import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { ConvexGeometry } from "three/addons/geometries/ConvexGeometry.js";
 
 // ======================================================
-// 1. CONFIG & DATA SYNC (LOCALSTORAGE & CLOUDFLARE D1)
+// 1. DATA USER & PERSISTENCE
 // ======================================================
-const API_URL = "https://advenature-api.YOUR-SUBDOMAIN.workers.dev"; // Điền Endpoint Worker API khi deploy
+const API_URL = "https://advenature-api.YOUR-SUBDOMAIN.workers.dev";
 
 let currentUser = JSON.parse(localStorage.getItem("advenature_user")) || null;
 
 if (!currentUser) {
     currentUser = {
         id: "AW_USER_" + Math.random().toString(36).substring(2, 8).toUpperCase(),
-        full_name: "Nhà Phiêu Lưu Mới",
+        full_name: "Nhà Phiêu Lưu",
         adventurer_code: "AW" + Math.floor(1000 + Math.random() * 9000),
-        role: "Tân Thủ",
+        role: "Tân Thủ Rừng Già",
         tinh_quang_points: 1, // Lần đầu Free
         tinh_thach_points: 0,
         cong_hien_points: 0,
         gacha_counter: 0,
-        unlocked_gems: [],     // Danh sách gem_code đã mở
-        inventory: []          // Danh sách vật phẩm túi 5x5
+        unlocked_gems: [],     // Lưu gem_code đã mở
+        inventory: []          // Lưới vật phẩm 5x5
     };
     saveUserData();
 }
@@ -38,39 +38,38 @@ function updateTopBarUI() {
     document.getElementById("valTinhThach").textContent = currentUser.tinh_thach_points.toLocaleString();
     document.getElementById("valCongHien").textContent = currentUser.cong_hien_points.toLocaleString();
     document.getElementById("userAdvenCode").textContent = currentUser.adventurer_code;
-    
-    const costBtn = document.getElementById("summonBtnCost");
+
+    // Cập nhật giá trên Nút Gacha Dock tròn
+    const dockCostBadge = document.getElementById("dockCostBadge");
     if (currentUser.gacha_counter === 0) {
-        costBtn.textContent = "FREE";
+        dockCostBadge.textContent = "FREE";
     } else {
-        costBtn.textContent = "1 🔮";
+        dockCostBadge.textContent = "1 🔮";
     }
 
     // Profile Screen
     document.getElementById("profName").textContent = currentUser.full_name;
     document.getElementById("profCode").textContent = currentUser.adventurer_code;
     document.getElementById("profRole").textContent = currentUser.role;
-    document.getElementById("profStatTQ").textContent = currentUser.tinh_quang_points;
-    document.getElementById("profStatTT").textContent = currentUser.tinh_thach_points;
-    document.getElementById("profStatCH").textContent = currentUser.cong_hien_points + " CP";
+    document.getElementById("profStatTQ").innerHTML = `<i class="rpg-ico ico-tq"></i> ${currentUser.tinh_quang_points}`;
+    document.getElementById("profStatTT").innerHTML = `<i class="rpg-ico ico-tt"></i> ${currentUser.tinh_thach_points}`;
+    document.getElementById("profStatCH").innerHTML = `<i class="rpg-ico ico-ch"></i> ${currentUser.cong_hien_points} CP`;
     document.getElementById("myRefCodeDisplay").textContent = currentUser.adventurer_code;
-    
-    // Progress rank
+
     const pct = Math.min(100, Math.floor((currentUser.cong_hien_points / 100) * 100));
     document.getElementById("rankProgressBar").style.width = pct + "%";
 }
 
 // ======================================================
-// 2. 3D SCENE & ENGINE SETUP
+// 2. THREE.JS ENGINE SETUP
 // ======================================================
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x03030a);
 scene.fog = new THREE.FogExp2(0x050514, 0.035);
 
 const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
 camera.position.set(0, 1.2, 8);
 
-const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -277,43 +276,43 @@ function createProceduralRock() {
 }
 
 // ======================================================
-// 4. DANH MỤC 30 CHÚC PHÚC & ITEM THEO DATA.MD
+// 4. DANH MỤC 30 CHÚC PHÚC & ITEM
 // ======================================================
 const BLESSINGS_DATA = [
     // COMMON (1-12)
-    { id: "BLESS_01", name: "1 ống tre", tier: "common", icon: "🎋", isBuff: false },
-    { id: "BLESS_02", name: "Nhựa thông", tier: "common", icon: "🪵", isBuff: false },
-    { id: "BLESS_03", name: "+1 Điểm Tinh Quang", tier: "common", icon: "🔮", isBuff: true, buff: { tq: 1 } },
-    { id: "BLESS_04", name: "1 mảnh vải ngẫu nhiên", tier: "common", icon: "🧣", isBuff: false },
-    { id: "BLESS_05", name: "1 Gậy gỗ", tier: "common", icon: "🦯", isBuff: false },
-    { id: "BLESS_06", name: "2 quả trứng gà", tier: "common", icon: "🥚", isBuff: false },
-    { id: "BLESS_07", name: "1 quả bắp", tier: "common", icon: "🌽", isBuff: false },
-    { id: "BLESS_08", name: "+1 Điểm Cống Hiến", tier: "common", icon: "🛡️", isBuff: true, buff: { ch: 1 } },
-    { id: "BLESS_09", name: "+2 Điểm Cống Hiến", tier: "common", icon: "🛡️", isBuff: true, buff: { ch: 2 } },
-    { id: "BLESS_10", name: "1 Ly Trà Thảo Mộc", tier: "common", icon: "🍵", isBuff: false },
-    { id: "BLESS_11", name: "1 Củ khoai lang", tier: "common", icon: "🍠", isBuff: false },
-    { id: "BLESS_12", name: "Thẻ thêm thịt nướng", tier: "common", icon: "🥩", isBuff: false },
+    { id: "BLESS_01", name: "1 ống tre", tier: "common", icon: "🎋", isBuff: false, desc: "Ống tre rừng nguyên sinh dùng trữ nước hoặc làm vật phẩm thủ công." },
+    { id: "BLESS_02", name: "Nhựa thông", tier: "common", icon: "🪵", isBuff: false, desc: "Nhựa thông khô dùng nhóm lửa thắp sáng lều trại ban đêm." },
+    { id: "BLESS_03", name: "+1 Điểm Tinh Quang", tier: "common", icon: "🔮", isBuff: true, buff: { tq: 1 }, desc: "Hồi phục ngay 1 lượt triệu hồi Gacha Tinh Quang." },
+    { id: "BLESS_04", name: "1 mảnh vải ngẫu nhiên", tier: "common", icon: "🧣", isBuff: false, desc: "Mảnh vải dệt hoa văn của bộ tộc Rừng Tinh Linh." },
+    { id: "BLESS_05", name: "1 Gậy gỗ", tier: "common", icon: "🦯", isBuff: false, desc: "Gậy leo núi trợ lực cho hành trình thám hiểm rừng già." },
+    { id: "BLESS_06", name: "2 quả trứng gà", tier: "common", icon: "🥚", isBuff: false, desc: "Bổ sung dinh dưỡng cho bữa ăn dã ngoại ngoài trời." },
+    { id: "BLESS_07", name: "1 quả bắp", tier: "common", icon: "🌽", isBuff: false, desc: "Dùng để nướng bên bếp lửa hồng tại Hội Ngọc Lục." },
+    { id: "BLESS_08", name: "+1 Điểm Cống Hiến", tier: "common", icon: "🛡️", isBuff: true, buff: { ch: 1 }, desc: "Tăng điểm cống hiến để thăng hạng Căn Cước Nhà Phiêu Lưu." },
+    { id: "BLESS_09", name: "+2 Điểm Cống Hiến", tier: "common", icon: "🛡️", isBuff: true, buff: { ch: 2 }, desc: "Tăng 2 điểm cống hiến cho Bang Hội." },
+    { id: "BLESS_10", name: "1 Ly Trà Thảo Mộc", tier: "common", icon: "🍵", isBuff: false, desc: "Thưởng thức ly trà thảo mộc tự nhiên thơm mát bên bờ suối." },
+    { id: "BLESS_11", name: "1 Củ khoai lang", tier: "common", icon: "🍠", isBuff: false, desc: "Nướng vùi tro bếp thưởng thức trong đêm lạnh." },
+    { id: "BLESS_12", name: "Thẻ thêm thịt nướng", tier: "common", icon: "🥩", isBuff: false, desc: "Tặng thêm 1 phần thịt nướng tại bữa tiệc BBQ đêm." },
     // UNCOMMON (13-21)
-    { id: "BLESS_13", name: "1 Bình Potion", tier: "uncommon", icon: "🧪", isBuff: false },
-    { id: "BLESS_14", name: "1 Ly Cocktail Tavern", tier: "uncommon", icon: "🍹", isBuff: false },
-    { id: "BLESS_15", name: "Thẻ X2 Tinh Thạch Main Quest", tier: "uncommon", icon: "📜", isBuff: false },
-    { id: "BLESS_16", name: "Thẻ Thuê Áo Choàng Free", tier: "uncommon", icon: "🧥", isBuff: false },
-    { id: "BLESS_17", name: "Thẻ Trợ Thủ NPC", tier: "uncommon", icon: "🧝", isBuff: false },
-    { id: "BLESS_18", name: "+1 Tinh Thạch", tier: "uncommon", icon: "💎", isBuff: true, buff: { tt: 1 } },
-    { id: "BLESS_19", name: "+2 Tinh Thạch", tier: "uncommon", icon: "💎", isBuff: true, buff: { tt: 2 } },
-    { id: "BLESS_20", name: "Thẻ mượn Đạo cụ Quest", tier: "uncommon", icon: "🧭", isBuff: false },
-    { id: "BLESS_21", name: "Thẻ Mượn Đèn Bão Đêm", tier: "uncommon", icon: "🏮", isBuff: false },
+    { id: "BLESS_13", name: "1 Bình Potion", tier: "uncommon", icon: "🧪", isBuff: false, desc: "Nước tăng lực thảo mộc tiếp sức cho Ranger đi rừng." },
+    { id: "BLESS_14", name: "1 Ly Cocktail Tavern", tier: "uncommon", icon: "🍹", isBuff: false, desc: "Đổi 1 ly đồ uống đặc chế tại quầy pha chế Tavern." },
+    { id: "BLESS_15", name: "Thẻ X2 Tinh Thạch Quest", tier: "uncommon", icon: "📜", isBuff: false, desc: "Nhân đôi phần thưởng Tinh Thạch khi hoàn thành Main Quest." },
+    { id: "BLESS_16", name: "Thẻ Thuê Áo Choàng Free", tier: "uncommon", icon: "🧥", isBuff: false, desc: "Mượn 1 áo choàng pháp sư check-in miễn phí trong ngày." },
+    { id: "BLESS_17", name: "Thẻ Trợ Thủ NPC", tier: "uncommon", icon: "🧝", isBuff: false, desc: "Được hỏi NPC Ranger 1 câu gợi ý giải mật mã Quest." },
+    { id: "BLESS_18", name: "+1 Tinh Thạch", tier: "uncommon", icon: "💎", isBuff: true, buff: { tt: 1 }, desc: "Cộng ngay 1 Tinh Thạch vào số dư để mua sắm." },
+    { id: "BLESS_19", name: "+2 Tinh Thạch", tier: "uncommon", icon: "💎", isBuff: true, buff: { tt: 2 }, desc: "Cộng 2 Tinh Thạch mua gói trải nghiệm." },
+    { id: "BLESS_20", name: "Thẻ mượn Đạo cụ Quest", tier: "uncommon", icon: "🧭", isBuff: false, desc: "Mượn la bàn hoặc ống nhòm khám phá rừng." },
+    { id: "BLESS_21", name: "Thẻ Mượn Đèn Bão Đêm", tier: "uncommon", icon: "🏮", isBuff: false, desc: "Trang bị đèn bão lung linh cho buổi đi dạo đêm." },
     // RARE (22-27)
-    { id: "BLESS_22", name: "Huy Hiệu Phiêu Lưu Xanh", tier: "rare", icon: "🏅", isBuff: false },
-    { id: "BLESS_23", name: "Thẻ Dịch Chuyển", tier: "rare", icon: "🌀", isBuff: false },
-    { id: "BLESS_24", name: "Thẻ Gacha Phiên Chợ", tier: "rare", icon: "🎟️", isBuff: false },
-    { id: "BLESS_25", name: "Dây chuyền Tinh Linh", tier: "rare", icon: "📿", isBuff: false },
-    { id: "BLESS_26", name: "Món Quà Bí Mật Tinh Linh", tier: "rare", icon: "🎁", isBuff: false },
-    { id: "BLESS_27", name: "Thẻ bài Tinh Linh Rừng", tier: "rare", icon: "🃏", isBuff: false },
+    { id: "BLESS_22", name: "Huy Hiệu Phiêu Lưu Xanh", tier: "rare", icon: "🏅", isBuff: false, desc: "Huy hiệu kim loại độc bản chứng nhận thành viên Hội Ngọc Lục." },
+    { id: "BLESS_23", name: "Thẻ Dịch Chuyển", tier: "rare", icon: "🌀", isBuff: false, desc: "Buff miễn phí chuyến xe đưa đón Bảo Lộc - Rừng Tinh Linh." },
+    { id: "BLESS_24", name: "Thẻ Gacha Phiên Chợ", tier: "rare", icon: "🎟️", isBuff: false, desc: "1 vé quay thưởng 100% trúng quà tại Chợ Tinh Linh." },
+    { id: "BLESS_25", name: "Dây chuyền Tinh Linh", tier: "rare", icon: "📿", isBuff: false, desc: "Vật phẩm lưu niệm đính đá bán quý thiên nhiên." },
+    { id: "BLESS_26", name: "Món Quà Bí Mật Tinh Linh", tier: "rare", icon: "🎁", isBuff: false, desc: "Hộp quà bất ngờ do Trưởng đoàn Hội Ngọc Lục trao tặng." },
+    { id: "BLESS_27", name: "Thẻ bài Tinh Linh Rừng", tier: "rare", icon: "🃏", isBuff: false, desc: "Thẻ bài ma thuật mở khóa đặc quyền thực địa độc nhất." },
     // LEGENDARY (28-30)
-    { id: "BLESS_28", name: "Thẻ Nâng cấp phòng riêng", tier: "legendary", icon: "🗝️", isBuff: false },
-    { id: "BLESS_29", name: "Thẻ lưu trú miễn phí", tier: "legendary", icon: "⛺", isBuff: false },
-    { id: "BLESS_30", name: "Trang bị Nhà Phiêu Lưu", tier: "legendary", icon: "⚔️", isBuff: false }
+    { id: "BLESS_28", name: "Thẻ Nâng Cấp Phòng Riêng", tier: "legendary", icon: "🗝️", isBuff: false, desc: "Nâng cấp lều trại tiêu chuẩn lên phòng riêng Glamping cao cấp." },
+    { id: "BLESS_29", name: "Thẻ Lưu Trú Miễn Phí", tier: "legendary", icon: "⛺", isBuff: false, desc: "Tặng 01 đêm nghỉ dưỡng hoàn toàn miễn phí tại Rừng Tinh Linh." },
+    { id: "BLESS_30", name: "Trang Bị Nhà Phiêu Lưu", tier: "legendary", icon: "⚔️", isBuff: false, desc: "Bộ quà tặng cao cấp gồm ba lô, áo khoác chuyên dụng dã ngoại." }
 ];
 
 function isPrime(num) {
@@ -343,6 +342,8 @@ function addItemToInventory(item) {
             id: item.id,
             name: item.name,
             icon: item.icon,
+            tier: item.tier || "common",
+            desc: item.desc || "",
             isBuff: item.isBuff,
             buff: item.buff || null,
             quantity: 1,
@@ -353,29 +354,31 @@ function addItemToInventory(item) {
 }
 
 // ======================================================
-// 5. GACHA STATE MACHINE & SỰ KIỆN TRIỆU HỒI
+// 5. GACHA CONTROLLER (KÍCH HOẠT TỪ NÚT BOTTOM ARC DOCK)
 // ======================================================
 const STATE = { IDLE: "idle", GACHA: "gacha", CORE: "core", LOOT: "loot", CLAIMED: "claimed" };
 let state = STATE.IDLE;
 let stateStart = performance.now();
 
-const gachaBtn = document.getElementById("gachaButton");
+const dockGachaTrigger = document.getElementById("dockGachaTrigger");
 const claimContainer = document.getElementById("claimContainer");
 const claimBtn = document.getElementById("claimButton");
 const lootText = document.getElementById("lootText");
 const crystalHeader = document.getElementById("crystalNameHeader");
+const collectBanner = document.getElementById("collectBanner");
+const app3dCanvas = document.getElementById("app-3d");
 
-gachaBtn.addEventListener("click", () => {
+function triggerGachaSummon() {
     if (state !== STATE.IDLE && state !== STATE.CLAIMED) return;
 
     if (currentUser.gacha_counter > 0 && currentUser.tinh_quang_points < 1) {
-        alert("Bạn đã hết Điểm Tinh Quang 🔮! Hãy điểm danh hoặc mời bạn bè để nhận thêm.");
+        alert("Bạn đã hết Điểm Tinh Quang 🔮! Hãy giải mã tri thức hoặc điểm danh để nhận thêm.");
         return;
     }
 
-    gachaBtn.style.display = "none";
     claimContainer.classList.add("hidden");
     lootText.classList.remove("show");
+    collectBanner.classList.add("hidden");
 
     coreGroup.position.set(0, 0, 0);
     coreGroup.scale.setScalar(0.001);
@@ -384,16 +387,41 @@ gachaBtn.addEventListener("click", () => {
     crystalHeader.textContent = gem.name;
 
     lootText.innerHTML = `
-        <div style="font-size: 16px; font-weight: bold; color: #ffe66d;">✦ ${gem.name} ✦</div>
-        <div style="font-size: 11px; color: #c9c3ff; letter-spacing: 1.5px; margin-top: 4px;">
+        <div style="font-size: 15px; font-weight: bold; color: #ffe66d;">✦ ${gem.name} ✦</div>
+        <div style="font-size: 10px; color: #c9c3ff; letter-spacing: 1.5px; margin-top: 3px;">
             [${gem.shapeName.toUpperCase()}] • ${gem.faceCount} DIỆN THỂ • MÃ: ${gem.code}
         </div>
     `;
 
     state = STATE.GACHA;
     stateStart = performance.now();
+}
+
+// Bấm nút tròn trung tâm trên Dock
+dockGachaTrigger.addEventListener("click", () => {
+    const isGachaViewActive = document.getElementById("gacha-view").classList.contains("active") && 
+                              !document.getElementById("gacha-view").classList.contains("hidden");
+
+    if (isGachaViewActive) {
+        triggerGachaSummon();
+    }
 });
 
+// POPUP RPG CHÚC PHÚC THAY THẾ ALERT
+const blessingModal = document.getElementById("blessingModal");
+function openBlessingModal(blessing, reasonText) {
+    document.getElementById("blessTierTag").textContent = blessing.tier.toUpperCase();
+    document.getElementById("blessTierTag").className = `blessing-tier-tag tier-${blessing.tier}`;
+    document.getElementById("blessIconBox").textContent = blessing.icon;
+    document.getElementById("blessTitle").textContent = blessing.name;
+    document.getElementById("blessDesc").textContent = `${reasonText}\n${blessing.desc}`;
+    blessingModal.classList.remove("hidden");
+}
+document.getElementById("btnCloseBlessingModal").addEventListener("click", () => {
+    blessingModal.classList.add("hidden");
+});
+
+// THU THẬP VÀO TÚI -> BANNER 3S -> 3D FADE-IN 4S
 claimBtn.addEventListener("click", () => {
     if (state !== STATE.LOOT) return;
     state = STATE.CLAIMED;
@@ -402,29 +430,28 @@ claimBtn.addEventListener("click", () => {
     claimContainer.classList.add("hidden");
     lootText.classList.remove("show");
 
-    // Khấu trừ điểm & cộng bộ đếm
     if (currentUser.gacha_counter > 0) {
         currentUser.tinh_quang_points = Math.max(0, currentUser.tinh_quang_points - 1);
     }
     currentUser.gacha_counter++;
 
-    // Lưu kho Tinh Quang Thạch (tránh trùng)
+    // Lưu mã đá đã mở
     if (!currentUser.unlocked_gems.includes(currentGemResult.code)) {
         currentUser.unlocked_gems.push(currentGemResult.code);
     }
 
-    // Logic Chúc Phúc Lần Đầu hoặc Kiểm Tra Số Nguyên Tố
+    // Logic Chúc phúc
     let wonBlessing = null;
+    let blessReason = "";
     if (currentUser.gacha_counter === 1) {
-        // Lần đầu: Tặng 1 trong 4 Chúc Phúc Free
         const freeTiers = [BLESSINGS_DATA[9], BLESSINGS_DATA[11], BLESSINGS_DATA[23], BLESSINGS_DATA[0]];
         wonBlessing = freeTiers[Math.floor(Math.random() * freeTiers.length)];
         addItemToInventory(wonBlessing);
-        alert(`🎉 LẦN ĐẦU TRIỆU HỒI THÀNH CÔNG!\nBạn thu thập [${currentGemResult.name} - ${currentGemResult.code}] và nhận Chúc Phúc Tân Thủ: [${wonBlessing.icon} ${wonBlessing.name}]!`);
+        blessReason = "Chúc Phúc Tân Thủ dành cho lần đầu triệu hồi thành công!";
     } else if (isPrime(currentUser.gacha_counter)) {
         wonBlessing = getRandomBlessing();
         addItemToInventory(wonBlessing);
-        alert(`🌟 TINH LINH BAN CHÚC PHÚC (Lần quay thứ ${currentUser.gacha_counter} là Số Nguyên Tố)!\nBạn nhận được: [${wonBlessing.icon} ${wonBlessing.name}]`);
+        blessReason = `Lần quay thứ ${currentUser.gacha_counter} là Số Nguyên Tố đặc biệt!`;
     }
 
     saveUserData();
@@ -432,13 +459,27 @@ claimBtn.addEventListener("click", () => {
     renderInventoryGems();
     renderInventory5x5();
 
+    // 1. Hiện thông báo giữa màn hình 3 giây
+    collectBanner.classList.remove("hidden");
     setTimeout(() => {
-        gachaBtn.style.display = "flex";
-        state = STATE.IDLE;
-    }, 1500);
+        collectBanner.classList.add("hidden");
+
+        // 2. Mở popup Chúc phúc nếu có
+        if (wonBlessing) {
+            openBlessingModal(wonBlessing, blessReason);
+        }
+
+        // 3. Fade in giao diện 3D trong 4 giây
+        app3dCanvas.style.opacity = "0.2";
+        setTimeout(() => {
+            app3dCanvas.style.opacity = "1";
+            state = STATE.IDLE;
+        }, 100);
+
+    }, 3000);
 });
 
-// Update vòng lặp hạt & lõi
+// Three.js Loop Animations
 function updateParticles(elapsed, progress) {
     const positions = particleGeometry.attributes.position.array;
     const totalTime = clock.getElapsedTime();
@@ -529,7 +570,7 @@ window.addEventListener("resize", () => {
 });
 
 // ======================================================
-// 6. ĐIỀU HƯỚNG & KHÓA ORBITCONTROLS KHI MỞ OVERLAY
+// 6. ĐIỀU HƯỚNG & NÚT TRỞ VỀ 🎐
 // ======================================================
 const navButtons = document.querySelectorAll(".nav-btn");
 const viewPanels = document.querySelectorAll(".view-panel");
@@ -542,15 +583,16 @@ navButtons.forEach(btn => {
         btn.classList.add("active");
 
         if (targetId === "gacha-view") {
-            controls.enabled = true; // Mở lại tương tác 3D
+            controls.enabled = true;
             document.getElementById("tabIndicator").textContent = "Home Gacha";
             viewPanels.forEach(p => {
                 if (p.id !== "gacha-view") p.classList.add("hidden");
             });
+            document.getElementById("gacha-view").classList.remove("hidden");
+            document.getElementById("gacha-view").classList.add("active");
             return;
         }
 
-        // Khóa tương tác 3D để cuộn panel mượt mà
         controls.enabled = false;
         viewPanels.forEach(p => {
             if (p.id !== "gacha-view") p.classList.add("hidden");
@@ -564,28 +606,30 @@ navButtons.forEach(btn => {
     });
 });
 
-document.querySelectorAll(".close-panel-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-        controls.enabled = true;
-        viewPanels.forEach(p => {
-            if (p.id !== "gacha-view") p.classList.add("hidden");
-        });
-        navButtons.forEach(b => b.classList.remove("active"));
-        document.querySelector(".dock-btn.center-core").classList.add("active");
-        document.getElementById("tabIndicator").textContent = "Home Gacha";
+// Nút Trở về 🎐 & nút X đóng panel
+function returnToGachaHome() {
+    controls.enabled = true;
+    viewPanels.forEach(p => {
+        if (p.id !== "gacha-view") p.classList.add("hidden");
     });
-});
+    navButtons.forEach(b => b.classList.remove("active"));
+    dockGachaTrigger.classList.add("active");
+    document.getElementById("gacha-view").classList.remove("hidden");
+    document.getElementById("gacha-view").classList.add("active");
+    document.getElementById("tabIndicator").textContent = "Home Gacha";
+}
 
+document.querySelectorAll(".btn-back-dock").forEach(btn => btn.addEventListener("click", returnToGachaHome));
+document.querySelectorAll(".close-panel-btn").forEach(btn => btn.addEventListener("click", returnToGachaHome));
 document.getElementById("btnProfileQuick").addEventListener("click", () => {
     document.querySelector('.dock-btn[data-target="profile-view"]').click();
 });
 
 // ======================================================
-// 7. PHASE 3: RENDER TỦ 990 THẠCH & LƯỚI 5x5 QR CODE
+// 7. INVENTORY: VẬT PHẨM LÊN ĐẦU & SẮP XẾP ĐÁ ĐÃ MỞ LÊN TRƯỚC
 // ======================================================
 let currentFilterSys = "ALL";
 
-// Tabs trong Túi đồ
 document.querySelectorAll(".inv-tab-btn").forEach(btn => {
     btn.addEventListener("click", () => {
         document.querySelectorAll(".inv-tab-btn").forEach(b => b.classList.remove("active"));
@@ -596,7 +640,6 @@ document.querySelectorAll(".inv-tab-btn").forEach(btn => {
     });
 });
 
-// Bộ lọc 6 Hệ
 document.querySelectorAll(".filter-btn").forEach(btn => {
     btn.addEventListener("click", () => {
         document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
@@ -617,29 +660,44 @@ function renderInventoryGems() {
     document.getElementById("gemProgressPct").textContent = `${pct}%`;
     document.getElementById("gemProgressBar").style.width = `${pct}%`;
 
-    // Lọc theo hệ
     const filteredPalettes = currentFilterSys === "ALL" 
         ? CRYSTAL_PALETTES 
         : CRYSTAL_PALETTES.filter(p => p.sys === currentFilterSys);
 
-    let html = "";
+    const unlockedList = [];
+    const lockedList = [];
+
     filteredPalettes.forEach(pal => {
         FACE_TIERS.forEach(face => {
             SHAPE_STYLES.forEach(shape => {
                 const code = `${pal.sys}${pal.sysIndex}${face}${shape.id}`;
                 const isUnlocked = unlockedSet.has(code);
 
-                html += `
-                    <div class="gem-slot ${isUnlocked ? 'unlocked' : 'locked'}">
-                        <div class="gem-slot-icon">${isUnlocked ? pal.sys : '❓'}</div>
-                        <div class="gem-slot-code">${isUnlocked ? code : '???'}</div>
-                        <div class="gem-slot-name">${isUnlocked ? pal.name : 'Chưa mở'}</div>
-                    </div>
-                `;
+                const itemData = {
+                    code,
+                    name: pal.name,
+                    sys: pal.sys,
+                    face,
+                    shapeName: shape.name,
+                    isUnlocked
+                };
+
+                if (isUnlocked) unlockedList.push(itemData);
+                else lockedList.push(itemData);
             });
         });
     });
-    grid.innerHTML = html;
+
+    // ĐÁ ĐÃ MỞ TỰ ĐỘNG XẾP LÊN ĐẦU
+    const sortedGems = [...unlockedList, ...lockedList];
+
+    grid.innerHTML = sortedGems.map(g => `
+        <div class="gem-slot ${g.isUnlocked ? 'unlocked' : 'locked'}">
+            <div class="gem-slot-icon">${g.isUnlocked ? g.sys : '❓'}</div>
+            <div class="gem-slot-code">${g.isUnlocked ? g.code : '???'}</div>
+            <div class="gem-slot-name">${g.isUnlocked ? g.name : 'Chưa mở'}</div>
+        </div>
+    `).join('');
 }
 
 function renderInventory5x5() {
@@ -670,14 +728,14 @@ function renderInventory5x5() {
     });
 }
 
-// Modal Item & QR Generator
+// Modal QR Item
 const itemModal = document.getElementById("itemModal");
 const qrcodeContainer = document.getElementById("qrcodeContainer");
-let currentQrInstance = null;
 
 function openItemModal(item, itemIndex) {
     itemModal.classList.remove("hidden");
     document.getElementById("modalItemTitle").textContent = `${item.icon} ${item.name}`;
+    document.getElementById("modalItemDesc").textContent = item.desc || "Vật phẩm lưu trữ trong túi đồ.";
     qrcodeContainer.innerHTML = "";
 
     const btnUseBuff = document.getElementById("btnUseBuffItem");
@@ -686,7 +744,7 @@ function openItemModal(item, itemIndex) {
     if (item.isBuff) {
         qrcodeContainer.style.display = "none";
         btnUseBuff.classList.remove("hidden");
-        noteText.textContent = "Nhấn [SỬ DỤNG NGAY] để cộng trực tiếp vào chỉ số của bạn.";
+        noteText.textContent = "Nhấn [SỬ DỤNG NGAY] để cộng chỉ số trực tiếp vào tài khoản.";
         btnUseBuff.onclick = () => {
             if (item.buff.tq) currentUser.tinh_quang_points += item.buff.tq;
             if (item.buff.tt) currentUser.tinh_thach_points += item.buff.tt;
@@ -703,64 +761,85 @@ function openItemModal(item, itemIndex) {
     } else {
         qrcodeContainer.style.display = "flex";
         btnUseBuff.classList.add("hidden");
-        noteText.textContent = "Đưa mã QR này cho NPC / Quản lý Hội Ngọc Lục để sử dụng ngoài đời thực.";
+        noteText.textContent = "Đưa mã QR cho Quản lý / NPC Hội Ngọc Lục để sử dụng offline.";
         
-        // Tạo mã QR động từ thư viện qrcodejs
-        currentQrInstance = new QRCode(qrcodeContainer, {
+        new QRCode(qrcodeContainer, {
             text: JSON.stringify({ token: item.qr_token, user: currentUser.adventurer_code, item: item.name }),
-            width: 120,
-            height: 120,
-            colorDark : "#000000",
-            colorLight : "#ffffff"
+            width: 110,
+            height: 110,
+            colorDark: "#000000",
+            colorLight: "#ffffff"
         });
     }
 }
-
-document.getElementById("closeItemModal").addEventListener("click", () => {
-    itemModal.classList.add("hidden");
-});
+document.getElementById("closeItemModal").addEventListener("click", () => itemModal.classList.add("hidden"));
 
 // ======================================================
-// 8. SHOP LỮ HÀNH RỪNG TINH LINH (DATA.MD)
+// 8. SHOP 2 CỘT & MODAL CHI TIẾT
 // ======================================================
 const SHOP_ITEMS = [
-    { id: "PKG_1", name: "📦 GÓI TRẢI NGHIỆM", tt: 22, vnd: 550000, desc: "Lều trại 01 đêm + Mystery Box + Buff dịch chuyển Bảo Lộc." },
-    { id: "PKG_2", name: "🎒 GÓI THƯ GIÃN", tt: 32, vnd: 800000, desc: "Trọn gói 3 bữa ăn (BBQ tối + Sáng + Trưa) + Lều trại lưu trú." },
-    { id: "PKG_3", name: "⚔️ GÓI TRỌN GÓI (Best)", tt: 64, vnd: 1600000, desc: "Full trải nghiệm 2N1Đ + 3 Bữa ăn + Mở toàn bộ 5 Main Quests." },
-    { id: "PKG_4", name: "🛡️ GÓI SĂN GACHA", tt: 80, vnd: 2000000, desc: "Full 2N1Đ + Túi 4 Tinh Thạch + 1 Thẻ bài Tinh Linh + 1 Lượt quay chợ." },
-    { id: "Q_1", name: "Quest Phong Tinh Linh", tt: 8, vnd: 200000, desc: "Nhận nhiệm vụ tại bìa rừng cùng Ranger NPC." },
-    { id: "Q_2", name: "Quest Mộc Tinh Linh", tt: 8, vnd: 200000, desc: "Nhiệm vụ tại Đồi Cỏ Cây Thông." },
-    { id: "Q_3", name: "Quest Hỏa Tinh Linh", tt: 8, vnd: 200000, desc: "Nhiệm vụ bên ngọn lửa tại Hội Ngọc Lục." },
-    { id: "Q_4", name: "Quest Thủy Tinh Linh", tt: 8, vnd: 200000, desc: "Khám phá suối rừng cùng NPC hướng dẫn." },
-    { id: "Q_5", name: "Quest Thổ Tinh Linh", tt: 8, vnd: 200000, desc: "Giao thương thử thách tại Phiên Chợ Tinh Linh." },
-    { id: "F_1", name: "Tiệc BBQ Đêm Tinh Nghịch", tt: 7, vnd: 175000, desc: "Tiệc nướng đêm bên bếp lửa Hội Ngọc Lục." },
-    { id: "F_2", name: "Bữa Sáng Bên Suối", tt: 2, vnd: 50000, desc: "Điểm tâm sáng thư thái bên suối tự nhiên." },
-    { id: "F_3", name: "Bữa Trưa Tại Phiên Chợ", tt: 2, vnd: 50000, desc: "Dùng bữa trưa đậm bản sắc tinh linh." }
+    { id: "PKG_1", name: "Gói Trải Nghiệm", tt: 22, vnd: 550000, iconClass: "ico-pkg", desc: "Mystery Box + 01 đêm lều trại lưu trú tiêu chuẩn + Buff hỗ trợ dịch chuyển Bảo Lộc - Rừng Tinh Linh." },
+    { id: "PKG_2", name: "Gói Thư Giãn", tt: 32, vnd: 800000, iconClass: "ico-pkg", desc: "Trọn gói 3 bữa ăn (BBQ tối + Sáng + Trưa) + Lều trại lưu trú + Buff dịch chuyển." },
+    { id: "PKG_3", name: "Gói Trọn Gói (Best)", tt: 64, vnd: 1600000, iconClass: "ico-pkg", desc: "Full trải nghiệm 2N1Đ + 3 Bữa ăn ẩm thực + Mở khóa toàn bộ 5 Main Quests Tinh Linh." },
+    { id: "PKG_4", name: "Gói Săn Gacha", tt: 80, vnd: 2000000, iconClass: "ico-pkg", desc: "Full trải nghiệm 2N1Đ + 4 Tinh Thạch tự do + 1 Thẻ bài Tinh Linh + 1 Vé quay chợ." },
+    { id: "Q_1", name: "Quest Phong Tinh", tt: 8, vnd: 200000, iconClass: "ico-quest", desc: "Nhận nhiệm vụ tại bìa rừng cùng Ranger NPC hướng dẫn." },
+    { id: "Q_2", name: "Quest Mộc Tinh", tt: 8, vnd: 200000, iconClass: "ico-quest", desc: "Khám phá mật ngữ thực vật tại Đồi Cỏ Cây Thông." },
+    { id: "Q_3", name: "Quest Hỏa Tinh", tt: 8, vnd: 200000, iconClass: "ico-quest", desc: "Nhiệm vụ bên bếp lửa ma thuật tại Hội Ngọc Lục." },
+    { id: "Q_4", name: "Quest Thủy Tinh", tt: 8, vnd: 200000, iconClass: "ico-quest", desc: "Nhiệm vụ lội suối tìm kho báu cùng NPC." },
+    { id: "Q_5", name: "Quest Thổ Tinh", tt: 8, vnd: 200000, iconClass: "ico-quest", desc: "Thử thách giao thương tại Phiên Chợ Tinh Linh." },
+    { id: "F_1", name: "Tiệc BBQ Đêm", tt: 7, vnd: 175000, iconClass: "ico-food", desc: "Tiệc nướng thịt thơm lừng bên ánh lửa trại ấm cúng." },
+    { id: "F_2", name: "Bữa Sáng Bên Suối", tt: 2, vnd: 50000, iconClass: "ico-food", desc: "Điểm tâm sáng trà bánh ngắm bình minh rừng già." },
+    { id: "F_3", name: "Bữa Trưa Tại Chợ", tt: 2, vnd: 50000, iconClass: "ico-food", desc: "Bữa trưa đặc sản đậm phong vị bản địa." }
 ];
 
 const selectedShopIds = new Set();
+const shopDetailModal = document.getElementById("shopDetailModal");
+let viewingShopItem = null;
 
 function renderShop() {
     const container = document.getElementById("shopItemsContainer");
     if (!container) return;
+
     container.innerHTML = SHOP_ITEMS.map(p => `
-        <div class="shop-card ${selectedShopIds.has(p.id) ? 'selected' : ''}" data-id="${p.id}">
-            <div class="shop-card-title">${p.name}</div>
-            <div class="shop-card-price">💎 ${p.tt} Tinh Thạch (~${p.vnd.toLocaleString()} đ)</div>
-            <div class="shop-card-desc">${p.desc}</div>
+        <div class="shop-2col-card ${selectedShopIds.has(p.id) ? 'selected' : ''}" data-id="${p.id}">
+            <div class="shop-2col-icon"><i class="rpg-ico ${p.iconClass}" style="width:32px;height:32px;"></i></div>
+            <div class="shop-2col-title">${p.name}</div>
+            <div class="shop-2col-tag">💎 ${p.tt} TT</div>
         </div>
     `).join('');
 
-    container.querySelectorAll(".shop-card").forEach(c => {
+    container.querySelectorAll(".shop-2col-card").forEach(c => {
         c.addEventListener("click", () => {
             const id = c.dataset.id;
-            if (selectedShopIds.has(id)) selectedShopIds.delete(id);
-            else selectedShopIds.add(id);
-            renderShop();
-            updateShopCheckout();
+            viewingShopItem = SHOP_ITEMS.find(x => x.id === id);
+            openShopDetail(viewingShopItem);
         });
     });
 }
+
+function openShopDetail(item) {
+    document.getElementById("shopModalIconBox").innerHTML = `<i class="rpg-ico ${item.iconClass}" style="width:48px;height:48px;"></i>`;
+    document.getElementById("shopModalTitle").textContent = item.name;
+    document.getElementById("shopModalPrice").textContent = `💎 ${item.tt} Tinh Thạch (~${item.vnd.toLocaleString()} đ)`;
+    document.getElementById("shopModalDesc").textContent = item.desc;
+
+    const btn = document.getElementById("btnToggleCartItem");
+    const isSelected = selectedShopIds.has(item.id);
+    btn.textContent = isSelected ? "BỎ CHỌN MỤC NÀY" : "CHỌN MỤC NÀY";
+    btn.style.background = isSelected ? "#c9184a" : "linear-gradient(180deg, #7c6cff, #4a34b8)";
+
+    btn.onclick = () => {
+        if (selectedShopIds.has(item.id)) selectedShopIds.delete(item.id);
+        else selectedShopIds.add(item.id);
+
+        renderShop();
+        updateShopCheckout();
+        shopDetailModal.classList.add("hidden");
+    };
+
+    shopDetailModal.classList.remove("hidden");
+}
+document.getElementById("closeShopDetailModal").addEventListener("click", () => shopDetailModal.classList.add("hidden"));
 
 function updateShopCheckout() {
     let totalTT = 0;
@@ -779,26 +858,26 @@ function updateShopCheckout() {
 
 document.getElementById("btnCheckoutShop").addEventListener("click", () => {
     if (selectedShopIds.size === 0) {
-        alert("Vui lòng tích chọn ít nhất 1 gói hoặc tiện ích!");
+        alert("Vui lòng chạm chọn ít nhất 1 gói hoặc tiện ích!");
         return;
     }
-    const phone = prompt("Nhập số điện thoại / Zalo để Hội Ngọc Lục liên hệ xác nhận:");
+    const phone = prompt("Nhập SĐT hoặc Zalo để Hội Ngọc Lục liên hệ xác nhận đơn:");
     if (!phone) return;
 
-    alert("✦ Thông tin đơn hàng đã được gửi cho Hội Ngọc Lục! Trưởng đoàn sẽ liên hệ sớm nhất qua SĐT/Zalo.");
+    alert("✦ Thông tin đơn hàng đã gửi tới Hội Ngọc Lục! Trưởng đoàn sẽ liên hệ sớm nhất qua SĐT/Zalo.");
     selectedShopIds.clear();
     renderShop();
     updateShopCheckout();
 });
 
 // ======================================================
-// 9. NHIỆM VỤ DAILY (CHECK-IN & REFERRAL)
+// 9. NHIỆM VỤ PIN-BOARD & QUIZ MẬT MÃ RỪNG TINH LINH
 // ======================================================
 document.getElementById("btnDoCheckin").addEventListener("click", () => {
     currentUser.tinh_quang_points += 1;
     saveUserData();
     updateTopBarUI();
-    alert("✦ Điểm danh thành công! Nhận +1 🔮 Điểm Tinh Quang.");
+    alert("✦ Điểm danh thành công! Nhận +1 🔮 Tinh Quang.");
     document.getElementById("btnDoCheckin").textContent = "Đã Điểm Danh";
     document.getElementById("btnDoCheckin").disabled = true;
 });
@@ -826,141 +905,122 @@ document.getElementById("btnSubmitRef").addEventListener("click", () => {
     }
 });
 
-// Khởi chạy ban đầu
+// QUIZ 10 CÂU HỎI MẬT MÃ
+const QUIZ_LIST = [
+    { q: "Hội Ngọc Lục nằm ở vùng đất rừng nào?", a: ["Bảo Lộc", "Đà Lạt", "Sa Pa", "Cát Bà"], c: 0 },
+    { q: "Biến thể Tinh Quang Thạch có bao nhiêu bậc số mặt?", a: ["11 bậc", "6 bậc", "3 bậc", "30 bậc"], c: 0 },
+    { q: "Hệ đá nào đại diện cho Hỏa Diệm & Huyết Tinh?", a: ["🔥 Hệ 1", "☀️ Hệ 2", "❄️ Hệ 4", "⚡ Hệ 5"], c: 0 }
+];
+let currentQuizIdx = 0;
+const quizModal = document.getElementById("quizModal");
+
+document.getElementById("btnOpenQuiz").addEventListener("click", () => {
+    currentQuizIdx = 0;
+    showQuizQuestion();
+    quizModal.classList.remove("hidden");
+});
+
+function showQuizQuestion() {
+    const qData = QUIZ_LIST[currentQuizIdx];
+    document.getElementById("quizQuestionText").textContent = `Câu ${currentQuizIdx + 1}: ${qData.q}`;
+    const ansBox = document.getElementById("quizAnswersBox");
+    ansBox.innerHTML = qData.a.map((ans, idx) => `
+        <button class="btn-quiz-ans" data-idx="${idx}">✦ ${ans}</button>
+    `).join('');
+
+    ansBox.querySelectorAll(".btn-quiz-ans").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const chosen = parseInt(btn.dataset.idx);
+            if (chosen === qData.c) {
+                currentQuizIdx++;
+                if (currentQuizIdx < QUIZ_LIST.length) {
+                    showQuizQuestion();
+                } else {
+                    currentUser.tinh_quang_points += 1;
+                    saveUserData();
+                    updateTopBarUI();
+                    quizModal.classList.add("hidden");
+                    alert("🎉 XUẤT SẮC! Bạn đã giải mã toàn bộ tri thức Rừng Tinh Linh, nhận +1 🔮 Tinh Quang!");
+                }
+            } else {
+                alert("Mật mã chưa chính xác! Hãy đọc kỹ tri thức và thử lại.");
+            }
+        });
+    });
+}
+document.getElementById("closeQuizModal").addEventListener("click", () => quizModal.classList.add("hidden"));
+
+// ======================================================
+// 10. ADMIN GOD-MODE (CHẠM 5 LẦN LOGO)
+// ======================================================
+let logoClicks = 0;
+let logoTimer = null;
+const adminLogo = document.getElementById("adminTriggerLogo");
+const adminModal = document.getElementById("adminGodModal");
+
+adminLogo.addEventListener("pointerdown", () => {
+    logoClicks++;
+    clearTimeout(logoTimer);
+    logoTimer = setTimeout(() => { logoClicks = 0; }, 2000);
+
+    if (logoClicks >= 5) {
+        logoClicks = 0;
+        adminModal.classList.remove("hidden");
+    }
+});
+document.getElementById("closeAdminModal").addEventListener("click", () => adminModal.classList.add("hidden"));
+
+document.getElementById("admAddTQ").addEventListener("click", () => {
+    currentUser.tinh_quang_points += 99;
+    saveUserData();
+    updateTopBarUI();
+    alert("⚡ Admin: +99 🔮");
+});
+document.getElementById("admAddTT").addEventListener("click", () => {
+    currentUser.tinh_thach_points += 99;
+    saveUserData();
+    updateTopBarUI();
+    alert("⚡ Admin: +99 💎");
+});
+document.getElementById("admAddCH").addEventListener("click", () => {
+    currentUser.cong_hien_points += 100;
+    saveUserData();
+    updateTopBarUI();
+    alert("⚡ Admin: +100 🛡️");
+});
+document.getElementById("admUnlockAllGems").addEventListener("click", () => {
+    const all = [];
+    CRYSTAL_PALETTES.forEach(p => {
+        FACE_TIERS.forEach(f => {
+            SHAPE_STYLES.forEach(s => all.push(`${p.sys}${p.sysIndex}${f}${s.id}`));
+        });
+    });
+    currentUser.unlocked_gems = all;
+    saveUserData();
+    renderInventoryGems();
+    alert("⚡ Admin: Đã mở full 990 đá!");
+});
+document.getElementById("admAddAllItems").addEventListener("click", () => {
+    BLESSINGS_DATA.forEach(b => addItemToInventory(b));
+    saveUserData();
+    renderInventory5x5();
+    alert("⚡ Admin: Đã thêm đủ 30 Chúc Phúc vào túi!");
+});
+document.getElementById("admResetData").addEventListener("click", () => {
+    if (confirm("Reset về Tân Thủ?")) {
+        localStorage.removeItem("advenature_user");
+        location.reload();
+    }
+});
+
+// KHỞI ĐỘNG HỆ THỐNG
 updateTopBarUI();
 renderInventoryGems();
 renderInventory5x5();
 renderShop();
 
-// Sinh mã QR Profile cá nhân
 new QRCode(document.getElementById("userProfileQr"), {
     text: `ADVENATURE_USER:${currentUser.adventurer_code}`,
-    width: 120,
-    height: 120
-});
-
-// ======================================================
-// SỬA LẠI: BỘ BẮT SỰ KIỆN ADMIN TOUCH & CLICK SIÊU NHẠY
-// ======================================================
-let logoClickCount = 0;
-let logoClickTimer = null;
-let isFastGachaEnabled = false;
-
-const brandLogo = document.getElementById("adminTriggerLogo");
-const adminModal = document.getElementById("adminGodModal");
-const closeAdminModal = document.getElementById("closeAdminModal");
-
-function handleAdminTrigger(e) {
-    if (e) e.preventDefault(); // Ngăn trình duyệt zoom hoặc cuộn
-    logoClickCount++;
-    
-    // Tạo hiệu ứng nháy nhẹ logo để bạn biết ngón tay đã chạm trúng
-    if (brandLogo) {
-        brandLogo.style.opacity = "0.4";
-        setTimeout(() => { brandLogo.style.opacity = "1"; }, 100);
-    }
-
-    clearTimeout(logoClickTimer);
-    // Nâng thời gian chờ lên 2.5 giây để bạn bấm thoải mái không bị vội
-    logoClickTimer = setTimeout(() => { 
-        logoClickCount = 0; 
-    }, 2500);
-
-    if (logoClickCount >= 5) {
-        logoClickCount = 0;
-        if (adminModal) {
-            adminModal.classList.remove("hidden");
-        }
-    }
-}
-
-if (brandLogo) {
-    // Dùng pointerdown để nhận tín hiệu ngay khi ngón tay vừa chạm xuống mặt kính
-    brandLogo.addEventListener("pointerdown", handleAdminTrigger);
-}
-
-if (closeAdminModal) {
-    closeAdminModal.addEventListener("click", () => {
-        adminModal.classList.add("hidden");
-    });
-}
-
-// 1. Bơm tài nguyên
-document.getElementById("admAddTQ").addEventListener("click", () => {
-    currentUser.tinh_quang_points += 99;
-    saveUserData();
-    updateTopBarUI();
-    alert("⚡ Admin: Đã cộng +99 🔮 Tinh Quang!");
-});
-
-document.getElementById("admAddTT").addEventListener("click", () => {
-    currentUser.tinh_thach_points += 99;
-    saveUserData();
-    updateTopBarUI();
-    alert("⚡ Admin: Đã cộng +99 💎 Tinh Thạch!");
-});
-
-document.getElementById("admAddCH").addEventListener("click", () => {
-    currentUser.cong_hien_points += 100;
-    saveUserData();
-    updateTopBarUI();
-    alert("⚡ Admin: Đã cộng +100 🛡️ Cống Hiến!");
-});
-
-// 2. Mở khóa toàn bộ 990 Đá
-document.getElementById("admUnlockAllGems").addEventListener("click", () => {
-    const allGems = [];
-    CRYSTAL_PALETTES.forEach(pal => {
-        FACE_TIERS.forEach(face => {
-            SHAPE_STYLES.forEach(shape => {
-                allGems.push(`${pal.sys}${pal.sysIndex}${face}${shape.id}`);
-            });
-        });
-    });
-    currentUser.unlocked_gems = allGems;
-    saveUserData();
-    renderInventoryGems();
-    alert("⚡ Admin: Đã mở khóa trọn bộ 990/990 Tinh Quang Thạch!");
-});
-
-// 3. Nhận đủ 30 Chúc Phúc vào Túi Đồ
-document.getElementById("admAddAllItems").addEventListener("click", () => {
-    BLESSINGS_DATA.forEach(item => {
-        addItemToInventory(item);
-    });
-    saveUserData();
-    renderInventory5x5();
-    alert("⚡ Admin: Đã nhận trọn vẹn 30 Chúc Phúc Tinh Linh vào túi!");
-});
-
-// 4. Bật/Tắt Fast Gacha (Triệu hồi tức thì không chờ xoáy hạt)
-const fastGachaStatus = document.getElementById("admFastGachaStatus");
-document.getElementById("admToggleFastGacha").addEventListener("click", () => {
-    isFastGachaEnabled = !isFastGachaEnabled;
-    fastGachaStatus.textContent = isFastGachaEnabled ? "BẬT (0.1s)" : "TẮT";
-    fastGachaStatus.style.color = isFastGachaEnabled ? "#00f5d4" : "#ff3366";
-});
-
-// Chèn logic Fast Gacha vào nút Triệu Hồi Gacha
-const originalGachaBtnHandler = gachaBtn.onclick;
-gachaBtn.addEventListener("click", () => {
-    if (isFastGachaEnabled && state === STATE.GACHA) {
-        // Rút ngắn thời gian chuyển trạng thái LOOT ngay lập tức
-        setTimeout(() => {
-            state = STATE.LOOT;
-            coreMaterial.opacity = 0;
-            coreGlowMaterial.opacity = 0;
-            coreGroup.scale.setScalar(0);
-            lootText.classList.add("show");
-            claimContainer.classList.remove("hidden");
-        }, 150);
-    }
-});
-
-// 5. Reset toàn bộ dữ liệu về trạng thái ban đầu
-document.getElementById("admResetData").addEventListener("click", () => {
-    if (confirm("Bạn có chắc chắn muốn xóa dữ liệu test và về trạng thái Tân Thủ?")) {
-        localStorage.removeItem("advenature_user");
-        location.reload();
-    }
+    width: 100,
+    height: 100
 });

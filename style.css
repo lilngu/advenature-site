@@ -36,14 +36,72 @@ body, html {
     overflow: hidden;
 }
 
+/* KHUNG CẢNH BACKGROUND HUYỀN BÍ (TỐI 40%) */
+#bg-scene-backdrop {
+    position: absolute;
+    inset: 0;
+    background: url('https://media.craiyon.com/2025-04-04/7ByR8QW6RO6yuM7WK0Z-Gw.webp') center/cover no-repeat;
+    z-index: 0;
+}
+#bg-scene-backdrop::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(3, 3, 10, 0.4); /* Độ tối 40% chuẩn xác */
+}
+
 #app-3d {
     position: absolute;
     inset: 0;
-    z-index: 0;
+    z-index: 1;
+    transition: opacity 4s ease-in-out; /* Fade in trong 4s */
 }
 
 /* ======================================================
-   TOP STATUS BAR (LAYER 10)
+   HỆ THỐNG ICON CSS ::before & SVG DATA URI
+====================================================== */
+.rpg-ico {
+    display: inline-block;
+    width: 1.15em;
+    height: 1.15em;
+    vertical-align: -0.2em;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* Data URI SVG cho Tinh Quang (Tím) */
+.ico-tq {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23c77dff'%3E%3Cpath d='M12 2L4 7v10l8 5 8-5V7l-8-5zm0 2.8L17.5 8 12 11.2 6.5 8 12 4.8zm-6 5.1l5 2.9v6.4l-5-3.1V9.9zm12 6.2l-5 3.1v-6.4l5-2.9v6.2z'/%3E%3C/svg%3E");
+}
+
+/* Data URI SVG cho Tinh Thạch (Lam Ngọc) */
+.ico-tt {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234cc9f0'%3E%3Cpath d='M6 3h12l4 7-10 11L2 10l4-7zm1.5 2l-2.5 4.5h4.2L8.5 5H7.5zm3.5 0l.7 4.5h4.6l.7-4.5h-6zm8 0h-1l-.7 4.5h4.2L19 5z'/%3E%3C/svg%3E");
+}
+
+/* Data URI SVG cho Cống Hiến (Khiên Vàng) */
+.ico-ch {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffd166'%3E%3Cpath d='M12 2L4 5v6.1c0 5.6 3.4 10.7 8 11.9 4.6-1.2 8-6.3 8-11.9V5l-8-3zm0 2.2l6 2.3v4.6c0 4.5-2.6 8.7-6 9.8-3.4-1.1-6-5.3-6-9.8V6.5l6-2.3z'/%3E%3C/svg%3E");
+}
+
+/* Data URI SVG cho Sản Phẩm Gói Tân Thủ */
+.ico-pkg {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffe66d'%3E%3Cpath d='M20 7l-8-4-8 4 8 4 8-4zm-8 6l-8-4v8l8 4 8-4v-8l-8 4z'/%3E%3C/svg%3E");
+}
+
+/* Data URI SVG cho Quest Dã Ngoại */
+.ico-quest {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2370e000'%3E%3Cpath d='M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z'/%3E%3C/svg%3E");
+}
+
+/* Data URI SVG cho Ẩm Thực Rừng */
+.ico-food {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff4d6d'%3E%3Cpath d='M18.1 4.2c-1.4 0-2.6.8-3.2 2-1.2-.5-2.6-.5-3.8 0-.6-1.2-1.8-2-3.2-2C6 4.2 4.3 6 4.3 8.1c0 2.7 2.9 5.8 7.7 9.9 4.8-4.1 7.7-7.2 7.7-9.9 0-2.1-1.7-3.9-3.6-3.9z'/%3E%3C/svg%3E");
+}
+
+/* ======================================================
+   TOP STATUS BAR
 ====================================================== */
 .rpg-topbar {
     position: absolute;
@@ -51,7 +109,7 @@ body, html {
     left: 0;
     right: 0;
     height: 60px;
-    background: linear-gradient(180deg, rgba(5,5,18,0.95) 0%, rgba(5,5,18,0.6) 80%, transparent 100%);
+    background: linear-gradient(180deg, rgba(5,5,18,0.95) 0%, rgba(5,5,18,0.5) 80%, transparent 100%);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -66,62 +124,45 @@ body, html {
     letter-spacing: 1.5px;
     color: var(--border-gold);
     text-shadow: 0 0 10px var(--gold-glow);
+    cursor: pointer;
+    touch-action: manipulation;
 }
 
-.currency-group {
-    display: flex;
-    gap: 8px;
-}
+.currency-group { display: flex; gap: 6px; }
 
 .currency-pill {
     background: rgba(20, 16, 45, 0.75);
     border: 1px solid var(--border-magic);
     border-radius: 20px;
-    padding: 4px 9px;
+    padding: 3px 8px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-width: 58px;
+    min-width: 54px;
     backdrop-filter: blur(8px);
 }
 
-.curr-label {
-    font-size: 8px;
-    text-transform: uppercase;
-    color: #a58cff;
-    letter-spacing: 0.5px;
-}
+.curr-label { font-size: 8px; text-transform: uppercase; color: #a58cff; }
+.curr-val { font-size: 11px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 3px; }
 
-.curr-val {
-    font-size: 11px;
-    font-weight: bold;
-    color: #fff;
-}
-
-.user-avatar-frame {
-    position: relative;
-    cursor: pointer;
-}
-
+.user-avatar-frame { position: relative; cursor: pointer; }
 .avatar-img {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     border: 1.5px solid var(--border-gold);
-    box-shadow: 0 0 8px var(--gold-glow);
     display: block;
 }
-
 .level-badge {
     position: absolute;
-    bottom: -4px;
+    bottom: -3px;
     right: -4px;
     background: #000;
     color: var(--gold-cp);
     font-size: 8px;
     font-weight: bold;
-    padding: 1px 4px;
-    border-radius: 6px;
+    padding: 1px 3px;
+    border-radius: 4px;
     border: 1px solid var(--border-gold);
 }
 
@@ -130,7 +171,7 @@ body, html {
     top: 68px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 11px;
+    font-size: 10px;
     letter-spacing: 2px;
     color: rgba(255,255,255,0.4);
     text-transform: uppercase;
@@ -138,16 +179,16 @@ body, html {
 }
 
 /* ======================================================
-   VIEWPORT GACHA (LAYER 20)
+   VIEWPORT GACHA (BỆ ĐÁ & THÔNG BÁO)
 ====================================================== */
 .crystal-title-box {
     position: absolute;
     top: 95px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(22, 17, 50, 0.6);
+    background: rgba(22, 17, 50, 0.65);
     border: 1px solid var(--border-magic);
-    padding: 6px 18px;
+    padding: 6px 16px;
     border-radius: 20px;
     display: flex;
     align-items: center;
@@ -155,23 +196,17 @@ body, html {
     backdrop-filter: blur(10px);
     z-index: 10;
 }
-
-.crystal-name {
-    font-size: 13px;
-    font-weight: bold;
-    letter-spacing: 1px;
-    color: #ffe66d;
-}
+.crystal-name { font-size: 12px; font-weight: bold; color: #ffe66d; }
 
 .loot-card {
     position: absolute;
-    top: 50%;
+    top: 48%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.85);
-    background: rgba(10, 8, 25, 0.9);
+    background: rgba(10, 8, 25, 0.92);
     border: 1.5px solid var(--border-gold);
     box-shadow: 0 0 25px var(--gold-glow);
-    padding: 14px 22px;
+    padding: 14px 20px;
     border-radius: 12px;
     text-align: center;
     opacity: 0;
@@ -180,60 +215,63 @@ body, html {
     z-index: 20;
     min-width: 270px;
 }
-
-.loot-card.show {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translate(-50%, -50%) scale(1);
-}
+.loot-card.show { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
 
 .summon-zone {
     position: absolute;
-    bottom: 95px;
+    bottom: 110px;
     left: 0;
     right: 0;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    justify-content: center;
     z-index: 20;
 }
-
 .btn-summon {
-    background: linear-gradient(180deg, #9d4edd 0%, #5a189a 100%);
-    border: 1.5px solid #fff;
-    box-shadow: 0 0 15px rgba(157, 78, 221, 0.6);
-    color: #fff;
-    padding: 12px 36px;
-    border-radius: 30px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 14px;
-    font-weight: bold;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s;
-}
-
-.btn-summon:active { transform: scale(0.96); }
-
-.btn-claim {
     background: linear-gradient(180deg, #ffd166 0%, #d48b00 100%);
-    border-color: #fff;
+    border: 1.5px solid #fff;
     color: #1a0f00;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
     box-shadow: 0 0 20px rgba(255, 209, 102, 0.7);
 }
 
-.summon-cost {
-    background: rgba(0,0,0,0.4);
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 11px;
-    color: #ffe66d;
+/* BANNER THU THẬP THÀNH CÔNG 3S */
+.collect-banner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 30;
+    width: 90%;
+    max-width: 380px;
+    text-align: center;
+    animation: bannerPop 0.4s ease-out;
+}
+.collect-banner-content {
+    background: linear-gradient(90deg, rgba(30,15,60,0.2), rgba(60,25,110,0.95), rgba(30,15,60,0.2));
+    border-top: 1.5px solid #ffd166;
+    border-bottom: 1.5px solid #ffd166;
+    padding: 16px 20px;
+    color: #fffbe5;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    text-shadow: 0 0 10px #ffe66d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+@keyframes bannerPop {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
 
 /* ======================================================
-   BOTTOM ARC WHEEL DOCK (LAYER 30)
+   BOTTOM ARC WHEEL DOCK (NÚT GACHA TO HƠN 50%)
 ====================================================== */
 .rpg-dock {
     position: absolute;
@@ -257,36 +295,32 @@ body, html {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
+    gap: 2px;
     cursor: pointer;
     font-size: 10px;
     position: relative;
     flex: 1;
 }
-
 .dock-btn.active { color: #ffe66d; }
 
 .dock-icon-ring {
-    position: relative;
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 16px;
+    position: relative;
 }
-
 .badge-dot {
     position: absolute;
     top: 2px;
     right: 2px;
-    width: 7px;
-    height: 7px;
+    width: 6px;
+    height: 6px;
     background: #ff3366;
     border-radius: 50%;
-    box-shadow: 0 0 6px #ff3366;
 }
-
 .badge-count {
     position: absolute;
     top: -2px;
@@ -299,40 +333,54 @@ body, html {
     border-radius: 8px;
 }
 
-/* Center Core Gacha Button */
+/* NÚT GACHA TO HƠN 50%: 58px -> 88px */
 .center-core {
-    margin-top: -24px;
+    margin-top: -38px;
+    flex: 1.2;
 }
 
 .core-glow-ring {
-    width: 58px;
-    height: 58px;
+    width: 88px;
+    height: 88px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #c77dff, #3a0ca3);
-    padding: 3px;
-    box-shadow: 0 0 20px rgba(199, 125, 255, 0.6);
+    background: linear-gradient(135deg, #ffd166, #c77dff, #3a0ca3);
+    padding: 4px;
+    box-shadow: 0 0 25px rgba(199, 125, 255, 0.7);
     display: flex;
     align-items: center;
     justify-content: center;
+    animation: corePulse 2.5s infinite ease-in-out;
+}
+@keyframes corePulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(199, 125, 255, 0.6); }
+    50% { transform: scale(1.06); box-shadow: 0 0 32px rgba(255, 209, 102, 0.8); }
 }
 
 .core-inner-sphere {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background: #09061e;
-    border: 1px solid rgba(255,255,255,0.4);
+    background: #0d0827;
+    border: 1.5px solid rgba(255,255,255,0.4);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 1px;
+}
+.core-ico-svg { width: 24px; height: 24px; }
+.core-text { font-size: 11px; font-weight: 900; letter-spacing: 1px; color: #ffe66d; }
+.core-cost-badge {
+    background: rgba(0,0,0,0.6);
+    color: #4cc9f0;
+    font-size: 8px;
+    padding: 1px 5px;
+    border-radius: 6px;
+    border: 0.5px solid var(--cyan-crystal);
 }
 
-.core-ico { font-size: 18px; line-height: 1; }
-.core-text { font-size: 8px; font-weight: 900; letter-spacing: 0.5px; color: #ffe66d; }
-
 /* ======================================================
-   OVERLAY PANELS (LAYER 40)
+   OVERLAY PANELS & NÚT TRỞ VỀ 🎐
 ====================================================== */
 .overlay-panel {
     position: absolute;
@@ -341,46 +389,39 @@ body, html {
     backdrop-filter: blur(14px);
     z-index: 40;
     overflow-y: auto;
-    padding: 70px 14px 90px;
+    padding: 70px 14px 100px;
     display: block;
 }
-
 .overlay-panel.hidden { display: none !important; }
 
-.panel-container {
-    max-width: 600px;
-    margin: 0 auto;
-    position: relative;
-}
+.panel-container { max-width: 600px; margin: 0 auto; position: relative; }
+.panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.section-title { font-size: 14px; font-weight: bold; color: var(--border-gold); }
+.close-panel-btn { font-size: 24px; color: #a8a4c2; cursor: pointer; }
 
-.panel-header {
+/* NÚT TRỞ VỀ ĐÁY 🎐 */
+.panel-bottom-dock {
+    margin-top: 24px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    padding-bottom: 10px;
+}
+.btn-back-dock {
+    background: rgba(30, 20, 60, 0.7);
+    border: 1px solid var(--border-magic);
+    border-radius: 20px;
+    padding: 6px 20px;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    margin-bottom: 14px;
-}
-
-.section-title {
-    font-size: 15px;
-    font-weight: bold;
-    letter-spacing: 1px;
-    color: var(--border-gold);
-}
-
-.close-panel-btn {
-    font-size: 26px;
-    color: #a8a4c2;
     cursor: pointer;
-    line-height: 1;
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
 }
+.back-ico { font-size: 16px; line-height: 1; }
+.back-text { font-size: 9px; font-weight: bold; color: #ffe66d; margin-top: 2px; }
 
 /* Tabs */
-.inv-tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
-}
-
+.inv-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
 .inv-tab-btn {
     flex: 1;
     background: rgba(255,255,255,0.05);
@@ -388,118 +429,32 @@ body, html {
     color: #a8a4c2;
     padding: 8px;
     border-radius: 8px;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: bold;
     cursor: pointer;
 }
-
 .inv-tab-btn.active {
     background: rgba(157, 78, 221, 0.3);
     border-color: var(--purple-light);
     color: #fff;
 }
-
 .inv-content.hidden { display: none; }
 
-/* Progress Bar */
-.progress-box { margin-bottom: 12px; }
-.progress-label { font-size: 11px; color: #c9c3ff; margin-bottom: 4px; }
-.progress-bar-container {
-    width: 100%;
-    height: 8px;
-    background: rgba(0,0,0,0.5);
-    border-radius: 10px;
-    overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.1);
-}
-.progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #7c6cff, #ffd166);
-    transition: width 0.3s;
-}
-
-/* Filter Bar */
-.filter-bar {
-    display: flex;
-    gap: 6px;
-    overflow-x: auto;
-    padding-bottom: 8px;
-    margin-bottom: 12px;
-}
-.filter-btn {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.15);
-    color: #c9c3ff;
-    padding: 4px 10px;
-    border-radius: 14px;
-    font-size: 11px;
-    white-space: nowrap;
-    cursor: pointer;
-}
-.filter-btn.active {
-    background: var(--purple-light);
-    border-color: #fff;
-    color: #000;
-    font-weight: bold;
-}
-
-/* Gem Grid (Tab A) */
-.gem-grid-layout {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    max-height: 55vh;
-    overflow-y: auto;
-    padding-right: 4px;
-}
-
-.gem-slot {
-    background: rgba(20, 16, 45, 0.6);
-    border: 1px solid var(--border-magic);
-    border-radius: 8px;
-    padding: 8px 4px;
-    text-align: center;
-    font-size: 10px;
-    cursor: pointer;
-}
-
-.gem-slot.locked {
-    opacity: 0.35;
-    border-style: dashed;
-}
-
-.gem-slot.unlocked {
-    border-color: #ffd166;
-    background: rgba(60, 40, 100, 0.4);
-    box-shadow: 0 0 10px rgba(255, 209, 102, 0.2);
-}
-
-.gem-slot-icon { font-size: 20px; margin-bottom: 2px; }
-.gem-slot-code { font-weight: bold; color: #ffe66d; }
-.gem-slot-name { font-size: 9px; color: #a8a4c2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-/* Grid 5x5 (Tab B) */
-.grid-5x5 {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 6px;
-}
-
+/* Lưới 5x5 */
+.grid-5x5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
 .item-slot {
     aspect-ratio: 1;
-    background: rgba(20, 16, 45, 0.6);
+    background: rgba(20, 16, 45, 0.65);
     border: 1px solid var(--border-magic);
     border-radius: 8px;
     position: relative;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     cursor: pointer;
 }
-
 .item-slot.empty { opacity: 0.25; border-style: dashed; }
-.item-slot-icon { font-size: 22px; }
+.item-slot-icon { font-size: 20px; }
 .item-slot-qty {
     position: absolute;
     bottom: 2px;
@@ -512,68 +467,138 @@ body, html {
     border-radius: 4px;
 }
 
-/* Quest Board */
-.quest-list { display: flex; flex-direction: column; gap: 10px; }
-.quest-card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid var(--border-magic);
-    border-radius: 10px;
-    padding: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-}
-.quest-info h4 { font-size: 13px; color: #ffe66d; margin-bottom: 3px; }
-.quest-info p { font-size: 11px; color: #a8a4c2; margin-bottom: 6px; }
-.streak-badge { font-size: 10px; color: var(--cyan-crystal); }
-.rpg-input {
+/* Tủ 990 Đá */
+.progress-box { margin-bottom: 12px; }
+.progress-label { font-size: 10px; color: #c9c3ff; margin-bottom: 4px; }
+.progress-bar-container {
     width: 100%;
-    padding: 6px 10px;
+    height: 7px;
     background: rgba(0,0,0,0.5);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.progress-fill { height: 100%; background: linear-gradient(90deg, #7c6cff, #ffd166); transition: width 0.3s; }
+.filter-bar { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 10px; }
+.filter-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #c9c3ff;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+.filter-btn.active { background: var(--purple-light); color: #000; font-weight: bold; }
+.gem-grid-layout {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    max-height: 52vh;
+    overflow-y: auto;
+}
+.gem-slot {
+    background: rgba(20, 16, 45, 0.6);
     border: 1px solid var(--border-magic);
     border-radius: 6px;
-    color: #fff;
-    font-size: 11px;
+    padding: 6px 2px;
+    text-align: center;
+    font-size: 9px;
 }
-.btn-action {
-    background: linear-gradient(180deg, #7c6cff, #4a34b8);
-    border: 1px solid #fff;
+.gem-slot.unlocked {
+    border-color: #ffd166;
+    background: rgba(70, 45, 120, 0.4);
+    box-shadow: 0 0 8px rgba(255, 209, 102, 0.25);
+}
+.gem-slot.locked { opacity: 0.35; border-style: dashed; }
+.gem-slot-icon { font-size: 18px; }
+.gem-slot-code { font-weight: bold; color: #ffe66d; }
+.gem-slot-name { font-size: 8px; color: #a8a4c2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ======================================================
+   BẢNG NHIỆM VỤ DẠNG PIN-BOARD
+====================================================== */
+.pin-board-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    background: rgba(25, 18, 40, 0.6);
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(212, 192, 132, 0.3);
+}
+.pin-card {
+    background: #fffbe8;
+    color: #2b1f0c;
+    border-radius: 4px;
+    padding: 10px 8px;
+    box-shadow: 2px 3px 10px rgba(0,0,0,0.5);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.pin-tack {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+}
+.pin-title { font-size: 11px; font-weight: bold; color: #8a4b00; margin-top: 4px; }
+.pin-desc { font-size: 9px; color: #5a4a35; margin: 4px 0; line-height: 1.25; }
+.pin-badge { font-size: 8px; font-weight: bold; color: #0077b6; margin-bottom: 4px; }
+.pin-btn {
+    background: #8a4b00;
     color: #fff;
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-size: 11px;
+    border: none;
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-size: 9px;
     font-weight: bold;
     cursor: pointer;
-    white-space: nowrap;
+}
+.pin-input {
+    width: 100%;
+    padding: 4px;
+    font-size: 8px;
+    background: #fff;
+    border: 1px solid #c9b084;
+    color: #000;
+    border-radius: 3px;
+    margin-bottom: 4px;
 }
 
-/* Shop Layout */
-.shop-subtitle { font-size: 11px; color: #a8a4c2; margin-bottom: 12px; }
-.shop-grid {
+/* ======================================================
+   SHOP 2 CỘT GỌN GÀNG
+====================================================== */
+.shop-2col-grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 8px;
-    margin-bottom: 60px;
+    margin-bottom: 20px;
 }
-@media (min-width: 480px) {
-    .shop-grid { grid-template-columns: 1fr 1fr; }
-}
-.shop-card {
-    background: rgba(255,255,255,0.03);
+.shop-2col-card {
+    background: rgba(25, 20, 50, 0.7);
     border: 1px solid var(--border-magic);
     border-radius: 8px;
-    padding: 10px;
+    padding: 10px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
     cursor: pointer;
+    position: relative;
 }
-.shop-card.selected {
-    border-color: var(--border-gold);
-    background: rgba(212, 192, 132, 0.12);
-    box-shadow: 0 0 10px var(--gold-glow);
+.shop-2col-card.selected {
+    border-color: #ffd166;
+    background: rgba(212, 192, 132, 0.15);
+    box-shadow: 0 0 10px rgba(255, 209, 102, 0.3);
 }
-.shop-card-title { font-size: 12px; font-weight: bold; color: #fff; }
-.shop-card-price { font-size: 11px; font-weight: bold; color: var(--cyan-crystal); margin: 3px 0; }
-.shop-card-desc { font-size: 10px; color: #8e8aab; }
+.shop-2col-icon { font-size: 26px; margin-bottom: 4px; }
+.shop-2col-title { font-size: 11px; font-weight: bold; color: #fff; }
+.shop-2col-tag { font-size: 9px; color: #4cc9f0; margin-top: 2px; }
 
 .shop-checkout-bar {
     position: sticky;
@@ -584,34 +609,66 @@ body, html {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-radius: 0 0 12px 12px;
+    border-radius: 8px;
+    margin-top: 10px;
 }
 .checkout-summary { font-size: 11px; }
-.btn-buy { padding: 8px 18px; font-size: 12px; }
+.btn-buy { padding: 8px 16px; font-size: 11px; }
 
-/* Profile Card */
-.passport-card {
-    background: linear-gradient(135deg, rgba(25, 20, 55, 0.7), rgba(10, 8, 25, 0.9));
+/* ======================================================
+   CĂN CƯỚC: AVATAR VUÔNG LỚN TRUNG TÂM
+====================================================== */
+.passport-card-centered {
+    background: linear-gradient(135deg, rgba(25, 20, 55, 0.8), rgba(10, 8, 25, 0.95));
     border: 1.5px solid var(--border-gold);
     border-radius: 12px;
-    padding: 16px;
+    padding: 18px 14px;
     box-shadow: 0 0 20px rgba(0,0,0,0.6);
 }
-.passport-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; text-align: left; }
-.avatar-large { width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--border-gold); }
-.passport-badge { display: inline-block; background: #000; color: var(--cyan-crystal); padding: 1px 6px; border-radius: 4px; font-size: 10px; margin-top: 2px; }
-.passport-role { font-size: 11px; color: #a8a4c2; }
-.passport-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; }
-.stat-box { background: rgba(0,0,0,0.4); padding: 8px 4px; border-radius: 6px; font-size: 11px; }
-.stat-box b { display: block; margin-top: 2px; color: #fff; }
-.rank-progress-box { text-align: left; margin-bottom: 14px; }
-.rank-label { display: flex; justify-content: space-between; font-size: 10px; color: #c9c3ff; margin-bottom: 4px; }
+.avatar-square-frame {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 10px;
+    border: 2px solid var(--border-gold);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 0 15px var(--gold-glow);
+}
+.avatar-large-square { width: 100%; height: 100%; object-fit: cover; }
+.passport-badge-floating {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.8);
+    color: #4cc9f0;
+    font-size: 9px;
+    font-weight: bold;
+    padding: 2px 0;
+    border-top: 1px solid var(--border-gold);
+}
+.passport-name-main { font-size: 15px; color: #ffe66d; }
+.passport-role-tag { font-size: 10px; color: #a8a4c2; margin-bottom: 12px; }
 
-/* Modal QR */
+.passport-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+.stat-pill { background: rgba(0,0,0,0.5); padding: 6px 2px; border-radius: 6px; }
+.stat-lbl { font-size: 8px; color: #a8a4c2; text-transform: uppercase; }
+.stat-pill b { display: block; font-size: 10px; margin-top: 2px; color: #fff; }
+
+/* ======================================================
+   MODAL RPG GLASS & TINH LINH BAN CHÚC PHÚC
+====================================================== */
 .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.82);
     backdrop-filter: blur(8px);
     z-index: 50;
     display: flex;
@@ -624,81 +681,79 @@ body, html {
     background: rgba(16, 12, 38, 0.96);
     border: 1.5px solid var(--border-gold);
     border-radius: 12px;
-    padding: 20px;
+    padding: 18px;
     max-width: 320px;
     width: 100%;
     text-align: center;
     position: relative;
-    box-shadow: 0 0 30px var(--gold-glow);
 }
-.close-modal {
-    position: absolute;
-    top: 8px;
-    right: 12px;
-    font-size: 24px;
+.close-modal { position: absolute; top: 8px; right: 12px; font-size: 22px; cursor: pointer; color: #a8a4c2; }
+
+/* Card Chúc Phúc Hào Quang */
+.rpg-blessing-box {
+    border: 2px solid #ffd166;
+    box-shadow: 0 0 30px rgba(255, 209, 102, 0.6);
+}
+.blessing-tier-tag {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: #000;
+    color: #ffd166;
+    border: 1px solid #ffd166;
+    margin-bottom: 8px;
+}
+.blessing-icon-large { font-size: 42px; margin: 6px 0; }
+.blessing-title { font-size: 14px; color: #ffe66d; }
+.blessing-desc { font-size: 11px; color: #e2dcff; margin-top: 4px; line-height: 1.35; }
+
+/* Modal Shop Chi Tiết */
+.shop-modal-ico-box { font-size: 40px; margin-bottom: 4px; }
+.shop-modal-desc { font-size: 11px; color: #a8a4c2; text-align: left; line-height: 1.4; }
+
+/* Quiz Answers */
+.quiz-answers-box { display: flex; flex-direction: column; gap: 6px; }
+.btn-quiz-ans {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border-magic);
+    color: #fff;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 11px;
     cursor: pointer;
-    color: #a8a4c2;
+    text-align: left;
 }
+.btn-quiz-ans:active { background: #7c6cff; }
+
+/* QR Box */
 .qr-box {
     background: #fff;
-    padding: 10px;
+    padding: 8px;
     border-radius: 8px;
-    width: 140px;
-    height: 140px;
-    margin: 14px auto;
+    width: 120px;
+    height: 120px;
+    margin: 12px auto;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 .qr-box img { width: 100%; height: 100%; }
-.qr-note { font-size: 10px; color: #a8a4c2; line-height: 1.4; }
-.hidden { display: none !important; }
+.qr-note { font-size: 9px; color: #a8a4c2; }
 
-/* ======================================================
-   KHỐI CODE THÊM MỚI: ADMIN GOD-MODE STYLES
-====================================================== */
-.admin-modal-box {
-    border: 1.5px solid #ff3366 !important;
-    box-shadow: 0 0 30px rgba(255, 51, 102, 0.45) !important;
-}
-
-.admin-grid-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-top: 6px;
-}
-
+/* Admin Modal */
+.admin-modal-box { border-color: #ff3366 !important; }
+.admin-grid-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .btn-admin-act {
-    background: rgba(35, 15, 45, 0.85);
+    background: rgba(40,15,45,0.85);
     border: 1px solid var(--border-magic);
     color: #fff;
-    padding: 8px 6px;
-    border-radius: 6px;
-    font-size: 11px;
+    padding: 6px 4px;
+    border-radius: 4px;
+    font-size: 10px;
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.15s ease;
 }
-
-.btn-admin-act:active {
-    transform: scale(0.96);
-    background: rgba(255, 51, 102, 0.3);
-}
-
-.btn-admin-act.btn-reset {
-    background: rgba(80, 10, 20, 0.65);
-    border-color: #ff3366;
-    color: #ff99aa;
-}
-
-/* Đảm bảo Logo luôn nhận chạm cảm ứng, không bị zoom khi bấm nhanh */
-#adminTriggerLogo {
-    pointer-events: auto !important;
-    touch-action: manipulation; /* Tắt double-tap-to-zoom để bấm nhanh không bị miss */
-    cursor: pointer;
-    user-select: none;
-    -webkit-user-select: none;
-    position: relative;
-    z-index: 99999; /* Đẩy lên cao nhất trên thanh topbar */
-}
+.btn-admin-act.btn-reset { background: rgba(90,10,25,0.8); border-color: #ff3366; color: #ff99aa; }
