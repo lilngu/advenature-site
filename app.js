@@ -19,7 +19,8 @@ import {
 // 1. CONFIG & DATA SYNC (BỎ DẤU / Ở CUỐI TRÁNH LỖI 404)
 // ======================================================
 const API_URL = "https://advenature-api.lilnguyen-dcr.workers.dev";
-const GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = "581456693359-uuhqadehjdotrjr37mo8iei02pvilthf.apps.googleusercontent.com";
+const IMGBB_API_KEY = "452ef7a840767c5950ace92ef266c8bd";
 
 let tempGoogleProfile = null;
 let selectedClass = "Ranger";
@@ -70,6 +71,12 @@ function updateTopBarUI() {
 
     const pct = Math.min(100, Math.floor((currentUser.cong_hien_points / 100) * 100));
     document.getElementById("rankProgressBar").style.width = pct + "%";
+
+    // Đồng bộ ảnh đại diện nếu có
+    if (currentUser.avatar_url) {
+        document.getElementById("userAvatarImg").src = currentUser.avatar_url;
+        document.getElementById("profAvatar").src = currentUser.avatar_url;
+    }
 }
 
 // ======================================================
@@ -1285,6 +1292,72 @@ document.getElementById("admResetData")?.addEventListener("click", () => {
     if (confirm("Reset về Tân Thủ?")) {
         localStorage.removeItem("advenature_user");
         location.reload();
+    }
+});
+
+// ======================================================
+// XỬ LÝ UPLOAD ẢNH ĐẠI DIỆN LÊN IMGBB & LƯU VÀO D1
+// ======================================================
+const inputAvatarFile = document.getElementById("inputAvatarFile");
+const btnTriggerUpload = document.getElementById("btnTriggerUpload");
+
+btnTriggerUpload?.addEventListener("click", () => {
+    inputAvatarFile?.click();
+});
+
+inputAvatarFile?.addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Giới hạn dung lượng tối đa 5MB
+    if (file.size > 5 * 1024 * 1024) {
+        alert("Vui lòng chọn ảnh có dung lượng dưới 5MB!");
+        return;
+    }
+
+    btnTriggerUpload.textContent = "⏳";
+    btnTriggerUpload.style.pointerEvents = "none";
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+        // 1. Gửi ảnh trực tiếp lên ImgBB API
+        const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+            method: "POST",
+            body: formData
+        });
+        const imgData = await res.json();
+
+        if (imgData.success) {
+            const newAvatarUrl = imgData.data.url;
+
+            // 2. Gửi link ảnh mới lên Cloudflare Worker để cập nhật bảng D1
+            await fetch(`${API_URL}/api/user/update-avatar`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    userId: currentUser.id,
+                    avatarUrl: newAvatarUrl
+                })
+            });
+
+            // 3. Cập nhật giao diện người dùng
+            currentUser.avatar_url = newAvatarUrl;
+            saveUserData();
+            document.getElementById("profAvatar").src = newAvatarUrl;
+            document.getElementById("userAvatarImg").src = newAvatarUrl;
+
+            alert("✦ Cập nhật ảnh đại diện thành công!");
+        } else {
+            alert("Lỗi tải ảnh: " + (imgData.error?.message || "Kiểm tra lại ImgBB API Key!"));
+        }
+    } catch (err) {
+        alert("Không thể kết nối đến máy chủ ảnh!");
+    } finally {
+        btnTriggerUpload.textContent = "📷";
+        btnTriggerUpload.style.pointerEvents = "auto";
+        inputAvatarFile.value = "";
     }
 });
 

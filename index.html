@@ -265,10 +265,15 @@
             
             <div class="passport-card-centered">
                 <!-- KHUNG AVATAR VUÔNG LỚN TRUNG TÂM -->
+                <!-- KHUNG AVATAR VUÔNG LỚN TRUNG TÂM KÈM NÚT CAMERA -->
                 <div class="avatar-square-frame">
                     <img src="https://api.dicebear.com/7.x/bottts/svg?seed=advenature" id="profAvatar" class="avatar-large-square" alt="Avatar">
+                    <!-- Nút bấm tải ảnh -->
+                    <div class="avatar-upload-badge" id="btnTriggerUpload" title="Đổi ảnh đại diện">📷</div>
                     <div class="passport-badge-floating" id="profCode">AW----</div>
                 </div>
+                <!-- Input chọn file ẩn -->
+                <input type="file" id="inputAvatarFile" accept="image/*" class="hidden">
 
                 <h3 id="profName" class="passport-name-main">Nhà Phiêu Lưu</h3>
                 <div class="passport-role-tag" id="profRole">Tân Thủ Rừng Già</div>

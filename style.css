@@ -1370,3 +1370,28 @@ body, html {
     font-weight: bold;
     box-shadow: 0 0 10px rgba(255, 209, 102, 0.3);
 }
+
+/* Nút icon máy ảnh đổi avatar */
+.avatar-upload-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: rgba(10, 8, 25, 0.85);
+    border: 1px solid var(--border-gold);
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    z-index: 5;
+    box-shadow: 0 0 8px rgba(0,0,0,0.6);
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.avatar-upload-badge:active {
+    transform: scale(0.88);
+    background: #7c6cff;
+}
