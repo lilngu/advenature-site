@@ -6,165 +6,176 @@ import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js"
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { ConvexGeometry } from "three/addons/geometries/ConvexGeometry.js";
 
-const API_URL = "https://advenature-api.YOUR-SUBDOMAIN.workers.dev";
+// ======================================================
+// CONFIG & DATA SYNC (CLOUDFLARE WORKERS API)
+// ======================================================
+const API_URL = "https://advenature-api.YOUR-SUBDOMAIN.workers.dev"; // Thay subdomain worker của bạn
 
-// --- QUẢN LÝ DỮ LIỆU USER THỰC TẾ ---
-let currentUser = JSON.parse(localStorage.getItem("advenature_user")) || {
-    id: "user_" + Math.floor(1000 + Math.random() * 9000),
-    full_name: "Nhà Phiêu Lưu",
-    adventurer_code: "AW" + Math.floor(1000 + Math.random() * 9000),
-    tinh_quang_points: 1, // 1 lượt quay miễn phí ban đầu
-    tinh_thach_points: 0,
-    cong_hien_points: 0,
-    gacha_counter: 0
-};
+let currentUser = JSON.parse(localStorage.getItem("advenature_user")) || null;
+let isFirstGacha = !currentUser;
 
-// Cập nhật Topbar UI
+// Khởi tạo thông tin khách nếu chưa đăng nhập
+if (!currentUser) {
+    currentUser = {
+        id: "guest_" + Math.random().toString(36).substring(2, 9),
+        full_name: "Khách Lữ Hành",
+        adventurer_code: "AW" + Math.floor(1000 + Math.random() * 9000),
+        role: "Tân Thủ",
+        tinh_quang_points: 1, // Lượt quay FREE đầu tiên
+        tinh_thach_points: 0,
+        cong_hien_points: 0,
+        gacha_counter: 0
+    };
+}
+
 function updateTopBarUI() {
-    document.getElementById("valTinhQuang").innerText = currentUser.tinh_quang_points.toLocaleString();
-    document.getElementById("valTinhThach").innerText = currentUser.tinh_thach_points.toLocaleString();
-    document.getElementById("userDisplayName").innerText = currentUser.full_name;
-    document.getElementById("userAdvCode").innerText = currentUser.adventurer_code;
-    localStorage.setItem("advenature_user", JSON.stringify(currentUser));
+    document.getElementById("valTinhQuang").textContent = currentUser.tinh_quang_points.toLocaleString();
+    document.getElementById("valTinhThach").textContent = currentUser.tinh_thach_points.toLocaleString();
+    document.getElementById("valCongHien").textContent = currentUser.cong_hien_points.toLocaleString();
+    document.getElementById("userDisplayName").textContent = currentUser.full_name;
+    document.getElementById("userAdvenCode").textContent = currentUser.adventurer_code;
+    document.getElementById("userRoleBadge").textContent = currentUser.role;
+
+    const summonBtnCost = document.getElementById("summonBtnCost");
+    if (currentUser.gacha_counter === 0) {
+        summonBtnCost.textContent = "FREE";
+    } else {
+        summonBtnCost.textContent = "1 🔮";
+    }
 }
 updateTopBarUI();
 
-// ==========================================
-// 1. THIẾT LẬP NAVIGATION SPA
-// ==========================================
-const navButtons = document.querySelectorAll(".nav-btn");
-const viewPanels = document.querySelectorAll(".view-panel");
-
-navButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-        const targetId = btn.dataset.target;
-        if (!targetId) return;
-
-        navButtons.forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-
-        if (targetId === "gacha-view") {
-            viewPanels.forEach(p => p.classList.add("hidden"));
-            document.getElementById("gacha-view").classList.remove("hidden");
-            document.getElementById("gacha-view").classList.add("active");
-        } else {
-            const targetView = document.getElementById(targetId);
-            if (targetView) targetView.classList.remove("hidden");
-        }
-    });
-});
-
-// Chuyển Tab trong Inventory
-const invTabs = document.querySelectorAll(".inv-tab-btn");
-invTabs.forEach(btn => {
-    btn.addEventListener("click", () => {
-        invTabs.forEach(b => b.classList.remove("active"));
-        document.querySelectorAll(".inv-content").forEach(c => c.classList.add("hidden"));
-        btn.classList.add("active");
-        document.getElementById(btn.dataset.sub).classList.remove("hidden");
-    });
-});
-
-// ==========================================
-// 2. SCENE 3D, BỆ ĐÁ & HẠT SÁNG VORTEX
-// ==========================================
+// ======================================================
+// 3D SCENE & ENGINE SETUP (CHUẨN TỪ GACHA-TEST.HTML)
+// ======================================================
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x03030a);
 scene.fog = new THREE.FogExp2(0x050514, 0.035);
 
 const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
-camera.position.set(0, 0.9, 7.5);
+camera.position.set(0, 0.8, 8);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.2;
 document.getElementById("app-3d").appendChild(renderer.domElement);
 
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
-composer.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.1, 0.5, 0.1));
+composer.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.2, 0.5, 0.1));
 composer.addPass(new OutputPass());
 
-// Ánh sáng tạo khối
-scene.add(new THREE.AmbientLight(0x443366, 0.6));
-const keyLight = new THREE.DirectionalLight(0xffffff, 2.2);
-keyLight.position.set(5, 7, 4);
+// Lightings
+scene.add(new THREE.AmbientLight(0x443366, 0.5));
+const keyLight = new THREE.DirectionalLight(0xffffff, 2.0);
+keyLight.position.set(5, 6, 4);
 scene.add(keyLight);
 
-const pointLight = new THREE.PointLight(0xa58cff, 2.0, 15);
+const pointLight = new THREE.PointLight(0xa58cff, 0, 20);
 pointLight.position.set(0, 1, 2);
 scene.add(pointLight);
 
-// --- BỆ ĐÁ MA PHÁP (ALTAR PEDESTAL) ---
-const altarGroup = new THREE.Group();
-const baseGeo = new THREE.CylinderGeometry(2.2, 2.5, 0.4, 32);
-const altarMat = new THREE.MeshStandardMaterial({ color: 0x16182e, roughness: 0.8, metalness: 0.2 });
-const altarBase = new THREE.Mesh(baseGeo, altarMat);
-altarBase.position.y = -1.2;
-altarGroup.add(altarBase);
+const clock = new THREE.Clock();
 
-const ringGeo = new THREE.RingGeometry(1.2, 1.9, 32);
-const ringMat = new THREE.MeshBasicMaterial({ color: 0x5c7cfa, side: THREE.DoubleSide, transparent: true, opacity: 0.6 });
-const runeRing = new THREE.Mesh(ringGeo, ringMat);
-runeRing.rotation.x = -Math.PI / 2;
-runeRing.position.y = -0.99;
-altarGroup.add(runeRing);
-scene.add(altarGroup);
-
-// --- HẠT SÁNG VORTEX (1000 HẠT) ---
-const PARTICLE_COUNT = 1000;
+// ======================================================
+// PARTICLES & CORE VORTEX (KHÔI PHỤC ĐẦY ĐỦ)
+// ======================================================
+const PARTICLE_COUNT = 1800;
 const particlePositions = new Float32Array(PARTICLE_COUNT * 3);
+const particleColors = new Float32Array(PARTICLE_COUNT * 3);
 const particleData = [];
+const colorPalette = [
+    new THREE.Color(0x7c6cff), new THREE.Color(0xff71ce), new THREE.Color(0x67e8ff),
+    new THREE.Color(0xffe66d), new THREE.Color(0xa878ff), new THREE.Color(0x75ffb2)
+];
 
 for (let i = 0; i < PARTICLE_COUNT; i++) {
-    const radius = THREE.MathUtils.randFloat(1.5, 6);
+    const radius = THREE.MathUtils.randFloat(2.5, 9);
     const theta = Math.random() * Math.PI * 2;
-    const y = THREE.MathUtils.randFloat(-1.0, 3.5);
+    const phi = Math.acos(THREE.MathUtils.randFloat(-1, 1));
 
-    particlePositions[i * 3] = Math.cos(theta) * radius;
+    const x = radius * Math.sin(phi) * Math.cos(theta);
+    const y = radius * Math.cos(phi);
+    const z = radius * Math.sin(phi) * Math.sin(theta);
+
+    particlePositions[i * 3] = x;
     particlePositions[i * 3 + 1] = y;
-    particlePositions[i * 3 + 2] = Math.sin(theta) * radius;
+    particlePositions[i * 3 + 2] = z;
 
-    particleData.push({ radius, angle: theta, speed: THREE.MathUtils.randFloat(0.5, 1.5), y });
+    const color = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+    particleColors[i * 3] = color.r;
+    particleColors[i * 3 + 1] = color.g;
+    particleColors[i * 3 + 2] = color.b;
+
+    particleData.push({
+        baseX: x, baseY: y, baseZ: z,
+        driftSpeed: THREE.MathUtils.randFloat(0.4, 1.2),
+        driftRadius: THREE.MathUtils.randFloat(0.3, 0.7),
+        phaseX: Math.random() * Math.PI * 2,
+        phaseY: Math.random() * Math.PI * 2,
+        phaseZ: Math.random() * Math.PI * 2,
+        radius, angle: theta,
+        vortexSpeed: THREE.MathUtils.randFloat(1.5, 3.5),
+        random: Math.random()
+    });
 }
 
-const particleGeo = new THREE.BufferGeometry();
-particleGeo.setAttribute("position", new THREE.BufferAttribute(particlePositions, 3));
-const particles = new THREE.Points(particleGeo, new THREE.PointsMaterial({
-    size: 0.05, color: 0xa58cff, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending
+const particleGeometry = new THREE.BufferGeometry();
+particleGeometry.setAttribute("position", new THREE.BufferAttribute(particlePositions, 3));
+particleGeometry.setAttribute("color", new THREE.BufferAttribute(particleColors, 3));
+const particles = new THREE.Points(particleGeometry, new THREE.PointsMaterial({
+    size: 0.07, vertexColors: true, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false
 }));
 scene.add(particles);
 
-// ==========================================
-// 3. LOGIC 30 BẢNG MÀU & 990 BIẾN THỂ CHUẨN
-// ==========================================
+// Lõi năng lượng (Core)
+const coreGroup = new THREE.Group();
+scene.add(coreGroup);
+const coreMaterial = new THREE.MeshBasicMaterial({ color: 0xd9ccff, transparent: true, opacity: 0 });
+coreGroup.add(new THREE.Mesh(new THREE.SphereGeometry(0.8, 32, 32), coreMaterial));
+const coreGlowMaterial = new THREE.MeshBasicMaterial({
+    color: 0x8f75ff, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false
+});
+coreGroup.add(new THREE.Mesh(new THREE.SphereGeometry(1.15, 32, 32), coreGlowMaterial));
+
+// ======================================================
+// 30 BẢNG MÀU & 11 BẬC MẶT THEO DATA.MD (990 BIẾN THỂ)
+// ======================================================
 const crystalPalettes = [
+    // HỆ 1: HỎA DIỆM & HUYẾT TINH
     { prefix: "🔥", sysIndex: 1, name: "Huyết Ngọc Ruby", color: 0xd90429, emissive: 0x9b001a },
     { prefix: "🔥", sysIndex: 2, name: "Thạch Anh Hồng", color: 0xff758f, emissive: 0xc9184a },
     { prefix: "🔥", sysIndex: 3, name: "San Hô Lửa", color: 0xff4d6d, emissive: 0xa4133c },
     { prefix: "🔥", sysIndex: 4, name: "Nham Thạch Hỏa Diệm", color: 0xff2a00, emissive: 0x8a0000 },
     { prefix: "🔥", sysIndex: 5, name: "Máu Rồng Garnet", color: 0x800f2f, emissive: 0x4a0011 },
+    // HỆ 2: THÁI DƯƠNG & HOÀNG KIM
     { prefix: "☀️", sysIndex: 1, name: "Hổ Phách Mặt Trời", color: 0xff8800, emissive: 0xcc5500 },
     { prefix: "☀️", sysIndex: 2, name: "Hoàng Kim Đế Vương", color: 0xffb703, emissive: 0xd48b00 },
     { prefix: "☀️", sysIndex: 3, name: "Tinh Thể Thái Dương", color: 0xffd000, emissive: 0xe67e00 },
     { prefix: "☀️", sysIndex: 4, name: "Đồng Đỏ Cổ Đại", color: 0xcd6e4e, emissive: 0x8c3a1e },
     { prefix: "☀️", sysIndex: 5, name: "Hoàng Thạch Topaz", color: 0xffa200, emissive: 0xcc6600 },
+    // HỆ 3: THẢO MỘC & PHONG MA
     { prefix: "🌿", sysIndex: 1, name: "Ngọc Lục Bảo Emerald", color: 0x10b981, emissive: 0x047857 },
     { prefix: "🌿", sysIndex: 2, name: "Băng Lục Bạc Hà", color: 0x2ec4b6, emissive: 0x008080 },
     { prefix: "🌿", sysIndex: 3, name: "Rừng Thần Malachite", color: 0x2d6a4f, emissive: 0x1b4332 },
     { prefix: "🌿", sysIndex: 4, name: "Dạ Quang Độc Dược", color: 0x70e000, emissive: 0x38b000 },
     { prefix: "🌿", sysIndex: 5, name: "Ngọc Bích Phong Ma", color: 0x52b788, emissive: 0x1b7a4e },
+    // HỆ 4: BĂNG TINH & HẢI DƯƠNG
     { prefix: "❄️", sysIndex: 1, name: "Hải Lam Ngọc Aquamarine", color: 0x4cc9f0, emissive: 0x0077b6 },
     { prefix: "❄️", sysIndex: 2, name: "Băng Tinh Bắc Cực", color: 0xa0c4ff, emissive: 0x0096c7 },
     { prefix: "❄️", sysIndex: 3, name: "Lam Tinh Thần Tú", color: 0x00f5d4, emissive: 0x00bbf9 },
     { prefix: "❄️", sysIndex: 4, name: "Sương Lam Huyền Ảo", color: 0xbde0fe, emissive: 0x48cae4 },
     { prefix: "❄️", sysIndex: 5, name: "Vực Sâu Biển Cả", color: 0x006d77, emissive: 0x004953 },
+    // HỆ 5: THIÊN HÀ & THẦN ĐIỆN
     { prefix: "⚡", sysIndex: 1, name: "Lam Bảo Sapphire", color: 0x2b4c7e, emissive: 0x132a4a },
     { prefix: "⚡", sysIndex: 2, name: "Dạ Khúc Indigo", color: 0x3a0ca3, emissive: 0x1e0363 },
     { prefix: "⚡", sysIndex: 3, name: "Bão Điện Thiên Không", color: 0x4361ee, emissive: 0x1a33b0 },
     { prefix: "⚡", sysIndex: 4, name: "Thanh Lam Cổ Thần", color: 0x1d3557, emissive: 0x457b9d },
     { prefix: "⚡", sysIndex: 5, name: "Tử Lam Hư Vô", color: 0x3f37c9, emissive: 0x241d99 },
+    // HỆ 6: MA PHÁP & TINH VÂN
     { prefix: "🔮", sysIndex: 1, name: "Thạch Anh Tím Amethyst", color: 0x7209b7, emissive: 0x480ca8 },
     { prefix: "🔮", sysIndex: 2, name: "Tinh Vân Nebula", color: 0x9d4edd, emissive: 0x5a189a },
     { prefix: "🔮", sysIndex: 3, name: "Tử Đằng Nguyệt Tinh", color: 0xc77dff, emissive: 0x7b2cbf },
@@ -177,135 +188,253 @@ let lootBox = null;
 let currentGemData = null;
 
 function createProceduralRock() {
-    if (lootBox) scene.remove(lootBox);
+    if (lootBox) {
+        scene.remove(lootBox);
+        lootBox.traverse(c => {
+            if (c.geometry) c.geometry.dispose();
+            if (c.material) c.material.dispose();
+        });
+    }
 
     const faceCount = FACE_TIERS[Math.floor(Math.random() * FACE_TIERS.length)];
     const shapeStyles = [
-        { id: 1, name: "Trụ Tinh Thể", rx: 0.9, ry: 2.1, rz: 0.9 },
-        { id: 2, name: "Cự Thạch",     rx: 1.4, ry: 1.4, rz: 1.4 },
-        { id: 3, name: "Phiến Thạch",  rx: 1.7, ry: 1.4, rz: 0.7 }
+        { id: 1, name: "Trụ Tinh Thể", rx: [0.8, 1.2], ry: [1.8, 2.5], rz: [0.8, 1.2] },
+        { id: 2, name: "Cự Thạch",     rx: [1.2, 1.6], ry: [1.2, 1.6], rz: [1.2, 1.6] },
+        { id: 3, name: "Phiến Thạch",  rx: [1.5, 2.0], ry: [1.2, 1.7], rz: [0.6, 0.9] }
     ];
     const shape = shapeStyles[Math.floor(Math.random() * shapeStyles.length)];
     const palette = crystalPalettes[Math.floor(Math.random() * crystalPalettes.length)];
 
     const gemCode = `${palette.prefix}${palette.sysIndex}${faceCount}${shape.id}`;
-    currentGemData = { code: gemCode, name: palette.name, shape: shape.name, faceCount: faceCount };
+    currentGemData = {
+        code: gemCode,
+        name: palette.name,
+        shape: shape.name,
+        faceCount: faceCount
+    };
 
     const points = [];
+    const phi = Math.PI * (Math.sqrt(5) - 1);
+    const rx = THREE.MathUtils.randFloat(...shape.rx);
+    const ry = THREE.MathUtils.randFloat(...shape.ry);
+    const rz = THREE.MathUtils.randFloat(...shape.rz);
+
     for (let i = 0; i < faceCount; i++) {
         const y = 1 - (i / (faceCount - 1 || 1)) * 2;
         const radiusAtY = Math.sqrt(Math.max(0, 1 - y * y));
-        const theta = Math.PI * (Math.sqrt(5) - 1) * i;
+        const theta = phi * i + THREE.MathUtils.randFloatSpread(0.6);
+        const noise = THREE.MathUtils.randFloat(0.85, 1.25);
         points.push(new THREE.Vector3(
-            Math.cos(theta) * radiusAtY * shape.rx,
-            y * shape.ry + 0.3, // Nâng cao vừa vặn trên bệ
-            Math.sin(theta) * radiusAtY * shape.rz
+            Math.cos(theta) * radiusAtY * rx * noise,
+            y * ry * noise,
+            Math.sin(theta) * radiusAtY * rz * noise
         ));
     }
 
     const geometry = new ConvexGeometry(points);
+    geometry.computeVertexNormals();
+
     const material = new THREE.MeshStandardMaterial({
         color: palette.color,
         emissive: palette.emissive,
-        emissiveIntensity: 0.45,
-        roughness: 0.15,
-        metalness: 0.25,
+        emissiveIntensity: 0.35,
+        roughness: 0.18,
+        metalness: 0.35,
         flatShading: true
     });
 
     lootBox = new THREE.Mesh(geometry, material);
-    lootBox.add(new THREE.LineSegments(new THREE.EdgesGeometry(geometry), new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.6, transparent: true })));
+    lootBox.add(new THREE.LineSegments(new THREE.EdgesGeometry(geometry), new THREE.LineBasicMaterial({
+        color: 0xffffff, transparent: true, opacity: 0.65
+    })));
+
+    lootBox.scale.setScalar(0.001);
+    lootBox.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
     scene.add(lootBox);
 
     return currentGemData;
 }
 
-// ==========================================
-// 4. LUỒNG TRIỆU HỒI (GACHA EVENT)
-// ==========================================
+// ======================================================
+// STATE MACHINE (IDLE -> GACHA -> CORE -> LOOT -> CLAIMED)
+// ======================================================
+const STATE = { IDLE: "idle", GACHA: "gacha", CORE: "core", LOOT: "loot", CLAIMED: "claimed" };
+let state = STATE.IDLE;
+let stateStart = performance.now();
+
 const gachaBtn = document.getElementById("gachaButton");
-const lootText = document.getElementById("lootText");
 const claimContainer = document.getElementById("claimContainer");
 const claimBtn = document.getElementById("claimButton");
+const lootText = document.getElementById("lootText");
 const crystalHeader = document.getElementById("crystalNameHeader");
 
 gachaBtn.addEventListener("click", () => {
-    if (currentUser.tinh_quang_points < 1) {
+    if (state !== STATE.IDLE && state !== STATE.CLAIMED) return;
+    if (currentUser.tinh_quang_points < 1 && currentUser.gacha_counter > 0) {
         alert("Bạn đã hết Điểm Tinh Quang! Hãy làm nhiệm vụ để nhận thêm.");
         return;
     }
 
-    // Trừ điểm ngay
-    currentUser.tinh_quang_points -= 1;
-    currentUser.gacha_counter += 1;
-    updateTopBarUI();
+    gachaBtn.style.display = "none";
+    claimContainer.classList.add("hidden");
+    lootText.classList.remove("show");
 
-    gachaBtn.classList.add("hidden");
+    coreGroup.position.set(0, 0, 0);
+    coreGroup.scale.setScalar(0.001);
+
     const gem = createProceduralRock();
+    crystalHeader.textContent = gem.name;
 
-    crystalHeader.innerText = gem.name.toUpperCase();
     lootText.innerHTML = `
-        <div style="font-size: 18px; font-weight: bold; color: #fff4c4;">${gem.name}</div>
-        <div style="font-size: 12px; color: #c9c3ff; margin-top: 4px;">
-            MÃ: [${gem.code}] • ${gem.shape.toUpperCase()} • ${gem.faceCount} MẶT
+        <div style="font-size: 18px; font-weight: bold; color: #fff5c0;">${gem.name}</div>
+        <div style="font-size: 12px; color: #c9c3ff; letter-spacing: 2px; margin-top: 4px;">
+            ✦ [${gem.shape.toUpperCase()}] • ${gem.faceCount} DIỆN THỂ • MÃ: ${gem.code} ✦
         </div>
     `;
-    lootText.classList.add("show");
-    claimContainer.classList.remove("hidden");
+
+    state = STATE.GACHA;
+    stateStart = performance.now();
 });
 
 claimBtn.addEventListener("click", async () => {
+    if (state !== STATE.LOOT) return;
+    state = STATE.CLAIMED;
+    stateStart = performance.now();
+
     claimContainer.classList.add("hidden");
     lootText.classList.remove("show");
-    gachaBtn.classList.remove("hidden");
-    crystalHeader.innerText = "KHOÁNG THẠCH TINH NGUYÊN";
 
-    // Lưu vào bộ nhớ cục bộ
-    let myGems = JSON.parse(localStorage.getItem("advenature_gems")) || [];
-    if (!myGems.find(g => g.code === currentGemData.code)) {
-        myGems.push(currentGemData);
-        localStorage.setItem("advenature_gems", JSON.stringify(myGems));
-    }
-
-    // Gửi đồng bộ lên Cloudflare D1
+    // Xử lý gửi dữ liệu lên Backend Cloudflare D1
     try {
-        await fetch(`${API_URL}/api/gacha`, {
+        const res = await fetch(`${API_URL}/api/gacha`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ userId: currentUser.id, gemData: currentGemData })
         });
+        const data = await res.json();
+        
+        if (data.success) {
+            currentUser.gacha_counter = data.counter;
+            currentUser.tinh_quang_points = Math.max(0, currentUser.tinh_quang_points - 1);
+            localStorage.setItem("advenature_user", JSON.stringify(currentUser));
+            updateTopBarUI();
+
+            if (data.blessing) {
+                alert(`🎉 TINH LINH BAN CHÚC PHÚC!\nBạn nhận được: [${data.blessing.name}]`);
+            }
+        }
     } catch (e) {
-        console.log("Offline mode - đã ghi nhận vào LocalStorage.");
+        // Dự phòng Offline Cache
+        currentUser.gacha_counter++;
+        currentUser.tinh_quang_points = Math.max(0, currentUser.tinh_quang_points - 1);
+        localStorage.setItem("advenature_user", JSON.stringify(currentUser));
+        updateTopBarUI();
     }
+
+    setTimeout(() => {
+        gachaBtn.style.display = "flex";
+        state = STATE.IDLE;
+    }, 2000);
 });
 
-// Render Loop
-function animate() {
-    requestAnimationFrame(animate);
+// Animations Loop
+function updateParticles(elapsed, progress) {
+    const positions = particleGeometry.attributes.position.array;
+    const totalTime = clock.getElapsedTime();
 
-    // Xoay bệ ma pháp & đá
-    runeRing.rotation.z += 0.005;
-    if (lootBox) {
-        lootBox.rotation.y += 0.008;
-    }
-
-    // Cập nhật hạt bụi sao
-    const pos = particleGeo.attributes.position.array;
     for (let i = 0; i < PARTICLE_COUNT; i++) {
         const p = particleData[i];
-        p.angle += p.speed * 0.01;
-        pos[i * 3] = Math.cos(p.angle) * p.radius;
-        pos[i * 3 + 2] = Math.sin(p.angle) * p.radius;
-    }
-    particleGeo.attributes.position.needsUpdate = true;
+        const wanderX = p.baseX + Math.sin(totalTime * p.driftSpeed + p.phaseX) * p.driftRadius;
+        const wanderY = p.baseY + Math.cos(totalTime * p.driftSpeed * 0.8 + p.phaseY) * p.driftRadius;
+        const wanderZ = p.baseZ + Math.sin(totalTime * p.driftSpeed * 1.2 + p.phaseZ) * p.driftRadius;
 
+        if (state === STATE.IDLE) {
+            positions[i * 3] = wanderX;
+            positions[i * 3 + 1] = wanderY;
+            positions[i * 3 + 2] = wanderZ;
+        } else if (state === STATE.GACHA) {
+            const currentAngle = p.angle + (elapsed * p.vortexSpeed) * (1 + progress * 2.5);
+            const collapse = Math.max(0, (progress - 0.45) / 0.55);
+            const currentRadius = THREE.MathUtils.lerp(p.radius, 0.25, collapse);
+            const verticalWave = Math.sin(elapsed * 4 + p.random * 10) * 0.3 * (1 - collapse);
+
+            positions[i * 3] = Math.cos(currentAngle) * currentRadius;
+            positions[i * 3 + 1] = Math.sin(currentAngle * 1.5) * currentRadius * 0.35 + verticalWave;
+            positions[i * 3 + 2] = Math.sin(currentAngle) * currentRadius;
+        }
+    }
+    particleGeometry.attributes.position.needsUpdate = true;
+}
+
+function updateState(now) {
+    const elapsed = (now - stateStart) / 1000;
+
+    if (state === STATE.IDLE) {
+        updateParticles(elapsed, 0);
+    } else if (state === STATE.GACHA) {
+        const progress = Math.min(elapsed / 4, 1);
+        updateParticles(elapsed, progress);
+        const appear = Math.max(0, (progress - 0.7) / 0.3);
+        coreMaterial.opacity = appear;
+        coreGlowMaterial.opacity = appear * 0.7;
+        coreGroup.scale.setScalar(appear);
+
+        if (elapsed >= 4) {
+            state = STATE.CORE;
+            stateStart = now;
+        }
+    } else if (state === STATE.CORE) {
+        if (elapsed >= 1.2) {
+            coreMaterial.opacity = 0;
+            coreGlowMaterial.opacity = 0;
+            coreGroup.scale.setScalar(0);
+            state = STATE.LOOT;
+            stateStart = now;
+            lootText.classList.add("show");
+            claimContainer.classList.remove("hidden");
+        }
+    } else if (state === STATE.LOOT && lootBox) {
+        lootBox.rotation.y += 0.008;
+        lootBox.scale.lerp(new THREE.Vector3(1, 1, 1), 0.06);
+    } else if (state === STATE.CLAIMED && lootBox) {
+        lootBox.position.y -= 0.04;
+        lootBox.scale.multiplyScalar(0.95);
+    }
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+    const elapsed = clock.getElapsedTime();
+
+    if (state === STATE.GACHA || state === STATE.CORE) {
+        pointLight.intensity = 8 + Math.sin(elapsed * 5) * 2;
+    } else if (state === STATE.LOOT) {
+        pointLight.intensity = THREE.MathUtils.lerp(pointLight.intensity, 4.0, 0.05);
+    } else {
+        pointLight.intensity = THREE.MathUtils.lerp(pointLight.intensity, 0, 0.03);
+    }
+
+    updateState(performance.now());
     composer.render();
 }
 animate();
 
+// Window Resize
 window.addEventListener("resize", () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
     composer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// Chuyển Tab Navigation
+document.querySelectorAll(".nav-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".view-panel").forEach(p => p.classList.add("hidden"));
+
+        btn.classList.add("active");
+        const target = document.getElementById(btn.dataset.target);
+        if (target) target.classList.remove("hidden");
+    });
 });
