@@ -353,7 +353,46 @@
             <div id="quizAnswersBox" class="quiz-answers-box"></div>
         </div>
     </div>
+<!-- ====================================================== -->
+    <!-- MODAL RPG: CHI TIẾT & PREVIEW 3D TINH QUANG THẠCH      -->
+    <!-- ====================================================== -->
+    <div id="gemPreviewModal" class="modal-overlay hidden">
+        <div class="modal-box rpg-gem-preview-box">
+            <span class="close-modal" id="closeGemPreviewModal">&times;</span>
+            
+            <!-- KHUNG CANVAS 3D XOAY NGẮM ĐÁ -->
+            <div class="gem-preview-3d-wrapper">
+                <div id="gem3dPreviewContainer"></div>
+            </div>
 
+            <!-- THÔNG TIN CHI TIẾT VIÊN ĐÁ -->
+            <div class="gem-preview-info">
+                <div class="preview-badge-row">
+                    <span class="preview-sys-tag" id="previewGemSysTag">
+                        <i class="rpg-ico ico-elem-fire"></i> Hỏa Diệm
+                    </span>
+                    <span class="preview-code-tag" id="previewGemCodeTag">☀️3243</span>
+                </div>
+                
+                <h3 id="previewGemTitle" class="preview-title">Tinh Thể Thái Dương</h3>
+                
+                <div class="preview-stats-grid">
+                    <div class="preview-stat-card">
+                        <span class="p-stat-lbl">Hình Thái</span>
+                        <b class="p-stat-val" id="previewGemShape">Phiến Thạch</b>
+                    </div>
+                    <div class="preview-stat-card">
+                        <span class="p-stat-lbl">Cấp Bậc Mặt</span>
+                        <b class="p-stat-val" id="previewGemFaces">24 Diện Thể</b>
+                    </div>
+                </div>
+
+                <p id="previewGemDesc" class="preview-desc">
+                    Khoáng thạch cổ thụ tích tụ linh lực nguyên tố thuần khiết của Rừng Tinh Linh.
+                </p>
+            </div>
+        </div>
+    </div>
     <!-- 9. MODAL QR OFFLINE / BUFF ITEM -->
     <div id="itemModal" class="modal-overlay hidden">
         <div class="modal-box rpg-glass-box">

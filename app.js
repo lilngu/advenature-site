@@ -742,6 +742,143 @@ document.querySelectorAll(".filter-btn").forEach(btn => {
     });
 });
 
+// ======================================================
+// MINI THREE.JS PREVIEW CHO TỪNG VIÊN ĐÁ KHI CLICK
+// ======================================================
+let previewRenderer = null;
+let previewScene = null;
+let previewCamera = null;
+let previewControls = null;
+let previewMesh = null;
+let isPreviewActive = false;
+
+const gemPreviewModal = document.getElementById("gemPreviewModal");
+const gem3dContainer = document.getElementById("gem3dPreviewContainer");
+
+function initMiniGem3D() {
+    if (previewRenderer) return;
+
+    previewScene = new THREE.Scene();
+    previewCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+    previewCamera.position.set(0, 0.5, 4.5);
+
+    previewRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    previewRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    previewRenderer.setSize(170, 170);
+    previewRenderer.outputColorSpace = THREE.SRGBColorSpace;
+    gem3dContainer.appendChild(previewRenderer.domElement);
+
+    previewControls = new OrbitControls(previewCamera, previewRenderer.domElement);
+    previewControls.enableZoom = false;
+    previewControls.enablePan = false;
+    previewControls.enableDamping = true;
+    previewControls.dampingFactor = 0.08;
+
+    previewScene.add(new THREE.AmbientLight(0xffffff, 0.8));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 2.5);
+    dirLight.position.set(4, 5, 3);
+    previewScene.add(dirLight);
+
+    function animatePreview() {
+        if (!isPreviewActive) return;
+        requestAnimationFrame(animatePreview);
+        if (previewMesh) {
+            previewMesh.rotation.y += 0.01;
+            previewMesh.rotation.x += 0.005;
+        }
+        previewControls.update();
+        previewRenderer.render(previewScene, previewCamera);
+    }
+    animatePreview();
+}
+
+function openGemPreviewModal(gemData) {
+    initMiniGem3D();
+
+    document.getElementById("previewGemCodeTag").textContent = gemData.isUnlocked ? gemData.code : "???";
+    document.getElementById("previewGemTitle").textContent = gemData.isUnlocked ? gemData.name : "Tinh Quang Thạch Ẩn Danh";
+    document.getElementById("previewGemShape").textContent = gemData.isUnlocked ? gemData.shapeName : "Chưa khám phá";
+    document.getElementById("previewGemFaces").textContent = gemData.isUnlocked ? `${gemData.face} Diện Thể` : "?? Mặt";
+    document.getElementById("previewGemSysTag").innerHTML = `
+        <i class="rpg-ico ico-elem-${gemData.sysKey}"></i> ${gemData.sysName || 'Nguyên Tố'}
+    `;
+
+    document.getElementById("previewGemDesc").textContent = gemData.isUnlocked 
+        ? `Đã mở khóa! Khoáng thạch chứa linh lực nguyên tố tinh khiết bậc ${gemData.face} diện thể.`
+        : "Biến thể huyền bí này chưa được khai mở. Hãy triệu hồi tại Bệ Đá Tinh Quang để thu thập vào bộ sưu tập!";
+
+    // Xóa mô hình cũ trong mini scene
+    if (previewMesh) {
+        previewScene.remove(previewMesh);
+        if (previewMesh.geometry) previewMesh.geometry.dispose();
+        if (previewMesh.material) previewMesh.material.dispose();
+        previewMesh = null;
+    }
+
+    // Tái tạo hình thái 3D viên đá chuẩn xác theo mã
+    const shape = SHAPE_STYLES.find(s => s.id === gemData.shapeId) || SHAPE_STYLES[0];
+    const points = [];
+    const phi = Math.PI * (Math.sqrt(5) - 1);
+    const rx = (shape.rx[0] + shape.rx[1]) / 2;
+    const ry = (shape.ry[0] + shape.ry[1]) / 2;
+    const rz = (shape.rz[0] + shape.rz[1]) / 2;
+
+    for (let i = 0; i < gemData.face; i++) {
+        const y = 1 - (i / (gemData.face - 1 || 1)) * 2;
+        const radiusAtY = Math.sqrt(Math.max(0, 1 - y * y));
+        const theta = phi * i;
+        points.push(new THREE.Vector3(
+            Math.cos(theta) * radiusAtY * rx,
+            y * ry,
+            Math.sin(theta) * radiusAtY * rz
+        ));
+    }
+
+    const geo = new ConvexGeometry(points);
+    geo.computeVertexNormals();
+
+    const mat = new THREE.MeshStandardMaterial({
+        color: gemData.isUnlocked ? gemData.color : 0x222233,
+        emissive: gemData.isUnlocked ? gemData.emissive : 0x000000,
+        emissiveIntensity: gemData.isUnlocked ? 0.45 : 0,
+        roughness: gemData.isUnlocked ? 0.2 : 0.8,
+        metalness: 0.35,
+        flatShading: true,
+        wireframe: !gemData.isUnlocked // Nếu chưa mở khóa thì hiện khung lưới bí ẩn
+    });
+
+    previewMesh = new THREE.Mesh(geo, mat);
+    previewMesh.add(new THREE.LineSegments(
+        new THREE.EdgesGeometry(geo),
+        new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: gemData.isUnlocked ? 0.7 : 0.2 })
+    ));
+    previewScene.add(previewMesh);
+
+    // Kích hoạt render và mở modal
+    isPreviewActive = true;
+    gemPreviewModal.classList.remove("hidden");
+    previewCamera.position.set(0, 0.5, 4.5);
+    previewControls.target.set(0, 0, 0);
+
+    // Tiếp tục vòng lặp render mini
+    function loop() {
+        if (!isPreviewActive) return;
+        requestAnimationFrame(loop);
+        if (previewMesh) {
+            previewMesh.rotation.y += 0.01;
+            previewMesh.rotation.x += 0.005;
+        }
+        previewControls.update();
+        previewRenderer.render(previewScene, previewCamera);
+    }
+    loop();
+}
+
+document.getElementById("closeGemPreviewModal").addEventListener("click", () => {
+    isPreviewActive = false; // Tắt vòng lặp render mini để tiết kiệm pin
+    gemPreviewModal.classList.add("hidden");
+});
+
 function renderInventoryGems() {
     const grid = document.getElementById("gemGrid");
     if (!grid) return;
@@ -753,7 +890,6 @@ function renderInventoryGems() {
     document.getElementById("gemProgressPct").textContent = `${pct}%`;
     document.getElementById("gemProgressBar").style.width = `${pct}%`;
 
-    // Lọc theo sysKey
     const filteredPalettes = currentFilterSys === "ALL" 
         ? CRYSTAL_PALETTES 
         : CRYSTAL_PALETTES.filter(p => p.sysKey === currentFilterSys);
@@ -771,8 +907,12 @@ function renderInventoryGems() {
                     code,
                     name: pal.name,
                     sysKey: pal.sysKey,
+                    sysName: pal.name.split(" ")[0], // Lấy tên hệ ngắn
                     face,
+                    shapeId: shape.id,
                     shapeName: shape.name,
+                    color: pal.color,
+                    emissive: pal.emissive,
                     isUnlocked
                 };
 
@@ -784,17 +924,24 @@ function renderInventoryGems() {
 
     const sortedGems = [...unlockedList, ...lockedList];
 
-    // Render icon bằng class CSS ::before thay vì chuỗi emoji
-    grid.innerHTML = sortedGems.map(g => {
+    grid.innerHTML = sortedGems.map((g, idx) => {
         const elemIconClass = g.isUnlocked ? `ico-elem-${g.sysKey}` : `ico-elem-unknown`;
         return `
-            <div class="gem-slot ${g.isUnlocked ? 'unlocked' : 'locked'}">
+            <div class="gem-slot ${g.isUnlocked ? 'unlocked' : 'locked'}" data-idx="${idx}">
                 <div class="gem-slot-icon"><i class="rpg-ico ${elemIconClass}"></i></div>
                 <div class="gem-slot-code">${g.isUnlocked ? g.code : '???'}</div>
                 <div class="gem-slot-name">${g.isUnlocked ? g.name : 'Chưa mở'}</div>
             </div>
         `;
     }).join('');
+
+    // BẮT SỰ KIỆN CLICK VÀO TỪNG Ô ĐÁ
+    grid.querySelectorAll(".gem-slot").forEach(slot => {
+        slot.addEventListener("click", () => {
+            const idx = parseInt(slot.dataset.idx);
+            openGemPreviewModal(sortedGems[idx]);
+        });
+    });
 }
 
 function renderInventory5x5() {

@@ -1225,3 +1225,118 @@ body, html {
     cursor: pointer;
 }
 .btn-admin-act.btn-reset { background: rgba(90,10,25,0.8); border-color: #ff3366; color: #ff99aa; }
+/* ======================================================
+   MODAL PREVIEW 3D TINH QUANG THẠCH
+====================================================== */
+.rpg-gem-preview-box {
+    background: rgba(14, 10, 32, 0.96) !important;
+    border: 1.5px solid var(--border-gold) !important;
+    box-shadow: 0 0 35px var(--gold-glow) !important;
+    max-width: 320px;
+    padding: 16px 14px;
+}
+
+.gem-preview-3d-wrapper {
+    width: 170px;
+    height: 170px;
+    margin: 4px auto 10px;
+    position: relative;
+    border-radius: 50%;
+    background: radial-gradient(circle at center, rgba(165, 140, 255, 0.2) 0%, transparent 72%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+#gem3dPreviewContainer canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    cursor: grab;
+}
+#gem3dPreviewContainer canvas:active { cursor: grabbing; }
+
+.preview-badge-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.preview-sys-tag {
+    background: rgba(40, 25, 75, 0.7);
+    border: 1px solid var(--border-magic);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.preview-code-tag {
+    background: #000;
+    border: 1px solid var(--border-gold);
+    color: var(--cyan-crystal);
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+}
+
+.preview-title {
+    font-size: 15px;
+    color: #ffe66d;
+    margin-bottom: 10px;
+    text-shadow: 0 0 10px rgba(255, 230, 109, 0.4);
+}
+
+.preview-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.preview-stat-card {
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    padding: 6px 4px;
+    text-align: center;
+}
+
+.p-stat-lbl {
+    display: block;
+    font-size: 8px;
+    color: #a8a4c2;
+    text-transform: uppercase;
+}
+
+.p-stat-val {
+    display: block;
+    font-size: 11px;
+    color: #fff;
+    margin-top: 2px;
+}
+
+.preview-desc {
+    font-size: 10px;
+    color: #c9c3ff;
+    line-height: 1.35;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 6px 10px;
+    border-radius: 6px;
+}
+
+/* Hiệu ứng chạm vào ô đá */
+.gem-slot {
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.gem-slot:active {
+    transform: scale(0.94);
+}
