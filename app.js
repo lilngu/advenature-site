@@ -131,6 +131,15 @@ function updateTopBarUI() {
 
     const pct = Math.min(100, Math.floor((currentUser.cong_hien_points / 100) * 100));
     document.getElementById("rankProgressBar").style.width = pct + "%";
+
+    const btnTopLogin = document.getElementById("btnTopLogin");
+    if (btnTopLogin) {
+        if (currentUser.adventurer_code && currentUser.adventurer_code !== "AW----") {
+            btnTopLogin.classList.add("hidden");
+        } else {
+            btnTopLogin.classList.remove("hidden");
+        }
+    }
 }
 
 // ======================================================
@@ -532,8 +541,10 @@ function initGoogleAuth() {
     }, 100);
 }
 
-// KHI GOOGLE XÁC NHẬN THÀNH CÔNG -> CHUYỂN BƯỚC 2
-function handleGoogleSuccess(response) {
+// ======================================================
+// XỬ LÝ GOOGLE AUTH THÔNG MINH (TỰ ĐỘNG PHÂN BIỆT MỚI / CŨ)
+// ======================================================
+async function handleGoogleSuccess(response) {
     if (response.mock) {
         tempGoogleProfile = response.profile;
     } else {
@@ -543,14 +554,58 @@ function handleGoogleSuccess(response) {
         tempGoogleProfile = JSON.parse(jsonPayload);
     }
 
-    // Chuyển sang Bước 2: Khai báo hồ sơ chi tiết
-    onboardStep1.classList.add("hidden");
-    onboardStep2.classList.remove("hidden");
+    googleBtnText.textContent = `⏳ Đang kiểm tra tài khoản: ${tempGoogleProfile.name}...`;
 
-    document.getElementById("googleBadgeVerified").textContent = `✓ Đã xác thực: ${tempGoogleProfile.email}`;
-    document.getElementById("obName").value = tempGoogleProfile.name || "";
-    renderAvatarOptions();
+    try {
+        // GỬI LÊN WORKER ĐỂ KIỂM TRA XEM CÓ PHẢI TÀI KHOẢN CŨ ĐÃ TỪNG ĐĂNG KÝ
+        const res = await fetch(`${API_URL}/api/auth/google-login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                googleUser: tempGoogleProfile,
+                gemData: currentGemResult || null
+            })
+        });
+        const data = await res.json();
+
+        // TRƯỜNG HỢP 1: ĐÂY LÀ NGƯỜI CŨ ĐÃ CÓ TÀI KHOẢN
+        if (data.success && !data.isNewUser) {
+            currentUser = data.user;
+            saveUserData();
+            updateTopBarUI();
+            renderInventoryGems();
+            renderInventory5x5();
+
+            // Đóng Modal ngay lập tức, KHÔNG BẮT ĐIỀN LẠI BƯỚC 2!
+            onboardingModal.classList.add("hidden");
+            if (claimContainer) claimContainer.classList.add("hidden");
+            lootText.classList.remove("show");
+
+            alert(`🎉 CHÀO MỪNG QUAY TRỞ LẠI, ${currentUser.full_name}!\nĐã khôi phục Căn Cước [${currentUser.adventurer_code}] và đồng bộ toàn bộ kho đồ của bạn.`);
+            state = STATE.IDLE;
+            return;
+        }
+
+        // TRƯỜNG HỢP 2: ĐÂY LÀ NGƯỜI MỚI TOANH -> Chuyển sang Bước 2 để khai báo hồ sơ
+        onboardStep1.classList.add("hidden");
+        onboardStep2.classList.remove("hidden");
+        document.getElementById("googleBadgeVerified").textContent = `✓ Đã xác thực: ${tempGoogleProfile.email}`;
+        document.getElementById("obName").value = tempGoogleProfile.name || "";
+        renderAvatarOptions();
+
+    } catch (err) {
+        // Nếu lỗi mạng thì chuyển sang Bước 2 để nhập
+        onboardStep1.classList.add("hidden");
+        onboardStep2.classList.remove("hidden");
+        renderAvatarOptions();
+    }
 }
+
+// Bắt sự kiện bấm nút "✦ Đăng Nhập" trực tiếp trên Topbar
+document.getElementById("btnTopLogin")?.addEventListener("click", () => {
+    initGoogleAuth();
+    onboardingModal.classList.remove("hidden");
+});
 
 // BẤM NÚT THU THẬP VÀO TÚI
 claimBtn.addEventListener("click", () => {

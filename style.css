@@ -1790,3 +1790,27 @@ span#profRankNeed {
     0%, 100% { opacity: 0.4; transform: scale(0.9); }
     50% { opacity: 1; transform: scale(1.2); }
 }
+
+/* Nút Đăng Nhập trên Topbar */
+.user-top-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-top-login {
+    background: linear-gradient(180deg, #7c6cff 0%, #433299 100%);
+    border: 1px solid var(--border-gold);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(124, 108, 255, 0.4);
+    white-space: nowrap;
+}
+
+.btn-top-login.hidden {
+    display: none !important;
+}
