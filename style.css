@@ -196,6 +196,83 @@ body, html {
 .ico-item-30::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZDcwMCI+PHBhdGggZD0iTTcgMmwtMiAyIDUgNSA1LTVsLTItMkg3em0tMyA4bDIgMiA4IDgtMiAyeiIvPjwvc3ZnPg=="); }
 
 /* ======================================================
+   ICON MENU DOCK NAVIGATION & NÚT TRỞ VỀ (DATA URI BASE64)
+====================================================== */
+.dock-ico {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dock-ico .rpg-ico {
+    width: 20px;
+    height: 20px;
+}
+
+/* 📜 Menu Nhiệm Vụ */
+.ico-menu-quest::before {
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZDE2NiI+PHBhdGggZD0iTTE5IDNIN2EzIDMgMCAwIDAtMyAzdjEyYTMgMyAwIDAgMCAzIDNoMTJhMiAyIDAgMCAwIDItMlY1YTIgMiAwIDAgMC0yLTJ6bS0xIDE0SDdhMSAxIDAgMCAxIDAtMmgxMXYyem0wLTRIN2ExIDEgMCAwIDEgMC0yaDExdjJ6bTAtNEg3YTEgMSAwIDAgMSAwLTJoMTF2MnoiLz48L3N2Zz4=");
+}
+
+/* 🎒 Menu Túi Đồ */
+.ico-menu-bag::before {
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2M3N2RmZiI+PHBhdGggZD0iTTE3IDZWNGEyIDIgMCAwIDAtMi0ySDlhMiAyIDAgMCAwLTIgMnYySDRhMiAyIDAgMCAwLTIgMnYxMWEzIDMgMCAwIDAgMyAzaDE0YTMgMyAwIDAgMCAzLTNWOGEyIDIgMCAwIDAtMi0yaC0zem0tOC0yaDZ2Mkg5VjR6bTExIDE1YTEgMSAwIDAgMS0xIDFINWExIDEgMCAwIDEtMS0xdi02aDN2MWExIDEgMCAwIDAgMiAwdjEtaDZ2MWExIDEgMCAwIDAgMiAwdjEtaDN2NnoiLz48L3N2Zz4=");
+}
+
+/* 🛒 Menu Shop */
+.ico-menu-shop::before {
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzRjYzlmMCI+PHBhdGggZD0iTTcgMThjLTEuMSAwLTIgLjktMiAycy45IDIgMiAyIDItLjkgMi0yLS45LTItMi0yem0xMCAwYy0xLjEgMC0yIC45LTIgMnMuOSAyIDIgMiAyLS45IDItMi0uOS0yLTItMnpNNC4zIDRsLjYgMmgxNS41YTEgMSAwIDAgMSAuOSAxLjRsLTMuMiA2LjRhMiAyIDAgMCAxLTEuOCAxLjJINC4zbC0uNiAxLjJhLjUuNSAwIDAgMCAuNS44SDE5djJIN2EyIDIgMCAwIDEtMS44LTIuOUw2LjUgMTMgMy4zIDJIMVYwaDMuMmwualA0eiIvPjwvc3ZnPg==");
+}
+
+/* 🛡️ Menu Căn Cước */
+.ico-menu-profile::before {
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZDE2NiI+PHBhdGggZD0iTTEyIDFMMyA1djZjMCA1LjUgMy44IDEwLjcgOSAxMiA1LjItMS4zIDktNi41IDktMTJWNWwtOS00em0wIDEwLjVjLTEuOSAwLTMuNS0xLjYtMy41LTMuNVMxMC4xIDQuNSAxMiA0LjVzMy41IDEuNiAzLjUgMy41LTEuNiAzLjUtMy41IDMuNXptLTUgNi40Yy41LTIuMiAyLjctMy45IDUtMy45czQuNSAxLjcgNSAzLjljLTEuNCAxLjEtMy4xIDEuOC01IDEuOHMtMy42LS43LTUtMS44eiIvPjwvc3ZnPg==");
+}
+
+/* 🎐 Nút Trở Về */
+.ico-back-wind::before {
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzRjYzlmMCI+PHBhdGggZD0iTTEyIDJhNiA2IDAgMCAwLTYgNnYzaDEyVjhhNiA2IDAgMCAwLTYtNnptMCAxMWExIDEgMCAwIDAtMSAxdjRoLTJ2Mmg2di0yaC0ydi00YTEgMSAwIDAgMC0xLTF6Ii8+PC9zdmc+");
+}
+
+/* ======================================================
+   ICON 6 HỆ NGUYÊN TỐ TINH QUANG THẠCH (DATA URI BASE64)
+====================================================== */
+/* 🔥 Hệ 1: Hỏa Diệm */
+.ico-elem-fire::before {
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmNGQ2ZCI+PHBhdGggZD0iTTEyIDIzYy00Ljk3IDAtOS00LjAzLTktOSAwLTQuOTIgMy4xMi04LjU4IDYuNDItMTEuNDUuNjQtLjU2IDEuNjItLjIgMS43Ny42NC40NCAyLjQ1IDEuODEgNC4zMSAzLjgxIDQuODEuNzEuMTggMS4xOC44OSAxLjA1IDEuNjEtLjMxIDEuNzUuMjUgMy40OSAxLjQ1IDQuNTkgMS40NSAxLjMzIDIuNSAzLjIgMi41IDUuOCAwIDQuOTctNC4wMyA5LTkgOXptMC0xNS41Yy0yLjMgMi4xLTQgNC41LTQgNi41IDAgMi4yIDEuOCA0IDQgNHM0LTEuOCA0LTRjMC0xLjgtMS41LTMuOC00LTYuNXoiLz48L3N2Zz4=");
+}
+
+/* ☀️ Hệ 2: Thái Dương */
+.ico-elem-sun::before {
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZDE2NiI+PHBhdGggZD0iTTEyIDdjLTIuNzYgMC01IDIuMjQtNSA1czIuMjQgNSA1IDUgNS0yLjI0IDUtNS0yLjI0LTUtNS01ek0yIDEzaDJjLjU1IDAgMS0uNDUgMS0xcy0uNDUtMS0xLTFIMmMtLjU1IDAtMSAuNDUtMSAxcy40NSAxIDEgMXptMTggMGgyYy41NSAwIDEtLjQ1IDEtMXMtLjQ1LTEtMS0xaC0yYy0uNTUgMC0xIC40NS0xIDFzLjQ1IDEgMSAxdk0xMSAyMnYyYzAgLjU1LjQ1IDEgMSAxczEtLjQ1IDEtMVYyYzAtLjU1LS40NS0xLTEtMXMtMSAuNDUtMSAxem0wIDE4djJjMCAuNTUuNDUgMSAxIDFzMS0uNDUgMS0xdi0yYzAtLjU1LS40NS0xLTEtMXMtMSAuNDUtMSAxek01Ljk5IDQuNThhMSAxIDAgMCAwLTEuNDEgMCAxIDEgMCAwIDAgMCAxLjQxbDEuNDIgMS40MmMuMzkuMzkgMS4wMi4zOSAxLjQxIDAgLjM5LS4zOS4zOS0xLjAyIDAtMS40MUw1Ljk5IDQuNTh6bTEyLjAyIDEyLjAyYTEgMSAwIDAgMC0xLjQxIDAgMSAxIDAgMCAwIDAgMS40MWwxLjQyIDEuNDJjLjM5LjM5IDEuMDIuMzkgMS40MSAwIC4zOS0uMzkuMzktMS4wMiAwLTEuNDFsLTEuNDItMS40MnptMS40MS0xMy40M2ExIDEgMCAwIDAtMS40MSAwbC0xLjQyIDEuNDJjLS4zOS4zOS0uMzkgMS4wMiAwIDEuNDEuMzkuMzkgMS4wMi4zOSAxLjQxIDBsMS40Mi0xLjQyYy4zOS0uMzguMzktMS4wMiAwLTEuNDF6TTcuMDUgMTguMzZsLTEuNDIgMS40MmExIDEgMCAwIDAgMCAxLjQxYy4zOS4zOSAxLjAyLjM5IDEuNDEgMGwxLjQyLTEuNDJjLjM5LS4zOS4zOS0xLjAyIDAtMS40MS0uMzktLjM5LTEuMDItLjM5LTEuNDEgMHoiLz48L3N2Zz4=");
+}
+
+/* 🌿 Hệ 3: Thảo Mộc */
+.ico-elem-wood::before {
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzJlYzRiNiI+PHBhdGggZD0iTTE3IDhDOCAxMCA1LjkgMTYuMTcgMy44MiAyMS4zNGwxLjg5LjY2QzcuNSAxNy41IDkuNSAxMiAxNyAxMFY4em00LTZjLTYuNjMgMC0xMiA1LjM3LTEyIDEyIDAgMi4yNC42MiA0LjM0IDEuNyA2LjEzIDEuOTUtMy43OSA1LjA4LTcuMDUgOS4zLTguODhWOWgyVjVjMC0xLjY2LTEuMzQtMy0zLTN6Ii8+PC9zdmc+");
+}
+
+/* ❄️ Hệ 4: Băng Tinh */
+.ico-elem-ice::before {
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzRjYzlmMCI+PHBhdGggZD0iTTIyIDExaC00LjE0bDIuNTctMi41Ny0xLjQyLTEuNDJMMTUuNDIgMTBIMTNWNy41OGwyLjk5LTIuOTktMS40MS0xLjQyTDEyIDUuNzUgOS40MiAzLjE3IDguMDEgNC41OSAxMSA3LjU4VjEwSDguNThMNS41OSA3LjAxIDQuMTcgOC40MyA2Ljc0IDExSDJ2Mmg0Ljc0bC0yLjU3IDIuNTcgMS40MiAxLjQyTDguNTggMTRIMTF2Mi40MmwtMi45OSAyLjk5IDEuNDEgMS40MkwxMiAxOC4yNWwyLjU4IDIuNTggMS40MS0xLjQyTDEzIDE2LjQyVjE0aDIuNDJsMi45OSAyLjk5IDEuNDItMS40MkwxNy4yNiAxM0gyMnYtMnoiLz48L3N2Zz4=");
+}
+
+/* ⚡ Hệ 5: Thiên Hà */
+.ico-elem-lightning::before {
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2EwYzRmZiI+PHBhdGggZD0iTTcgMnYxMWgzdjlsNy0xMmgtNGw0LThIN3oiLz48L3N2Zz4=");
+}
+
+/* 🔮 Hệ 6: Ma Pháp */
+.ico-elem-magic::before {
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2M3N2RmZiI+PHBhdGggZD0iTTEyIDJhOSA5IDAgMCAwLTkgOWMwIDQuMTcgMi44NCA3LjY3IDYuNjkgOC42N0w4IDIyaDhsLTEuNjktMi4zM0MxOC4xNiAxOC42NyAyMSAxNS4xNyAyMSAxMWExIDkgMCAwIDAtOS05em0tMyA3YTMgMyAwIDAgMSAzLTNjLjU1IDAgMSAuNDUgMSAxcy0uNDUgMS0xIDFhMSAxIDAgMCAwLTEgMWMwIC41NS0uNDUgMS0xIDFzLTEtLjQ1LTEtMXoiLz48L3N2Zz4=");
+}
+
+/* ❓ Đá chưa mở khóa (Silhouette Silhouette) */
+.ico-elem-unknown::before {
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzY2NjE4NSI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTEgMTZoLTJ2LTJoMnYyem0xLjA3LTcuNzVsLS45LjkyQzEyLjQ1IDExLjkgMTIgMTIuNSAxMiAxNGgtMnYtLjVjMC0xLjEuNDUtMi4xIDEuMTctMi44M2wxLjI0LTEuMjZjLjM3LS4zNi41OS0uODYuNTktMS40MSAwLTEuMS0uOS0yLTItMnMtMiAuOS0yIDJIN2MwLTIuNzYgMi4yNC01IDUtNXM1IDIuMjQgNSA1YzAgMS4wNC0uNDIgMS45OS0xLjA3IDIuNzV6Ii8+PC9zdmc=");
+}
+
+/* ======================================================
    TOP STATUS BAR
 ====================================================== */
 .rpg-topbar {
@@ -932,6 +1009,56 @@ body, html {
 .blessing-icon-large { font-size: 42px; margin: 6px 0; }
 .blessing-title { font-size: 14px; color: #ffe66d; }
 .blessing-desc { font-size: 11px; color: #e2dcff; margin-top: 4px; line-height: 1.35; }
+
+/* Button Xác Nhận Thu Vào Túi trong Modal Chúc Phúc */
+#btnCloseBlessingModal {
+    background: linear-gradient(135deg, #4cc9f0 0%, #3a0ca3 100%);
+    border: 2px solid #ffd166;
+    color: #ffffff;
+    padding: 14px 20px;
+    border-radius: 35px;
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 1.8px;
+    cursor: pointer;
+    white-space: nowrap;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    box-shadow: 
+        0 0 20px rgba(76, 201, 240, 0.5),
+        0 0 40px rgba(255, 209, 102, 0.3),
+        inset 0 0 15px rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    animation: blessingButtonGlow 2s infinite ease-in-out;
+}
+
+#btnCloseBlessingModal:hover {
+    transform: scale(1.05);
+    box-shadow: 
+        0 0 30px rgba(76, 201, 240, 0.8),
+        0 0 60px rgba(255, 209, 102, 0.6);
+}
+
+#btnCloseBlessingModal:active {
+    transform: scale(0.98);
+    box-shadow: 
+        0 0 15px rgba(76, 201, 240, 0.4),
+        inset 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes blessingButtonGlow {
+    0%, 100% {
+        box-shadow: 
+            0 0 20px rgba(76, 201, 240, 0.5),
+            0 0 40px rgba(255, 209, 102, 0.3),
+            inset 0 0 15px rgba(255, 255, 255, 0.1);
+    }
+    50% {
+        box-shadow: 
+            0 0 30px rgba(76, 201, 240, 0.8),
+            0 0 60px rgba(255, 209, 102, 0.6),
+            inset 0 0 20px rgba(255, 255, 255, 0.2);
+    }
+}
 
 /* Modal Shop Chi Tiết */
 .shop-modal-ico-box { font-size: 40px; margin-bottom: 4px; }
