@@ -283,5 +283,35 @@
     </div>
 
     <script type="module" src="app.js"></script>
+	<!-- ====================================================== -->
+    <!-- KHỐI CODE THÊM MỚI: ADMIN GOD-MODE MODAL              -->
+    <!-- ====================================================== -->
+    <div id="adminGodModal" class="modal-overlay hidden">
+        <div class="modal-box admin-modal-box">
+            <span class="close-modal" id="closeAdminModal">&times;</span>
+            <h3 style="color: #ff3366; font-size: 15px; margin-bottom: 12px; letter-spacing: 1px;">
+                ⚡ BẢNG ĐIỀU KHIỂN ADMIN TEST
+            </h3>
+            
+            <div class="admin-grid-actions">
+                <button class="btn-admin-act" id="admAddTQ">+99 🔮 Tinh Quang</button>
+                <button class="btn-admin-act" id="admAddTT">+99 💎 Tinh Thạch</button>
+                <button class="btn-admin-act" id="admAddCH">+100 🛡️ Cống Hiến</button>
+                <button class="btn-admin-act" id="admUnlockAllGems" style="grid-column: span 2; border-color: #ffd166;">
+                    🔓 Mở Khóa Đủ 990 Đá (Full Tủ)
+                </button>
+                <button class="btn-admin-act" id="admAddAllItems" style="grid-column: span 2; border-color: #c77dff;">
+                    🎒 Nhận Đủ 30 Chúc Phúc Vào Túi
+                </button>
+                <button class="btn-admin-act" id="admToggleFastGacha" style="grid-column: span 2;">
+                    ⚡ Fast Gacha: <span id="admFastGachaStatus" style="color: #ff3366;">TẮT</span>
+                </button>
+                <button class="btn-admin-act btn-reset" id="admResetData" style="grid-column: span 2;">
+                    ⚠️ Xóa Dữ Liệu (Reset Về Tân Thủ)
+                </button>
+            </div>
+            <p class="qr-note" style="margin-top: 10px;">Chế độ God-Mode phục vụ kiểm thử không giới hạn.</p>
+        </div>
+    </div>
 </body>
 </html>

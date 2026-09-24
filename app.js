@@ -838,3 +838,111 @@ new QRCode(document.getElementById("userProfileQr"), {
     width: 120,
     height: 120
 });
+
+// ======================================================
+// KHỐI CODE THÊM MỚI: LOGIC ADMIN GOD-MODE & FAST GACHA
+// ======================================================
+let logoClickCount = 0;
+let logoClickTimer = null;
+let isFastGachaEnabled = false;
+
+const brandLogo = document.querySelector(".brand-logo");
+const adminModal = document.getElementById("adminGodModal");
+const closeAdminModal = document.getElementById("closeAdminModal");
+
+// Bấm liên tục 5 lần vào Logo để mở Admin Tool
+brandLogo.style.cursor = "pointer";
+brandLogo.addEventListener("click", () => {
+    logoClickCount++;
+    clearTimeout(logoClickTimer);
+    logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 1500);
+
+    if (logoClickCount >= 5) {
+        logoClickCount = 0;
+        adminModal.classList.remove("hidden");
+    }
+});
+
+closeAdminModal.addEventListener("click", () => {
+    adminModal.classList.add("hidden");
+});
+
+// 1. Bơm tài nguyên
+document.getElementById("admAddTQ").addEventListener("click", () => {
+    currentUser.tinh_quang_points += 99;
+    saveUserData();
+    updateTopBarUI();
+    alert("⚡ Admin: Đã cộng +99 🔮 Tinh Quang!");
+});
+
+document.getElementById("admAddTT").addEventListener("click", () => {
+    currentUser.tinh_thach_points += 99;
+    saveUserData();
+    updateTopBarUI();
+    alert("⚡ Admin: Đã cộng +99 💎 Tinh Thạch!");
+});
+
+document.getElementById("admAddCH").addEventListener("click", () => {
+    currentUser.cong_hien_points += 100;
+    saveUserData();
+    updateTopBarUI();
+    alert("⚡ Admin: Đã cộng +100 🛡️ Cống Hiến!");
+});
+
+// 2. Mở khóa toàn bộ 990 Đá
+document.getElementById("admUnlockAllGems").addEventListener("click", () => {
+    const allGems = [];
+    CRYSTAL_PALETTES.forEach(pal => {
+        FACE_TIERS.forEach(face => {
+            SHAPE_STYLES.forEach(shape => {
+                allGems.push(`${pal.sys}${pal.sysIndex}${face}${shape.id}`);
+            });
+        });
+    });
+    currentUser.unlocked_gems = allGems;
+    saveUserData();
+    renderInventoryGems();
+    alert("⚡ Admin: Đã mở khóa trọn bộ 990/990 Tinh Quang Thạch!");
+});
+
+// 3. Nhận đủ 30 Chúc Phúc vào Túi Đồ
+document.getElementById("admAddAllItems").addEventListener("click", () => {
+    BLESSINGS_DATA.forEach(item => {
+        addItemToInventory(item);
+    });
+    saveUserData();
+    renderInventory5x5();
+    alert("⚡ Admin: Đã nhận trọn vẹn 30 Chúc Phúc Tinh Linh vào túi!");
+});
+
+// 4. Bật/Tắt Fast Gacha (Triệu hồi tức thì không chờ xoáy hạt)
+const fastGachaStatus = document.getElementById("admFastGachaStatus");
+document.getElementById("admToggleFastGacha").addEventListener("click", () => {
+    isFastGachaEnabled = !isFastGachaEnabled;
+    fastGachaStatus.textContent = isFastGachaEnabled ? "BẬT (0.1s)" : "TẮT";
+    fastGachaStatus.style.color = isFastGachaEnabled ? "#00f5d4" : "#ff3366";
+});
+
+// Chèn logic Fast Gacha vào nút Triệu Hồi Gacha
+const originalGachaBtnHandler = gachaBtn.onclick;
+gachaBtn.addEventListener("click", () => {
+    if (isFastGachaEnabled && state === STATE.GACHA) {
+        // Rút ngắn thời gian chuyển trạng thái LOOT ngay lập tức
+        setTimeout(() => {
+            state = STATE.LOOT;
+            coreMaterial.opacity = 0;
+            coreGlowMaterial.opacity = 0;
+            coreGroup.scale.setScalar(0);
+            lootText.classList.add("show");
+            claimContainer.classList.remove("hidden");
+        }, 150);
+    }
+});
+
+// 5. Reset toàn bộ dữ liệu về trạng thái ban đầu
+document.getElementById("admResetData").addEventListener("click", () => {
+    if (confirm("Bạn có chắc chắn muốn xóa dữ liệu test và về trạng thái Tân Thủ?")) {
+        localStorage.removeItem("advenature_user");
+        location.reload();
+    }
+});
