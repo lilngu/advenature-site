@@ -1,6 +1,7 @@
 /* ======================================================
    DESIGN SYSTEM: AETHERPUNK / DARK FANTASY RPG
 ====================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=MedievalSharp&display=swap');
 :root {
     --bg-dark: #03030a;
     --surface-glass: rgba(12, 10, 32, 0.94);
@@ -334,37 +335,113 @@ body, html {
 
 /* BANNER THU THẬP THÀNH CÔNG 3S */
 .collect-banner {
-    position: absolute;
-    top: 50%;
+    position: fixed; /* Hoặc absolute tùy thuộc vào layout của bạn */
+    top: 10%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 30;
-    width: 90%;
-    max-width: 380px;
-    text-align: center;
-    pointer-events: none; /* Tránh cản trở click chuột */
-    animation: bannerPop 0.4s ease-out;
+    transform: translateX(-50%);
+    z-index: 9999;
+    background: rgba(10, 10, 15, 0.85); /* Nền tối mờ huyền ảo */
+    border: 2px solid #ffd700; /* Viền màu vàng kim */
+    border-radius: 12px;
+    padding: 16px 32px;
+    box-shadow: 
+        0 0 15px rgba(255, 215, 0, 0.4),
+        inset 0 0 15px rgba(255, 215, 0, 0.2);
+    animation: bannerFloatAndGlow 3s ease-in-out infinite alternate;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
 }
 
-/* Đảm bảo khi có class .hidden thì banner và các phần tử khác biến mất tuyệt đối */
-.hidden {
-    display: none !important;
+/* Ẩn banner khi có class hidden */
+.collect-banner.hidden {
+    display: none!important;
 }
-}
+
+/* --- 2. Định dạng phần nội dung chữ và ngôi sao --- */
 .collect-banner-content {
-    background: linear-gradient(90deg, rgba(30,15,60,0.2), rgba(60,25,110,0.95), rgba(30,15,60,0.2));
-    border-top: 1.5px solid #ffd166;
-    border-bottom: 1.5px solid #ffd166;
-    padding: 16px 20px;
-    color: #fffbe5;
-    font-size: 13px;
-    font-weight: bold;
-    letter-spacing: 1.5px;
-    text-shadow: 0 0 10px #ffe66d;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
+    gap: 15px;
+    color: #fff3cd; /* Màu vàng kem hoàng gia */
+    font-family: 'Cinzel Decorative', 'MedievalSharp', serif; /* Font chữ trung cổ */
+    font-size: 26px; /* Chữ to bản */
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 2px;
+    
+    /* Hiệu ứng phát sáng chữ chuyển động */
+    text-shadow: 
+        0 0 5px #ffae00,
+        0 0 10px #ffae00,
+        0 0 20px #ff7700,
+        0 0 40px #ff3300;
+    animation: textGlowPulse 2s ease-in-out infinite alternate;
+}
+
+/* --- 3. Hiệu ứng cho các ngôi sao (✦) --- */
+.banner-star {
+    color: #ffcc00;
+    font-size: 30px;
+    display: inline-block;
+    text-shadow: 0 0 10px #ffea00, 0 0 20px #ff9900;
+    animation: starRotateAndShine 2s linear infinite;
+}
+
+/* --- 4. Các Keyframes tạo chuyển động ánh sáng --- */
+
+/* Hiệu ứng nổi bồng bềnh và đổi độ sáng viền banner */
+@keyframes bannerFloatAndGlow {
+    0% {
+        transform: translateX(-50%) translateY(0);
+        box-shadow: 
+            0 0 15px rgba(255, 215, 0, 0.4),
+            0 0 30px rgba(255, 140, 0, 0.2),
+            inset 0 0 15px rgba(255, 215, 0, 0.2);
+        border-color: #ffd700;
+    }
+    100% {
+        transform: translateX(-50%) translateY(-8px); /* Nổi lên xuống nhẹ */
+        box-shadow: 
+            0 0 25px rgba(255, 215, 0, 0.8),
+            0 0 50px rgba(255, 140, 0, 0.6),
+            inset 0 0 25px rgba(255, 215, 0, 0.4);
+        border-color: #fff6a1;
+    }
+}
+
+/* Hiệu ứng nhấp nháy ánh sáng chữ (Glowing Pulse) */
+@keyframes textGlowPulse {
+    0% {
+        text-shadow: 
+            0 0 4px #ffae00,
+            0 0 10px #ffae00,
+            0 0 18px #ff7700;
+        filter: brightness(0.9);
+    }
+    100% {
+        text-shadow: 
+            0 0 8px #fff,
+            0 0 16px #ffae00,
+            0 0 30px #ff5500,
+            0 0 50px #ff2200;
+        filter: brightness(1.2);
+    }
+}
+
+/* Hiệu ứng ngôi sao lấp lánh / xoay nhẹ */
+@keyframes starRotateAndShine {
+    0% {
+        transform: scale(1) rotate(0deg);
+        filter: drop-shadow(0 0 2px #fff);
+    }
+    50% {
+        transform: scale(1.2) rotate(15deg);
+        filter: drop-shadow(0 0 10px #ffcc00);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        filter: drop-shadow(0 0 2px #fff);
+    }
 }
 @keyframes bannerPop {
     from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
