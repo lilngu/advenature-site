@@ -99,6 +99,91 @@ body, html {
 .ico-food {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff4d6d'%3E%3Cpath d='M18.1 4.2c-1.4 0-2.6.8-3.2 2-1.2-.5-2.6-.5-3.8 0-.6-1.2-1.8-2-3.2-2C6 4.2 4.3 6 4.3 8.1c0 2.7 2.9 5.8 7.7 9.9 4.8-4.1 7.7-7.2 7.7-9.9 0-2.1-1.7-3.9-3.6-3.9z'/%3E%3C/svg%3E");
 }
+/* ======================================================
+   HỆ THỐNG ICON 30 VẬT PHẨM CHÚC PHÚC (DATA URI BASE64)
+   Chuẩn hóa class để Admin Bot Telegram có thể quản lý/thay thế
+====================================================== */
+.item-ico {
+    display: inline-block;
+    width: 26px;
+    height: 26px;
+    vertical-align: middle;
+    position: relative;
+}
+
+.item-ico::before {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* 🟢 COMMON ITEMS (01 -> 12) */
+/* 01: Ống tre */
+.ico-item-01::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzVjOTQ2ZSI+PHBhdGggZD0iTTcgMnYyMGgyVjJoLTJ6bTYgMHYyMGgyVjJoLTJ6bS04IDdoMTB2Mkg1di0yeiIvPjwvc3ZnPg=="); }
+/* 02: Nhựa thông */
+.ico-item-02::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2Q0OGIwMCI+PHBhdGggZD0iTTEyIDJjLTQgNi03IDgtNyAxMSAwIDMuOSA1IDkgNyA5cyA3LTUuMSA3LTljMC0zLTMtNS03LTExem0wIDExYy0xLjEgMC0yLS45LTItMiAwLS42LjktMS44IDItM3Y1eiIvPjwvc3ZnPg=="); }
+/* 03: +1 Tinh Quang */
+.ico-item-03::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2M3N2RmZiI+PHBhdGggZD0iTTEyIDJMNC خانdjh2MTBsOCA1IDgtNVY3bC04LTV6bTAgMi44TDE3LjUgOCAxMiAxMS4yIDYuNSA4IDEyIDQuOHoiLz48L3N2Zz4="); }
+/* 04: Mảnh vải */
+.ico-item-04::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2RiMmI1NSI+PHBhdGggZD0iTTQgNmgxNnYySDRWNmptMCA1aDE2djJINFYxMWptMCA1aDE2djJINFYxNnoiLz48L3N2Zz4="); }
+/* 05: Gậy gỗ */
+.ico-item-05::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzgyNTIydSI+PHBhdGggZD0iTTE0LjEgMi45TDcuMSAyMGwtMS40LS41TDExLjkgMWwxLjYgMS40eiIvPjwvc3ZnPg=="); }
+/* 06: Trứng gà */
+.ico-item-06::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmYjcwMyI+PHBhdGggZD0iTTEyIDNDOCA5IDUgMTMgNSAxN2MwIDMuOSAzLjEgNyA3IDdzNy0zLjEgNy03Yy0wLTQtMy04LTctMTR6Ii8+PC9zdmc+"); }
+/* 07: Bắp ngô */
+.ico-item-07::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZDE2NiI+PHBhdGggZD0iTTcgNWMwIDUgMyA5IDggMTJsMS0xYy01LTgtNS04LTgtMTEtMSAwLTEgMC0xIDB6Ii8+PC9zdmc+"); }
+/* 08 & 09: Cống Hiến */
+.ico-item-08::before, .ico-item-09::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZDE2NiI+PHBhdGggZD0iTTEyIDJMNCA1djYuMWMwIDUuNiAzLjQgMTAuNyA4IDExLjkgNC42LTEuMiA4LTYuMyA4LTExLjlWNWwtOC0zem0wIDIuMmw2IDIuM3Y0LjZjMCA0LjUtMi42IDguNy02IDkuOC0zLjQtMS4xLTYtNS4zLTYtOS44VjYuNWw2LTIuM3oiLz48L3N2Zz4="); }
+/* 10: Trà thảo mộc */
+.ico-item-10::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzUyYjc4OCI+PHBhdGggZD0iTTIgNXY4YzAgMi4yIDEuOCA0IDQgNGgxMGMxLjEgMCAyLS45IDItMlY5aDJjMS4xIDAgMi0uOSAyLTJWN2MtMS4xIDAtMiAuOS0yIDJoLTJ2LTJINnptMTQgNHYyaDJWOWgtMnoiLz48L3N2Zz4="); }
+/* 11: Khoai lang */
+.ico-item-11::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzk5MmU2MyI+PHBhdGggZD0iTTE3IDNjLTcgMC0xMiA1LTEyIDExIDAgNCA1IDcgMTAgNyA3IDAgMTItNSAxMi0xMSAwLTQtNS03LTEwLTd6Ii8+PC9zdmc+"); }
+/* 12: Thịt nướng */
+.ico-item-12::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmNGQ2ZCI+PHBhdGggZD0iTTE4LjIgNS44Yy0xLjktMS45LTUtMS45LTYuOCAwTDUuNiAxMS42Yy0xLjkgMS45LTEuOSA1IDAgNi44cyA1IDEuOSA2LjggMGw1LjgtNS44YzEuOS0xLjkgMS45LTUgMC02Ljh6Ii8+PC9zdmc+"); }
+
+/* 🔵 UNCOMMON ITEMS (13 -> 21) */
+/* 13: Bình Potion */
+.ico-item-13::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzAwZjVkNCI+PHBhdGggZD0iTTE5IDEwLjVWMjBhMyAzIDAgMCAxLTMgM0g4YTMgMyAwIDAgMS0zLTN2LTkuNWwtMS0xLjVWOEg2VjVoMlYzbDItMXYzaDJ2MmgxbDEgMS41djIuNXoiLz48L3N2Zz4="); }
+/* 14: Cocktail */
+.ico-item-14::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2Y3MjU4NSI+PHBhdGggZD0iTTcgLjVsLTEwIDhoMTRsLTEwLTh6bTggMTF2N2g0djJIMXYtMmg0di03eiIvPjwvc3ZnPg=="); }
+/* 15: Thẻ X2 Main Quest */
+.ico-item-15::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzQzNjFlZSI+PHBhdGggZD0iTTE5IDNINWMtMS4xIDAtMiAuOS0yIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMlY1YzAtMS4xLS45LTItMi0yem0tMiAxMGgtNHY0aC0ydi00SDd2LTJoNHYtNGgydjRoNHYyeiIvPjwvc3ZnPg=="); }
+/* 16: Áo choàng */
+.ico-item-16::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzNhMGNhMyI+PHBhdGggZD0iTTEyIDJMNiA1djE1bDUtMmw1IDJWNWwtNi0zem0wIDN2MTRsLTMtMS4yVjZ2LS4xeiIvPjwvc3ZnPg=="); }
+/* 17: Trợ thủ NPC */
+.ico-item-17::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzcwZTAwMCI+PHBhdGggZD0iTTEyIDJhNSA1IDAgMSAwIDUgNWExIDAgMCAwLTUtNXptMCAxMmMtNS4zIDAtOCAyLjctOCA0djJoMTZ2LTJjMC0xLjMtMi43LTQtOC00eiIvPjwvc3ZnPg=="); }
+/* 18 & 19: Tinh Thạch */
+.ico-item-18::before, .ico-item-19::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzRjYzlmMCI+PHBhdGggZD0iTTYgM2gxMmw0IDctMTAgMTFMMiAxMGw0LTd6bTEuNSAyTC01IDQuNWg0LjJMOC41IDVINy41em0zLjUgMCAuNyA0LjVoNC42bC43LTQuNWgtNnoiLz48L3N2Zz4="); }
+/* 20: Đạo cụ Quest */
+.ico-item-20::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzRlOGRhNCI+PHBhdGggZD0iTTEyIDJDNi41IDIgMiA2LjUgMiAxMnM0LjUgMTAgMTAgMTAgMTAtNC41IDEwLTEwUzE3LjUgMiAxMiAyem0xIDE0LjEtMS41LS45LS45LTEuNWw0LjYtMi4xLTIuMiA0LjV6Ii8+PC9zdmc+"); }
+/* 21: Đèn bão đêm */
+.ico-item-21::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmOTkwMCI+PHBhdGggZD0iTTkgMmg2djJoLTZ6bTgtM2gtMTBWOGgxMHptMiAxMGgtMTR2OGgydjNoOHYtM2gyeiIvPjwvc3ZnPg=="); }
+
+/* 🟣 RARE ITEMS (22 -> 27) */
+/* 22: Huy hiệu xanh */
+.ico-item-22::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzJlYzRiNiI+PHBhdGggZD0iTTEyIDJMMyA2djZoMWMwIDUgMy41IDkuMyA4IDEwIDQuNS0uNyA4LTUgOC0xMGgxVjZsLTktNHptMCAxNC44Yy0yLjctLjctNC44LTMuMy00LjgtNi44VjhsNC44LTIuMSA0LjggMi4xdjQuOGMtLjAgMy41LTIuMSA2LjEtNC44IDYuOHoiLz48L3N2Zz4="); }
+/* 23: Dịch chuyển */
+.ico-item-23::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzc2NTVmNSI+PHBhdGggZD0iTTEyIDJhMTAgMTAgMCAxIDAgMTAgMTAgMTAgMTAgMCAwIDAtMTAtMTB6bTAgMThhOCA4IDAgMSAxIDgtOCA4IDggMCAwIDEtOCA4em0wLTE0YTQgNCAwIDEgMCA0IDQgNCA0IDAgMCAwLTQtNHoiLz48L3N2Zz4="); }
+/* 24: Vé Gacha Chợ */
+.ico-item-24::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2Y3MjU4NSI+PHBhdGggZD0iTTIyIDEwaC0xYTIgMiAwIDAgMSAwLTRoMXYtMkgydjJoMWExIDAgMCAxIDAgNGgtMXY2aDIwdjZ6Ii8+PC9zdmc+"); }
+/* 25: Dây chuyền */
+.ico-item-25::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2JkZTBmZSI+PHBhdGggZD0iTTEyIDJDNi41IDIgMiA2LjUgMiAxMmMyLjEgMyA3IDQgMTAgOXM3LjktNiAxMC05YzAtNS41LTQuNS0xMC0xMC0xMHptMCAxMmMtMS4xIDAtMi0uOS0yLTJzLjktMiAyLTIgMiAuOSAyIDItLjkgMi0yIDJ6Ii8+PC9zdmc+"); }
+/* 26: Quà bí mật */
+.ico-item-26::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzk5MmU2MyI+PHBhdGggZD0iTTIwIDZINHY0aDE2VjZ6bS0yIDZIOHY4aDEwdi04eiIvPjwvc3ZnPg=="); }
+/* 27: Thẻ bài ma thuật */
+.ico-item-27::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2M3N2RmZiI+PHBhdGggZD0iTTMgM2gxOHYxOEgzVjN6bTE2IDE2VjVIN1YxOWgxMnoiLz48L3N2Zz4="); }
+
+/* 🟡 LEGENDARY ITEMS (28 -> 30) */
+/* 28: Nâng cấp phòng */
+.ico-item-28::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZDE2NiI+PHBhdGggZD0iTTEyLjY1IDEwQzExLjcgOC4zMSA5Ljk5IDcgOCA3Yy0yLjc2IDAtNSAydjEwYzAgMi43NiAyLjI0IDUgNSA1cyAyLjMtMSAxLjcxLTNsNS4yOS01LjI5djEuMjl6Ii8+PC9zdmc+"); }
+/* 29: Thẻ lưu trú free */
+.ico-item-29::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmYjcwMyI+PHBhdGggZD0iTTEyIDJMNiA1djE1bDUtMmw1IDJWNWwtNi0zem0wIDN2MTRsLTMtMS4yVjZ2LS4xeiIvPjwvc3ZnPg=="); }
+/* 30: Trang bị Ranger */
+.ico-item-30::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZDcwMCI+PHBhdGggZD0iTTcgMmwtMiAyIDUgNSA1LTVsLTItMkg3em0tMyA4bDIgMiA4IDgtMiAyeiIvPjwvc3ZnPg=="); }
 
 /* ======================================================
    TOP STATUS BAR
@@ -248,7 +333,14 @@ body, html {
     width: 90%;
     max-width: 380px;
     text-align: center;
+    pointer-events: none; /* Tránh cản trở click chuột */
     animation: bannerPop 0.4s ease-out;
+}
+
+/* Đảm bảo khi có class .hidden thì banner và các phần tử khác biến mất tuyệt đối */
+.hidden {
+    display: none !important;
+}
 }
 .collect-banner-content {
     background: linear-gradient(90deg, rgba(30,15,60,0.2), rgba(60,25,110,0.95), rgba(30,15,60,0.2));

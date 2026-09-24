@@ -276,43 +276,46 @@ function createProceduralRock() {
 }
 
 // ======================================================
-// 4. DANH MỤC 30 CHÚC PHÚC & ITEM
+// 4. DANH MỤC 30 CHÚC PHÚC & ITEM (ĐÃ CHUẨN HÓA DATA URI CLASS)
 // ======================================================
 const BLESSINGS_DATA = [
     // COMMON (1-12)
-    { id: "BLESS_01", name: "1 ống tre", tier: "common", icon: "🎋", isBuff: false, desc: "Ống tre rừng nguyên sinh dùng trữ nước hoặc làm vật phẩm thủ công." },
-    { id: "BLESS_02", name: "Nhựa thông", tier: "common", icon: "🪵", isBuff: false, desc: "Nhựa thông khô dùng nhóm lửa thắp sáng lều trại ban đêm." },
-    { id: "BLESS_03", name: "+1 Điểm Tinh Quang", tier: "common", icon: "🔮", isBuff: true, buff: { tq: 1 }, desc: "Hồi phục ngay 1 lượt triệu hồi Gacha Tinh Quang." },
-    { id: "BLESS_04", name: "1 mảnh vải ngẫu nhiên", tier: "common", icon: "🧣", isBuff: false, desc: "Mảnh vải dệt hoa văn của bộ tộc Rừng Tinh Linh." },
-    { id: "BLESS_05", name: "1 Gậy gỗ", tier: "common", icon: "🦯", isBuff: false, desc: "Gậy leo núi trợ lực cho hành trình thám hiểm rừng già." },
-    { id: "BLESS_06", name: "2 quả trứng gà", tier: "common", icon: "🥚", isBuff: false, desc: "Bổ sung dinh dưỡng cho bữa ăn dã ngoại ngoài trời." },
-    { id: "BLESS_07", name: "1 quả bắp", tier: "common", icon: "🌽", isBuff: false, desc: "Dùng để nướng bên bếp lửa hồng tại Hội Ngọc Lục." },
-    { id: "BLESS_08", name: "+1 Điểm Cống Hiến", tier: "common", icon: "🛡️", isBuff: true, buff: { ch: 1 }, desc: "Tăng điểm cống hiến để thăng hạng Căn Cước Nhà Phiêu Lưu." },
-    { id: "BLESS_09", name: "+2 Điểm Cống Hiến", tier: "common", icon: "🛡️", isBuff: true, buff: { ch: 2 }, desc: "Tăng 2 điểm cống hiến cho Bang Hội." },
-    { id: "BLESS_10", name: "1 Ly Trà Thảo Mộc", tier: "common", icon: "🍵", isBuff: false, desc: "Thưởng thức ly trà thảo mộc tự nhiên thơm mát bên bờ suối." },
-    { id: "BLESS_11", name: "1 Củ khoai lang", tier: "common", icon: "🍠", isBuff: false, desc: "Nướng vùi tro bếp thưởng thức trong đêm lạnh." },
-    { id: "BLESS_12", name: "Thẻ thêm thịt nướng", tier: "common", icon: "🥩", isBuff: false, desc: "Tặng thêm 1 phần thịt nướng tại bữa tiệc BBQ đêm." },
+    { id: "BLESS_01", name: "1 ống tre", tier: "common", iconClass: "ico-item-01", isBuff: false, desc: "Ống tre rừng nguyên sinh dùng trữ nước hoặc thủ công." },
+    { id: "BLESS_02", name: "Nhựa thông", tier: "common", iconClass: "ico-item-02", isBuff: false, desc: "Nhựa thông khô nhóm lửa thắp sáng lều trại ban đêm." },
+    { id: "BLESS_03", name: "+1 Điểm Tinh Quang", tier: "common", iconClass: "ico-item-03", isBuff: true, buff: { tq: 1 }, desc: "Hồi phục 1 lượt triệu hồi Gacha Tinh Quang." },
+    { id: "BLESS_04", name: "1 mảnh vải ngẫu nhiên", tier: "common", iconClass: "ico-item-04", isBuff: false, desc: "Mảnh vải dệt thủ công mang hoa văn Rừng Tinh Linh." },
+    { id: "BLESS_05", name: "1 Gậy gỗ", tier: "common", iconClass: "ico-item-05", isBuff: false, desc: "Gậy leo núi trợ lực cho hành trình thám hiểm rừng." },
+    { id: "BLESS_06", name: "2 quả trứng gà", tier: "common", iconClass: "ico-item-06", isBuff: false, desc: "Bổ sung dinh dưỡng cho bữa ăn dã ngoại ngoài trời." },
+    { id: "BLESS_07", name: "1 quả bắp", tier: "common", iconClass: "ico-item-07", isBuff: false, desc: "Nướng bên bếp than hồng cùng các nhà phiêu lưu." },
+    { id: "BLESS_08", name: "+1 Điểm Cống Hiến", tier: "common", iconClass: "ico-item-08", isBuff: true, buff: { ch: 1 }, desc: "Tăng cống hiến để thăng bậc Căn Cước Phiêu Lưu." },
+    { id: "BLESS_09", name: "+2 Điểm Cống Hiến", tier: "common", iconClass: "ico-item-09", isBuff: true, buff: { ch: 2 }, desc: "Tăng 2 điểm cống hiến cho Bang Hội." },
+    { id: "BLESS_10", name: "1 Ly Trà Thảo Mộc", tier: "common", iconClass: "ico-item-10", isBuff: false, desc: "Ly trà thơm mát ngắm bình minh bên bờ suối." },
+    { id: "BLESS_11", name: "1 Củ khoai lang", tier: "common", iconClass: "ico-item-11", isBuff: false, desc: "Khoai mật nướng tro bếp thưởng thức trong đêm lạnh." },
+    { id: "BLESS_12", name: "Thẻ thêm thịt nướng", tier: "common", iconClass: "ico-item-12", isBuff: false, desc: "Thêm 1 phần thịt nướng tại bữa tiệc BBQ đêm." },
+
     // UNCOMMON (13-21)
-    { id: "BLESS_13", name: "1 Bình Potion", tier: "uncommon", icon: "🧪", isBuff: false, desc: "Nước tăng lực thảo mộc tiếp sức cho Ranger đi rừng." },
-    { id: "BLESS_14", name: "1 Ly Cocktail Tavern", tier: "uncommon", icon: "🍹", isBuff: false, desc: "Đổi 1 ly đồ uống đặc chế tại quầy pha chế Tavern." },
-    { id: "BLESS_15", name: "Thẻ X2 Tinh Thạch Quest", tier: "uncommon", icon: "📜", isBuff: false, desc: "Nhân đôi phần thưởng Tinh Thạch khi hoàn thành Main Quest." },
-    { id: "BLESS_16", name: "Thẻ Thuê Áo Choàng Free", tier: "uncommon", icon: "🧥", isBuff: false, desc: "Mượn 1 áo choàng pháp sư check-in miễn phí trong ngày." },
-    { id: "BLESS_17", name: "Thẻ Trợ Thủ NPC", tier: "uncommon", icon: "🧝", isBuff: false, desc: "Được hỏi NPC Ranger 1 câu gợi ý giải mật mã Quest." },
-    { id: "BLESS_18", name: "+1 Tinh Thạch", tier: "uncommon", icon: "💎", isBuff: true, buff: { tt: 1 }, desc: "Cộng ngay 1 Tinh Thạch vào số dư để mua sắm." },
-    { id: "BLESS_19", name: "+2 Tinh Thạch", tier: "uncommon", icon: "💎", isBuff: true, buff: { tt: 2 }, desc: "Cộng 2 Tinh Thạch mua gói trải nghiệm." },
-    { id: "BLESS_20", name: "Thẻ mượn Đạo cụ Quest", tier: "uncommon", icon: "🧭", isBuff: false, desc: "Mượn la bàn hoặc ống nhòm khám phá rừng." },
-    { id: "BLESS_21", name: "Thẻ Mượn Đèn Bão Đêm", tier: "uncommon", icon: "🏮", isBuff: false, desc: "Trang bị đèn bão lung linh cho buổi đi dạo đêm." },
+    { id: "BLESS_13", name: "1 Bình Potion", tier: "uncommon", iconClass: "ico-item-13", isBuff: false, desc: "Nước tăng lực thảo mộc tiếp sức Ranger đi rừng." },
+    { id: "BLESS_14", name: "1 Ly Cocktail Tavern", tier: "uncommon", iconClass: "ico-item-14", isBuff: false, desc: "Đổi đồ uống pha chế tại quầy Tavern Rừng Già." },
+    { id: "BLESS_15", name: "Thẻ X2 Tinh Thạch Quest", tier: "uncommon", iconClass: "ico-item-15", isBuff: false, desc: "Nhân đôi phần thưởng Tinh Thạch từ Main Quest." },
+    { id: "BLESS_16", name: "Thẻ Thuê Áo Choàng Free", tier: "uncommon", iconClass: "ico-item-16", isBuff: false, desc: "Mượn áo choàng pháp sư check-in miễn phí trong ngày." },
+    { id: "BLESS_17", name: "Thẻ Trợ Thủ NPC", tier: "uncommon", iconClass: "ico-item-17", isBuff: false, desc: "Hỏi NPC Ranger 1 câu gợi ý giải mật mã Quest." },
+    { id: "BLESS_18", name: "+1 Tinh Thạch", tier: "uncommon", iconClass: "ico-item-18", isBuff: true, buff: { tt: 1 }, desc: "Cộng 1 Tinh Thạch mua dịch vụ hoặc tiện ích." },
+    { id: "BLESS_19", name: "+2 Tinh Thạch", tier: "uncommon", iconClass: "ico-item-19", isBuff: true, buff: { tt: 2 }, desc: "Cộng 2 Tinh Thạch vào tài khoản tiêu dùng." },
+    { id: "BLESS_20", name: "Thẻ mượn Đạo cụ Quest", tier: "uncommon", iconClass: "ico-item-20", isBuff: false, desc: "Mượn la bàn hoặc ống nhòm khám phá rừng." },
+    { id: "BLESS_21", name: "Thẻ Mượn Đèn Bão Đêm", tier: "uncommon", iconClass: "ico-item-21", isBuff: false, desc: "Trang bị đèn bão lung linh cho buổi dạo đêm." },
+
     // RARE (22-27)
-    { id: "BLESS_22", name: "Huy Hiệu Phiêu Lưu Xanh", tier: "rare", icon: "🏅", isBuff: false, desc: "Huy hiệu kim loại độc bản chứng nhận thành viên Hội Ngọc Lục." },
-    { id: "BLESS_23", name: "Thẻ Dịch Chuyển", tier: "rare", icon: "🌀", isBuff: false, desc: "Buff miễn phí chuyến xe đưa đón Bảo Lộc - Rừng Tinh Linh." },
-    { id: "BLESS_24", name: "Thẻ Gacha Phiên Chợ", tier: "rare", icon: "🎟️", isBuff: false, desc: "1 vé quay thưởng 100% trúng quà tại Chợ Tinh Linh." },
-    { id: "BLESS_25", name: "Dây chuyền Tinh Linh", tier: "rare", icon: "📿", isBuff: false, desc: "Vật phẩm lưu niệm đính đá bán quý thiên nhiên." },
-    { id: "BLESS_26", name: "Món Quà Bí Mật Tinh Linh", tier: "rare", icon: "🎁", isBuff: false, desc: "Hộp quà bất ngờ do Trưởng đoàn Hội Ngọc Lục trao tặng." },
-    { id: "BLESS_27", name: "Thẻ bài Tinh Linh Rừng", tier: "rare", icon: "🃏", isBuff: false, desc: "Thẻ bài ma thuật mở khóa đặc quyền thực địa độc nhất." },
+    { id: "BLESS_22", name: "Huy Hiệu Phiêu Lưu Xanh", tier: "rare", iconClass: "ico-item-22", isBuff: false, desc: "Huy hiệu kim loại độc bản chứng nhận thành viên Hội." },
+    { id: "BLESS_23", name: "Thẻ Dịch Chuyển", tier: "rare", iconClass: "ico-item-23", isBuff: false, desc: "Buff miễn phí chuyến xe đưa đón Bảo Lộc - Rừng Già." },
+    { id: "BLESS_24", name: "Thẻ Gacha Phiên Chợ", tier: "rare", iconClass: "ico-item-24", isBuff: false, desc: "1 vé quay 100% trúng quà tại Phiên Chợ Tinh Linh." },
+    { id: "BLESS_25", name: "Dây chuyền Tinh Linh", tier: "rare", iconClass: "ico-item-25", isBuff: false, desc: "Vật phẩm đính đá khoáng thạch thiên nhiên." },
+    { id: "BLESS_26", name: "Món Quà Bí Mật Tinh Linh", tier: "rare", iconClass: "ico-item-26", isBuff: false, desc: "Hộp quà bất ngờ do Trưởng quán Hội Ngọc Lục trao tặng." },
+    { id: "BLESS_27", name: "Thẻ bài Tinh Linh Rừng", tier: "rare", iconClass: "ico-item-27", isBuff: false, desc: "Thẻ bài ma thuật mở khóa đặc quyền thực địa." },
+
     // LEGENDARY (28-30)
-    { id: "BLESS_28", name: "Thẻ Nâng Cấp Phòng Riêng", tier: "legendary", icon: "🗝️", isBuff: false, desc: "Nâng cấp lều trại tiêu chuẩn lên phòng riêng Glamping cao cấp." },
-    { id: "BLESS_29", name: "Thẻ Lưu Trú Miễn Phí", tier: "legendary", icon: "⛺", isBuff: false, desc: "Tặng 01 đêm nghỉ dưỡng hoàn toàn miễn phí tại Rừng Tinh Linh." },
-    { id: "BLESS_30", name: "Trang Bị Nhà Phiêu Lưu", tier: "legendary", icon: "⚔️", isBuff: false, desc: "Bộ quà tặng cao cấp gồm ba lô, áo khoác chuyên dụng dã ngoại." }
+    { id: "BLESS_28", name: "Thẻ Nâng Cấp Phòng Riêng", tier: "legendary", iconClass: "ico-item-28", isBuff: false, desc: "Nâng cấp lều trại lên phòng riêng Glamping cao cấp." },
+    { id: "BLESS_29", name: "Thẻ Lưu Trú Miễn Phí", tier: "legendary", iconClass: "ico-item-29", isBuff: false, desc: "01 đêm nghỉ dưỡng hoàn toàn miễn phí tại Rừng." },
+    { id: "BLESS_30", name: "Trang Bị Nhà Phiêu Lưu", tier: "legendary", iconClass: "ico-item-30", isBuff: false, desc: "Bộ ba lô, áo khoác chuyên dụng dã ngoại cao cấp." }
 ];
 
 function isPrime(num) {
@@ -341,7 +344,7 @@ function addItemToInventory(item) {
         currentUser.inventory.push({
             id: item.id,
             name: item.name,
-            icon: item.icon,
+            iconClass: item.iconClass, // Dùng class Data-URI
             tier: item.tier || "common",
             desc: item.desc || "",
             isBuff: item.isBuff,
@@ -412,7 +415,8 @@ const blessingModal = document.getElementById("blessingModal");
 function openBlessingModal(blessing, reasonText) {
     document.getElementById("blessTierTag").textContent = blessing.tier.toUpperCase();
     document.getElementById("blessTierTag").className = `blessing-tier-tag tier-${blessing.tier}`;
-    document.getElementById("blessIconBox").textContent = blessing.icon;
+    // Render icon Data URI lớn
+    document.getElementById("blessIconBox").innerHTML = `<i class="item-ico ${blessing.iconClass}" style="width:48px;height:48px;"></i>`;
     document.getElementById("blessTitle").textContent = blessing.name;
     document.getElementById("blessDesc").textContent = `${reasonText}\n${blessing.desc}`;
     blessingModal.classList.remove("hidden");
@@ -710,7 +714,7 @@ function renderInventory5x5() {
         if (item) {
             slotsHtml += `
                 <div class="item-slot" data-index="${i}">
-                    <span class="item-slot-icon">${item.icon}</span>
+                    <span class="item-slot-icon"><i class="item-ico ${item.iconClass}"></i></span>
                     <span class="item-slot-qty">x${item.quantity}</span>
                 </div>
             `;
@@ -734,7 +738,8 @@ const qrcodeContainer = document.getElementById("qrcodeContainer");
 
 function openItemModal(item, itemIndex) {
     itemModal.classList.remove("hidden");
-    document.getElementById("modalItemTitle").textContent = `${item.icon} ${item.name}`;
+    // Render icon Data URI cạnh tiêu đề modal
+    document.getElementById("modalItemTitle").innerHTML = `<i class="item-ico ${item.iconClass}"></i> ${item.name}`;
     document.getElementById("modalItemDesc").textContent = item.desc || "Vật phẩm lưu trữ trong túi đồ.";
     qrcodeContainer.innerHTML = "";
 
