@@ -571,21 +571,32 @@ body, html {
 }
 
 /* ======================================================
-   BOTTOM ARC WHEEL DOCK (RESPONSIVE: PC & MOBILE)
+   BOTTOM ARC WHEEL DOCK - RPG GAME STYLE (CUNG TRÒN)
 ====================================================== */
 .rpg-dock {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 150px;
-    background: linear-gradient(0deg, rgba(5,5,15,0.98) 0%, rgba(12,10,28,0.92) 80%, transparent 100%);
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-end;
-    padding: 0 8px 10px;
+    height: 160px;
+    background: linear-gradient(0deg, rgba(5,5,15,0.98) 0%, rgba(12,10,28,0.92) 70%, transparent 100%);
     z-index: 30;
     border-top: 1px solid rgba(255,255,255,0.08);
+    overflow: visible;
+}
+
+/* Container để tạo cung tròn */
+.rpg-dock::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140%;
+    height: 280px;
+    border-radius: 50%;
+    border: 1px solid rgba(165, 140, 255, 0.15);
+    pointer-events: none;
 }
 
 .dock-btn {
@@ -599,143 +610,232 @@ body, html {
     align-items: center;
     gap: 4px;
     cursor: pointer;
-    font-size: clamp(9px, 2.5vw, 11px);
-    position: relative;
-    flex: 1;
-    max-width: 90px;
-    transition: transform 0.2s ease;
+    font-size: 10px;
+    position: absolute;
+    transition: transform 0.2s ease, color 0.2s ease;
 }
-.dock-btn.active { color: #ffe66d; }
-.dock-btn:active { transform: scale(0.95); }
+
+.dock-btn.active { 
+    color: #ffe66d; 
+}
+
+.dock-btn:active { 
+    transform: translateX(-50%) translateY(var(--y-offset, 0)) scale(0.92) !important; 
+}
 
 .dock-icon-ring {
-    width: clamp(60px, 18vw, 90px);
-    height: clamp(60px, 18vw, 90px);
+    width: 64px;
+    height: 64px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: clamp(14px, 4vw, 18px);
+    font-size: 16px;
     position: relative;
+    background: rgba(20, 16, 45, 0.7);
+    border-radius: 50%;
+    border: 1.5px solid rgba(165, 140, 255, 0.3);
+    backdrop-filter: blur(8px);
+}
+
+.dock-btn.active .dock-icon-ring {
+    border-color: rgba(255, 209, 102, 0.6);
+    box-shadow: 0 0 15px rgba(255, 209, 102, 0.3);
 }
 
 .dock-label {
+    font-size: 9px;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
 }
 
 .badge-dot {
     position: absolute;
     top: 4px;
     right: 4px;
-    width: clamp(5px, 1.5vw, 7px);
-    height: clamp(5px, 1.5vw, 7px);
+    width: 8px;
+    height: 8px;
     background: #ff3366;
     border-radius: 50%;
+    border: 1.5px solid #000;
+    box-shadow: 0 0 8px #ff3366;
 }
+
 .badge-count {
     position: absolute;
-    top: 0;
+    top: -2px;
     right: -4px;
     background: #ff3366;
     color: white;
-    font-size: clamp(7px, 2vw, 9px);
+    font-size: 8px;
     font-weight: bold;
-    padding: 1px 4px;
-    border-radius: 8px;
+    padding: 2px 5px;
+    border-radius: 10px;
+    border: 1px solid #000;
+    box-shadow: 0 0 6px rgba(255, 51, 102, 0.6);
 }
 
-/* NÚT GACHA TRUNG TÂM - LỚN HƠN VÀ NHÔ CAO */
-.center-core {
-    margin-top: clamp(-70px, -20vw, -100px);
-    flex: 1.5;
-    max-width: 160px;
+/* XẾP THEO CUNG TRÒN - 5 NÚT */
+/* Nút 1: Sub-left (Nhiệm Vụ) */
+.dock-btn.sub-left {
+    bottom: 30px;
+    left: 8%;
+    transform: translateX(-50%);
 }
 
+/* Nút 2: Mid-left (Túi Đồ) */
+.dock-btn.mid-left {
+    bottom: 55px;
+    left: 23%;
+    transform: translateX(-50%);
+}
+
+/* Nút 3: CENTER GACHA (Giữa, cao nhất) */
+.dock-btn.center-core {
+    bottom: 68px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+/* Nút 4: Mid-right (Shop) */
+.dock-btn.mid-right {
+    bottom: 55px;
+    right: 23%;
+    left: auto;
+    transform: translateX(50%);
+}
+
+/* Nút 5: Sub-right (Hồ Sơ) */
+.dock-btn.sub-right {
+    bottom: 30px;
+    right: 8%;
+    left: auto;
+    transform: translateX(50%);
+}
+
+/* NÚT GACHA TO HƠN VÀ NỔI BẬT */
 .core-glow-ring {
-    width: clamp(120px, 35vw, 170px);
-    height: clamp(120px, 35vw, 170px);
+    width: 110px;
+    height: 110px;
     border-radius: 50%;
     background: linear-gradient(135deg, #ffd166, #c77dff, #3a0ca3);
-    padding: clamp(3px, 1vw, 5px);
-    box-shadow: 0 0 25px rgba(199, 125, 255, 0.7);
+    padding: 4px;
+    box-shadow: 
+        0 0 25px rgba(199, 125, 255, 0.7),
+        0 -5px 35px rgba(255, 209, 102, 0.4);
     display: flex;
     align-items: center;
     justify-content: center;
     animation: corePulse 2.5s infinite ease-in-out;
 }
+
 @keyframes corePulse {
-    0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(199, 125, 255, 0.6); }
-    50% { transform: scale(1.06); box-shadow: 0 0 32px rgba(255, 209, 102, 0.8); }
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 
+            0 0 20px rgba(199, 125, 255, 0.6),
+            0 -5px 30px rgba(255, 209, 102, 0.3);
+    }
+    50% { 
+        transform: scale(1.05); 
+        box-shadow: 
+            0 0 35px rgba(199, 125, 255, 0.9),
+            0 -5px 45px rgba(255, 209, 102, 0.6);
+    }
 }
 
 .core-inner-sphere {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background: #0d0827;
-    border: 1.5px solid rgba(255,255,255,0.4);
+    background: radial-gradient(circle at 30% 30%, #1a0f3d, #0d0827);
+    border: 2px solid rgba(255,255,255,0.4);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: clamp(1px, 0.5vw, 3px);
-}
-.core-ico-svg { 
-    width: clamp(20px, 6vw, 28px); 
-    height: clamp(20px, 6vw, 28px); 
-}
-.core-text { 
-    font-size: clamp(10px, 2.8vw, 13px); 
-    font-weight: 900; 
-    letter-spacing: 1px; 
-    color: #ffe66d; 
-}
-.core-cost-badge {
-    background: rgba(0,0,0,0.6);
-    color: #4cc9f0;
-    font-size: clamp(7px, 2vw, 9px);
-    padding: 1px 5px;
-    border-radius: 6px;
-    border: 0.5px solid var(--cyan-crystal);
+    gap: 2px;
+    box-shadow: inset 0 0 20px rgba(124, 108, 255, 0.3);
 }
 
-/* RESPONSIVE: MOBILE SMALL (< 360px) */
-@media (max-width: 360px) {
-    .rpg-dock {
-        height: 130px;
-        padding: 0 4px 8px;
-    }
-    .dock-btn {
-        gap: 2px;
-        max-width: 70px;
-    }
-    .center-core {
-        max-width: 140px;
-    }
+.core-ico-svg { 
+    width: 28px; 
+    height: 28px;
+    filter: drop-shadow(0 0 8px rgba(199, 125, 255, 0.6));
+}
+
+.core-text { 
+    font-size: 12px; 
+    font-weight: 900; 
+    letter-spacing: 1.2px; 
+    color: #ffe66d;
+    text-shadow: 0 0 10px rgba(255, 230, 109, 0.6);
+}
+
+.core-cost-badge {
+    background: rgba(0,0,0,0.8);
+    color: #4cc9f0;
+    font-size: 8px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 8px;
+    border: 1px solid var(--cyan-crystal);
+    box-shadow: 0 0 8px rgba(76, 201, 240, 0.4);
+}
+
+/* RESPONSIVE: MOBILE SMALL (< 375px) */
+@media (max-width: 374px) {
+    .rpg-dock { height: 140px; }
+    
+    .dock-btn.sub-left { bottom: 25px; left: 6%; }
+    .dock-btn.mid-left { bottom: 48px; left: 21%; }
+    .dock-btn.center-core { bottom: 58px; }
+    .dock-btn.mid-right { bottom: 48px; right: 21%; }
+    .dock-btn.sub-right { bottom: 25px; right: 6%; }
+    
+    .dock-icon-ring { width: 56px; height: 56px; font-size: 14px; }
+    .dock-label { font-size: 8px; }
+    .core-glow-ring { width: 95px; height: 95px; }
+    .core-ico-svg { width: 24px; height: 24px; }
+    .core-text { font-size: 10px; }
+}
+
+/* RESPONSIVE: MOBILE STANDARD (375px - 428px) */
+@media (min-width: 375px) and (max-width: 428px) {
+    .dock-btn.sub-left { left: 7%; }
+    .dock-btn.sub-right { right: 7%; }
+}
+
+/* RESPONSIVE: LARGE MOBILE (> 428px) */
+@media (min-width: 429px) and (max-width: 767px) {
+    .rpg-dock { height: 170px; }
+    
+    .dock-btn.sub-left { bottom: 35px; left: 10%; }
+    .dock-btn.mid-left { bottom: 60px; left: 24%; }
+    .dock-btn.center-core { bottom: 72px; }
+    .dock-btn.mid-right { bottom: 60px; right: 24%; }
+    .dock-btn.sub-right { bottom: 35px; right: 10%; }
+    
+    .dock-icon-ring { width: 70px; height: 70px; }
+    .core-glow-ring { width: 120px; height: 120px; }
 }
 
 /* RESPONSIVE: TABLET & PC (> 768px) */
 @media (min-width: 768px) {
-    .rpg-dock {
-        height: 180px;
-        padding: 0 20px 15px;
-    }
-    .dock-btn {
-        max-width: 110px;
-    }
-    .center-core {
-        max-width: 180px;
-    }
-    .dock-icon-ring {
-        width: 95px;
-        height: 95px;
-    }
-    .core-glow-ring {
-        width: 180px;
-        height: 180px;
-    }
+    .rpg-dock { height: 190px; }
+    
+    .dock-btn.sub-left { bottom: 40px; left: 12%; }
+    .dock-btn.mid-left { bottom: 70px; left: 26%; }
+    .dock-btn.center-core { bottom: 85px; }
+    .dock-btn.mid-right { bottom: 70px; right: 26%; }
+    .dock-btn.sub-right { bottom: 40px; right: 12%; }
+    
+    .dock-icon-ring { width: 80px; height: 80px; font-size: 18px; }
+    .dock-label { font-size: 10px; }
+    
+    .core-glow-ring { width: 140px; height: 140px; }
+    .core-ico-svg { width: 32px; height: 32px; }
+    .core-text { font-size: 13px; }
 }
 
 /* ======================================================
