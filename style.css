@@ -571,7 +571,7 @@ body, html {
 }
 
 /* ======================================================
-   BOTTOM ARC WHEEL DOCK (NÚT GACHA TO HƠN 50%)
+   BOTTOM ARC WHEEL DOCK (RESPONSIVE: PC & MOBILE)
 ====================================================== */
 .rpg-dock {
     position: absolute;
@@ -582,8 +582,8 @@ body, html {
     background: linear-gradient(0deg, rgba(5,5,15,0.98) 0%, rgba(12,10,28,0.92) 80%, transparent 100%);
     display: flex;
     justify-content: space-around;
-    align-items: center;
-    padding: 0 10px;
+    align-items: flex-end;
+    padding: 0 8px 10px;
     z-index: 30;
     border-top: 1px solid rgba(255,255,255,0.08);
 }
@@ -597,56 +597,68 @@ body, html {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
+    gap: 4px;
     cursor: pointer;
-    font-size: 10px;
+    font-size: clamp(9px, 2.5vw, 11px);
     position: relative;
     flex: 1;
+    max-width: 90px;
+    transition: transform 0.2s ease;
 }
 .dock-btn.active { color: #ffe66d; }
+.dock-btn:active { transform: scale(0.95); }
 
 .dock-icon-ring {
-    width: 100px;
-    height: 100px;
+    width: clamp(60px, 18vw, 90px);
+    height: clamp(60px, 18vw, 90px);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: clamp(14px, 4vw, 18px);
     position: relative;
 }
+
+.dock-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
 .badge-dot {
     position: absolute;
-    top: 2px;
-    right: 2px;
-    width: 6px;
-    height: 6px;
+    top: 4px;
+    right: 4px;
+    width: clamp(5px, 1.5vw, 7px);
+    height: clamp(5px, 1.5vw, 7px);
     background: #ff3366;
     border-radius: 50%;
 }
 .badge-count {
     position: absolute;
-    top: -2px;
-    right: -6px;
+    top: 0;
+    right: -4px;
     background: #ff3366;
     color: white;
-    font-size: 8px;
+    font-size: clamp(7px, 2vw, 9px);
     font-weight: bold;
     padding: 1px 4px;
     border-radius: 8px;
 }
 
-/* NÚT GACHA TO HƠN 50%: 58px -> 88px */
+/* NÚT GACHA TRUNG TÂM - LỚN HƠN VÀ NHÔ CAO */
 .center-core {
-    margin-top: -88px;
-    flex: 1.2;
+    margin-top: clamp(-70px, -20vw, -100px);
+    flex: 1.5;
+    max-width: 160px;
 }
 
 .core-glow-ring {
-    width: 150px;
-    height: 150px;
+    width: clamp(120px, 35vw, 170px);
+    height: clamp(120px, 35vw, 170px);
     border-radius: 50%;
     background: linear-gradient(135deg, #ffd166, #c77dff, #3a0ca3);
-    padding: 4px;
+    padding: clamp(3px, 1vw, 5px);
     box-shadow: 0 0 25px rgba(199, 125, 255, 0.7);
     display: flex;
     align-items: center;
@@ -668,17 +680,62 @@ body, html {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 1px;
+    gap: clamp(1px, 0.5vw, 3px);
 }
-.core-ico-svg { width: 24px; height: 24px; }
-.core-text { font-size: 11px; font-weight: 900; letter-spacing: 1px; color: #ffe66d; }
+.core-ico-svg { 
+    width: clamp(20px, 6vw, 28px); 
+    height: clamp(20px, 6vw, 28px); 
+}
+.core-text { 
+    font-size: clamp(10px, 2.8vw, 13px); 
+    font-weight: 900; 
+    letter-spacing: 1px; 
+    color: #ffe66d; 
+}
 .core-cost-badge {
     background: rgba(0,0,0,0.6);
     color: #4cc9f0;
-    font-size: 8px;
+    font-size: clamp(7px, 2vw, 9px);
     padding: 1px 5px;
     border-radius: 6px;
     border: 0.5px solid var(--cyan-crystal);
+}
+
+/* RESPONSIVE: MOBILE SMALL (< 360px) */
+@media (max-width: 360px) {
+    .rpg-dock {
+        height: 130px;
+        padding: 0 4px 8px;
+    }
+    .dock-btn {
+        gap: 2px;
+        max-width: 70px;
+    }
+    .center-core {
+        max-width: 140px;
+    }
+}
+
+/* RESPONSIVE: TABLET & PC (> 768px) */
+@media (min-width: 768px) {
+    .rpg-dock {
+        height: 180px;
+        padding: 0 20px 15px;
+    }
+    .dock-btn {
+        max-width: 110px;
+    }
+    .center-core {
+        max-width: 180px;
+    }
+    .dock-icon-ring {
+        width: 95px;
+        height: 95px;
+    }
+    .core-glow-ring {
+        width: 180px;
+        height: 180px;
+    }
 }
 
 /* ======================================================
@@ -1404,6 +1461,7 @@ body, html {
     transform: scale(0.88);
     background: #7c6cff;
 }
+input.hidden {display: none;}
 
 /* ======================================================
    NÚT GOOGLE SIGN-IN CHUẨN GIAO DIỆN RPG
