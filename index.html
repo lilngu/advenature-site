@@ -130,27 +130,146 @@
         </footer>
     </div>
 
-    <!-- 2. MÀN HÌNH 2: TÚI TRỮ VẬT (GIỮ LẠI - NẰM NGOÀI GAME CONTAINER ĐỂ LÀM POPUP/LAYER) -->
+   <!-- 2. MÀN HÌNH TÚI TRỮ VẬT (INVENTORY) -->
     <section id="inventory-view" class="view-panel hidden">
         <div class="panel-container">
-            <span class="close-panel-btn" onclick="document.getElementById('inventory-view').classList.add('hidden')">&times;</span>
+            <span class="close-panel-btn">&times;</span>
             <h2 class="section-title">🎒 TÚI TRỮ VẬT NHÀ PHIÊU LƯU</h2>
             <div class="inv-tabs">
-                <button class="inv-tab-btn active" data-sub="sub-gems">Tinh Quang Thạch (<span id="gemProgress">0/990</span>)</button>
-                <button class="inv-tab-btn" data-sub="sub-items">Vật Phẩm & Thẻ (5x5)</button>
+                <button class="inv-tab-btn active" data-sub="sub-gems">Tinh Quang Thạch (<span id="gemProgressCount">0/990</span>)</button>
+                <button class="inv-tab-btn" data-sub="sub-items">Túi Đồ & Thẻ (5x5)</button>
             </div>
 
-            <!-- Tab Con 1: Tủ 990 Tinh Quang Thạch -->
+            <!-- Tab 1: Tủ 990 Thạch -->
             <div id="sub-gems" class="inv-content active">
                 <div class="progress-bar-container">
                     <div id="gemProgressBar" class="progress-fill" style="width: 0%;"></div>
                 </div>
+                <!-- Bộ lọc 6 Hệ -->
+                <div class="filter-bar" id="gemFilterBar">
+                    <button class="filter-btn active" data-sys="ALL">Tất cả</button>
+                    <button class="filter-btn" data-sys="🔥">🔥 Hỏa</button>
+                    <button class="filter-btn" data-sys="☀️">☀️ Dương</button>
+                    <button class="filter-btn" data-sys="🌿">🌿 Mộc</button>
+                    <button class="filter-btn" data-sys="❄️">❄️ Băng</button>
+                    <button class="filter-btn" data-sys="⚡">⚡ Lôi</button>
+                    <button class="filter-btn" data-sys="🔮">🔮 Ma Pháp</button>
+                </div>
                 <div id="gemGrid" class="gem-grid-layout"></div>
             </div>
 
-            <!-- Tab Con 2: Lưới 5x5 Vật Phẩm Offline -->
+            <!-- Tab 2: Lưới 5x5 Vật Phẩm -->
             <div id="sub-items" class="inv-content hidden">
                 <div id="itemGrid" class="grid-5x5"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. MÀN HÌNH NHIỆM VỤ (QUESTS) -->
+    <section id="quest-view" class="view-panel hidden">
+        <div class="panel-container">
+            <span class="close-panel-btn">&times;</span>
+            <h2 class="section-title">📜 TRẠM NHIỆM VỤ TINH LINH</h2>
+            <div class="quest-list">
+                <!-- Nhiệm vụ 1: Điểm danh -->
+                <div class="quest-card">
+                    <div class="quest-info">
+                        <h4>✦ Trạm Điểm Danh Hàng Ngày</h4>
+                        <p>Nhận 1 🔮 Tinh Quang mỗi ngày. Chuỗi 7 ngày thưởng thêm +1 🔮</p>
+                        <div class="streak-indicator" id="streakDisplay">Chuỗi: 0/7 ngày</div>
+                    </div>
+                    <button class="btn-action" id="btnDoCheckin">Điểm Danh</button>
+                </div>
+
+                <!-- Nhiệm vụ 2: Truyền tin FB -->
+                <div class="quest-card">
+                    <div class="quest-info">
+                        <h4>✦ Truyền Tin Cộng Đồng</h4>
+                        <p>Đăng bài chia sẻ trên Group Advenature, nộp link để nhận +1 🔮</p>
+                        <input type="text" id="inputFbLink" class="rpg-input" placeholder="Dán link bài viết Facebook...">
+                    </div>
+                    <button class="btn-action" id="btnSubmitFb">Gửi Duyệt</button>
+                </div>
+
+                <!-- Nhiệm vụ 3: Kết nối bạn bè -->
+                <div class="quest-card">
+                    <div class="quest-info">
+                        <h4>✦ Kết Nối Nhà Phiêu Lưu</h4>
+                        <p>Chia sẻ mã <b id="myRefCodeDisplay">AW----</b>. Cả 2 cùng nhận +1 🔮</p>
+                        <input type="text" id="inputFriendCode" class="rpg-input" placeholder="Nhập mã AWxxxx của bạn bè...">
+                    </div>
+                    <button class="btn-action" id="btnSubmitRef">Xác Nhận</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. MÀN HÌNH SHOP LỮ HÀNH (ĐỦ DỮ LIỆU DATA.MD) -->
+    <section id="shop-view" class="view-panel hidden">
+        <div class="panel-container">
+            <span class="close-panel-btn">&times;</span>
+            <h2 class="section-title">🛒 SHOP LỮ HÀNH RỪNG TINH LINH</h2>
+            <p class="shop-subtitle">Chọn gói hoặc tiện ích để đăng ký trải nghiệm thực địa</p>
+            
+            <div class="shop-grid" id="shopItemsContainer">
+                <!-- 12 Sản phẩm chuẩn data.md sẽ được JS render tự động tại đây -->
+            </div>
+
+            <!-- Thanh tổng kết giỏ hàng dính đáy panel -->
+            <div class="shop-checkout-bar">
+                <div class="checkout-summary">
+                    <div>Đã chọn: <b id="cartCount">0</b> mục</div>
+                    <div>Tổng: <b id="cartTotalTinhThach" style="color:#92d4ff;">0 💎</b> (~<span id="cartTotalVnd">0</span> VNĐ)</div>
+                </div>
+                <button class="btn-summon" id="btnCheckoutShop" style="padding: 6px 18px; font-size: 12px;">✦ ĐẶT MUA ✦</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. MÀN HÌNH NHÀ PHIÊU LƯU (PROFILE) -->
+    <section id="profile-view" class="view-panel hidden">
+        <div class="panel-container text-center">
+            <span class="close-panel-btn">&times;</span>
+            <h2 class="section-title">🛡️ THẺ NHÀ PHIÊU LƯU</h2>
+            
+            <div class="passport-card">
+                <div class="passport-header">
+                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=advenature" id="profAvatar" class="avatar-large">
+                    <div class="passport-meta">
+                        <h3 id="profName">Nhà Phiêu Lưu</h3>
+                        <div class="passport-badge" id="profCode">AW----</div>
+                        <div class="passport-role" id="profRole">Tân Thủ</div>
+                    </div>
+                </div>
+
+                <div class="passport-stats">
+                    <div class="stat-box">
+                        <span>🔮 Tinh Quang</span>
+                        <b id="profStatTQ">0</b>
+                    </div>
+                    <div class="stat-box">
+                        <span>💎 Tinh Thạch</span>
+                        <b id="profStatTT">0</b>
+                    </div>
+                    <div class="stat-box">
+                        <span>🛡️ Cống Hiến</span>
+                        <b id="profStatCH">0 CP</b>
+                    </div>
+                </div>
+
+                <!-- Thanh tiến trình Cống Hiến Bang Hội -->
+                <div class="rank-progress-box">
+                    <div class="rank-label">
+                        <span>Bậc Bang Hội: <b>Tập Sự</b></span>
+                        <span>Cần: 100 CP</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-fill" id="rankProgressBar" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <div id="userQrBox" class="qr-box" style="margin: 15px auto;"></div>
+                <div class="qr-note">Mã QR Định Danh Nhà Phiêu Lưu</div>
             </div>
         </div>
     </section>

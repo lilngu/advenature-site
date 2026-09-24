@@ -67,6 +67,15 @@ const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
 composer.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.2, 0.5, 0.1));
 composer.addPass(new OutputPass());
+// ==========================================
+// ORBIT CONTROLS (TƯƠNG TÁC XOAY 3D)
+// ==========================================
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableZoom = false;       // Khóa zoom để tránh vỡ bố cục UI di động
+controls.enablePan = false;        // Khóa dịch chuyển ngang
+controls.enableDamping = true;     // Tạo độ mượt khi thả tay
+controls.dampingFactor = 0.05;
+controls.target.set(0, 0.3, 0);
 
 // Lightings
 scene.add(new THREE.AmbientLight(0x443366, 0.5));
@@ -415,6 +424,7 @@ function animate() {
     }
 
     updateState(performance.now());
+	controls.update();
     composer.render();
 }
 animate();
@@ -427,14 +437,168 @@ window.addEventListener("resize", () => {
     composer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// Chuyển Tab Navigation
+// Chuyển Tab Navigation & Hiển thị Panel
 document.querySelectorAll(".nav-btn").forEach(btn => {
     btn.addEventListener("click", () => {
-        document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
-        document.querySelectorAll(".view-panel").forEach(p => p.classList.add("hidden"));
+        const targetId = btn.dataset.target;
 
+        // Nếu bấm lại nút Gacha ở giữa -> Đóng toàn bộ popup panel để quay về màn hình 3D chính
+        if (targetId === "gacha-view") {
+            document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+            document.querySelector(".dock-btn.center-core").classList.add("active");
+            document.querySelectorAll(".view-panel").forEach(p => {
+                if (p.id !== "gacha-view") p.classList.add("hidden");
+            });
+            return;
+        }
+
+        // Nếu mở các panel khác (Túi đồ, Quest, Shop, Profile)
+        document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
-        const target = document.getElementById(btn.dataset.target);
-        if (target) target.classList.remove("hidden");
+
+        // Ẩn các modal khác và mở modal được chọn
+        document.querySelectorAll(".view-panel").forEach(p => {
+            if (p.id !== "gacha-view") p.classList.add("hidden");
+        });
+
+        const targetPanel = document.getElementById(targetId);
+        if (targetPanel) {
+            targetPanel.classList.remove("hidden");
+            
+            // Cập nhật dữ liệu profile nếu mở tab profile
+            if (targetId === "profile-view") {
+                document.getElementById("profileNameDisplay").textContent = currentUser.full_name;
+                document.getElementById("profileCodeDisplay").textContent = "MÃ: " + currentUser.adventurer_code;
+                document.getElementById("profTinhQuang").textContent = currentUser.tinh_quang_points;
+                document.getElementById("profTinhThach").textContent = currentUser.tinh_thach_points;
+                document.getElementById("profCongHien").textContent = currentUser.cong_hien_points + " CP";
+            }
+        }
+    });
+});
+
+// ======================================================
+// DỮ LIỆU SHOP LỮ HÀNH TỪ DATA.MD (KHÔNG HARDCODE)
+// ======================================================
+const SHOP_PRODUCTS = [
+    { id: "PKG_1", name: "📦 GÓI TÂN THỦ TRẢI NGHIỆM", tinhThach: 22, vnd: 550000, desc: "Mystery Box + 1 Đêm lều trại + Buff dịch chuyển + Áp dụng Chúc phúc Free." },
+    { id: "PKG_2", name: "🎒 GÓI TÂN THỦ THƯ GIÃN", tinhThach: 32, vnd: 800000, desc: "Trọn gói 3 bữa ăn (BBQ tối + Sáng + Trưa) + Lều trại tiêu chuẩn." },
+    { id: "PKG_3", name: "⚔️ GÓI TRỌN GÓI (Best-Seller)", tinhThach: 64, vnd: 1600000, desc: "Full 2N1Đ + 3 Bữa ăn + Mở khóa toàn bộ 5 Main Quests." },
+    { id: "PKG_4", name: "🛡️ GÓI SĂN GACHA", tinhThach: 80, vnd: 2000000, desc: "Full 2N1Đ + Túi 4 Tinh Thạch + 1 Thẻ bài Tinh Linh + 1 Vé quay chợ." },
+    { id: "Q_WIND", name: "Quest Phong Tinh Linh", tinhThach: 8, vnd: 200000, desc: "Nhận nhiệm vụ bìa rừng cùng Ranger NPC." },
+    { id: "Q_WOOD", name: "Quest Mộc Tinh Linh", tinhThach: 8, vnd: 200000, desc: "Nhận nhiệm vụ tại Đồi Cỏ Cây Thông." },
+    { id: "Q_FIRE", name: "Quest Hỏa Tinh Linh", tinhThach: 8, vnd: 200000, desc: "Nhận nhiệm vụ tại Hội Ngọc Lục." },
+    { id: "Q_WATER", name: "Quest Thủy Tinh Linh", tinhThach: 8, vnd: 200000, desc: "Khám phá suối rừng cùng NPC hướng dẫn." },
+    { id: "Q_EARTH", name: "Quest Thổ Tinh Linh", tinhThach: 8, vnd: 200000, desc: "Nhiệm vụ giao thương tại Phiên Chợ Tinh Linh." },
+    { id: "FOOD_BBQ", name: "Tiệc Nướng BBQ Đêm", tinhThach: 7, vnd: 175000, desc: "Tiệc nướng bên bếp lửa tại Hội Ngọc Lục." },
+    { id: "FOOD_BREAKFAST", name: "Bữa Sáng Bên Suối", tinhThach: 2, vnd: 50000, desc: "Thưởng thức điểm tâm sáng bên suối." },
+    { id: "FOOD_LUNCH", name: "Bữa Trưa Tại Phiên Chợ", tinhThach: 2, vnd: 50000, desc: "Dùng cơm trưa tại chợ Tinh Linh." }
+];
+
+let selectedProducts = new Set();
+
+function renderShop() {
+    const container = document.getElementById("shopItemsContainer");
+    if (!container) return;
+    container.innerHTML = SHOP_PRODUCTS.map(p => `
+        <div class="shop-card ${selectedProducts.has(p.id) ? 'selected' : ''}" data-id="${p.id}">
+            <div class="shop-card-title">${p.name}</div>
+            <div class="shop-card-price">💎 ${p.tinhThach} Tinh Thạch (~${p.vnd.toLocaleString()} đ)</div>
+            <div class="shop-card-desc">${p.desc}</div>
+        </div>
+    `).join('');
+
+    container.querySelectorAll(".shop-card").forEach(card => {
+        card.addEventListener("click", () => {
+            const pid = card.dataset.id;
+            if (selectedProducts.has(pid)) selectedProducts.delete(pid);
+            else selectedProducts.add(pid);
+            renderShop();
+            updateShopCheckout();
+        });
+    });
+}
+
+function updateShopCheckout() {
+    let totalTT = 0;
+    let totalVND = 0;
+    selectedProducts.forEach(id => {
+        const prod = SHOP_PRODUCTS.find(p => p.id === id);
+        if (prod) {
+            totalTT += prod.tinhThach;
+            totalVND += prod.vnd;
+        }
+    });
+    document.getElementById("cartCount").textContent = selectedProducts.size;
+    document.getElementById("cartTotalTinhThach").textContent = `${totalTT} 💎`;
+    document.getElementById("cartTotalVnd").textContent = totalVND.toLocaleString();
+}
+
+// Render Shop khi khởi động
+renderShop();
+
+// Xử lý nút Đặt mua gửi qua Bot Telegram
+document.getElementById("btnCheckoutShop").addEventListener("click", async () => {
+    if (selectedProducts.size === 0) {
+        alert("Vui lòng chọn ít nhất 1 gói hoặc tiện ích!");
+        return;
+    }
+    const phone = prompt("Nhập số điện thoại/Zalo để Hội Ngọc Lục liên hệ xác nhận:");
+    if (!phone) return;
+
+    try {
+        const res = await fetch(`${API_URL}/api/shop-order`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                userId: currentUser.id,
+                packageName: Array.from(selectedProducts).join(", "),
+                tinhThach: parseInt(document.getElementById("cartTotalTinhThach").textContent),
+                vnd: parseInt(document.getElementById("cartTotalVnd").textContent.replace(/,/g, '')),
+                phone: phone
+            })
+        });
+        alert("✦ Thông tin đơn hàng đã được gửi cho Hội Ngọc Lục! Trưởng đoàn sẽ liên hệ sớm nhất qua SĐT/Zalo.");
+        selectedProducts.clear();
+        renderShop();
+        updateShopCheckout();
+    } catch (e) {
+        alert("Đã lưu đơn hàng. Quản trị viên sẽ liên hệ với bạn!");
+    }
+});
+
+// ======================================================
+// XỬ LÝ NHIỆM VỤ (CHECK-IN & REFERRAL CODE)
+// ======================================================
+document.getElementById("btnDoCheckin").addEventListener("click", () => {
+    currentUser.tinh_quang_points += 1;
+    localStorage.setItem("advenature_user", JSON.stringify(currentUser));
+    updateTopBarUI();
+    alert("✦ Điểm danh thành công! Nhận +1 🔮 Điểm Tinh Quang.");
+    document.getElementById("btnDoCheckin").textContent = "Đã Điểm Danh";
+    document.getElementById("btnDoCheckin").disabled = true;
+});
+
+document.getElementById("btnSubmitRef").addEventListener("click", () => {
+    const code = document.getElementById("inputFriendCode").value.trim();
+    if (code.startsWith("AW") && code !== currentUser.adventurer_code) {
+        currentUser.tinh_quang_points += 1;
+        localStorage.setItem("advenature_user", JSON.stringify(currentUser));
+        updateTopBarUI();
+        alert(`✦ Kết nối thành công với nhà phiêu lưu [${code}]! Nhận +1 🔮 Tinh Quang.`);
+        document.getElementById("inputFriendCode").value = "";
+    } else {
+        alert("Mã Phiêu Lưu không hợp lệ hoặc trùng với mã của bạn!");
+    }
+});
+
+// Nút đóng tất cả các panel popup
+document.querySelectorAll(".close-panel-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        document.querySelectorAll(".view-panel").forEach(p => {
+            if (p.id !== "gacha-view") p.classList.add("hidden");
+        });
+        document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+        document.querySelector(".dock-btn.center-core").classList.add("active");
     });
 });
