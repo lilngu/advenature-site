@@ -44,6 +44,29 @@ if (!currentUser) {
     saveUserData();
 }
 
+// app.js: Đặt ngay bên dưới đoạn khai báo currentUser
+const isFirstTimeGuest = !currentUser || !currentUser.adventurer_code || currentUser.adventurer_code === "AW----";
+
+const scrollBanner = document.getElementById("welcomeScrollBanner");
+
+if (isFirstTimeGuest) {
+    // Bật chế độ khách: Ẩn menu đáy, đưa nút Gacha ra giữa màn hình
+    document.body.classList.add("guest-mode");
+
+    // Bắt sự kiện click vào Cuộn giấy cổ: trượt xuống dưới rồi biến mất
+    if (scrollBanner) {
+        scrollBanner.addEventListener("click", () => {
+            scrollBanner.classList.add("slide-down-exit");
+            setTimeout(() => {
+                scrollBanner.style.display = "none";
+            }, 600); // Ẩn hoàn toàn sau khi chạy xong animation 0.6s
+        });
+    }
+} else {
+    // Người dùng đã có tài khoản: ẩn banner cuộn giấy ngay từ đầu
+    if (scrollBanner) scrollBanner.style.display = "none";
+}
+
 // ======================================================
 // PHASE 3: ĐỒNG BỘ DỮ LIỆU TỪ D1 KHI MỞ TRANG HOẶC VÀO TÚI ĐỒ
 // ======================================================
@@ -619,6 +642,7 @@ async function handleGoogleSuccess(response) {
         if (data.success && !data.isNewUser) {
             currentUser = data.user;
             saveUserData();
+            document.body.classList.remove("guest-mode");
             updateTopBarUI();
             renderInventoryGems();
             renderInventory5x5();
@@ -722,6 +746,7 @@ btnCompleteRegister.addEventListener("click", async () => {
                 class_name: obClass
             };
             saveUserData();
+            document.body.classList.remove("guest-mode");
             updateTopBarUI();
             renderInventoryGems();
             renderInventory5x5();

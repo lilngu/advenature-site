@@ -1814,3 +1814,123 @@ span#profRankNeed {
 .btn-top-login.hidden {
     display: none !important;
 }
+
+/* ======================================================
+   UX ONBOARDING DÀNH CHO USER MỚI (GUEST-MODE)
+====================================================== */
+
+/* 1. Ẩn Pill tiền tệ và Avatar trên Topbar, chỉ giữ nút Đăng Nhập */
+body.guest-mode .currency-group,
+body.guest-mode #btnProfileQuick {
+    display: none !important;
+}
+body.guest-mode #btnTopLogin {
+    display: block !important;
+}
+
+/* 2. Ẩn 4 nút menu ở Dock đáy, tắt nền Dock để không che màn hình */
+body.guest-mode .rpg-dock {
+    background: transparent !important;
+    pointer-events: none;
+}
+body.guest-mode .rpg-dock::before {
+    display: none !important;
+}
+body.guest-mode .dock-btn:not(.center-core) {
+    display: none !important;
+}
+
+/* 3. Đưa Nút Gacha từ đáy lên chính giữa trang */
+body.guest-mode .dock-btn.center-core {
+    pointer-events: auto;
+    bottom: 45% !important;
+    left: 50% !important;
+    transform: translate(-50%, 50%) !important;
+    transition: all 0.7s cubic-bezier(0.2, 0.8, 0.2, 1.2);
+    z-index: 32;
+}
+
+/* 4. Banner Cuộn Giấy Cổ */
+.welcome-scroll-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(3, 3, 10, 0.75);
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    cursor: pointer;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+}
+
+/* Hiệu ứng trượt xuống dưới và biến mất khi click */
+.welcome-scroll-overlay.slide-down-exit {
+    transform: translateY(120vh);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.scroll-card {
+    position: relative;
+    max-width: 330px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: scrollFloat 3s ease-in-out infinite alternate;
+}
+
+.scroll-bg-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 0 25px rgba(255, 209, 102, 0.4));
+}
+
+.scroll-inner-content {
+    position: absolute;
+    inset: 15% 12%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #3d260f; /* Màu mực cổ điển trên nền giấy */
+    font-family: "Handjet", sans-serif;
+    pointer-events: none;
+}
+
+.scroll-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: #633303;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+}
+
+.scroll-text {
+    font-size: 13px;
+    line-height: 1.3;
+    color: #4a2d11;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.scroll-tap-hint {
+    font-size: 12px;
+    font-weight: bold;
+    color: #8f4f06;
+    animation: textBlink 1.5s infinite;
+}
+
+@keyframes scrollFloat {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-8px); }
+}
+
+@keyframes textBlink {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
