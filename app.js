@@ -397,40 +397,45 @@ const btnGoogleCustom = document.getElementById("btnGoogleCustom");
 const onboardStep1 = document.getElementById("onboardStep1");
 const onboardStep2 = document.getElementById("onboardStep2");
 
+// ======================================================
+// KHỞI TẠO NÚT GOOGLE SIGN-IN CHÍNH THỨC (BẬT POPUP 100%)
+// ======================================================
 function initGoogleAuth() {
-    // Reset về Bước 1
     onboardStep1.classList.remove("hidden");
     onboardStep2.classList.add("hidden");
 
-    if (typeof google !== "undefined" && google.accounts && GOOGLE_CLIENT_ID && !GOOGLE_CLIENT_ID.includes("YOUR_GOOGLE")) {
+    const container = document.getElementById("googleBtnContainer");
+    if (!container) return;
+
+    if (typeof google !== "undefined" && google.accounts) {
         try {
             google.accounts.id.initialize({
                 client_id: GOOGLE_CLIENT_ID,
-                callback: handleGoogleSuccess
+                callback: handleGoogleSuccess,
+                auto_select: false
             });
-            btnGoogleCustom.onclick = () => google.accounts.id.prompt();
+
+            // YÊU CẦU GOOGLE TỰ RENDER NÚT BẤM CHUẨN
+            // Nút này khi click 100% sẽ mở cửa sổ popup chọn tài khoản Gmail
+            container.innerHTML = "";
+            google.accounts.id.renderButton(container, {
+                type: "standard",
+                theme: "filled_blue",
+                size: "large",
+                text: "signin_with",
+                shape: "pill",
+                logo_alignment: "left",
+                width: 260
+            });
             return;
-        } catch (e) {}
+        } catch (e) {
+            console.error("Lỗi Google GIS:", e);
+        }
     }
 
-    // Nút đăng nhập Google trực quan
-    btnGoogleCustom.onclick = () => {
-        const emailInput = prompt("ĐĂNG NHẬP GOOGLE:\nNhập địa chỉ Gmail của bạn:", tempGoogleProfile?.email || "");
-        if (emailInput && emailInput.includes("@")) {
-            const defaultName = emailInput.split("@")[0];
-            handleGoogleSuccess({
-                mock: true,
-                profile: {
-                    sub: "AW_G_" + Math.random().toString(36).substring(2, 9),
-                    email: emailInput.trim(),
-                    name: defaultName.charAt(0).toUpperCase() + defaultName.slice(1),
-                    picture: "https://api.dicebear.com/7.x/adventurer/svg?seed=" + emailInput
-                }
-            });
-        } else if (emailInput !== null) {
-            alert("Vui lòng nhập địa chỉ Gmail hợp lệ để định danh tài khoản!");
-        }
-    };
+    // Dự phòng nếu mạng bị chặn script Google
+    container.innerHTML = `<button type="button" class="btn-action" id="btnGoogleRetry">Tải lại nút Google</button>`;
+    document.getElementById("btnGoogleRetry")?.addEventListener("click", () => initGoogleAuth());
 }
 
 // KHI GOOGLE XÁC NHẬN THÀNH CÔNG -> CHUYỂN BƯỚC 2

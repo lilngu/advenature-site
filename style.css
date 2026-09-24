@@ -207,8 +207,8 @@ body, html {
 }
 
 .dock-ico .rpg-ico {
-    width: 20px;
-    height: 20px;
+    width: 80px;
+    height: 80px;
 }
 
 /* 📜 Menu Nhiệm Vụ */
@@ -364,7 +364,7 @@ body, html {
     border: 1px solid var(--border-magic);
     padding: 6px 16px;
     border-radius: 20px;
-    display: flex;
+    display: none;
     align-items: center;
     gap: 8px;
     backdrop-filter: blur(10px);
@@ -412,6 +412,7 @@ body, html {
 
 /* Nút Thu Thập với hiệu ứng Scale to ra + Hào quang bập bùng */
 #claimContainer:not(.hidden) .btn-claim {
+    font-family: "Handjet", sans-serif;
     background: #f0f8ff00;
     border: 2px solid #ffffff;
     color: #ffffff;
@@ -577,7 +578,7 @@ body, html {
     bottom: 0;
     left: 0;
     right: 0;
-    height: 72px;
+    height: 150px;
     background: linear-gradient(0deg, rgba(5,5,15,0.98) 0%, rgba(12,10,28,0.92) 80%, transparent 100%);
     display: flex;
     justify-content: space-around;
@@ -588,9 +589,11 @@ body, html {
 }
 
 .dock-btn {
+    font-family: "Spectral SC", sans-serif;
+    font-weight: 600;
     background: transparent;
     border: none;
-    color: #a8a4c2;
+    color: #e6ffd4;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -603,8 +606,8 @@ body, html {
 .dock-btn.active { color: #ffe66d; }
 
 .dock-icon-ring {
-    width: 30px;
-    height: 30px;
+    width: 100px;
+    height: 100px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -634,13 +637,13 @@ body, html {
 
 /* NÚT GACHA TO HƠN 50%: 58px -> 88px */
 .center-core {
-    margin-top: -38px;
+    margin-top: -88px;
     flex: 1.2;
 }
 
 .core-glow-ring {
-    width: 88px;
-    height: 88px;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
     background: linear-gradient(135deg, #ffd166, #c77dff, #3a0ca3);
     padding: 4px;
@@ -949,6 +952,7 @@ body, html {
 }
 .checkout-summary { font-size: 11px; }
 .btn-buy { 
+    font-family: "Handjet", sans-serif;
     padding: 8px 16px; 
     font-size: 11px;
     background: linear-gradient(135deg, #7c6cff, #4a34b8);
@@ -1123,6 +1127,7 @@ body, html {
 /* Quiz Answers */
 .quiz-answers-box { display: flex; flex-direction: column; gap: 6px; }
 .btn-quiz-ans {
+    font-family: "Handjet", sans-serif;
     background: rgba(255,255,255,0.06);
     border: 1px solid var(--border-magic);
     color: #fff;
@@ -1146,6 +1151,7 @@ body, html {
    BUTTON ACTIONS TỔNG QUÁT
 ====================================================== */
 .btn-action {
+    font-family: "Handjet", sans-serif;
     background: linear-gradient(135deg, #7c6cff, #4a34b8);
     border: 1px solid var(--border-magic);
     color: #fff;
@@ -1172,6 +1178,7 @@ body, html {
 
 /* NÚT SUMMON / CLAIM */
 .btn-summon {
+    font-family: "Handjet", sans-serif;
     background: linear-gradient(135deg, #4cc9f0, #3a0ca3);
     border: 2px solid #ffd166;
     color: #fff;
@@ -1215,6 +1222,7 @@ body, html {
 .admin-modal-box { border-color: #ff3366 !important; }
 .admin-grid-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .btn-admin-act {
+    font-family: "Handjet", sans-serif;
     background: rgba(40,15,45,0.85);
     border: 1px solid var(--border-magic);
     color: #fff;
@@ -1352,6 +1360,7 @@ body, html {
 }
 
 .btn-class-opt {
+    font-family: "Handjet", sans-serif;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--border-magic);
     color: #c9c3ff;
@@ -1404,6 +1413,7 @@ body, html {
 }
 
 .btn-google-rpg {
+    font-family: "Handjet", sans-serif;
     width: 100%;
     background: #ffffff;
     border: 1px solid #d4c084;
