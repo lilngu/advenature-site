@@ -78,6 +78,7 @@ body, html {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+    flex-shrink: 0;
 }
 
 /* Data URI SVG cho Tinh Quang (Tím) */
@@ -119,6 +120,7 @@ body, html {
     height: 26px;
     vertical-align: middle;
     position: relative;
+    flex-shrink: 0;
 }
 
 .item-ico::before {
@@ -857,6 +859,14 @@ body, html {
     font-size: 9px;
     font-weight: bold;
     cursor: pointer;
+    transition: all 0.2s ease;
+}
+.pin-btn:hover {
+    background: #a65d00;
+    transform: scale(1.05);
+}
+.pin-btn:active {
+    transform: scale(0.98);
 }
 .pin-input {
     width: 100%;
@@ -867,6 +877,32 @@ body, html {
     color: #000;
     border-radius: 3px;
     margin-bottom: 4px;
+    font-family: inherit;
+}
+.pin-input:focus {
+    outline: none;
+    border-color: #8a4b00;
+    box-shadow: 0 0 5px rgba(138, 75, 0, 0.3);
+}
+
+/* INPUT TỔNG QUÁT */
+.rpg-input {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 12px;
+    background: rgba(20, 16, 45, 0.7);
+    border: 1px solid var(--border-magic);
+    color: #fff;
+    border-radius: 8px;
+    font-family: inherit;
+}
+.rpg-input:focus {
+    outline: none;
+    border-color: var(--purple-light);
+    box-shadow: 0 0 10px rgba(124, 108, 255, 0.4);
+}
+.rpg-input::placeholder {
+    color: #a8a4c2;
 }
 
 /* ======================================================
@@ -912,7 +948,27 @@ body, html {
     margin-top: 10px;
 }
 .checkout-summary { font-size: 11px; }
-.btn-buy { padding: 8px 16px; font-size: 11px; }
+.btn-buy { 
+    padding: 8px 16px; 
+    font-size: 11px;
+    background: linear-gradient(135deg, #7c6cff, #4a34b8);
+    border: 1px solid var(--border-magic);
+    color: #fff;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+    letter-spacing: 1px;
+    box-shadow: 0 0 15px rgba(124, 108, 255, 0.4);
+    transition: all 0.3s ease;
+}
+.btn-buy:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px rgba(124, 108, 255, 0.6);
+}
+.btn-buy:active {
+    transform: translateY(0);
+}
 
 /* ======================================================
    CĂN CƯỚC: AVATAR VUÔNG LỚN TRUNG TÂM
@@ -1075,8 +1131,70 @@ body, html {
     font-size: 11px;
     cursor: pointer;
     text-align: left;
+    transition: all 0.2s ease;
 }
-.btn-quiz-ans:active { background: #7c6cff; }
+.btn-quiz-ans:hover {
+    background: rgba(124, 108, 255, 0.3);
+    border-color: var(--purple-light);
+}
+.btn-quiz-ans:active { 
+    background: #7c6cff;
+    transform: scale(0.98);
+}
+
+/* ======================================================
+   BUTTON ACTIONS TỔNG QUÁT
+====================================================== */
+.btn-action {
+    background: linear-gradient(135deg, #7c6cff, #4a34b8);
+    border: 1px solid var(--border-magic);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 1px;
+    box-shadow: 0 0 15px rgba(124, 108, 255, 0.4);
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+.btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px rgba(124, 108, 255, 0.6);
+}
+.btn-action:active {
+    transform: translateY(0);
+}
+.btn-action.hidden {
+    display: none !important;
+}
+
+/* NÚT SUMMON / CLAIM */
+.btn-summon {
+    background: linear-gradient(135deg, #4cc9f0, #3a0ca3);
+    border: 2px solid #ffd166;
+    color: #fff;
+    padding: 14px 30px;
+    border-radius: 35px;
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 1.8px;
+    cursor: pointer;
+    box-shadow: 
+        0 0 20px rgba(76, 201, 240, 0.5),
+        0 0 40px rgba(255, 209, 102, 0.3);
+    transition: all 0.3s ease;
+}
+.btn-summon:hover {
+    transform: scale(1.05);
+    box-shadow: 
+        0 0 30px rgba(76, 201, 240, 0.8),
+        0 0 60px rgba(255, 209, 102, 0.6);
+}
+.btn-summon:active {
+    transform: scale(0.98);
+}
 
 /* QR Box */
 .qr-box {
