@@ -1395,3 +1395,41 @@ body, html {
     transform: scale(0.88);
     background: #7c6cff;
 }
+
+/* ======================================================
+   NÚT GOOGLE SIGN-IN CHUẨN GIAO DIỆN RPG
+====================================================== */
+.google-auth-wrapper {
+    margin-bottom: 12px;
+}
+
+.btn-google-rpg {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #d4c084;
+    border-radius: 25px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.btn-google-rpg:active {
+    transform: scale(0.97);
+}
+
+.google-icon {
+    width: 18px;
+    height: 18px;
+}
+
+#googleBtnText {
+    color: #1f1f1f;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}

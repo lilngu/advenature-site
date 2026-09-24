@@ -351,31 +351,55 @@ document.querySelectorAll(".btn-class-opt").forEach(btn => {
 });
 
 // Google Sign-In init
+const btnGoogleCustom = document.getElementById("btnGoogleCustom");
+const googleBtnText = document.getElementById("googleBtnText");
+
 function initGoogleAuth() {
-    if (typeof google === "undefined" || !google.accounts) return;
+    // Nếu có thư viện Google và có Client ID thật
+    if (typeof google !== "undefined" && google.accounts && GOOGLE_CLIENT_ID && !GOOGLE_CLIENT_ID.includes("YOUR_GOOGLE")) {
+        try {
+            google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: handleGoogleCredential
+            });
 
-    google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: (response) => {
-            const base64Url = response.credential.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-            
-            tempGoogleProfile = JSON.parse(jsonPayload);
-            document.getElementById("googleBtnContainer").innerHTML = `
-                <div style="font-size: 11px; color: #4cc9f0; padding: 6px;">
-                    ✓ Đã nhận diện: <b>${tempGoogleProfile.name}</b>
-                </div>
-            `;
+            // Nút bấm kích hoạt popup đăng nhập Google thật
+            btnGoogleCustom.onclick = () => {
+                google.accounts.id.prompt();
+            };
+            return;
+        } catch (e) {
+            console.warn("Chưa cấu hình Google Cloud, chuyển sang chế độ đăng nhập linh hoạt.");
         }
-    });
+    }
 
-    google.accounts.id.renderButton(
-        document.getElementById("googleBtnContainer"),
-        { theme: "filled_blue", size: "medium", shape: "pill", text: "signin_with" }
-    );
+    // Chế độ tương tác nhanh (khi đang test hoặc chưa điền Client ID thật)
+    btnGoogleCustom.onclick = () => {
+        const nameInput = prompt("Nhập Tên Nhà Phiêu Lưu của bạn (hoặc Gmail):", tempGoogleProfile?.name || "Nhà Phiêu Lưu");
+        if (nameInput) {
+            const uid = "AW_G_" + Math.random().toString(36).substring(2, 9);
+            tempGoogleProfile = {
+                sub: uid,
+                name: nameInput.trim(),
+                email: nameInput.includes("@") ? nameInput.trim() : `${uid.toLowerCase()}@advenature.local`,
+                picture: `https://api.dicebear.com/7.x/bottts/svg?seed=${nameInput}`
+            };
+            googleBtnText.textContent = `✓ Đã kết nối: ${tempGoogleProfile.name}`;
+            btnGoogleCustom.style.borderColor = "#4cc9f0";
+        }
+    };
+}
+
+function handleGoogleCredential(response) {
+    const base64Url = response.credential.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    tempGoogleProfile = JSON.parse(jsonPayload);
+    googleBtnText.textContent = `✓ Đã kết nối: ${tempGoogleProfile.name}`;
+    btnGoogleCustom.style.borderColor = "#4cc9f0";
 }
 
 // BẤM NÚT THU THẬP VÀO TÚI (PHÂN LUỒNG)
@@ -395,15 +419,14 @@ claimBtn.addEventListener("click", () => {
 
 // BƯỚC 3 CỦA FIRST GACHA: GỬI LÊN WORKER & D1
 btnCompleteRegister.addEventListener("click", async () => {
-    // SỬA ĐOẠN NÀY: Nếu chưa đăng nhập Google, tạo profile khách với email ĐỘC NHẤT
+    // Nếu chưa đăng nhập Google hay nhập tên, tự sinh thông tin độc nhất
     if (!tempGoogleProfile) {
         const guestUid = "AW_G_" + Math.random().toString(36).substring(2, 9);
         tempGoogleProfile = {
             sub: guestUid,
             name: "Lữ Hành Rừng Tinh Linh",
-            // Tự sinh email duy nhất dạng aw_g_xxxx@advenature.local để không bao giờ bị trùng
             email: `${guestUid.toLowerCase()}@advenature.local`,
-            picture: "https://api.dicebear.com/7.x/bottts/svg?seed=" + guestUid
+            picture: `https://api.dicebear.com/7.x/bottts/svg?seed=${guestUid}`
         };
     }
 
@@ -433,33 +456,14 @@ btnCompleteRegister.addEventListener("click", async () => {
             claimContainer.classList.add("hidden");
             lootText.classList.remove("show");
 
-            // Mở Modal Chúc Phúc (phân biệt tài khoản mới hay tài khoản cũ quay lại)
-            const reason = data.isRestored 
-                ? "Chào mừng bạn quay trở lại! Đã khôi phục căn cước và cập nhật Tủ Đá của bạn." 
-                : "Chúc Phúc Tân Thủ dành riêng cho bạn!";
-            openBlessingModal(data.blessing, reason);
+            // MỞ MODAL VỚI ĐÚNG 1 TRONG 4 CHÚC PHÚC FREE TRẢ VỀ TỪ SERVER
+            openBlessingModal(data.blessing, "Chúc Phúc Tân Thủ dành riêng cho bạn!");
             state = STATE.IDLE;
         } else {
             alert("Lỗi đăng ký: " + (data.error || "Vui lòng thử lại"));
         }
     } catch (e) {
-        // Fallback Offline
-        currentUser.full_name = tempGoogleProfile.name;
-        currentUser.role = selectedClass;
-        currentUser.adventurer_code = "AW" + Math.floor(1000 + Math.random() * 9000);
-        currentUser.gacha_counter = 1;
-        if (!currentUser.unlocked_gems.includes(currentGemResult.code)) {
-            currentUser.unlocked_gems.push(currentGemResult.code);
-        }
-        addItemToInventory(BLESSINGS_DATA[9]);
-        saveUserData();
-        updateTopBarUI();
-        renderInventoryGems();
-        renderInventory5x5();
-        onboardingModal.classList.add("hidden");
-        claimContainer.classList.add("hidden");
-        openBlessingModal(BLESSINGS_DATA[9], "Chúc Phúc Tân Thủ dành riêng cho bạn!");
-        state = STATE.IDLE;
+        alert("Lỗi kết nối máy chủ! Vui lòng kiểm tra lại Worker.");
     } finally {
         btnCompleteRegister.textContent = "✦ KHỞI TẠO CĂN CƯỚC & THU THẬP ✦";
         btnCompleteRegister.disabled = false;
