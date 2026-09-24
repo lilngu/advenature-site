@@ -54,6 +54,9 @@ body, html {
     position: absolute;
     inset: 0;
     z-index: 1;
+	background: 
+        linear-gradient(rgba(3, 3, 10, 0.4), rgba(3, 3, 10, 0.4)),
+        url('https://media.craiyon.com/2025-04-04/7ByR8QW6RO6yuM7WK0Z-Gw.webp') center/cover no-repeat;
     transition: opacity 4s ease-in-out; /* Fade in trong 4s */
 }
 #app-3d canvas {

@@ -64,7 +64,7 @@ function updateTopBarUI() {
 // 2. THREE.JS ENGINE SETUP
 // ======================================================
 const scene = new THREE.Scene();
-scene.fog = new THREE.FogExp2(0x050514, 0.035);
+scene.fog = null;
 
 const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
 camera.position.set(0, 1.2, 8);
@@ -455,7 +455,7 @@ claimBtn.addEventListener("click", () => {
     } else if (isPrime(currentUser.gacha_counter)) {
         wonBlessing = getRandomBlessing();
         addItemToInventory(wonBlessing);
-        blessReason = `Lần quay thứ ${currentUser.gacha_counter} là Số Nguyên Tố đặc biệt!`;
+        blessReason = `Lượt GACHA thứ ${currentUser.gacha_counter}! Bạn nhận được `;
     }
 
     saveUserData();
