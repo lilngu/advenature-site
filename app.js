@@ -61,22 +61,31 @@ function updateTopBarUI() {
         dockCostBadge.textContent = "1 🔮";
     }
 
-    document.getElementById("profName").textContent = currentUser.full_name;
-    document.getElementById("profCode").textContent = currentUser.adventurer_code;
-    document.getElementById("profRole").textContent = currentUser.role || "Tân Thủ Rừng Già";
+    // Hiển thị đầy đủ thông tin Căn Cước Nhà Phiêu Lưu
+    document.getElementById("profName").textContent = currentUser.full_name || "Nhà Phiêu Lưu";
+    document.getElementById("profCode").textContent = currentUser.adventurer_code || "AW----";
+    document.getElementById("profEmail").textContent = currentUser.email || "chua_lien_ket@advenature.local";
+    document.getElementById("profClass").textContent = currentUser.class_name || "Chưa thiết lập";
+    document.getElementById("profTribe").textContent = currentUser.tribe || "Tự do";
+    document.getElementById("profGender").textContent = currentUser.gender || "Nam";
+    document.getElementById("profBirth").textContent = currentUser.birth_year || "----";
+
+    // Phân quyền Role hiển thị
+    const roleTitles = { admin: "Trưởng Quán (Admin)", manager: "Quản Lý (Manager)", user: "Tân Thủ Rừng Già" };
+    document.getElementById("profRole").textContent = roleTitles[currentUser.role] || (currentUser.role || "Tân Thủ Rừng Già");
+
     document.getElementById("profStatTQ").innerHTML = `<i class="rpg-ico ico-tq"></i> ${currentUser.tinh_quang_points}`;
     document.getElementById("profStatTT").innerHTML = `<i class="rpg-ico ico-tt"></i> ${currentUser.tinh_thach_points}`;
     document.getElementById("profStatCH").innerHTML = `<i class="rpg-ico ico-ch"></i> ${currentUser.cong_hien_points} CP`;
     document.getElementById("myRefCodeDisplay").textContent = currentUser.adventurer_code;
 
+    if (currentUser.avatar_url) {
+        document.getElementById("profAvatar").src = currentUser.avatar_url;
+        document.getElementById("userAvatarImg").src = currentUser.avatar_url;
+    }
+
     const pct = Math.min(100, Math.floor((currentUser.cong_hien_points / 100) * 100));
     document.getElementById("rankProgressBar").style.width = pct + "%";
-
-    // Đồng bộ ảnh đại diện nếu có
-    if (currentUser.avatar_url) {
-        document.getElementById("userAvatarImg").src = currentUser.avatar_url;
-        document.getElementById("profAvatar").src = currentUser.avatar_url;
-    }
 }
 
 // ======================================================
@@ -543,7 +552,13 @@ btnCompleteRegister.addEventListener("click", async () => {
 
         const data = await res.json();
         if (data.success) {
-            currentUser = data.user;
+            currentUser = {
+                ...data.user,
+                birth_year: obBirth,
+                gender: currentGender,
+                tribe: obTribe,
+                class_name: obClass
+            };
             saveUserData();
             updateTopBarUI();
             renderInventoryGems();

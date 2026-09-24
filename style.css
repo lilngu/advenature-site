@@ -581,7 +581,6 @@ body, html {
     height: 160px;
     background: linear-gradient(0deg, rgba(5,5,15,0.98) 0%, rgba(12,10,28,0.92) 70%, transparent 100%);
     z-index: 30;
-    border-top: 1px solid rgba(255,255,255,0.08);
     overflow: visible;
 }
 
@@ -620,8 +619,9 @@ body, html {
 }
 
 .dock-btn:active { 
-    transform: translateX(-50%) translateY(var(--y-offset, 0)) scale(0.92) !important; 
-}
+    transform: translateX(-50%) translateY(var(--y-offset, 0)) scale(0.92) !important;}
+.dock-btn.sub-right, .dock-btn.mid-right:active {
+    transform: translateX(50%) translateY(var(--y-offset, 0)) scale(0.92) !important;}
 
 .dock-icon-ring {
     width: 64px;
@@ -826,16 +826,16 @@ body, html {
     
     .dock-btn.sub-left { bottom: 40px; left: 12%; }
     .dock-btn.mid-left { bottom: 70px; left: 26%; }
-    .dock-btn.center-core { bottom: 85px; }
+    .dock-btn.center-core { bottom: 5px; }
     .dock-btn.mid-right { bottom: 70px; right: 26%; }
     .dock-btn.sub-right { bottom: 40px; right: 12%; }
     
-    .dock-icon-ring { width: 80px; height: 80px; font-size: 18px; }
-    .dock-label { font-size: 10px; }
+    .dock-icon-ring { width: 150px; height: 150px; font-size: 18px; }
+    .dock-label { font-size: 25px; font-family: "Handjet", sans-serif;}
     
-    .core-glow-ring { width: 140px; height: 140px; }
+    .core-glow-ring { width: 350px; height: 350px; }
     .core-ico-svg { width: 32px; height: 32px; }
-    .core-text { font-size: 13px; }
+    .core-text { font-size: 80px;font-family: "Handjet", sans-serif; }
 }
 
 /* ======================================================
@@ -866,10 +866,10 @@ body, html {
     padding-bottom: 10px;
 }
 .btn-back-dock {
-        background: rgba(30, 20, 60, 0.7);
+     background: rgb(30 20 60 / 0%);
     border: 1px solid rgb(148 129 215 / 14%);
     border-radius: 80px;
-    padding: 6px 20px;
+    padding: 0px 20px 0px 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -879,7 +879,7 @@ body, html {
     bottom: 5%;
 }
 .back-ico { font-size: 40px; line-height: 1; }
-.back-text { font-size: 20px; font-weight: bold; color: #ffe66d; margin-top: 2px; }
+.back-text { font-size: 20px; font-family: "Handjet", sans-serif; font-weight: bold; color: #ffe66d; margin-top: 2px; }
 
 /* Tabs */
 .inv-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
@@ -1669,4 +1669,48 @@ input.hidden {display: none;}
     border-color: #ffd166;
     box-shadow: 0 0 12px rgba(255, 209, 102, 0.6);
     transform: scale(1.06);
+}
+
+/* ======================================================
+   ĐỊNH DẠNG BẢNG THÔNG TIN CHI TIẾT CĂN CƯỚC (PROFILE)
+====================================================== */
+.passport-email-txt {
+    font-size: 10px;
+    color: #4cc9f0;
+    margin-top: -2px;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+}
+
+.passport-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 12px;
+    text-align: left;
+}
+
+.info-cell {
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(165, 140, 255, 0.2);
+    border-radius: 6px;
+    padding: 6px 8px;
+}
+
+.info-k {
+    font-size: 8px;
+    color: #a8a4c2;
+    text-transform: uppercase;
+    display: block;
+    letter-spacing: 0.5px;
+}
+
+.info-v {
+    font-size: 11px;
+    color: #ffe66d;
+    display: block;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

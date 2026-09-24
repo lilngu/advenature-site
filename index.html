@@ -139,8 +139,8 @@
             </div>
             
             <div class="inv-tabs">
-                <button class="inv-tab-btn active" data-sub="sub-items">Vật Phẩm & Thẻ (5x5)</button>
                 <button class="inv-tab-btn" data-sub="sub-gems">Tinh Quang Thạch (<span id="gemProgressCount">0/990</span>)</button>
+                <button class="inv-tab-btn active" data-sub="sub-items">Vật Phẩm & Thẻ</button>
             </div>
 
             <!-- Tab 1: Lưới 5x5 Vật Phẩm -->
@@ -264,20 +264,41 @@
             </div>
             
             <div class="passport-card-centered">
-                <!-- KHUNG AVATAR VUÔNG LỚN TRUNG TÂM -->
-                <!-- KHUNG AVATAR VUÔNG LỚN TRUNG TÂM KÈM NÚT CAMERA -->
+                <!-- KHUNG AVATAR LỚN TRUNG TÂM -->
                 <div class="avatar-square-frame">
                     <img src="https://api.dicebear.com/7.x/bottts/svg?seed=advenature" id="profAvatar" class="avatar-large-square" alt="Avatar">
-                    <!-- Nút bấm tải ảnh -->
                     <div class="avatar-upload-badge" id="btnTriggerUpload" title="Đổi ảnh đại diện">📷</div>
                     <div class="passport-badge-floating" id="profCode">AW----</div>
                 </div>
-                <!-- Input chọn file ẩn -->
                 <input type="file" id="inputAvatarFile" accept="image/*" class="hidden">
 
                 <h3 id="profName" class="passport-name-main">Nhà Phiêu Lưu</h3>
+                <!-- Email Google liên kết -->
+                <div id="profEmail" class="passport-email-txt">chua_lien_ket@advenature.local</div>
+                <!-- Cấp bậc quyền hạn (Tân Thủ / Manager / Admin) -->
                 <div class="passport-role-tag" id="profRole">Tân Thủ Rừng Già</div>
 
+                <!-- LƯỚI THÔNG TIN CHI TIẾT CĂN CƯỚC NHÀ PHIÊU LƯU -->
+                <div class="passport-info-grid">
+                    <div class="info-cell">
+                        <span class="info-k">Chức Nghiệp</span>
+                        <b class="info-v" id="profClass">Chưa có</b>
+                    </div>
+                    <div class="info-cell">
+                        <span class="info-k">Bộ Tộc</span>
+                        <b class="info-v" id="profTribe">Tự do</b>
+                    </div>
+                    <div class="info-cell">
+                        <span class="info-k">Giới Tính</span>
+                        <b class="info-v" id="profGender">Nam</b>
+                    </div>
+                    <div class="info-cell">
+                        <span class="info-k">Năm Sinh</span>
+                        <b class="info-v" id="profBirth">----</b>
+                    </div>
+                </div>
+
+                <!-- CỤM TÀI NGUYÊN -->
                 <div class="passport-stats-grid">
                     <div class="stat-pill">
                         <span class="stat-lbl">Tinh Quang</span>
@@ -293,6 +314,7 @@
                     </div>
                 </div>
 
+                <!-- THANH BẬC BANG HỘI -->
                 <div class="rank-progress-box">
                     <div class="rank-label">
                         <span>Bậc Bang Hội: <b id="profRankTitle">Tập Sự</b></span>
