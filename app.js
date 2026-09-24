@@ -484,56 +484,60 @@ claimBtn.addEventListener("click", () => {
 });
 
 // Three.js Loop Animations
-function updateParticles(elapsed, progress) {
-    const positions = particleGeometry.attributes.position.array;
-    const totalTime = clock.getElapsedTime();
-
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-        const p = particleData[i];
-        const wanderX = p.baseX + Math.sin(totalTime * p.driftSpeed + p.phaseX) * p.driftRadius;
-        const wanderY = p.baseY + Math.cos(totalTime * p.driftSpeed * 0.8 + p.phaseY) * p.driftRadius;
-        const wanderZ = p.baseZ + Math.sin(totalTime * p.driftSpeed * 1.2 + p.phaseZ) * p.driftRadius;
-
-        if (state === STATE.IDLE) {
-            positions[i * 3] = wanderX;
-            positions[i * 3 + 1] = wanderY;
-            positions[i * 3 + 2] = wanderZ;
-        } else if (state === STATE.GACHA) {
-            const currentAngle = p.angle + (elapsed * p.vortexSpeed) * (1 + progress * 2.5);
-            const collapse = Math.max(0, (progress - 0.45) / 0.55);
-            const currentRadius = THREE.MathUtils.lerp(p.radius, 0.25, collapse);
-            const verticalWave = Math.sin(elapsed * 4 + p.random * 10) * 0.3 * (1 - collapse);
-
-            positions[i * 3] = Math.cos(currentAngle) * currentRadius;
-            positions[i * 3 + 1] = Math.sin(currentAngle * 1.5) * currentRadius * 0.35 + verticalWave;
-            positions[i * 3 + 2] = Math.sin(currentAngle) * currentRadius;
+function updateCore(elapsed, progress) {
+    if (state === STATE.GACHA) {
+        const appear = Math.max(0, (progress - 0.45) / 0.55);
+        coreMaterial.opacity = appear;
+        coreGlowMaterial.opacity = appear * 0.7;
+        coreGroup.scale.setScalar(appear * (1 + Math.sin(elapsed * 12) * 0.05));
+        
+        // Lõi năng lượng bắt đầu rung nhẹ khi các hạt nén lại
+        if (progress > 0.5) {
+            coreGroup.position.x = (Math.random() - 0.5) * 0.02 * appear;
+            coreGroup.position.y = (Math.random() - 0.5) * 0.02 * appear;
         }
+    } else if (state === STATE.CORE) {
+        coreMaterial.opacity = 1;
+        coreGlowMaterial.opacity = 0.85;
+        // Rung giật cực đại với tần số cao (60Hz)
+        coreGroup.position.x = Math.sin(elapsed * 65) * 0.04;
+        coreGroup.position.y = Math.cos(elapsed * 50) * 0.03;
+        coreGroup.scale.setScalar(1 + Math.sin(elapsed * 16) * 0.12);
     }
-    particleGeometry.attributes.position.needsUpdate = true;
 }
 
 function updateState(now) {
     const elapsed = (now - stateStart) / 1000;
+    let shakeStrength = 0; // Độ rung của background và camera
 
     if (state === STATE.IDLE) {
         updateParticles(elapsed, 0);
     } else if (state === STATE.GACHA) {
         const progress = Math.min(elapsed / 3.5, 1);
         updateParticles(elapsed, progress);
-        const appear = Math.max(0, (progress - 0.7) / 0.3);
-        coreMaterial.opacity = appear;
-        coreGlowMaterial.opacity = appear * 0.7;
-        coreGroup.scale.setScalar(appear);
+        updateCore(elapsed, progress);
+
+        // Khi hạt nén được 50% chặng đường -> Background bắt đầu rung tăng dần
+        if (progress > 0.5) {
+            shakeStrength = ((progress - 0.5) / 0.5) * 3.5; // Rung tăng dần từ 0px -> 3.5px
+        }
 
         if (elapsed >= 3.5) {
             state = STATE.CORE;
             stateStart = now;
         }
     } else if (state === STATE.CORE) {
+        updateParticles(elapsed, 1);
+        updateCore(elapsed, 1);
+
+        // GIAI ĐOẠN ĐỈNH ĐIỂM: Background và Camera rung chấn dữ dội
+        shakeStrength = 6 + Math.sin(elapsed * 30) * 2; // Rung mạnh 5px -> 8px
+
         if (elapsed >= 1.0) {
             coreMaterial.opacity = 0;
             coreGlowMaterial.opacity = 0;
             coreGroup.scale.setScalar(0);
+            coreGroup.position.set(0, 0, 0);
             state = STATE.LOOT;
             stateStart = now;
             lootText.classList.add("show");
@@ -545,6 +549,21 @@ function updateState(now) {
     } else if (state === STATE.CLAIMED && lootBox) {
         lootBox.position.y -= 0.04;
         lootBox.scale.multiplyScalar(0.94);
+    }
+
+    // Áp dụng rung giật đồng bộ cho Background và Camera 3D
+    if (shakeStrength > 0) {
+        const rx = (Math.random() - 0.5) * shakeStrength;
+        const ry = (Math.random() - 0.5) * shakeStrength;
+        app3dCanvas.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
+        
+        // Rung nhẹ góc nhìn camera Three.js tạo chiều sâu 3D chân thực
+        camera.position.x = (Math.random() - 0.5) * (shakeStrength * 0.01);
+        camera.position.y = 1.2 + (Math.random() - 0.5) * (shakeStrength * 0.01);
+    } else {
+        app3dCanvas.style.transform = "";
+        camera.position.x = 0;
+        camera.position.y = 1.2;
     }
 }
 
