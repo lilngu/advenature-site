@@ -212,7 +212,7 @@ body, html {
 }
 
 /* 📜 Menu Nhiệm Vụ */
-.ico-menu-quest::before {
+.ico-menu-quest {
     background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZDE2NiI+PHBhdGggZD0iTTE5IDNIN2EzIDMgMCAwIDAtMyAzdjEyYTMgMyAwIDAgMCAzIDNoMTJhMiAyIDAgMCAwIDItMlY1YTIgMiAwIDAgMC0yLTJ6bS0xIDE0SDdhMSAxIDAgMCAxIDAtMmgxMXYyem0wLTRIN2ExIDEgMCAwIDEgMC0yaDExdjJ6bTAtNEg3YTEgMSAwIDAgMSAwLTJoMTF2MnoiLz48L3N2Zz4=");
 }
 
