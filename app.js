@@ -674,7 +674,13 @@ async function handleGoogleSuccess(response) {
         renderAvatarOptions();
     }
 }
-
+//  Bổ sung sự kiện đóng onboarding modal
+document.getElementById("closeOnboardingModal")?.addEventListener("click", () => {
+    const onboardingModal = document.getElementById("onboardingModal");
+    if (onboardingModal) {
+        onboardingModal.classList.add("hidden");
+    }
+});
 // Bắt sự kiện bấm nút "✦ Đăng Nhập" trực tiếp trên Topbar
 document.getElementById("btnTopLogin")?.addEventListener("click", () => {
     initGoogleAuth();
