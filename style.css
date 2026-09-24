@@ -312,31 +312,73 @@ body, html {
 }
 .loot-card.show { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
 
-.summon-zone {
+#claimContainer {
     position: absolute;
-    bottom: 110px;
-    left: 0;
-    right: 0;
+    bottom: 30%; /* Đặt chuẩn xác 30% từ bottom lên */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 35;
     display: flex;
     justify-content: center;
-    z-index: 20;
+    align-items: center;
+    pointer-events: auto;
 }
-.btn-summon {
-    background: linear-gradient(180deg, #ffd166 0%, #d48b00 100%);
-    border: 1.5px solid #fff;
+
+/* Ẩn dứt điểm khi chưa mở được đá */
+#claimContainer.hidden,
+#claimContainer[style*="display: none"] {
+    display: none !important;
+    pointer-events: none !important;
+}
+
+/* Nút Thu Thập với hiệu ứng Scale to ra + Hào quang bập bùng */
+#claimContainer:not(.hidden) .btn-claim {
+    background: linear-gradient(180deg, #ffe066 0%, #d48b00 100%);
+    border: 2px solid #ffffff;
     color: #1a0f00;
-    padding: 12px 30px;
-    border-radius: 30px;
-    font-size: 13px;
-    font-weight: bold;
+    padding: 14px 36px;
+    border-radius: 35px;
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
     cursor: pointer;
-    box-shadow: 0 0 20px rgba(255, 209, 102, 0.7);
+    white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.4);
+    
+    /* Kết hợp 2 hiệu ứng: Phóng to lúc xuất hiện (0.4s) + Bập bùng lặp vô tận */
+    animation: 
+        claimPopIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards,
+        claimGlowPulse 2s infinite ease-in-out 0.45s;
+}
+
+/* 1. Hiệu ứng phóng to nở ra từ tâm */
+@keyframes claimPopIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* 2. Hiệu ứng nhịp thở bập bùng (Scale nhẹ + Hào quang vàng rực) */
+@keyframes claimGlowPulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 15px rgba(255, 209, 102, 0.6), 0 0 30px rgba(212, 139, 0, 0.4);
+    }
+    50% {
+        transform: scale(1.07);
+        box-shadow: 0 0 35px rgba(255, 224, 102, 0.95), 0 0 60px rgba(255, 170, 0, 0.8);
+    }
 }
 
 /* BANNER THU THẬP THÀNH CÔNG 3S */
 .collect-banner {
     position: fixed; /* Hoặc absolute tùy thuộc vào layout của bạn */
-    top: 10%;
+    top: 30%;
     left: 50%;
     transform: translateX(-50%);
     z-index: 9999;
@@ -364,7 +406,7 @@ body, html {
     gap: 15px;
     color: #fff3cd; /* Màu vàng kem hoàng gia */
     font-family: 'Cinzel Decorative', 'MedievalSharp', serif; /* Font chữ trung cổ */
-    font-size: 26px; /* Chữ to bản */
+    font-size: x-large; /* Chữ to bản */
     font-weight: 700;
     text-align: center;
     letter-spacing: 2px;
@@ -585,18 +627,20 @@ body, html {
     padding-bottom: 10px;
 }
 .btn-back-dock {
-    background: rgba(30, 20, 60, 0.7);
-    border: 1px solid var(--border-magic);
-    border-radius: 20px;
+        background: rgba(30, 20, 60, 0.7);
+    border: 1px solid rgb(148 129 215 / 14%);
+    border-radius: 80px;
     padding: 6px 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     cursor: pointer;
-    box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    position: fixed;
+    bottom: 5%;
 }
-.back-ico { font-size: 16px; line-height: 1; }
-.back-text { font-size: 9px; font-weight: bold; color: #ffe66d; margin-top: 2px; }
+.back-ico { font-size: 40px; line-height: 1; }
+.back-text { font-size: 20px; font-weight: bold; color: #ffe66d; margin-top: 2px; }
 
 /* Tabs */
 .inv-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
@@ -805,8 +849,8 @@ body, html {
 }
 .avatar-square-frame {
     position: relative;
-    width: 100px;
-    height: 100px;
+    width: 200px;
+    height: 200px;
     margin: 0 auto 10px;
     border: 2px solid var(--border-gold);
     border-radius: 12px;
@@ -816,16 +860,17 @@ body, html {
 }
 .avatar-large-square { width: 100%; height: 100%; object-fit: cover; }
 .passport-badge-floating {
-    position: absolute;
+       position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(0,0,0,0.8);
+    background: rgba(0, 0, 0, 0.8);
     color: #4cc9f0;
-    font-size: 9px;
+    font-size: 19px;
     font-weight: bold;
     padding: 2px 0;
     border-top: 1px solid var(--border-gold);
+    text-align: center;
 }
 .passport-name-main { font-size: 15px; color: #ffe66d; }
 .passport-role-tag { font-size: 10px; color: #a8a4c2; margin-bottom: 12px; }

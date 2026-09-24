@@ -365,6 +365,7 @@ let stateStart = performance.now();
 
 const dockGachaTrigger = document.getElementById("dockGachaTrigger");
 const claimContainer = document.getElementById("claimContainer");
+if (claimContainer) claimContainer.classList.add("hidden");
 const claimBtn = document.getElementById("claimButton");
 const lootText = document.getElementById("lootText");
 const crystalHeader = document.getElementById("crystalNameHeader");
@@ -706,6 +707,9 @@ function returnToGachaHome() {
     document.getElementById("gacha-view").classList.remove("hidden");
     document.getElementById("gacha-view").classList.add("active");
     document.getElementById("tabIndicator").textContent = "Home Gacha";
+	 if (state !== STATE.LOOT && claimContainer) {
+        claimContainer.classList.add("hidden");
+    }
 }
 
 document.querySelectorAll(".btn-back-dock").forEach(btn => btn.addEventListener("click", returnToGachaHome));
