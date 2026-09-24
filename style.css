@@ -820,7 +820,7 @@ body, html {
     .core-glow-ring { width: 120px; height: 120px; }
 }
 /* RESPONSIVE: TABLET & PC (> 768px) */
-@media (min-width: 1440px) {
+@media (min-width: 7680x) {
     .rpg-dock { height: 190px; }
     
     .dock-btn.sub-left { bottom: 0px; left: 10%; }
@@ -1730,3 +1730,7 @@ input.hidden {display: none;}
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+span#profRankNeed {
+    position: absolute;
+    right: 10px;}
