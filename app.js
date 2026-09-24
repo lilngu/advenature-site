@@ -338,97 +338,144 @@ document.getElementById("btnCloseBlessingModal").addEventListener("click", () =>
 // ======================================================
 // 5. LUỒNG THU THẬP: FIRST GACHA & GACHA THƯỜNG
 // ======================================================
-const onboardingModal = document.getElementById("onboardingModal");
-const btnCompleteRegister = document.getElementById("btnCompleteRegister");
+// ======================================================
+// HỆ THỐNG 8 AVATAR PRESET (4 NAM & 4 NỮ)
+// ======================================================
+const AVATAR_PRESETS = {
+    Nam: [
+        "https://api.dicebear.com/7.x/adventurer/svg?seed=Felix&hair=short01",
+        "https://api.dicebear.com/7.x/adventurer/svg?seed=Leo&hair=short02",
+        "https://api.dicebear.com/7.x/adventurer/svg?seed=Oliver&hair=short04",
+        "https://api.dicebear.com/7.x/adventurer/svg?seed=Jack&hair=short05"
+    ],
+    Nữ: [
+        "https://api.dicebear.com/7.x/adventurer/svg?seed=Bella&hair=long01",
+        "https://api.dicebear.com/7.x/adventurer/svg?seed=Luna&hair=long02",
+        "https://api.dicebear.com/7.x/adventurer/svg?seed=Maya&hair=long04",
+        "https://api.dicebear.com/7.x/adventurer/svg?seed=Sophie&hair=long05"
+    ]
+};
 
-// Chọn Chức nghiệp
-document.querySelectorAll(".btn-class-opt").forEach(btn => {
+let currentGender = "Nam";
+let selectedAvatarUrl = AVATAR_PRESETS.Nam[0];
+
+// Render 4 avatar theo giới tính hiện tại
+function renderAvatarOptions() {
+    const container = document.getElementById("avatarSelectGrid");
+    if (!container) return;
+
+    const list = AVATAR_PRESETS[currentGender];
+    selectedAvatarUrl = list[0]; // Mặc định chọn avatar đầu tiên
+
+    container.innerHTML = list.map((url, idx) => `
+        <div class="avatar-option-slot ${idx === 0 ? 'selected' : ''}" data-url="${url}">
+            <img src="${url}" alt="Avatar ${idx + 1}">
+        </div>
+    `).join('');
+
+    container.querySelectorAll(".avatar-option-slot").forEach(slot => {
+        slot.addEventListener("click", () => {
+            container.querySelectorAll(".avatar-option-slot").forEach(s => s.classList.remove("selected"));
+            slot.classList.add("selected");
+            selectedAvatarUrl = slot.dataset.url;
+        });
+    });
+}
+
+// Bắt sự kiện đổi Giới tính
+document.querySelectorAll(".btn-gender-opt").forEach(btn => {
     btn.addEventListener("click", () => {
-        document.querySelectorAll(".btn-class-opt").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".btn-gender-opt").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
-        selectedClass = btn.dataset.class;
+        currentGender = btn.dataset.gender;
+        renderAvatarOptions(); // Đổi 4 avatar sang giới tính mới
     });
 });
 
-// Google Sign-In init
+// Khởi tạo Google Auth
 const btnGoogleCustom = document.getElementById("btnGoogleCustom");
-const googleBtnText = document.getElementById("googleBtnText");
+const onboardStep1 = document.getElementById("onboardStep1");
+const onboardStep2 = document.getElementById("onboardStep2");
 
 function initGoogleAuth() {
-    // Nếu có thư viện Google và có Client ID thật
+    // Reset về Bước 1
+    onboardStep1.classList.remove("hidden");
+    onboardStep2.classList.add("hidden");
+
     if (typeof google !== "undefined" && google.accounts && GOOGLE_CLIENT_ID && !GOOGLE_CLIENT_ID.includes("YOUR_GOOGLE")) {
         try {
             google.accounts.id.initialize({
                 client_id: GOOGLE_CLIENT_ID,
-                callback: handleGoogleCredential
+                callback: handleGoogleSuccess
             });
-
-            // Nút bấm kích hoạt popup đăng nhập Google thật
-            btnGoogleCustom.onclick = () => {
-                google.accounts.id.prompt();
-            };
+            btnGoogleCustom.onclick = () => google.accounts.id.prompt();
             return;
-        } catch (e) {
-            console.warn("Chưa cấu hình Google Cloud, chuyển sang chế độ đăng nhập linh hoạt.");
-        }
+        } catch (e) {}
     }
 
-    // Chế độ tương tác nhanh (khi đang test hoặc chưa điền Client ID thật)
+    // Nút đăng nhập Google trực quan
     btnGoogleCustom.onclick = () => {
-        const nameInput = prompt("Nhập Tên Nhà Phiêu Lưu của bạn (hoặc Gmail):", tempGoogleProfile?.name || "Nhà Phiêu Lưu");
-        if (nameInput) {
-            const uid = "AW_G_" + Math.random().toString(36).substring(2, 9);
-            tempGoogleProfile = {
-                sub: uid,
-                name: nameInput.trim(),
-                email: nameInput.includes("@") ? nameInput.trim() : `${uid.toLowerCase()}@advenature.local`,
-                picture: `https://api.dicebear.com/7.x/bottts/svg?seed=${nameInput}`
-            };
-            googleBtnText.textContent = `✓ Đã kết nối: ${tempGoogleProfile.name}`;
-            btnGoogleCustom.style.borderColor = "#4cc9f0";
+        const emailInput = prompt("ĐĂNG NHẬP GOOGLE:\nNhập địa chỉ Gmail của bạn:", tempGoogleProfile?.email || "");
+        if (emailInput && emailInput.includes("@")) {
+            const defaultName = emailInput.split("@")[0];
+            handleGoogleSuccess({
+                mock: true,
+                profile: {
+                    sub: "AW_G_" + Math.random().toString(36).substring(2, 9),
+                    email: emailInput.trim(),
+                    name: defaultName.charAt(0).toUpperCase() + defaultName.slice(1),
+                    picture: "https://api.dicebear.com/7.x/adventurer/svg?seed=" + emailInput
+                }
+            });
+        } else if (emailInput !== null) {
+            alert("Vui lòng nhập địa chỉ Gmail hợp lệ để định danh tài khoản!");
         }
     };
 }
 
-function handleGoogleCredential(response) {
-    const base64Url = response.credential.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
+// KHI GOOGLE XÁC NHẬN THÀNH CÔNG -> CHUYỂN BƯỚC 2
+function handleGoogleSuccess(response) {
+    if (response.mock) {
+        tempGoogleProfile = response.profile;
+    } else {
+        const base64Url = response.credential.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+        tempGoogleProfile = JSON.parse(jsonPayload);
+    }
 
-    tempGoogleProfile = JSON.parse(jsonPayload);
-    googleBtnText.textContent = `✓ Đã kết nối: ${tempGoogleProfile.name}`;
-    btnGoogleCustom.style.borderColor = "#4cc9f0";
+    // Chuyển sang Bước 2: Khai báo hồ sơ chi tiết
+    onboardStep1.classList.add("hidden");
+    onboardStep2.classList.remove("hidden");
+
+    document.getElementById("googleBadgeVerified").textContent = `✓ Đã xác thực: ${tempGoogleProfile.email}`;
+    document.getElementById("obName").value = tempGoogleProfile.name || "";
+    renderAvatarOptions();
 }
 
-// BẤM NÚT THU THẬP VÀO TÚI (PHÂN LUỒNG)
+// BẤM NÚT THU THẬP VÀO TÚI
 claimBtn.addEventListener("click", () => {
     if (state !== STATE.LOOT) return;
 
-    // LẦN ĐẦU (FIRST GACHA) -> Bật bảng Đăng Ký Căn Cước
     if (currentUser.gacha_counter === 0) {
         initGoogleAuth();
         onboardingModal.classList.remove("hidden");
         return;
     }
-
-    // CÁC LẦN GACHA SAU -> Thu thập & Kiểm tra Số Nguyên Tố
     processClaimAfterLoot();
 });
 
-// BƯỚC 3 CỦA FIRST GACHA: GỬI LÊN WORKER & D1
+// BƯỚC 2: HOÀN TẤT & LƯU HỒ SƠ
 btnCompleteRegister.addEventListener("click", async () => {
-    // Nếu chưa đăng nhập Google hay nhập tên, tự sinh thông tin độc nhất
-    if (!tempGoogleProfile) {
-        const guestUid = "AW_G_" + Math.random().toString(36).substring(2, 9);
-        tempGoogleProfile = {
-            sub: guestUid,
-            name: "Lữ Hành Rừng Tinh Linh",
-            email: `${guestUid.toLowerCase()}@advenature.local`,
-            picture: `https://api.dicebear.com/7.x/bottts/svg?seed=${guestUid}`
-        };
-    }
+    const obName = document.getElementById("obName").value.trim();
+    const obBirth = document.getElementById("obBirthYear").value.trim();
+    const obClass = document.getElementById("obClass").value.trim();
+    const obTribe = document.getElementById("obTribe").value.trim();
+
+    if (!obName) { alert("Vui lòng nhập Tên Nhà Phiêu Lưu!"); return; }
+    if (!obBirth) { alert("Vui lòng nhập Năm sinh!"); return; }
+    if (!obClass) { alert("Vui lòng nhập Chức nghiệp của bạn!"); return; }
+    if (!obTribe) { alert("Vui lòng nhập Bộ tộc của bạn!"); return; }
 
     btnCompleteRegister.textContent = "Đang kích hoạt căn cước...";
     btnCompleteRegister.disabled = true;
@@ -439,7 +486,12 @@ btnCompleteRegister.addEventListener("click", async () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 googleUser: tempGoogleProfile,
-                className: selectedClass,
+                adventurerName: obName,
+                birthYear: obBirth,
+                gender: currentGender,
+                className: obClass,
+                tribe: obTribe,
+                avatarUrl: selectedAvatarUrl,
                 gemData: currentGemResult
             })
         });
@@ -456,16 +508,15 @@ btnCompleteRegister.addEventListener("click", async () => {
             claimContainer.classList.add("hidden");
             lootText.classList.remove("show");
 
-            // MỞ MODAL VỚI ĐÚNG 1 TRONG 4 CHÚC PHÚC FREE TRẢ VỀ TỪ SERVER
             openBlessingModal(data.blessing, "Chúc Phúc Tân Thủ dành riêng cho bạn!");
             state = STATE.IDLE;
         } else {
             alert("Lỗi đăng ký: " + (data.error || "Vui lòng thử lại"));
         }
     } catch (e) {
-        alert("Lỗi kết nối máy chủ! Vui lòng kiểm tra lại Worker.");
+        alert("Lỗi kết nối máy chủ! Vui lòng thử lại.");
     } finally {
-        btnCompleteRegister.textContent = "✦ KHỞI TẠO CĂN CƯỚC & THU THẬP ✦";
+        btnCompleteRegister.textContent = "✦ HOÀN TẤT & THU THẬP VÀO TÚI ✦";
         btnCompleteRegister.disabled = false;
     }
 });
@@ -1161,10 +1212,8 @@ document.getElementById("btnCheckoutShop")?.addEventListener("click", async () =
 // ======================================================
 // 10. NHIỆM VỤ PIN-BOARD & QUIZ
 // ======================================================
-document.getElementById("btnDoCheckin")?.addEventListener("click", () => {
-    currentUser.tinh_quang_points += 1;
-    saveUserData();
-    updateTopBarUI();
+document.getElementById("btnDoCheckin")?.addEventListener("click", async () => {
+    await syncPointsToBackend(1, 0, 0); // Cộng 1 🔮 vào cả giao diện lẫn Database D1
     alert("✦ Điểm danh thành công! Nhận +1 🔮 Tinh Quang.");
     document.getElementById("btnDoCheckin").textContent = "Đã Điểm Danh";
     document.getElementById("btnDoCheckin").disabled = true;
@@ -1252,24 +1301,48 @@ adminLogo?.addEventListener("pointerdown", () => {
 });
 document.getElementById("closeAdminModal")?.addEventListener("click", () => adminModal?.classList.add("hidden"));
 
-document.getElementById("admAddTQ")?.addEventListener("click", () => {
-    currentUser.tinh_quang_points += 99;
+// ======================================================
+// 1. HÀM ĐỒNG BỘ ĐIỂM: VỪA CẬP NHẬT GIAO DIỆN VỪA GHI VÀO D1
+// ======================================================
+async function syncPointsToBackend(tq = 0, tt = 0, ch = 0) {
+    currentUser.tinh_quang_points += tq;
+    currentUser.tinh_thach_points += tt;
+    currentUser.cong_hien_points += ch;
     saveUserData();
     updateTopBarUI();
-    alert("⚡ Admin: +99 🔮");
+
+    try {
+        await fetch(`${API_URL}/api/user/add-points`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                userId: currentUser.id,
+                tinhQuang: tq,
+                tinhThach: tt,
+                congHien: ch
+            })
+        });
+    } catch (e) {
+        console.warn("Chưa đồng bộ điểm lên D1:", e);
+    }
+}
+
+// 2. CÁC NÚT BƠM ĐIỂM ADMIN (GỌI ĐỒNG BỘ VÀO D1)
+document.getElementById("admAddTQ")?.addEventListener("click", async () => {
+    await syncPointsToBackend(99, 0, 0);
+    alert("⚡ Admin: +99 🔮 (Đã ghi nhận vào Database D1)");
 });
-document.getElementById("admAddTT")?.addEventListener("click", () => {
-    currentUser.tinh_thach_points += 99;
-    saveUserData();
-    updateTopBarUI();
-    alert("⚡ Admin: +99 💎");
+
+document.getElementById("admAddTT")?.addEventListener("click", async () => {
+    await syncPointsToBackend(0, 99, 0);
+    alert("⚡ Admin: +99 💎 (Đã ghi nhận vào Database D1)");
 });
-document.getElementById("admAddCH")?.addEventListener("click", () => {
-    currentUser.cong_hien_points += 100;
-    saveUserData();
-    updateTopBarUI();
-    alert("⚡ Admin: +100 🛡️");
+
+document.getElementById("admAddCH")?.addEventListener("click", async () => {
+    await syncPointsToBackend(0, 0, 100);
+    alert("⚡ Admin: +100 🛡️ (Đã ghi nhận vào Database D1)");
 });
+
 document.getElementById("admUnlockAllGems")?.addEventListener("click", () => {
     const all = [];
     CRYSTAL_PALETTES.forEach(p => {
