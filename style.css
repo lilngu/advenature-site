@@ -52,7 +52,7 @@ body, html {
 
 #app-3d {
     position: absolute;
-    inset: -15;
+    inset: -15px;
     z-index: 1;
 	background: 
         linear-gradient(rgb(30 105 127 / 54%), rgb(19 19 61 / 59%)), url(https://media.craiyon.com/2025-04-04/7ByR8QW6RO6yuM7WK0Z-Gw.webp) center / cover no-repeat;

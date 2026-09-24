@@ -508,7 +508,19 @@ function updateCore(elapsed, progress) {
 
 function updateState(now) {
     const elapsed = (now - stateStart) / 1000;
-    let shakeStrength = 0; // Độ rung của background và camera
+    let shakeStrength = 0;
+
+    // Hỗ trợ Fast Gacha cho Admin: Bỏ qua chờ đợi, hiện đá ngay lập tức
+    if (window.isFastGachaEnabled && (state === STATE.GACHA || state === STATE.CORE)) {
+        coreMaterial.opacity = 0;
+        coreGlowMaterial.opacity = 0;
+        coreGroup.scale.setScalar(0);
+        state = STATE.LOOT;
+        stateStart = now;
+        lootText.classList.add("show");
+        claimContainer.classList.remove("hidden");
+        return;
+    }
 
     if (state === STATE.IDLE) {
         updateParticles(elapsed, 0);
@@ -517,9 +529,8 @@ function updateState(now) {
         updateParticles(elapsed, progress);
         updateCore(elapsed, progress);
 
-        // Khi hạt nén được 50% chặng đường -> Background bắt đầu rung tăng dần
         if (progress > 0.5) {
-            shakeStrength = ((progress - 0.5) / 0.5) * 3.5; // Rung tăng dần từ 0px -> 3.5px
+            shakeStrength = ((progress - 0.5) / 0.5) * 3.5;
         }
 
         if (elapsed >= 3.5) {
@@ -529,9 +540,7 @@ function updateState(now) {
     } else if (state === STATE.CORE) {
         updateParticles(elapsed, 1);
         updateCore(elapsed, 1);
-
-        // GIAI ĐOẠN ĐỈNH ĐIỂM: Background và Camera rung chấn dữ dội
-        shakeStrength = 6 + Math.sin(elapsed * 30) * 2; // Rung mạnh 5px -> 8px
+        shakeStrength = 6 + Math.sin(elapsed * 30) * 2;
 
         if (elapsed >= 1.0) {
             coreMaterial.opacity = 0;
@@ -542,6 +551,10 @@ function updateState(now) {
             stateStart = now;
             lootText.classList.add("show");
             claimContainer.classList.remove("hidden");
+            
+            // Đặt lại góc camera chuẩn 1 lần duy nhất khi đá bung ra
+            camera.position.set(0, 1.2, 8);
+            controls.target.set(0, 0.2, 0);
         }
     } else if (state === STATE.LOOT && lootBox) {
         lootBox.rotation.y += 0.008;
@@ -551,19 +564,15 @@ function updateState(now) {
         lootBox.scale.multiplyScalar(0.94);
     }
 
-    // Áp dụng rung giật đồng bộ cho Background và Camera 3D
+    // Áp dụng rung giật: CHỈ can thiệp khi có rung chấn để KHÔNG làm kẹt OrbitControls
     if (shakeStrength > 0) {
         const rx = (Math.random() - 0.5) * shakeStrength;
         const ry = (Math.random() - 0.5) * shakeStrength;
         app3dCanvas.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
-        
-        // Rung nhẹ góc nhìn camera Three.js tạo chiều sâu 3D chân thực
         camera.position.x = (Math.random() - 0.5) * (shakeStrength * 0.01);
         camera.position.y = 1.2 + (Math.random() - 0.5) * (shakeStrength * 0.01);
     } else {
         app3dCanvas.style.transform = "";
-        camera.position.x = 0;
-        camera.position.y = 1.2;
     }
 }
 
