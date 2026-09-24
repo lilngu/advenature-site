@@ -395,12 +395,15 @@ claimBtn.addEventListener("click", () => {
 
 // BƯỚC 3 CỦA FIRST GACHA: GỬI LÊN WORKER & D1
 btnCompleteRegister.addEventListener("click", async () => {
+    // SỬA ĐOẠN NÀY: Nếu chưa đăng nhập Google, tạo profile khách với email ĐỘC NHẤT
     if (!tempGoogleProfile) {
+        const guestUid = "AW_G_" + Math.random().toString(36).substring(2, 9);
         tempGoogleProfile = {
-            sub: "AW_G_" + Math.random().toString(36).substring(2, 9),
+            sub: guestUid,
             name: "Lữ Hành Rừng Tinh Linh",
-            email: "guest@advenature.vn",
-            picture: "https://api.dicebear.com/7.x/bottts/svg?seed=" + Date.now()
+            // Tự sinh email duy nhất dạng aw_g_xxxx@advenature.local để không bao giờ bị trùng
+            email: `${guestUid.toLowerCase()}@advenature.local`,
+            picture: "https://api.dicebear.com/7.x/bottts/svg?seed=" + guestUid
         };
     }
 
@@ -430,8 +433,11 @@ btnCompleteRegister.addEventListener("click", async () => {
             claimContainer.classList.add("hidden");
             lootText.classList.remove("show");
 
-            // Mở Modal Chúc Phúc Free
-            openBlessingModal(data.blessing, "Chúc Phúc Tân Thủ dành riêng cho bạn!");
+            // Mở Modal Chúc Phúc (phân biệt tài khoản mới hay tài khoản cũ quay lại)
+            const reason = data.isRestored 
+                ? "Chào mừng bạn quay trở lại! Đã khôi phục căn cước và cập nhật Tủ Đá của bạn." 
+                : "Chúc Phúc Tân Thủ dành riêng cho bạn!";
+            openBlessingModal(data.blessing, reason);
             state = STATE.IDLE;
         } else {
             alert("Lỗi đăng ký: " + (data.error || "Vui lòng thử lại"));
