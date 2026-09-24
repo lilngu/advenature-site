@@ -819,16 +819,32 @@ body, html {
     .dock-icon-ring { width: 70px; height: 70px; }
     .core-glow-ring { width: 120px; height: 120px; }
 }
-
 /* RESPONSIVE: TABLET & PC (> 768px) */
-@media (min-width: 768px) {
+@media (min-width: 1440px) {
     .rpg-dock { height: 190px; }
     
-    .dock-btn.sub-left { bottom: 40px; left: 12%; }
-    .dock-btn.mid-left { bottom: 70px; left: 26%; }
-    .dock-btn.center-core { bottom: 5px; }
-    .dock-btn.mid-right { bottom: 70px; right: 26%; }
-    .dock-btn.sub-right { bottom: 40px; right: 12%; }
+    .dock-btn.sub-left { bottom: 0px; left: 10%; }
+    .dock-btn.mid-left { bottom: 30px; left: 26%; }
+    .dock-btn.center-core { bottom: 50px; }
+    .dock-btn.mid-right { bottom: 30px; right: 26%; }
+    .dock-btn.sub-right { bottom: 0px; right: 10%; }
+    
+    .dock-icon-ring { width: 100px; height: 100px; font-size: 18px; }
+    .dock-label { font-size: 25px; font-family: "Handjet", sans-serif;}
+    
+    .core-glow-ring { width: 200px; height: 200px; }
+    .core-ico-svg { width: 32px; height: 32px; }
+    .core-text { font-size: 80px;font-family: "Handjet", sans-serif; }
+}
+/* RESPONSIVE: wide PC (> 1440px) */
+@media (min-width: 1440px) {
+    .rpg-dock { height: 190px; }
+    
+    .dock-btn.sub-left { bottom: 30px; left: 25%; }
+    .dock-btn.mid-left { bottom: 50px; left: 35%; }
+    .dock-btn.center-core { bottom: -50px; }
+    .dock-btn.mid-right { bottom: 50px; right: 35%; }
+    .dock-btn.sub-right { bottom: 30px; right: 25%; }
     
     .dock-icon-ring { width: 150px; height: 150px; font-size: 18px; }
     .dock-label { font-size: 25px; font-family: "Handjet", sans-serif;}
