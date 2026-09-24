@@ -1341,3 +1341,32 @@ body, html {
 .gem-slot:active {
     transform: scale(0.94);
 }
+
+/* ======================================================
+   CHỨC NGHIỆP NHẬP VAI ONBOARDING
+====================================================== */
+.class-options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
+.btn-class-opt {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-magic);
+    color: #c9c3ff;
+    padding: 7px 4px;
+    border-radius: 6px;
+    font-size: 10px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.btn-class-opt.active {
+    background: rgba(126, 103, 255, 0.25);
+    border-color: #ffd166;
+    color: #fff;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(255, 209, 102, 0.3);
+}

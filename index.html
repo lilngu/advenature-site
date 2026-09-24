@@ -173,7 +173,7 @@
             <div class="panel-bottom-dock">
                 <button class="btn-back-dock">
                     <span class="back-ico"><i class="rpg-ico ico-back-wind" style="width:18px;height:18px;"></i></span>
-                    <span class="back-text">[Trở về]</span>
+                    <span class="back-text">TRỞ VỀ</span>
                 </button>
             </div>
         </div>
@@ -228,7 +228,7 @@
             <div class="panel-bottom-dock">
                 <button class="btn-back-dock">
                     <span class="back-ico"><i class="rpg-ico ico-back-wind" style="width:18px;height:18px;"></i></span>
-                    <span class="back-text">[Trở về]</span>
+                    <span class="back-text">TRỞ VỀ</span>
                 </button>
             </div>
         </div>
@@ -251,13 +251,6 @@
                     <div>Tổng: <b id="cartTotalTinhThach" style="color:#4cc9f0;">0 💎</b> (~<span id="cartTotalVnd">0</span> đ)</div>
                 </div>
                 <button class="btn-summon btn-buy" id="btnCheckoutShop">✦ ĐẶT MUA ✦</button>
-            </div>
-
-            <div class="panel-bottom-dock">
-                <button class="btn-back-dock">
-                    <span class="back-ico"><i class="rpg-ico ico-back-wind" style="width:18px;height:18px;"></i></span>
-                    <span class="back-text">[Trở về]</span>
-                </button>
             </div>
         </div>
     </section>
@@ -312,7 +305,7 @@
             <div class="panel-bottom-dock">
                 <button class="btn-back-dock">
                     <span class="back-ico"><i class="rpg-ico ico-back-wind" style="width:18px;height:18px;"></i></span>
-                    <span class="back-text">[Trở về]</span>
+                    <span class="back-text">TRỞ VỀ</span>
                 </button>
             </div>
         </div>
@@ -329,6 +322,37 @@
             <button id="btnToggleCartItem" class="btn-action" style="width: 100%; margin-top: 14px; padding: 10px;">CHỌN MỤC NÀY</button>
         </div>
     </div>
+<!-- ====================================================== -->
+    <!-- MODAL RPG: ĐĂNG KÝ CĂN CƯỚC NHÀ PHIÊU LƯU (BƯỚC 3)    -->
+    <!-- ====================================================== -->
+    <div id="onboardingModal" class="modal-overlay hidden">
+        <div class="modal-box rpg-glass-box" style="max-width: 330px;">
+            <h3 style="color: #ffd166; font-size: 15px; margin-bottom: 4px;">✦ CĂN CƯỚC NHÀ PHIÊU LƯU ✦</h3>
+            <p style="font-size: 10px; color: #c9c3ff; margin-bottom: 12px;">
+                Đăng nhập tài khoản để lưu giữ vĩnh viễn Tinh Quang Thạch đầu tiên của bạn!
+            </p>
+
+            <!-- KHUNG GOOGLE SIGN-IN ONBOARDING -->
+            <div id="googleBtnContainer" style="display: flex; justify-content: center; margin-bottom: 12px;"></div>
+
+            <!-- CHỌN CHỨC NGHIỆP NHẬP VAI -->
+            <div class="class-select-section" style="text-align: left; margin-bottom: 12px;">
+                <label style="font-size: 10px; color: #ffd166; font-weight: bold; display: block; margin-bottom: 6px;">
+                    CHỌN CHỨC NGHIỆP CỦA BẠN:
+                </label>
+                <div class="class-options-grid">
+                    <button class="btn-class-opt active" data-class="Ranger">🏹 Ranger (Kiểm Lâm)</button>
+                    <button class="btn-class-opt" data-class="Knight">⚔️ Hiệp Sĩ Rừng</button>
+                    <button class="btn-class-opt" data-class="Mage">🔮 Pháp Sư Tinh Vân</button>
+                    <button class="btn-class-opt" data-class="Druid">🌿 Thần Nông Thảo Dược</button>
+                </div>
+            </div>
+
+            <button id="btnCompleteRegister" class="btn-summon btn-claim" style="width: 100%; padding: 10px; font-size: 12px;">
+                ✦ KHỞI TẠO CĂN CƯỚC & THU THẬP ✦
+            </button>
+        </div>
+    </div>
 
     <!-- 7. MODAL RPG: TINH LINH BAN CHÚC PHÚC (THAY THẾ HOÀN TOÀN ALERT BROWSER) -->
     <div id="blessingModal" class="modal-overlay hidden">
@@ -338,9 +362,18 @@
             <div class="blessing-icon-large" id="blessIconBox">🎋</div>
             <h3 id="blessTitle" class="blessing-title">Chúc Phúc Tinh Linh</h3>
             <p id="blessDesc" class="blessing-desc">Mô tả vật phẩm nhận được</p>
-            <button id="btnCloseBlessingModal" class="btn-summon btn-claim" style="width: 100%; margin-top: 15px;">
-                ✦ XÁC NHẬN THU VÀO TÚI ✦
-            </button>
+            <<!-- Thay đổi nút trong thẻ #blessingModal -->
+            <div class="blessing-cta-box" style="margin-top: 14px;">
+                <p style="font-size: 10px; color: #ffd166; margin-bottom: 8px; font-style: italic;">
+                    *Chúc phúc này có hiệu lực khi bạn tham gia dã ngoại cùng 1 Gói Tân Thủ!
+                </p>
+                <button id="btnGoToShopAfterBlessing" class="btn-summon btn-claim" style="width: 100%; margin-bottom: 6px;">
+                    ✦ KHÁM PHÁ GÓI TÂN THỦ ✦
+                </button>
+                <button id="btnCloseBlessingModal" class="btn-action" style="width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.2);">
+                    Cất Vào Túi Đồ
+                </button>
+            </div>
         </div>
     </div>
 
