@@ -56,6 +56,12 @@ body, html {
     z-index: 1;
     transition: opacity 4s ease-in-out; /* Fade in trong 4s */
 }
+#app-3d canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    mix-blend-mode: screen; /* Khử nền đen, viên đá & hạt sáng rực trên nền rừng */
+}
 
 /* ======================================================
    HỆ THỐNG ICON CSS ::before & SVG DATA URI
