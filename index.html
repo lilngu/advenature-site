@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advenature - Loot Box Tinh Quang</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Google Identity Services SDK -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- QRCode Lib (Dùng cho QR túi đồ offline) -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+    <!-- Importmap cho Three.js -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+<body>
+
+    <!-- 3D Canvas Background & Scene -->
+    <div id="app-3d"></div>
+
+    <!-- Thanh Điều Hướng Trên Cùng (Navbar) -->
+    <header id="main-header">
+        <div class="logo">✦ ADVENATURE ✦</div>
+        <nav class="nav-links">
+            <button class="nav-btn active" data-target="gacha-view">🔮 Gacha</button>
+            <button class="nav-btn" data-target="inventory-view">🎒 Túi Trữ Vật</button>
+            <button class="nav-btn" data-target="quest-view">📜 Nhiệm Vụ</button>
+            <button class="nav-btn" data-target="shop-view">🛒 Shop Lữ Hành</button>
+            <button class="nav-btn" data-target="profile-view">🛡️ Nhà Phiêu Lưu</button>
+        </nav>
+        <div id="user-auth-panel">
+            <!-- Nút đăng nhập Google sẽ tự render tại đây -->
+            <div id="g_id_onload"></div>
+        </div>
+    </header>
+
+    <!-- GIAO DIỆN 1: MÀN HÌNH GACHA -->
+    <section id="gacha-view" class="view-panel active">
+        <div id="startUI" class="center-ui">
+            <div class="title">GACHA</div>
+            <div class="subtitle">LOOT BOX TINH QUANG</div>
+            <button id="gachaButton" class="magic-btn">✦ GACHA (1 🔮) ✦</button>
+            <div id="tinhQuangDisplay" class="counter-badge">Điểm Tinh Quang: <span id="tqCount">1</span></div>
+        </div>
+
+        <div id="lootText"></div>
+
+        <div id="claimContainer" class="center-bottom-ui">
+            <button id="claimButton" class="magic-btn">✦ THU THẬP VÀO TÚI ✦</button>
+        </div>
+
+        <div id="rewardMessage">ĐÃ LƯU VÀO TÚI TRỮ VẬT!</div>
+        <div id="againContainer" class="center-bottom-ui">
+            <button id="againButton" class="magic-btn">✦ GACHA TIẾP ✦</button>
+        </div>
+    </section>
+
+    <!-- GIAO DIỆN 2: TÚI TRỮ VẬT (INVENTORY) -->
+    <section id="inventory-view" class="view-panel hidden">
+        <div class="panel-container">
+            <h2 class="section-title">🎒 TÚI TRỮ VẬT NHÀ PHIÊU LƯU</h2>
+            <div class="inv-tabs">
+                <button class="inv-tab-btn active" data-sub="sub-gems">Tinh Quang Thạch (<span id="gemProgress">0/990</span>)</button>
+                <button class="inv-tab-btn" data-sub="sub-items">Vật Phẩm & Thẻ (5x5)</button>
+            </div>
+
+            <!-- Tab Con 1: Tủ 990 Tinh Quang Thạch -->
+            <div id="sub-gems" class="inv-content active">
+                <div class="progress-bar-container">
+                    <div id="gemProgressBar" class="progress-fill" style="width: 0%;"></div>
+                </div>
+                <div id="gemGrid" class="gem-grid-layout">
+                    <!-- Danh sách các viên đá đã thu thập sẽ hiển thị tại đây -->
+                </div>
+            </div>
+
+            <!-- Tab Con 2: Lưới 5x5 Vật Phẩm Offline -->
+            <div id="sub-items" class="inv-content hidden">
+                <div id="itemGrid" class="grid-5x5">
+                    <!-- 25 ô chứa Item -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODAL HIỂN THỊ CHI TIẾT ITEM & MÃ QR OFFLINE -->
+    <div id="itemModal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <span class="close-modal" id="closeItemModal">&times;</span>
+            <h3 id="modalItemTitle">Tên Vật Phẩm</h3>
+            <p id="modalItemDesc">Mô tả vật phẩm...</p>
+            <div id="qrcode" class="qr-box"></div>
+            <p class="qr-note">Đưa mã này cho NPC / Quản lý Hội Ngọc Lục để sử dụng</p>
+        </div>
+    </div>
+
+    <!-- Import logic vận hành -->
+    <script type="module" src="app.js"></script>
+</body>
+</html>
