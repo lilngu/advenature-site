@@ -58,7 +58,7 @@ body, html {
 	background: 
         linear-gradient(rgb(30 105 127 / 54%), rgb(19 19 61 / 59%)), url(https://media.craiyon.com/2025-04-04/7ByR8QW6RO6yuM7WK0Z-Gw.webp) center / cover no-repeat;
     transition: opacity 7s ease-in-out; /* Fade in trong 4s */
-	pointer-events: none;
+	pointer-events: auto;
 }
 #app-3d canvas {
     display: block;
