@@ -1940,13 +1940,15 @@ body.guest-mode .dock-btn:not(.center-core) {
 /* 3. Đưa Nút Gacha từ đáy lên chính giữa trang */
 body.guest-mode .dock-btn.center-core {
     pointer-events: auto;
-    bottom: 45% !important;
+    bottom: 45vh !important;
     left: 50% !important;
     transform: translate(-50%, 50%) !important;
     transition: all 0.7s cubic-bezier(0.2, 0.8, 0.2, 1.2);
     z-index: 32;
 }
-
+body.guest-mode .dock-btn.center-core.moved {
+    bottom: 45% !important;
+}
 /* 4. Banner Cuộn Giấy Cổ */
 .welcome-scroll-overlay {
     position: fixed;

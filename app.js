@@ -216,13 +216,13 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.35; // Tăng sáng nhẹ để hạt lấp lánh như hình thiết kế
+renderer.toneMappingExposure = 1.33; // Tăng sáng nhẹ để hạt lấp lánh như hình thiết kế
 document.getElementById("app-3d").appendChild(renderer.domElement);
 
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
 // Chỉnh Bloom Pass để viên đá và bệ đá tỏa hào quang thần tiên
-composer.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.6, 0.15));
+composer.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.1, 0.5, 0.15));
 composer.addPass(new OutputPass());
 
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -353,9 +353,9 @@ function createProceduralRock() {
     const material = new THREE.MeshStandardMaterial({
         color: palette.color,
         emissive: palette.emissive,
-        emissiveIntensity: 0.35,
-        roughness: 0.18,
-        metalness: 0.35,
+        emissiveIntensity: 0.33,
+        roughness: 0.1,
+        metalness: 0.4,
         flatShading: true
     });
 
@@ -442,6 +442,7 @@ dockGachaTrigger.addEventListener("click", () => {
                               !document.getElementById("gacha-view").classList.contains("hidden");
 
     if (isGachaViewActive) {
+        dockGachaTrigger.classList.add("moved"); 
         triggerGachaSummon();
     }
 });
@@ -1588,13 +1589,40 @@ document.getElementById("btnDoCheckin")?.addEventListener("click", async () => {
     document.getElementById("btnDoCheckin").disabled = true;
 });
 
-document.getElementById("btnSubmitFb")?.addEventListener("click", () => {
-    const link = document.getElementById("inputFbLink").value.trim();
-    if (link.startsWith("http")) {
-        alert("✦ Đã gửi link bài viết cho Quản trị viên Telegram! Vui lòng chờ duyệt (+1 🔮).");
-        document.getElementById("inputFbLink").value = "";
-    } else {
-        alert("Vui lòng nhập đường link bài viết hợp lệ!");
+// app.js: Cập nhật sự kiện nộp bài viết Facebook
+document.getElementById("btnSubmitFb")?.addEventListener("click", async () => {
+    const linkInput = document.getElementById("inputFbLink");
+    const link = linkInput.value.trim();
+    if (!link.startsWith("http")) {
+        alert("Vui lòng nhập đường link bài viết hợp lệ (bắt đầu bằng http...)!");
+        return;
+    }
+
+    const btn = document.getElementById("btnSubmitFb");
+    btn.textContent = "Đang gửi...";
+    btn.disabled = true;
+
+    try {
+        const res = await fetch(`${API_URL}/api/quest/submit-fb`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                userId: currentUser.id,
+                postUrl: link
+            })
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert("✦ Đã gửi link bài viết cho Quản trị viên Telegram! Vui lòng chờ duyệt (+1 🔮).");
+            linkInput.value = "";
+        } else {
+            alert("Lỗi gửi link: " + (data.error || "Thử lại sau!"));
+        }
+    } catch (e) {
+        alert("Không thể kết nối đến máy chủ duyệt nhiệm vụ!");
+    } finally {
+        btn.textContent = "Gửi Duyệt";
+        btn.disabled = false;
     }
 });
 
