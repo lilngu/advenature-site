@@ -1582,11 +1582,44 @@ document.getElementById("btnCheckoutShop")?.addEventListener("click", async () =
 // ======================================================
 // 10. NHIỆM VỤ PIN-BOARD & QUIZ
 // ======================================================
+// Điểm danh hằng ngày với Server D1 (Chuỗi 7 ngày tặng thêm điểm)
 document.getElementById("btnDoCheckin")?.addEventListener("click", async () => {
-    await syncPointsToBackend(1, 0, 0); // Cộng 1 🔮 vào cả giao diện lẫn Database D1
-    alert("✦ Điểm danh thành công! Nhận +1 🔮 Tinh Quang.");
-    document.getElementById("btnDoCheckin").textContent = "Đã Điểm Danh";
-    document.getElementById("btnDoCheckin").disabled = true;
+    const btn = document.getElementById("btnDoCheckin");
+    btn.disabled = true;
+    btn.textContent = "Đang kiểm tra...";
+
+    try {
+        const res = await fetch(`${API_URL}/api/quest/checkin`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: currentUser.id })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            currentUser.tinh_quang_points = data.tinh_quang_points;
+            saveUserData();
+            updateTopBarUI();
+
+            const streakText = `Chuỗi: ${data.streak % 7}/7 ngày (Tổng: ${data.streak} ngày)`;
+            document.getElementById("streakDisplay").textContent = streakText;
+            btn.textContent = "Đã Điểm Danh";
+
+            let alertMsg = `✦ Điểm danh thành công! Nhận +1 🔮 Tinh Quang.`;
+            if (data.isBonus) {
+                alertMsg = `🎉 XUẤT SẮC! Đạt mốc chuỗi 7 ngày liên tục! Thưởng thêm +1 🔮 (Tổng nhận +2 🔮).`;
+            }
+            alert(alertMsg);
+        } else {
+            alert(data.error || "Không thể điểm danh!");
+            btn.textContent = "Điểm Danh";
+            btn.disabled = false;
+        }
+    } catch (e) {
+        alert("Lỗi kết nối máy chủ điểm danh!");
+        btn.textContent = "Điểm Danh";
+        btn.disabled = false;
+    }
 });
 
 // app.js: Cập nhật sự kiện nộp bài viết Facebook
@@ -1638,18 +1671,43 @@ document.getElementById("btnSubmitRef")?.addEventListener("click", async () => {
     }
 });
 
+//CỤM XỬ LÝ QUIZ
+let quizPool = [];
+let quizCorrectCount = 0;
 let currentQuizIdx = 0;
-const quizModal = document.getElementById("quizModal");
 
-document.getElementById("btnOpenQuiz")?.addEventListener("click", () => {
-    currentQuizIdx = 0;
-    showQuizQuestion();
-    quizModal.classList.remove("hidden");
+document.getElementById("btnOpenQuiz")?.addEventListener("click", async () => {
+    const btn = document.getElementById("btnOpenQuiz");
+    btn.textContent = "Đang tải câu đố...";
+
+    try {
+        const res = await fetch(`${API_URL}/api/quest/quiz-questions`);
+        const data = await res.json();
+        if (data.success && Array.isArray(data.questions)) {
+            // Xáo trộn ngẫu nhiên (shuffle) từ kho 50 câu
+            quizPool = data.questions.sort(() => 0.5 - Math.random());
+            quizCorrectCount = 0;
+            currentQuizIdx = 0;
+            showQuizQuestion();
+            quizModal.classList.remove("hidden");
+        }
+    } catch (e) {
+        alert("Chưa thể tải bộ câu đố Tinh Linh!");
+    } finally {
+        btn.textContent = "Giải Mã";
+    }
 });
 
 function showQuizQuestion() {
-    const qData = QUIZ_LIST[currentQuizIdx];
-    document.getElementById("quizQuestionText").textContent = `Câu ${currentQuizIdx + 1}: ${qData.q}`;
+    if (currentQuizIdx >= quizPool.length) {
+        currentQuizIdx = 0; // Quay vòng nếu chưa đủ 10 câu đúng
+    }
+    const qData = quizPool[currentQuizIdx];
+    document.getElementById("quizQuestionText").innerHTML = `
+        <div style="font-size: 10px; color: #00f5d4; margin-bottom: 4px;">Tiến trình: ${quizCorrectCount}/10 câu đúng</div>
+        <b>Câu hỏi:</b> ${qData.q}
+    `;
+
     const ansBox = document.getElementById("quizAnswersBox");
     ansBox.innerHTML = qData.a.map((ans, idx) => `
         <button class="btn-quiz-ans" data-idx="${idx}">✦ ${ans}</button>
@@ -1659,22 +1717,116 @@ function showQuizQuestion() {
         btn.addEventListener("click", async () => {
             const chosen = parseInt(btn.dataset.idx);
             if (chosen === qData.c) {
+                quizCorrectCount++;
                 currentQuizIdx++;
-                if (currentQuizIdx < QUIZ_LIST.length) {
-                    showQuizQuestion();
+
+                // Khi tích lũy đủ 10 câu đúng
+                if (quizCorrectCount >= 10) {
+                    try {
+                        const completeRes = await fetch(`${API_URL}/api/quest/quiz-complete`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ userId: currentUser.id })
+                        });
+                        const completeData = await completeRes.json();
+                        if (completeData.success) {
+                            currentUser.tinh_thach_points = completeData.tinh_thach_points;
+                            saveUserData();
+                            updateTopBarUI();
+                            quizModal.classList.add("hidden");
+                            alert(`🎉 HOÀN THÀNH TRI THỨC TINH LINH!\nBạn đã trả lời đúng 10 câu và nhận được +1 💎 Tinh Thạch! (Hôm nay: ${completeData.countToday}/2 lượt)`);
+                        } else {
+                            alert(completeData.error);
+                            quizModal.classList.add("hidden");
+                        }
+                    } catch (err) {
+                        alert("Lỗi kết nối khi nhận thưởng!");
+                    }
                 } else {
-                    // GỌI HÀM ĐỒNG BỘ LÊN CLOUDFLARE D1
-                    await syncPointsToBackend(1, 0, 0);
-                    quizModal.classList.add("hidden");
-                    alert("🎉 XUẤT SẮC! Bạn đã giải mã toàn bộ tri thức Rừng Tinh Linh, nhận +1 🔮 Tinh Quang!");
+                    showQuizQuestion();
                 }
             } else {
-                alert("Mật mã chưa chính xác! Hãy đọc kỹ tri thức và thử lại.");
+                alert("Mật mã chưa chính xác! Hãy thử lại câu khác.");
+                currentQuizIdx++;
+                showQuizQuestion();
             }
         });
     });
 }
 document.getElementById("closeQuizModal")?.addEventListener("click", () => quizModal.classList.add("hidden"));
+
+//BẬT CAMERA QUÉT QR KẾT NỐI
+let html5QrScanner = null;
+
+document.getElementById("btnScanFriendQr")?.addEventListener("click", () => {
+    const scanModal = document.getElementById("friendQrScanModal");
+    scanModal.classList.remove("hidden");
+
+    if (typeof Html5Qrcode !== "undefined") {
+        html5QrScanner = new Html5Qrcode("qrScannerReader");
+        html5QrScanner.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 180, height: 180 } },
+            (decodedText) => {
+                // Nhận diện mã dạng ADVENATURE_USER:AWxxxx hoặc AWxxxx
+                let friendCode = decodedText.trim();
+                if (friendCode.includes("ADVENATURE_USER:")) {
+                    friendCode = friendCode.replace("ADVENATURE_USER:", "").trim();
+                }
+
+                if (friendCode.startsWith("AW")) {
+                    document.getElementById("inputFriendCode").value = friendCode;
+                    stopScanner();
+                    scanModal.classList.add("hidden");
+                    alert(`✓ Đã nhận diện mã bạn bè: [${friendCode}]! Hãy bấm Xác Nhận.`);
+                }
+            },
+            (error) => {}
+        ).catch(err => {
+            alert("Không thể truy cập Camera. Vui lòng cấp quyền máy ảnh!");
+            scanModal.classList.add("hidden");
+        });
+    }
+});
+
+function stopScanner() {
+    if (html5QrScanner) {
+        html5QrScanner.stop().then(() => {
+            html5QrScanner.clear();
+            html5QrScanner = null;
+        }).catch(() => {});
+    }
+}
+
+document.getElementById("closeFriendQrScanModal")?.addEventListener("click", () => {
+    stopScanner();
+    document.getElementById("friendQrScanModal").classList.add("hidden");
+});
+
+//MỞ MODAL LỊCH PHIÊU LƯU, BANG HỘI, RANGER
+// Mở / Đóng Modal Lịch Trình Shop
+document.getElementById("btnOpenScheduleModal")?.addEventListener("click", () => {
+    document.getElementById("scheduleModal").classList.remove("hidden");
+});
+document.getElementById("closeScheduleModal")?.addEventListener("click", () => {
+    document.getElementById("scheduleModal").classList.add("hidden");
+});
+
+// Mở / Đóng Modal Bang Hội
+document.getElementById("btnOpenGuildModal")?.addEventListener("click", () => {
+    document.getElementById("guildModal").classList.remove("hidden");
+});
+document.getElementById("closeGuildModal")?.addEventListener("click", () => {
+    document.getElementById("guildModal").classList.add("hidden");
+});
+
+// Mở / Đóng Modal Ranger
+document.getElementById("btnOpenRangerModal")?.addEventListener("click", () => {
+    document.getElementById("rangerModal").classList.remove("hidden");
+});
+document.getElementById("closeRangerModal")?.addEventListener("click", () => {
+    document.getElementById("rangerModal").classList.add("hidden");
+});
 
 // ======================================================
 // 11. ADMIN GOD-MODE TEST TOOLBAR

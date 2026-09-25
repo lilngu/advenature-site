@@ -1973,7 +1973,7 @@ body.guest-mode .dock-btn.center-core.moved {
 
 .scroll-card {
     position: relative;
-    max-width: 330px;
+    max-width: 500px;
     width: 100%;
     display: flex;
     align-items: center;
@@ -2010,7 +2010,7 @@ body.guest-mode .dock-btn.center-core.moved {
 }
 
 .scroll-text {
-    font-size: 13px;
+    font-size: large;
     line-height: 1.3;
     color: #4a2d11;
     font-weight: 600;
@@ -2033,3 +2033,63 @@ body.guest-mode .dock-btn.center-core.moved {
     0%, 100% { opacity: 0.5; }
     50% { opacity: 1; }
 }
+
+/* BANNER LỊCH PHIÊU LƯU */
+.adventure-schedule-banner {
+    background: linear-gradient(135deg, rgba(20, 35, 60, 0.85), rgba(10, 15, 30, 0.95));
+    border: 1.5px solid #4cc9f0;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(76, 201, 240, 0.25);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.adventure-schedule-banner:active { transform: scale(0.98); }
+.schedule-badge {
+    background: #00f5d4;
+    color: #03030a;
+    font-size: 8px;
+    font-weight: 900;
+    padding: 2px 6px;
+    border-radius: 8px;
+}
+.schedule-title { font-size: 13px; color: #ffe66d; margin: 6px 0 4px; }
+.schedule-desc { font-size: 10px; color: #c9c3ff; line-height: 1.3; }
+.schedule-cta { font-size: 10px; font-weight: bold; color: #4cc9f0; display: inline-block; margin-top: 6px; }
+
+/* DANH SÁCH LỊCH TRÌNH */
+.schedule-list-box { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.schedule-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(165, 140, 255, 0.2);
+    border-radius: 8px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.sch-date { font-size: 9px; font-weight: bold; color: #ffd166; max-width: 60px; line-height: 1.2; }
+.sch-info { flex: 1; margin: 0 8px; text-align: left; }
+.sch-info b { font-size: 11px; color: #fff; display: block; }
+.sch-info span { font-size: 9px; color: #a8a4c2; display: block; }
+.sch-slots { font-size: 9px; font-weight: bold; color: #00f5d4; background: rgba(0,0,0,0.5); padding: 4px 6px; border-radius: 6px; }
+
+/* 2 BANNER PROFILE */
+.guild-action-banners { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+.guild-banner-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(212, 192, 132, 0.3);
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: transform 0.15s;
+    text-align: left;
+}
+.guild-banner-card:active { transform: scale(0.97); }
+.banner-ico-box { font-size: 26px; }
+.banner-txt-box h4 { font-size: 11px; color: #ffe66d; }
+.banner-txt-box p { font-size: 9px; color: #a8a4c2; margin-top: 2px; }

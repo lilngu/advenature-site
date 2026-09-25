@@ -9,7 +9,8 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <!-- QRCode JS (Xác thực Offline) -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-    
+    <!-- Camera QR Code Scanner nhẹ cho tính năng quét mã bạn bè -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <!-- Gacha Orb Magic Effect -->
     <script src="gacha-orb-effect.js" defer></script>
 
@@ -244,13 +245,17 @@
                 </div>
 
                 <!-- Nhiệm vụ 4: Kết nối bạn bè -->
-                <div class="pin-card">
-                    <span class="pin-tack">📌</span>
-                    <h4 class="pin-title">Kết Nối Bạn Bè</h4>
-                    <p class="pin-desc">Mã: <b id="myRefCodeDisplay" style="color:#ffe66d;">AW----</b> (+1 🔮 cả 2).</p>
-                    <input type="text" id="inputFriendCode" class="rpg-input pin-input" placeholder="Mã AWxxxx...">
-                    <button class="btn-action pin-btn" id="btnSubmitRef">Xác Nhận</button>
-                </div>
+                <!-- Sửa pin-card Kết Nối Bạn Bè -->
+<div class="pin-card">
+    <span class="pin-tack">📌</span>
+    <h4 class="pin-title">Kết Nối Nhà phiêu lưu</h4>
+    <p class="pin-desc">Mã: <b id="myRefCodeDisplay" style="color:#ffe66d;">AW----</b> (+1 🔮 cả 2).</p>
+    <div style="display: flex; gap: 4px; margin-bottom: 4px;">
+        <input type="text" id="inputFriendCode" class="rpg-input pin-input" placeholder="Mã AWxxxx..." style="margin-bottom:0;">
+        <button class="btn-action pin-btn" id="btnScanFriendQr" style="padding: 0 8px;" title="Quét mã QR">📷</button>
+    </div>
+    <button class="btn-action pin-btn" id="btnSubmitRef">Xác Nhận</button>
+</div>
             </div>
 
             <div class="panel-bottom-dock">
@@ -272,7 +277,14 @@
             <p class="shop-subtitle">Chạm vào gói hoặc tiện ích để xem chi tiết</p>
             
             <div class="shop-2col-grid" id="shopItemsContainer"></div>
-
+<div class="adventure-schedule-banner" id="btnOpenScheduleModal">
+    <div class="schedule-banner-inner">
+        <span class="schedule-badge">SỰ KIỆN THỰC ĐỊA</span>
+        <h3 class="schedule-title">📅 LỊCH TRÌNH THÁM HIỂM RỪNG TINH LINH</h3>
+        <p class="schedule-desc">Xem lịch khởi hành các tour cắm trại, săn thạch và số lượng người tham gia.</p>
+        <span class="schedule-cta">✦ Khám phá lịch trình ✦</span>
+    </div>
+</div>
             <div class="shop-checkout-bar">
                 <div class="checkout-summary">
                     <div>Đã chọn: <b id="cartCount">0</b> mục</div>
@@ -352,6 +364,22 @@
                         <div class="progress-fill" id="rankProgressBar" style="width: 0%;"></div>
                     </div>
                 </div>
+                <div class="guild-action-banners">
+    <div class="guild-banner-card banner-guild" id="btnOpenGuildModal">
+        <div class="banner-ico-box">🏰</div>
+        <div class="banner-txt-box">
+            <h4>ĐIỀU LỆ & LẬP BANG HỘI</h4>
+            <p>Quy chế Hội Ngọc Lục, quyền lợi thủ lĩnh bang.</p>
+        </div>
+    </div>
+    <div class="guild-banner-card banner-ranger" id="btnOpenRangerModal">
+        <div class="banner-ico-box">🌲</div>
+        <div class="banner-txt-box">
+            <h4>CHIÊU MỘ NPC RANGER RỪNG</h4>
+            <p>Ứng tuyển người dẫn đường thực địa & nhận thù lao.</p>
+        </div>
+    </div>
+</div>
 
                 <div id="userProfileQr" class="qr-box"></div>
                 <div class="qr-note">Mã QR Định Danh Nhà Phiêu Lưu Thực Địa</div>
@@ -580,8 +608,78 @@
             </div>
         </div>
     </div>
+<!-- MODAL: LỊCH TRÌNH PHIÊU LƯU THỰC TẾ -->
+<div id="scheduleModal" class="modal-overlay hidden">
+    <div class="modal-box rpg-glass-box" style="max-width: 360px;">
+        <span class="close-modal" id="closeScheduleModal">&times;</span>
+        <h3 style="color: #ffd166; font-size: 14px; margin-bottom: 8px;">✦ LỊCH TRÌNH SỰ KIỆN THỰC ĐỊA ✦</h3>
+        <div class="schedule-list-box">
+            <div class="schedule-item">
+                <div class="sch-date">15 THÁNG NÀY</div>
+                <div class="sch-info">
+                    <b>Đêm Lửa Trại & Khai Mở Thạch Quán</b>
+                    <span>Địa điểm: Rừng Tinh Linh, Bảo Lộc</span>
+                </div>
+                <div class="sch-slots">18/25 chỗ</div>
+            </div>
+            <div class="schedule-item">
+                <div class="sch-date">CUỐI TUẦN NÀY</div>
+                <div class="sch-info">
+                    <b>Hành Trình Băng Suối Vực Mây</b>
+                    <span>Trekking 8km + Thưởng trà bình minh</span>
+                </div>
+                <div class="sch-slots">22/30 chỗ</div>
+            </div>
+            <div class="schedule-item">
+                <div class="sch-date">MÙNG 1 ĐẦU THÁNG</div>
+                <div class="sch-info">
+                    <b>Phiên Chợ Đổi Thạch Tinh Linh</b>
+                    <span>Giao lưu khoáng thạch & BBQ đêm</span>
+                </div>
+                <div class="sch-slots">35/50 chỗ</div>
+            </div>
+        </div>
+        <p style="font-size: 9px; color: #a8a4c2; margin-top: 10px;">*Sở hữu ít nhất 1 Gói Tân Thủ trong túi để đăng ký giữ chỗ chính thức.</p>
+    </div>
+</div>
 
+<!-- MODAL: ĐIỀU LỆ BANG HỘI -->
+<div id="guildModal" class="modal-overlay hidden">
+    <div class="modal-box rpg-glass-box" style="max-width: 340px; text-align: left;">
+        <span class="close-modal" id="closeGuildModal">&times;</span>
+        <h3 style="color: #ffd166; font-size: 14px; text-align: center; margin-bottom: 8px;">🏰 ĐIỀU LỆ HỘI NGỌC LỤC</h3>
+        <p style="font-size: 10px; color: #e2dcff; line-height: 1.4; margin-bottom: 8px;">
+            1. Hội Ngọc Lục là liên minh những người đam mê thám hiểm thiên nhiên và thu thập khoáng thạch.<br>
+            2. Điểm Cống Hiến (🛡️ CP) được tích lũy qua các chuyến dã ngoại và hoạt động bang.<br>
+            3. Đạt mốc 100 CP để thăng cấp thành viên chính thức và mở quyền lập phân hội riêng.
+        </p>
+        <button class="btn-action" style="width: 100%; font-size: 11px;" onclick="window.open('https://forms.gle/', '_blank')">✦ ĐĂNG KÝ THÀNH LẬP BANG ✦</button>
+    </div>
+</div>
+
+<!-- MODAL: CHIÊU MỘ NPC RANGER -->
+<div id="rangerModal" class="modal-overlay hidden">
+    <div class="modal-box rpg-glass-box" style="max-width: 340px; text-align: left;">
+        <span class="close-modal" id="closeRangerModal">&times;</span>
+        <h3 style="color: #4cc9f0; font-size: 14px; text-align: center; margin-bottom: 8px;">🌲 ỨNG TUYỂN NPC RANGER</h3>
+        <p style="font-size: 10px; color: #e2dcff; line-height: 1.4; margin-bottom: 8px;">
+            • <b>Vai trò:</b> Người dẫn đoàn thám hiểm, phát thẻ Quest và hỗ trợ người chơi tại thực địa.<br>
+            • <b>Quyền lợi:</b> Hỗ trợ chi phí di chuyển, lưu trú Glamping miễn phí và nhận trang bị độc bản.<br>
+            • <b>Yêu cầu:</b> Yêu thích cắm trại, có kỹ năng sinh tồn cơ bản và trách nhiệm cao.
+        </p>
+        <button class="btn-action" style="width: 100%; font-size: 11px; background: linear-gradient(135deg, #2ec4b6, #0f4c5c);" onclick="window.open('https://forms.gle/', '_blank')">✦ NỘP HỒ SƠ RANGER ✦</button>
+    </div>
+</div>
+
+<!-- MODAL: CAMERA QUÉT QR BẠN BÈ -->
+<div id="friendQrScanModal" class="modal-overlay hidden">
+    <div class="modal-box rpg-glass-box" style="max-width: 320px;">
+        <span class="close-modal" id="closeFriendQrScanModal">&times;</span>
+        <h3 style="color: #ffe66d; font-size: 13px; margin-bottom: 8px;">📷 QUÉT MÃ CĂN CƯỚC BẠN BÈ</h3>
+        <div id="qrScannerReader" style="width: 100%; min-height: 220px; background: #000; border-radius: 8px; overflow: hidden;"></div>
+        <p style="font-size: 9px; color: #a8a4c2; margin-top: 8px;">Hướng camera vào mã QR Căn Cước của bạn bè để tự động nhập mã.</p>
+    </div>
+</div>
     <script type="module" src="app.js"></script>
-
 </body>
 </html>
