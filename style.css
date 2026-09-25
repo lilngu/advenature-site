@@ -481,7 +481,7 @@ body, html {
 
 /* --- 2. Định dạng phần nội dung chữ và ngôi sao --- */
 .collect-banner-content {
-    display: flex;
+    display: grid;
     align-items: center;
     gap: 15px;
     color: #fff3cd; /* Màu vàng kem hoàng gia */
@@ -692,6 +692,23 @@ body, html {
     box-shadow: 0 0 8px #00f5d4;
     border: 1px solid #fff;
 }
+.badge-mark {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background: #00f5d4;
+    color: #061e23;
+    font-size: 11px;
+    font-weight: 900;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 8px #ff7f44;
+    border: 1px solid #fff;
+}
 
 /* Tọa độ xếp hình vòng cung ôm theo bệ đá */
 .dock-btn.sub-left { bottom: 18px; left: 14%; transform: translateX(-50%); }
@@ -767,6 +784,7 @@ body, html {
 
 .core-text {
     font-size: 14px;
+    font-family: "Handjet", sans-serif;
     font-weight: 900;
     color: #fffbe6;
     letter-spacing: 1.2px;

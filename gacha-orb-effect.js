@@ -29,7 +29,7 @@
                 particleColors: ['rgba(157, 0, 255,', 'rgba(0, 234, 255,'],
                 shadowColors: ['#8a00ff', '#00ffff', '#ffffff', '#b8ffff'],
                 wispColors: ['rgba(138, 0, 255, 0.35)', 'rgba(0, 255, 255, 0.5)', 'rgba(255, 255, 255, 0.7)'],
-                coreGradient: ['#ffffff', '#61c99c', '#00bfff', '#ffffff']
+                coreGradient: ['#ffffff', '#61c99c', '#00bfff', '#e3fffbff']
             };
         } else {
             // Tone đỏ-vàng (hết Tinh Quang)
@@ -37,7 +37,7 @@
                 particleColors: ['rgba(255, 69, 0,', 'rgba(255, 200, 0,'],
                 shadowColors: ['#ff4500', '#ffa500', '#ffff00', '#ffd700'],
                 wispColors: ['rgba(255, 69, 0, 0.35)', 'rgba(255, 165, 0, 0.5)', 'rgba(255, 255, 0, 0.7)'],
-                coreGradient: ['#ffffff', '#ff8c00', '#ff4500', '#ffffff']
+                coreGradient: ['#ffffff', '#ff8c00', '#ff4500', '#5a1c1cff']
             };
         }
     }
