@@ -9,6 +9,9 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <!-- QRCode JS (Xác thực Offline) -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    
+    <!-- Gacha Orb Magic Effect -->
+    <script src="gacha-orb-effect.js" defer></script>
 
     <!-- Importmap Three.js Engine -->
     <script type="importmap">
@@ -129,6 +132,7 @@
             <button class="dock-btn center-core nav-btn active" id="dockGachaTrigger" data-target="gacha-view" title="Triệu Hồi Gacha">
                 <div class="core-sunburst-halo"></div>
                 <div class="core-glow-ring">
+                    <canvas id="gachaOrbCanvas" width="88" height="88"></canvas>
                     <div class="core-inner-sphere">
                         <i class="rpg-ico ico-tq core-ico-svg"></i>
                         <span class="core-text">GACHA</span>
