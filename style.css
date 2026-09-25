@@ -695,8 +695,8 @@ body, html {
 .badge-mark {
     position: absolute;
     top: -2px;
-    right: -2px;
-    background: #00f5d4;
+    left: -2px;
+    background: #c95a5a;
     color: #061e23;
     font-size: 11px;
     font-weight: 900;
@@ -1171,15 +1171,15 @@ body, html {
 ====================================================== */
 .shop-2col-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 20px;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 4px;
+    margin-bottom: 10px;
 }
 .shop-2col-card {
     background: rgba(25, 20, 50, 0.7);
     border: 1px solid var(--border-magic);
     border-radius: 8px;
-    padding: 10px 8px;
+    padding: 8px 6px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1204,9 +1204,9 @@ body, html {
     background: rgba(212, 192, 132, 0.15);
     box-shadow: 0 0 10px rgba(255, 209, 102, 0.3);
 }
-.shop-2col-icon { font-size: 26px; margin-bottom: 4px; }
-.shop-2col-title { font-size: 11px; font-weight: bold; color: #fff; }
-.shop-2col-tag { font-size: 9px; color: #4cc9f0; margin-top: 2px; }
+.shop-2col-icon { font-size: 24px; margin-bottom: 3px; }
+.shop-2col-title { font-size: 10px; font-weight: bold; color: #fff; }
+.shop-2col-tag { font-size: 8px; color: #4cc9f0; margin-top: 1px; }
 
 .shop-checkout-bar {
     position: sticky;

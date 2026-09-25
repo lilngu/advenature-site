@@ -142,7 +142,7 @@ function updateTopBarUI() {
     // 2. Chi phí nút Gacha đáy
     const dockCostBadge = document.getElementById("dockCostBadge");
     if (dockCostBadge) {
-        dockCostBadge.textContent = (currentUser.gacha_counter === 0) ? "FREE" : "1 🔮";
+        dockCostBadge.textContent = (currentUser.gacha_counter === 0) ? "FREE" : "🧊";
     }
 
     // 3. Thông tin Thẻ Căn Cước Nhà Phiêu Lưu
@@ -1659,15 +1659,33 @@ document.getElementById("btnSubmitFb")?.addEventListener("click", async () => {
     }
 });
 
+// app.js: Nhập mã bạn bè an toàn cho User thường
 document.getElementById("btnSubmitRef")?.addEventListener("click", async () => {
-    const code = document.getElementById("inputFriendCode").value.trim().toUpperCase();
-    if (code.startsWith("AW") && code !== currentUser.adventurer_code) {
-        // GỌI HÀM ĐỒNG BỘ LÊN CLOUDFLARE D1
-        await syncPointsToBackend(1, 0, 0);
-        alert(`✦ Kết nối thành công với nhà phiêu lưu [${code}]! Nhận +1 🔮.`);
-        document.getElementById("inputFriendCode").value = "";
-    } else {
-        alert("Mã bạn bè không hợp lệ hoặc trùng với mã của bạn!");
+    const input = document.getElementById("inputFriendCode");
+    const code = input.value.trim().toUpperCase();
+    if (!code.startsWith("AW")) {
+        alert("Mã bạn bè phải bắt đầu bằng AW (Ví dụ: AW8391)!");
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_URL}/api/quest/referral`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: currentUser.id, friendCode: code })
+        });
+        const data = await res.json();
+        if (data.success) {
+            currentUser.tinh_quang_points = data.tinh_quang_points;
+            saveUserData();
+            updateTopBarUI();
+            alert(`🎉 Kết nối thành công với [${code}]! Cả 2 bạn đều nhận được +1 🔮.`);
+            input.value = "";
+        } else {
+            alert(data.error || "Không thể kết nối bạn bè!");
+        }
+    } catch (e) {
+        alert("Lỗi kết nối máy chủ!");
     }
 });
 
