@@ -233,7 +233,7 @@ body, html {
 
 /* 🎐 Nút Trở Về */
 .ico-back-wind {
-    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzRjYzlmMCI+PHBhdGggZD0iTTEyIDJhNiA2IDAgMCAwLTYgNnYzaDEyVjhhNiA2IDAgMCAwLTYtNnptMCAxMWExIDEgMCAwIDAtMSAxdjRoLTJ2Mmg2di0yaC0ydi00YTEgMSAwIDAgMC0xLTF6Ii8+PC9zdmc+");
+    background-image: url(data:image/webp;base64,UklGRkoDAABXRUJQVlA4WAoAAAAQAAAAPwAALgAAQUxQSCsBAAABgIJt27HnPWbbtm1v+U+z7bhk20pM//Gn2Y62l8xk2/yeZ4wRMQHkP5PHxD3SOZimxvE1FKLHJx/fPm3x5kOnV3P7+PH9LDFUPEWXj59nyDDh0Zh/pPL4ns6FxWr3kepBARxGh4/UD/NgkNh6hGQwwTF1PMJGwQU+Ap8qQLEsQT3Sobx3wW5lYJjmH8HvfWG0HhGuMYH4YnjUAWlA4Q2ygiIPgu0cRQ0E3y2KPgiBL8d2jaIBgmkHRRkEiUYRChKLYd8IxArDEhMI2w6CSgKbhsAOSOoUrI9Ap0HdWoFxLcLclxN4o3OQJjYExH+WuvMtBYKSdk1ZGRNB6nhI0awSQavWT8VtGRdBzBK49pn7HguCnMO76/oDu9UW5CsKOUTG19Qxkh2N2Mh/NgBWUDgg+AEAALALAJ0BKkAALwA+bTCTR6QioaEoFVxwgA2JQBhHZofhGr0H9QG2t54DTVfQANrNlbsBUtPqcYZRv2suNicbiTqF9Z6QOl7/sQhKbrpY09j/nzu21Mc5AyPQ+GeSwAr2lzals6y2YAD+/YDv/6/H/56H//WqxB4MC3opjtL0S/Pll0ivaS3Y4WiNYZI+BRT8w13Y87SoUD2S1plb8h7+TBPT2I8A4hFHbf4rnDfkh6esjx2f5W7HPUAR5prrsxB4ZHda5f6x9KaC1UowFY9McQr4yaWqSDDjHCKie5VLTGU31807j46Y5dVZ568Snk3uGPq7fvS7sehc52pRzVKRxVjk9xqxKt5D6coipsbJDkW/9fPh++eOIzalzW9yLI04dd4GVTVhdRkxDAQktCUdyj/OY2z+gfs7uMlVroIzU8HWoce4kuUoAYNGT0frg/MVHgWSWzPbrV41bXkemPncJzp/noCurFLvk0NRVIGd5Eashzxgv/jd7NPtW+PWOSuuWhnfC1IS7lOPnttbMS9KPY7rRshwBno3f3fb42MOeOH1JO0sYGypIvIv361GHllRUvb0a3HtflUyOLoo3LYGn7a61LSZmnVcszicVzE9pn9fnLJMid2rb2Olm6BQo2iJY92vUBn5swSz4LlBOQ2npn5H5AtCBgMAAA==);
 }
 
 /* ======================================================
@@ -921,7 +921,6 @@ body, html {
     flex-direction: column;
     align-items: center;
     cursor: pointer;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
     position: fixed;
     bottom: 0;
     left: 0;
@@ -944,7 +943,7 @@ body, html {
 }
 .back-ico { font-size: 40px; line-height: 1; }
 .back-text { font-size: 20px; font-family: "Handjet", sans-serif; font-weight: bold; color: #ffe66d; margin-top: 2px; }
-
+i.ico-back-wind {width: 64px; height: 64px;}
 /* Tabs */
 .inv-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
 .inv-tab-btn {
