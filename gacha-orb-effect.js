@@ -8,10 +8,39 @@
     const height = canvas.height;
     const centerX = width / 2;
     const centerY = height / 2;
-    const orbRadius = 35;
+    const orbRadius = 52; // Tăng từ 35 lên 52 (50% lớn hơn)
 
     let time = 0;
     let mouse = { x: centerX, y: centerY, targetX: centerX, targetY: centerY, active: false };
+    
+    // Hàm kiểm tra giá trị Tinh Quang để đổi tone màu
+    function getTinhQuangValue() {
+        const valElement = document.getElementById('valTinhQuang');
+        return valElement ? parseInt(valElement.textContent) || 0 : 0;
+    }
+    
+    // Hàm lấy màu sắc dựa trên giá trị Tinh Quang
+    function getOrbColors() {
+        const value = getTinhQuangValue();
+        
+        if (value >= 1) {
+            // Tone xanh-trắng (có Tinh Quang)
+            return {
+                particleColors: ['rgba(157, 0, 255,', 'rgba(0, 234, 255,'],
+                shadowColors: ['#8a00ff', '#00ffff', '#ffffff', '#b8ffff'],
+                wispColors: ['rgba(138, 0, 255, 0.35)', 'rgba(0, 255, 255, 0.5)', 'rgba(255, 255, 255, 0.7)'],
+                coreGradient: ['#ffffff', '#61c99c', '#00bfff', '#ffffff']
+            };
+        } else {
+            // Tone đỏ-vàng (hết Tinh Quang)
+            return {
+                particleColors: ['rgba(255, 69, 0,', 'rgba(255, 200, 0,'],
+                shadowColors: ['#ff4500', '#ffa500', '#ffff00', '#ffd700'],
+                wispColors: ['rgba(255, 69, 0, 0.35)', 'rgba(255, 165, 0, 0.5)', 'rgba(255, 255, 0, 0.7)'],
+                coreGradient: ['#ffffff', '#ff8c00', '#ff4500', '#ffffff']
+            };
+        }
+    }
 
     // Lớp quản lý các hạt tinh linh năng lượng (Mana Particles)
     class ManaParticle {
@@ -24,7 +53,9 @@
             this.speed = Math.random() * 0.8 + 0.3;
             this.size = Math.random() * 1.2 + 0.3;
             this.alpha = Math.random() * 0.5 + 0.5;
-            this.color = Math.random() < 0.5 ? 'rgba(157, 0, 255,' : 'rgba(0, 234, 255,';
+            // Động động lấy màu từ getOrbColors()
+            const colors = getOrbColors();
+            this.color = Math.random() < 0.5 ? colors.particleColors[0] : colors.particleColors[1];
             this.wobbleSpeed = Math.random() * 0.05 + 0.02;
         }
         update() {
@@ -91,8 +122,11 @@
     function animate() {
         time += 0.04;
         
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-        ctx.fillRect(0, 0, width, height);
+        // Lấy màu sắc hiện tại dựa trên giá trị Tinh Quang
+        const colors = getOrbColors();
+        
+        // Xóa canvas trong suốt hoàn toàn
+        ctx.clearRect(0, 0, width, height);
 
         ctx.shadowBlur = 0;
         particles.forEach(p => {
@@ -102,26 +136,26 @@
 
         ctx.shadowBlur = 15;
         
-        ctx.shadowColor = '#8a00ff';
-        drawMagicWisp(1, 'rgba(138, 0, 255, 0.35)', 5, 6, 1.2);
+        ctx.shadowColor = colors.shadowColors[0];
+        drawMagicWisp(1, colors.wispColors[0], 5, 6, 1.2);
         
-        ctx.shadowColor = '#00ffff';
-        drawMagicWisp(2, 'rgba(0, 255, 255, 0.5)', 7, 4, -1.8);
+        ctx.shadowColor = colors.shadowColors[1];
+        drawMagicWisp(2, colors.wispColors[1], 7, 4, -1.8);
 
-        ctx.shadowColor = '#ffffff';
-        drawMagicWisp(3, 'rgba(255, 255, 255, 0.7)', 4, 2.5, 2.5);
+        ctx.shadowColor = colors.shadowColors[2];
+        drawMagicWisp(3, colors.wispColors[2], 4, 2.5, 2.5);
 
-        ctx.shadowBlur = 20;
-        ctx.shadowColor = '#b8ffff';
-        const coreGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 18);
-        coreGradient.addColorStop(0, '#ffffff');
-        coreGradient.addColorStop(0.2, '#61c99c');
-        coreGradient.addColorStop(0.8, '#00bfff');
-        coreGradient.addColorStop(1, '#ffffff');
+        ctx.shadowBlur = 25;
+        ctx.shadowColor = colors.shadowColors[3];
+        const coreGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 28);
+        coreGradient.addColorStop(0, colors.coreGradient[0]);
+        coreGradient.addColorStop(0.2, colors.coreGradient[1]);
+        coreGradient.addColorStop(0.8, colors.coreGradient[2]);
+        coreGradient.addColorStop(1, colors.coreGradient[3]);
         
         ctx.fillStyle = coreGradient;
         ctx.beginPath();
-        ctx.arc(centerX, centerY, 25, 0, Math.PI * 2);
+        ctx.arc(centerX, centerY, 38, 0, Math.PI * 2); // Tăng từ 25 lên 38
         ctx.fill();
 
         requestAnimationFrame(animate);
