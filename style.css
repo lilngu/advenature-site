@@ -41,7 +41,7 @@ body, html {
 #bg-scene-backdrop {
     position: absolute;
     inset: 0;
-    background: url('https://media.craiyon.com/2025-04-04/7ByR8QW6RO6yuM7WK0Z-Gw.webp') center/cover no-repeat;
+    background: url('https://media.craiyon.com/2025-04-04/7ByR8QW6RO6yuM7WK0Z-Gw.webp') center 65% / cover no-repeat;
     z-index: 0;
 }
 #bg-scene-backdrop::after {
@@ -571,205 +571,140 @@ body, html {
 }
 
 /* ======================================================
-   BOTTOM ARC WHEEL DOCK - RPG GAME STYLE (CUNG TRÒN)
+   BOTTOM ARC WHEEL DOCK - BỆ ĐÁ MA PHÁP CHUẨN MOCKUP
 ====================================================== */
 .rpg-dock {
     position: absolute;
     bottom: 0;
-    left: 0;
-    right: 0;
-    height: 160px;
-    background: linear-gradient(0deg, rgba(5,5,15,0.98) 0%, rgba(12,10,28,0.92) 70%, transparent 100%);
-    z-index: 30;
-    overflow: visible;
-}
-
-/* Container để tạo cung tròn */
-.rpg-dock::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 140%;
-    height: 280px;
-    border-radius: 50%;
-    border: 1px solid rgba(165, 140, 255, 0.15);
+    width: 100%;
+    max-width: 480px; /* Khống chế bề rộng tối đa, không để tràn màn hình trên PC */
+    height: 180px;
+    z-index: 30;
     pointer-events: none;
 }
 
+/* Bệ đá chạm khắc cổ kính dưới đáy dock */
+.dock-stone-pedestal {
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 340px;
+    height: 130px;
+    border-radius: 50% 50% 20px 20px;
+    background: radial-gradient(ellipse at 50% 30%, #352654 0%, #171126 70%, #090611 100%);
+    border: 3px solid #5d4880;
+    box-shadow: 
+        0 -6px 25px rgba(124, 77, 255, 0.4),
+        inset 0 4px 15px rgba(199, 125, 255, 0.3),
+        inset 0 -10px 20px rgba(0, 0, 0, 0.9);
+    pointer-events: none;
+}
+
+.rpg-dock::before {
+    display: none; /* Bỏ viền mảnh cũ */
+}
+
+/* Định dạng các nút huân chương tròn viền vàng */
 .dock-btn {
-    font-family: "Spectral SC", sans-serif;
-    font-weight: 600;
+    pointer-events: auto;
+    position: absolute;
     background: transparent;
     border: none;
-    color: #e6ffd4;
+    cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    cursor: pointer;
-    font-size: 10px;
-    position: absolute;
-    transition: transform 0.2s ease, color 0.2s ease;
+    transition: transform 0.2s ease, filter 0.2s ease;
 }
 
-.dock-btn.active { 
-    color: #ffe66d; 
-}
-
-.dock-btn:active { 
-    transform: translateX(-50%) translateY(var(--y-offset, 0)) scale(0.92) !important;}
-.dock-btn.sub-right, .dock-btn.mid-right:active {
-    transform: translateX(50%) translateY(var(--y-offset, 0)) scale(0.92) !important;}
-
-.dock-icon-ring {
-    width: 64px;
-    height: 64px;
+.medallion-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #241b35, #0c0817);
+    border: 2px solid #bfa15f;
+    box-shadow: 
+        0 4px 10px rgba(0,0,0,0.8),
+        0 0 12px rgba(212, 192, 132, 0.35),
+        inset 0 0 8px rgba(0,0,0,0.8);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
     position: relative;
-    background: rgba(20, 16, 45, 0.7);
-    border-radius: 50%;
-    border: 1.5px solid rgba(165, 140, 255, 0.3);
-    backdrop-filter: blur(8px);
 }
 
-.dock-btn.active .dock-icon-ring {
-    border-color: rgba(255, 209, 102, 0.6);
-    box-shadow: 0 0 15px rgba(255, 209, 102, 0.3);
+.dock-btn.active .medallion-btn {
+    border-color: #ffe66d;
+    box-shadow: 0 0 18px rgba(255, 230, 109, 0.7);
 }
 
-.dock-label {
-    font-size: 9px;
-    white-space: nowrap;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+.medallion-btn .rpg-ico {
+    width: 28px;
+    height: 28px;
 }
 
-.badge-dot {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    width: 8px;
-    height: 8px;
-    background: #ff3366;
-    border-radius: 50%;
-    border: 1.5px solid #000;
-    box-shadow: 0 0 8px #ff3366;
-}
-
-.badge-count {
+/* Badge dấu cộng xanh sáng như trong ảnh */
+.badge-plus {
     position: absolute;
     top: -2px;
-    right: -4px;
-    background: #ff3366;
-    color: white;
-    font-size: 8px;
-    font-weight: bold;
-    padding: 2px 5px;
-    border-radius: 10px;
-    border: 1px solid #000;
-    box-shadow: 0 0 6px rgba(255, 51, 102, 0.6);
-}
-
-/* XẾP THEO CUNG TRÒN - 5 NÚT */
-/* Nút 1: Sub-left (Nhiệm Vụ) */
-.dock-btn.sub-left {
-    bottom: 30px;
-    left: 8%;
-    transform: translateX(-50%);
-}
-
-/* Nút 2: Mid-left (Túi Đồ) */
-.dock-btn.mid-left {
-    bottom: 55px;
-    left: 23%;
-    transform: translateX(-50%);
-}
-
-/* Nút 3: CENTER GACHA (Giữa, cao nhất) */
-.dock-btn.center-core {
-    bottom: 68px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
-}
-
-/* Nút 4: Mid-right (Shop) */
-.dock-btn.mid-right {
-    bottom: 55px;
-    right: 23%;
-    left: auto;
-    transform: translateX(50%);
-}
-
-/* Nút 5: Sub-right (Hồ Sơ) */
-.dock-btn.sub-right {
-    bottom: 30px;
-    right: 8%;
-    left: auto;
-    transform: translateX(50%);
-}
-
-/* NÚT GACHA TO HƠN VÀ NỔI BẬT */
-.core-glow-ring {
-    width: 110px;
-    height: 110px;
+    right: -2px;
+    background: #00f5d4;
+    color: #061e23;
+    font-size: 11px;
+    font-weight: 900;
+    width: 15px;
+    height: 15px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #ffd166, #c77dff, #3a0ca3);
-    padding: 4px;
-    box-shadow: 
-        0 0 25px rgba(199, 125, 255, 0.7),
-        0 -5px 35px rgba(255, 209, 102, 0.4);
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: corePulse 2.5s infinite ease-in-out;
+    box-shadow: 0 0 8px #00f5d4;
+    border: 1px solid #fff;
 }
 
-@keyframes corePulse {
-    0%, 100% { 
-        transform: scale(1); 
-        box-shadow: 
-            0 0 20px rgba(199, 125, 255, 0.6),
-            0 -5px 30px rgba(255, 209, 102, 0.3);
-    }
-    50% { 
-        transform: scale(1.05); 
-        box-shadow: 
-            0 0 35px rgba(199, 125, 255, 0.9),
-            0 -5px 45px rgba(255, 209, 102, 0.6);
-    }
+/* Tọa độ xếp hình vòng cung ôm theo bệ đá */
+.dock-btn.sub-left { bottom: 18px; left: 14%; transform: translateX(-50%); }
+.dock-btn.mid-left { bottom: 58px; left: 24%; transform: translateX(-50%); }
+.dock-btn.center-core { bottom: 52px; left: 50%; transform: translateX(-50%); z-index: 10; }
+.dock-btn.mid-right { bottom: 58px; right: 24%; transform: translateX(50%); }
+.dock-btn.sub-right { bottom: 18px; right: 14%; transform: translateX(50%); }
+
+/* Nút quả cầu Gacha trung tâm với vành tia sáng Sunburst */
+.core-glow-ring {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, #ffd166, #b8860b 60%, #4a2800 100%);
+    padding: 4px;
+    box-shadow: 0 0 25px rgba(255, 209, 102, 0.6), 0 0 50px rgba(124, 77, 255, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .core-inner-sphere {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, #1a0f3d, #0d0827);
-    border: 2px solid rgba(255,255,255,0.4);
+    background: radial-gradient(circle at 35% 30%, #a855f7 0%, #4c1d95 60%, #1e0b40 100%);
+    border: 2px solid #fff2a1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 2px;
-    box-shadow: inset 0 0 20px rgba(124, 108, 255, 0.3);
+    box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.6);
 }
 
-.core-ico-svg { 
-    width: 28px; 
-    height: 28px;
-    filter: drop-shadow(0 0 8px rgba(199, 125, 255, 0.6));
-}
-
-.core-text { 
-    font-size: 12px; 
-    font-weight: 900; 
-    letter-spacing: 1.2px; 
-    color: #ffe66d;
-    text-shadow: 0 0 10px rgba(255, 230, 109, 0.6);
+.core-text {
+    font-size: 13px;
+    font-weight: 900;
+    color: #fffbe6;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 4px #000, 0 0 8px #ffd166;
+    margin-top: 1px;
 }
 
 .core-cost-badge {
@@ -783,75 +718,67 @@ body, html {
     box-shadow: 0 0 8px rgba(76, 201, 240, 0.4);
 }
 
-/* RESPONSIVE: MOBILE SMALL (< 375px) */
-@media (max-width: 374px) {
-    .rpg-dock { height: 140px; }
-    
-    .dock-btn.sub-left { bottom: 25px; left: 6%; }
-    .dock-btn.mid-left { bottom: 48px; left: 21%; }
+/* ======================================================
+   BỘ RESPONSIVE TOÀN DIỆN CHO DOCK (THAY THẾ TOÀN BỘ CŨ)
+====================================================== */
+
+/* 1. Màn hình điện thoại siêu nhỏ (< 360px: iPhone SE1, Fold gập hẹp) */
+@media (max-width: 359px) {
+    .rpg-dock {
+        height: 155px;
+        transform: translateX(-50%) scale(0.85);
+        transform-origin: bottom center;
+    }
+}
+
+/* 2. Màn hình điện thoại tiêu chuẩn (360px -> 480px: Đa số smartphone - chuẩn Demo 1) */
+@media (min-width: 360px) and (max-width: 480px) {
+    .rpg-dock {
+        height: 175px;
+        bottom: 0;
+    }
+}
+
+/* 3. Màn hình trung bình / Xoay ngang (481px -> 768px: Tablet dọc / Mobile Landscape) */
+@media (min-width: 481px) and (max-width: 768px) {
+    .rpg-dock {
+        height: 180px;
+        max-width: 460px;
+        bottom: 5px;
+    }
+}
+
+/* 4. Màn hình máy tính & Tablet ngang (>= 769px: Chuẩn theo Demo 2) */
+@media (min-width: 769px) {
+    .rpg-dock {
+        height: 195px;
+        max-width: 500px;
+        bottom: 12px;
+    }
+    .dock-stone-pedestal {
+        width: 380px;
+        height: 145px;
+    }
+    .medallion-btn {
+        width: 58px;
+        height: 58px;
+    }
+    .medallion-btn .rpg-ico {
+        width: 32px;
+        height: 32px;
+    }
+    .core-glow-ring {
+        width: 98px;
+        height: 98px;
+    }
+    .core-text {
+        font-size: 14px;
+    }
+    .dock-btn.sub-left { bottom: 20px; left: 13%; }
+    .dock-btn.mid-left { bottom: 65px; left: 23%; }
     .dock-btn.center-core { bottom: 58px; }
-    .dock-btn.mid-right { bottom: 48px; right: 21%; }
-    .dock-btn.sub-right { bottom: 25px; right: 6%; }
-    
-    .dock-icon-ring { width: 56px; height: 56px; font-size: 14px; }
-    .dock-label { font-size: 8px; }
-    .core-glow-ring { width: 95px; height: 95px; }
-    .core-ico-svg { width: 24px; height: 24px; }
-    .core-text { font-size: 10px; }
-}
-
-/* RESPONSIVE: MOBILE STANDARD (375px - 428px) */
-@media (min-width: 375px) and (max-width: 428px) {
-    .dock-btn.sub-left { left: 7%; }
-    .dock-btn.sub-right { right: 7%; }
-}
-
-/* RESPONSIVE: LARGE MOBILE (> 428px) */
-@media (min-width: 429px) and (max-width: 767px) {
-    .rpg-dock { height: 170px; }
-    
-    .dock-btn.sub-left { bottom: 35px; left: 10%; }
-    .dock-btn.mid-left { bottom: 60px; left: 24%; }
-    .dock-btn.center-core { bottom: 72px; }
-    .dock-btn.mid-right { bottom: 60px; right: 24%; }
-    .dock-btn.sub-right { bottom: 35px; right: 10%; }
-    
-    .dock-icon-ring { width: 70px; height: 70px; }
-    .core-glow-ring { width: 120px; height: 120px; }
-}
-/* RESPONSIVE: TABLET & PC (> 768px) */
-@media (min-width: 768px) {
-    .rpg-dock { height: 190px; }
-    
-    .dock-btn.sub-left { bottom: 0px; left: 10%; }
-    .dock-btn.mid-left { bottom: 30px; left: 26%; }
-    .dock-btn.center-core { bottom: 50px; }
-    .dock-btn.mid-right { bottom: 30px; right: 26%; }
-    .dock-btn.sub-right { bottom: 0px; right: 10%; }
-    
-    .dock-icon-ring { width: 100px; height: 100px; font-size: 18px; }
-    .dock-label { font-size: 25px; font-family: "Handjet", sans-serif;}
-    
-    .core-glow-ring { width: 200px; height: 200px; }
-    .core-ico-svg { width: 32px; height: 32px; }
-    .core-text { font-size: 80px;font-family: "Handjet", sans-serif; }
-}
-/* RESPONSIVE: wide PC (> 1440px) */
-@media (min-width: 1440px) {
-    .rpg-dock { height: 190px; }
-    
-    .dock-btn.sub-left { bottom: 30px; left: 25%; }
-    .dock-btn.mid-left { bottom: 50px; left: 35%; }
-    .dock-btn.center-core { bottom: -50px; }
-    .dock-btn.mid-right { bottom: 50px; right: 35%; }
-    .dock-btn.sub-right { bottom: 30px; right: 25%; }
-    
-    .dock-icon-ring { width: 150px; height: 150px; font-size: 18px; }
-    .dock-label { font-size: 25px; font-family: "Handjet", sans-serif;}
-    
-    .core-glow-ring { width: 350px; height: 350px; }
-    .core-ico-svg { width: 32px; height: 32px; }
-    .core-text { font-size: 80px;font-family: "Handjet", sans-serif; }
+    .dock-btn.mid-right { bottom: 65px; right: 23%; }
+    .dock-btn.sub-right { bottom: 20px; right: 13%; }
 }
 
 /* ======================================================

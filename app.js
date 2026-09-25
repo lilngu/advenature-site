@@ -206,20 +206,23 @@ if (profQrContainer && typeof QRCode !== "undefined") {
 const scene = new THREE.Scene();
 scene.fog = null;
 
-const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
-camera.position.set(0, 1.2, 8);
+// ĐOẠN CODE MỚI ĐÃ CĂN CHỈNH TỌA ĐỘ THEO ĐÚNG BỆ ĐÁ TRONG BACKGROUND:
+const camera = new THREE.PerspectiveCamera(48, window.innerWidth / window.innerHeight, 0.1, 100);
+// Nâng nhẹ camera và hướng góc nhìn chuẩn xác vào tâm bệ đá Runes
+camera.position.set(0, 1.8, 7.5);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.2;
+renderer.toneMappingExposure = 1.35; // Tăng sáng nhẹ để hạt lấp lánh như hình thiết kế
 document.getElementById("app-3d").appendChild(renderer.domElement);
 
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
-composer.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.2, 0.5, 0.1));
+// Chỉnh Bloom Pass để viên đá và bệ đá tỏa hào quang thần tiên
+composer.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.6, 0.15));
 composer.addPass(new OutputPass());
 
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -227,7 +230,8 @@ controls.enableZoom = false;
 controls.enablePan = false;
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
-controls.target.set(0, 0.2, 0);
+// Tâm xoay đặt tại y = 0.85 (ngay tâm lơ lửng phía trên bệ đá)
+controls.target.set(0, 0.85, 0);
 
 scene.add(new THREE.AmbientLight(0x443366, 0.6));
 const keyLight = new THREE.DirectionalLight(0xffffff, 2.0);

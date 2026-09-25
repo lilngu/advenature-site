@@ -105,24 +105,29 @@
         </main>
 
         <!-- BOTTOM ARC WHEEL DOCK -->
+        <!-- BOTTOM ARC WHEEL DOCK (CHUẨN THEO THIẾT KẾ MOCKUP) -->
         <footer class="rpg-dock">
-            <button class="dock-btn sub-left nav-btn" data-target="quest-view">
-                <div class="dock-icon-ring">
+            <!-- 1. Cụm bệ đá nền 3D giả lập cho Dock -->
+            <div class="dock-stone-pedestal"></div>
+
+            <!-- Nút 1: Nhiệm vụ (Cuộn thư cổ - Sub Left) -->
+            <button class="dock-btn sub-left nav-btn" data-target="quest-view" title="Nhiệm Vụ">
+                <div class="dock-icon-ring medallion-btn">
                     <span class="dock-ico"><i class="rpg-ico ico-menu-quest"></i></span>
                     <span class="badge-dot" id="questDot"></span>
                 </div>
-                <span class="dock-label">Nhiệm Vụ</span>
             </button>
 
-            <button class="dock-btn mid-left nav-btn" data-target="inventory-view">
-                <div class="dock-icon-ring">
+            <!-- Nút 2: Túi Đồ (Balo lữ hành - Mid Left) -->
+            <button class="dock-btn mid-left nav-btn" data-target="inventory-view" title="Túi Đồ">
+                <div class="dock-icon-ring medallion-btn">
                     <span class="dock-ico"><i class="rpg-ico ico-menu-bag"></i></span>
                 </div>
-                <span class="dock-label">Túi Đồ</span>
             </button>
 
-            <!-- Nút Gacha trung tâm giữ nguyên -->
-            <button class="dock-btn center-core nav-btn active" id="dockGachaTrigger" data-target="gacha-view">
+            <!-- Nút 3: Gacha Core (Quả cầu ma thuật hào quang vàng kim) -->
+            <button class="dock-btn center-core nav-btn active" id="dockGachaTrigger" data-target="gacha-view" title="Triệu Hồi Gacha">
+                <div class="core-sunburst-halo"></div>
                 <div class="core-glow-ring">
                     <div class="core-inner-sphere">
                         <i class="rpg-ico ico-tq core-ico-svg"></i>
@@ -132,19 +137,20 @@
                 </div>
             </button>
 
-            <button class="dock-btn mid-right nav-btn" data-target="shop-view">
-                <div class="dock-icon-ring">
+            <!-- Nút 4: Shop (Xe kéo - Mid Right) -->
+            <button class="dock-btn mid-right nav-btn" data-target="shop-view" title="Shop">
+                <div class="dock-icon-ring medallion-btn">
                     <span class="dock-ico"><i class="rpg-ico ico-menu-shop"></i></span>
-                    <span class="badge-count">Hot</span>
+                    <span class="badge-plus">+</span>
                 </div>
-                <span class="dock-label">Shop</span>
             </button>
 
-            <button class="dock-btn sub-right nav-btn" data-target="profile-view">
-                <div class="dock-icon-ring">
+            <!-- Nút 5: Hồ Sơ Căn Cước (Khiên Hiệp Sĩ - Sub Right) -->
+            <button class="dock-btn sub-right nav-btn" data-target="profile-view" title="Hồ Sơ">
+                <div class="dock-icon-ring medallion-btn">
                     <span class="dock-ico"><i class="rpg-ico ico-menu-profile"></i></span>
+                    <span class="badge-plus">+</span>
                 </div>
-                <span class="dock-label">Hồ Sơ</span>
             </button>
         </footer>
     </div>
