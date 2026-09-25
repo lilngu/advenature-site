@@ -925,10 +925,10 @@ body, html {
     position: fixed;
     bottom: 0;
     left: 0;
-    width: 50px;
-    z-index: 1000;
+    transform: none;
     will-change: transform;
     touch-action: none;
+    z-index: 1000;
     transition: transform 0.3s ease;
 }
 
