@@ -1420,28 +1420,48 @@ function openItemModal(item, itemIndex) {
             }
         };
     } 
-    // TRƯỜNG HỢP 2: VẬT PHẨM DỊCH VỤ / QUY ĐỔI THỰC ĐỊA (MÃ QR ĐỘNG)
+   // TRƯỜNG HỢP 2: VẬT PHẨM DỊCH VỤ / QUY ĐỔI THỰC ĐỊA (MÃ QR ĐỘNG)
     else {
         qrWrapper.classList.remove("hidden");
         btnUseBuff.classList.add("hidden");
         noteText.textContent = "Đưa mã QR này cho Quản lý / NPC Ranger Hội Ngọc Lục quét tại khu dã ngoại.";
-        tokenTxt.textContent = `MÃ: ${item.qr_token || 'QR_TOKEN'}`;
 
-        // Sinh mã QR động bằng thư viện qrcodejs
-        new QRCode(qrcodeContainer, {
-            text: JSON.stringify({
-                token: item.qr_token,
-                code: currentUser.adventurer_code,
-                item: item.id,
-                name: item.name
-            }),
-            width: 120,
-            height: 120,
-            colorDark: "#000000",
-            colorLight: "#ffffff"
+        // 1. Đảm bảo vật phẩm luôn có token hợp lệ (nếu thiếu tự sinh ngay)
+        if (!item.qr_token) {
+            item.qr_token = "QR_" + Math.random().toString(36).substring(2, 10).toUpperCase();
+            saveUserData();
+        }
+
+        tokenTxt.textContent = `MÃ: ${item.qr_token}`;
+
+        // 2. Đóng gói dữ liệu QR thuần ASCII (Không chứa tiếng Việt có dấu, nhẹ và quét siêu nhanh)
+        const qrPayload = JSON.stringify({
+            token: item.qr_token,
+            code: currentUser.adventurer_code || "AW----",
+            item: item.id
         });
 
-        // Lắng nghe trạng thái quét thời gian thực (chuẩn bị sẵn cho Phase 5 Miniapp)
+        // 3. Khởi tạo mã QR an toàn với try/catch
+        try {
+            new QRCode(qrcodeContainer, {
+                text: qrPayload,
+                width: 120,
+                height: 120,
+                colorDark: "#08300aff",
+                colorLight: "#ffffff",
+                correctLevel: (typeof QRCode !== "undefined" && QRCode.CorrectLevel) ? QRCode.CorrectLevel.M : 0
+            });
+        } catch (err) {
+            console.error("Lỗi tạo QR:", err);
+            // Fallback: nếu chuỗi JSON vẫn quá dài thì chỉ mã hóa duy nhất qr_token
+            new QRCode(qrcodeContainer, {
+                text: item.qr_token,
+                width: 120,
+                height: 120
+            });
+        }
+
+        // Lắng nghe trạng thái quét thời gian thực (polling)
         qrCheckPollTimer = setInterval(async () => {
             try {
                 const checkRes = await fetch(`${API_URL}/api/inventory/check-qr?token=${item.qr_token}`);
