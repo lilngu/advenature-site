@@ -794,7 +794,6 @@ body, html {
 }
 
 .core-cost-badge {
-    background: rgba(0, 0, 0, 0.85);
     color: #4cc9f0;
     font-size: 9px;
     font-weight: bold;
@@ -924,7 +923,10 @@ body, html {
     cursor: pointer;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
     position: fixed;
-    bottom: 5%;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    z-index: 1000;
     transition: all 0.3s ease;
 }
 
@@ -2076,7 +2078,7 @@ body.guest-mode .dock-btn.center-core.moved {
 .sch-slots { font-size: 9px; font-weight: bold; color: #00f5d4; background: rgba(0,0,0,0.5); padding: 4px 6px; border-radius: 6px; }
 
 /* 2 BANNER PROFILE */
-.guild-action-banners { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+.guild-action-banners { display: flex; flex-direction: row; gap: 8px; margin-top: 14px; }
 .guild-banner-card {
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(212, 192, 132, 0.3);
