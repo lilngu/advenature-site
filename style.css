@@ -1197,6 +1197,7 @@ i.ico-back-wind {width: 64px; height: 64px;}
     border-color: var(--purple-light);
     color: #fff;
 }
+.inv-tab-btn{width: 100%;    margin: 0 auto;    padding: 1%;}
 .inv-content.hidden { display: none; }
 
 /* Lưới 5x5 */
@@ -1572,11 +1573,7 @@ i.ico-back-wind {width: 64px; height: 64px;}
 
 /* Button Xác Nhận Thu Vào Túi trong Modal Chúc Phúc */
 #btnCloseBlessingModal {
-    background: linear-gradient(135deg, #4cc9f0 0%, #3a0ca3 100%);
-    border: 2px solid #ffd166;
-    color: #ffffff;
     padding: 14px 20px;
-    border-radius: 35px;
     font-size: 14px;
     font-weight: 900;
     letter-spacing: 1.8px;
