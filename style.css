@@ -418,12 +418,12 @@ body, html {
     color: #ffffff;
     padding: 14px 36px;
     border-radius: 35px;
-    font-size: 14px;
+    font-size: 20px;
     font-weight: 900;
     letter-spacing: 1.5px;
     cursor: pointer;
     white-space: nowrap;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.4);
+    text-shadow: 0 1px 3px rgb(79 113 207 / 85%);
     
     /* Kết hợp 2 hiệu ứng: Phóng to lúc xuất hiện (0.4s) + Bập bùng lặp vô tận */
     animation: 
@@ -717,133 +717,323 @@ body, html {
 .dock-btn.mid-right { bottom: 58px; right: 24%; transform: translateX(50%); }
 .dock-btn.sub-right { bottom: 18px; right: 14%; transform: translateX(50%); }
 
-/* Nút quả cầu Gacha trung tâm với vành tia sáng Sunburst */
-.core-sunburst-halo {
-    position: absolute;
-    width: 100%;
-    height: 100%;
+/* ======================================================
+   MAGIC ORB BUTTON - GACHA CORE (THIẾT KẾ MỚI)
+====================================================== */
+
+.magic-orb-wrapper {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
     border-radius: 50%;
-    background: transparent;
-    pointer-events: none;
-    box-shadow: 0 0 30px rgba(255, 209, 102, 0.3), 0 0 60px rgba(124, 77, 255, 0.2);
+    padding: 8px;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.25) 0%, rgba(0,0,0,0) 70%);
+    transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.core-glow-ring {
-    width: 132px;
-    height: 132px;
-    border-radius: 50%;
-    background: transparent; /* Xóa background solid */
-    padding: 0;
-    box-shadow: 0 0 30px rgb(102 234 255 / 50%), 0 0 60px rgba(124, 77, 255, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.magic-orb-wrapper:hover {
+    transform: scale(1.08);
+}
+
+.magic-orb-wrapper:active {
+    transform: scale(0.95);
+}
+
+/* Outer Golden Metallic Ring Frame */
+.gold-ring {
     position: relative;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffe885 0%, #d4a237 35%, #8a5d10 65%, #ffd700 100%);
+    padding: 8px;
+    box-shadow: 
+        0 0 30px rgba(212, 162, 55, 0.4),
+        inset 0 0 15px rgba(255, 255, 255, 0.7),
+        inset 0 0 10px rgba(0, 0, 0, 0.8);
+    transition: box-shadow 0.4s ease;
+}
+
+.magic-orb-wrapper:hover .gold-ring {
+    box-shadow: 
+        0 0 50px rgba(255, 215, 0, 0.85),
+        0 0 80px rgba(168, 85, 247, 0.6),
+        inset 0 0 25px rgba(255, 255, 255, 0.95);
+}
+
+/* Gold Star/Diamond Spikes on Rim (8 spikes) */
+.spike {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(135deg, #fff099, #d4a237);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    box-shadow: 0 0 10px #ffd700;
+    z-index: 25;
     transition: all 0.3s ease;
 }
 
-.dock-btn.center-core:hover .core-glow-ring {
-    transform: scale(1.1);
-    box-shadow: 
-        0 0 40px rgb(102 234 255 / 80%), 
-        0 0 80px rgba(255, 209, 102, 0.6);
+.spike-1 { top: -5px; left: calc(50% - 9px); }
+.spike-2 { top: 18px; right: 18px; transform: rotate(45deg); }
+.spike-3 { top: calc(50% - 9px); right: -5px; }
+.spike-4 { bottom: 18px; right: 18px; transform: rotate(135deg); }
+.spike-5 { bottom: -5px; left: calc(50% - 9px); }
+.spike-6 { bottom: 18px; left: 18px; transform: rotate(225deg); }
+.spike-7 { top: calc(50% - 9px); left: -5px; }
+.spike-8 { top: 18px; left: 18px; transform: rotate(315deg); }
+
+.magic-orb-wrapper:hover .spike {
+    filter: drop-shadow(0 0 8px #ffffff) brightness(1.3);
+    transform: scale(1.2) rotate(45deg);
 }
 
-.dock-btn.center-core:active .core-glow-ring {
-    transform: scale(1.05);
-    box-shadow: 
-        0 0 35px rgb(102 234 255 / 70%), 
-        0 0 70px rgba(124, 77, 255, 0.5);
+/* Inner Celestial Chamber */
+.orb-chamber {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 30%, #1c153b 0%, #0c0824 60%, #03010b 100%);
+    overflow: hidden;
+    border: 2.5px solid rgba(212, 162, 55, 0.5);
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.95);
 }
 
+/* Nebula Swirl inside Orb */
+.orb-nebula {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 80%, rgba(56, 189, 248, 0.35) 0%, transparent 60%),
+                radial-gradient(circle at 30% 20%, rgba(168, 85, 247, 0.35) 0%, transparent 50%);
+    filter: blur(6px);
+    animation: nebulaSpin 12s linear infinite;
+}
+
+@keyframes nebulaSpin {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.1); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+/* Central Glowing Crystal Orb Base */
+.crystal-ball {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -55%);
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, 
+        #ffffff 0%, 
+        #f0abfc 20%, 
+        #c084fc 45%, 
+        #6b21a8 75%, 
+        #3b0764 100%);
+    box-shadow: 
+        0 0 25px rgba(192, 132, 252, 0.7),
+        0 0 50px rgba(168, 85, 247, 0.5),
+        inset -8px -8px 18px rgba(24, 9, 46, 0.85);
+    transition: all 0.4s ease;
+    animation: orbPulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes orbPulse {
+    0% {
+        box-shadow: 0 0 20px rgba(192, 132, 252, 0.7), 0 0 40px rgba(168, 85, 247, 0.4);
+        transform: translate(-50%, -55%) scale(1);
+    }
+    100% {
+        box-shadow: 0 0 35px rgba(232, 121, 249, 0.9), 0 0 65px rgba(168, 85, 247, 0.7);
+        transform: translate(-50%, -55%) scale(1.05);
+    }
+}
+
+.magic-orb-wrapper:hover .crystal-ball {
+    background: radial-gradient(circle at 35% 30%, 
+        #ffffff 0%, 
+        #f5d0fe 25%, 
+        #e879f9 50%, 
+        #a855f7 75%, 
+        #581c87 100%);
+    transform: translate(-50%, -55%) scale(1.1);
+    filter: brightness(1.25);
+}
+
+/* Highlights & Sparkles on Orb */
+.crystal-shine {
+    position: absolute;
+    top: 12%;
+    left: 18%;
+    width: 28px;
+    height: 18px;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 50%;
+    transform: rotate(-35deg);
+    filter: blur(1px);
+}
+
+.crystal-sparkle {
+    position: absolute;
+    color: #ffffff;
+    font-size: 14px;
+    text-shadow: 0 0 6px #fff, 0 0 12px #e879f9;
+    animation: twinkle 2s infinite alternate;
+}
+
+@keyframes twinkle {
+    0% { opacity: 0.3; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Cost badge inside orb */
+.core-cost-badge-orb {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #4cc9f0;
+    font-size: 9px;
+    font-weight: 900;
+    font-family: "Handjet", sans-serif;
+    letter-spacing: 0.5px;
+    padding: 2px 8px;
+    border-radius: 8px;
+    border: 1px solid var(--cyan-crystal);
+    box-shadow: 0 0 8px rgba(76, 201, 240, 0.5), 0 0 15px rgba(76, 201, 240, 0.2);
+    z-index: 10;
+    pointer-events: none;
+}
+
+/* Canvas overlay for magic wisps & particles */
 #gachaOrbCanvas {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border-radius: 50%;
-    mix-blend-mode: screen;
+    width: 220px;
+    height: 220px;
     pointer-events: none;
-}
-
-.core-inner-sphere {
-    width: 100%;
-    height: 100%;
+    z-index: 30;
+    mix-blend-mode: screen;
     border-radius: 50%;
-    background: transparent; /* Đã trong suốt */
-    border: none; /* Xóa viền vàng */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    box-shadow: none; /* Xóa shadow */
-    position: relative;
-    z-index: 2;
-    pointer-events: none; /* Cho phép click xuyên qua đến canvas */
 }
 
-.core-text {
-    font-size: 14px;
-    font-family: "Handjet", sans-serif;
-    font-weight: 900;
-    color: #fffbe6;
-    letter-spacing: 1.2px;
-    text-shadow: 0 2px 6px #000, 0 0 12px #ffd166, 0 0 20px rgba(255, 209, 102, 0.6);
-    margin-top: 1px;
-    pointer-events: auto;
+/* Shockwave Expansion Ring */
+.shockwave {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 3px solid #f5d0fe;
+    box-shadow: 0 0 20px #e879f9, inset 0 0 15px #3b82f6;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 15;
 }
 
-.core-cost-badge {
-    color: #4cc9f0;
-    font-size: 9px;
-    font-weight: bold;
-    padding: 3px 8px;
-    border-radius: 10px;
-    border: 1px solid var(--cyan-crystal);
-    box-shadow: 0 0 10px rgba(76, 201, 240, 0.5), 0 0 20px rgba(76, 201, 240, 0.2);
-    pointer-events: auto;
+.shockwave.active {
+    animation: shockwaveExpand 0.7s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+@keyframes shockwaveExpand {
+    0% {
+        width: 20px;
+        height: 20px;
+        opacity: 1;
+        border-width: 4px;
+    }
+    100% {
+        width: 450px;
+        height: 450px;
+        opacity: 0;
+        border-width: 1px;
+    }
 }
 
 /* ======================================================
-   BỘ RESPONSIVE TOÀN DIỆN CHO DOCK (THAY THẾ TOÀN BỘ CŨ)
+   BỘ RESPONSIVE TOÀN DIỆN CHO DOCK (MAGIC ORB BUTTON)
 ====================================================== */
 
 /* 1. Màn hình điện thoại siêu nhỏ (< 360px: iPhone SE1, Fold gập hẹp) */
 @media (max-width: 359px) {
     .rpg-dock {
-        height: 155px;
-        transform: translateX(-50%) scale(0.85);
+        height: 160px;
+        transform: translateX(-50%) scale(0.8);
         transform-origin: bottom center;
+    }
+    .gold-ring {
+        width: 180px;
+        height: 180px;
+    }
+    #gachaOrbCanvas {
+        width: 180px;
+        height: 180px;
+    }
+    .crystal-ball {
+        width: 78px;
+        height: 78px;
+    }
+    .spike {
+        width: 15px;
+        height: 15px;
     }
 }
 
-/* 2. Màn hình điện thoại tiêu chuẩn (360px -> 480px: Đa số smartphone - chuẩn Demo 1) */
+/* 2. Màn hình điện thoại tiêu chuẩn (360px -> 480px: Đa số smartphone) */
 @media (min-width: 360px) and (max-width: 480px) {
     .rpg-dock {
         height: 175px;
         bottom: 0;
+    }
+    .gold-ring {
+        width: 200px;
+        height: 200px;
+    }
+    #gachaOrbCanvas {
+        width: 200px;
+        height: 200px;
+    }
+    .crystal-ball {
+        width: 88px;
+        height: 88px;
     }
 }
 
 /* 3. Màn hình trung bình / Xoay ngang (481px -> 768px: Tablet dọc / Mobile Landscape) */
 @media (min-width: 481px) and (max-width: 768px) {
     .rpg-dock {
-        height: 180px;
+        height: 185px;
         max-width: 460px;
         bottom: 5px;
     }
+    .gold-ring {
+        width: 210px;
+        height: 210px;
+    }
+    #gachaOrbCanvas {
+        width: 210px;
+        height: 210px;
+    }
+    .crystal-ball {
+        width: 92px;
+        height: 92px;
+    }
 }
 
-/* 4. Màn hình máy tính & Tablet ngang (>= 769px: Chuẩn theo Demo 2) */
+/* 4. Màn hình máy tính & Tablet ngang (>= 769px: Chuẩn to nhất) */
 @media (min-width: 769px) {
     .rpg-dock {
-        height: 195px;
-        max-width: 500px;
+        height: 200px;
+        max-width: 520px;
         bottom: 12px;
     }
     .dock-stone-pedestal {
-        width: 380px;
-        height: 145px;
+        width: 400px;
+        height: 155px;
     }
     .medallion-btn {
         width: 58px;
@@ -853,22 +1043,49 @@ body, html {
         width: 32px;
         height: 32px;
     }
-    .core-glow-ring {
-        width: 147px; /* Tăng từ 98px lên 147px (50% lớn hơn) */
-        height: 147px;
+    .gold-ring {
+        width: 240px;
+        height: 240px;
+        padding: 10px;
     }
     #gachaOrbCanvas {
-        width: 147px;
-        height: 147px;
+        width: 240px;
+        height: 240px;
     }
-    .core-text {
-        font-size: 15px;
+    .crystal-ball {
+        width: 105px;
+        height: 105px;
     }
-    .dock-btn.sub-left { bottom: 20px; left: 13%; }
-    .dock-btn.mid-left { bottom: 65px; left: 23%; }
-    .dock-btn.center-core { bottom: 58px; }
-    .dock-btn.mid-right { bottom: 65px; right: 23%; }
-    .dock-btn.sub-right { bottom: 20px; right: 13%; }
+    .spike {
+        width: 22px;
+        height: 22px;
+    }
+    .dock-btn.sub-left { bottom: 20px; left: 12%; }
+    .dock-btn.mid-left { bottom: 70px; left: 22%; }
+    .dock-btn.center-core { bottom: 60px; }
+    .dock-btn.mid-right { bottom: 70px; right: 22%; }
+    .dock-btn.sub-right { bottom: 20px; right: 12%; }
+}
+
+/* Guest mode - nút Gacha ở giữa màn hình */
+body.guest-mode .dock-btn.center-core {
+    pointer-events: auto;
+    bottom: 45vh !important;
+    left: 50% !important;
+    transform: translate(-50%, 50%) !important;
+    transition: all 0.7s cubic-bezier(0.2, 0.8, 0.2, 1.2);
+    z-index: 32;
+}
+body.guest-mode .dock-btn.center-core.moved {
+    bottom: 45% !important;
+}
+body.guest-mode .gold-ring {
+    width: 220px;
+    height: 220px;
+}
+body.guest-mode #gachaOrbCanvas {
+    width: 220px;
+    height: 220px;
 }
 
 /* ======================================================
@@ -942,7 +1159,6 @@ body, html {
     box-shadow: 0 0 15px rgba(76, 201, 240, 0.3);
 }
 .back-ico { font-size: 40px; line-height: 1; }
-.back-text { font-size: 20px; font-family: "Handjet", sans-serif; font-weight: bold; color: #ffe66d; margin-top: 2px; }
 i.ico-back-wind {width: 64px; height: 64px;}
 /* Tabs */
 .inv-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
@@ -1940,18 +2156,6 @@ body.guest-mode .dock-btn:not(.center-core) {
     display: none !important;
 }
 
-/* 3. Đưa Nút Gacha từ đáy lên chính giữa trang */
-body.guest-mode .dock-btn.center-core {
-    pointer-events: auto;
-    bottom: 45vh !important;
-    left: 50% !important;
-    transform: translate(-50%, 50%) !important;
-    transition: all 0.7s cubic-bezier(0.2, 0.8, 0.2, 1.2);
-    z-index: 32;
-}
-body.guest-mode .dock-btn.center-core.moved {
-    bottom: 45% !important;
-}
 /* 4. Banner Cuộn Giấy Cổ */
 .welcome-scroll-overlay {
     position: fixed;

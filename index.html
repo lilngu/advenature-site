@@ -129,16 +129,42 @@
                 </div>
             </button>
 
-            <!-- Nút 3: Gacha Core (Quả cầu ma thuật hào quang vàng kim) -->
+            <!-- Nút 3: Gacha Core - Magic Orb Button (Quả cầu phép thuật hào quang) -->
             <button class="dock-btn center-core nav-btn active" id="dockGachaTrigger" data-target="gacha-view" title="Triệu Hồi Gacha">
-                <div class="core-sunburst-halo"></div>
-                <div class="core-glow-ring">
-                    <canvas id="gachaOrbCanvas" width="132" height="132"></canvas>
-                    <div class="core-inner-sphere">
-                        <span class="core-text">GACHA</span>
-                        <span class="core-cost-badge" id="dockCostBadge">FREE</span>
+                <div class="magic-orb-wrapper" id="magicOrbWrapper">
+                    <!-- Vành vàng kim với móc răng (Gold Ring with Spikes) -->
+                    <div class="gold-ring">
+                        <div class="spike spike-1"></div>
+                        <div class="spike spike-2"></div>
+                        <div class="spike spike-3"></div>
+                        <div class="spike spike-4"></div>
+                        <div class="spike spike-5"></div>
+                        <div class="spike spike-6"></div>
+                        <div class="spike spike-7"></div>
+                        <div class="spike spike-8"></div>
+
+                        <!-- Buồng năng lượng bên trong -->
+                        <div class="orb-chamber">
+                            <div class="orb-nebula"></div>
+                            
+                            <!-- Viên tinh thể trung tâm -->
+                            <div class="crystal-ball" id="crystalBall">
+                                <div class="crystal-shine"></div>
+                                <div class="crystal-sparkle" style="top:20%; right:22%;">✦</div>
+                                <div class="crystal-sparkle" style="bottom:25%; left:20%; animation-delay: 0.7s;">✦</div>
+                            </div>
+                            
+                            <!-- Badge chi phí FREE -->
+                            <div class="core-cost-badge-orb" id="dockCostBadge">FREE</div>
+                        </div>
                     </div>
                 </div>
+                
+                <!-- Canvas overlay cho Magic Wisps & Mana Particles -->
+                <canvas id="gachaOrbCanvas" width="320" height="320"></canvas>
+                
+                <!-- Shockwave ring khi click -->
+                <div id="shockwave" class="shockwave"></div>
             </button>
 
             <!-- Nút 4: Shop (Xe kéo - Mid Right) -->
@@ -188,11 +214,11 @@
                 <div class="filter-bar" id="gemFilterBar">
                     <button class="filter-btn active" data-sys="ALL">Tất cả</button>
                     <button class="filter-btn" data-sys="fire"><i class="rpg-ico ico-elem-fire"></i> Hỏa</button>
-                    <button class="filter-btn" data-sys="sun"><i class="rpg-ico ico-elem-sun"></i> Dương</button>
+                    <button class="filter-btn" data-sys="sun"><i class="rpg-ico ico-elem-sun"></i>Thái Dương</button>
                     <button class="filter-btn" data-sys="wood"><i class="rpg-ico ico-elem-wood"></i> Mộc</button>
                     <button class="filter-btn" data-sys="ice"><i class="rpg-ico ico-elem-ice"></i> Băng</button>
-                    <button class="filter-btn" data-sys="lightning"><i class="rpg-ico ico-elem-lightning"></i> Thiên Hà</button>
-                    <button class="filter-btn" data-sys="magic"><i class="rpg-ico ico-elem-magic"></i> Ma Pháp</button>
+                    <button class="filter-btn" data-sys="lightning"><i class="rpg-ico ico-elem-lightning"></i> Thiên</button>
+                    <button class="filter-btn" data-sys="magic"><i class="rpg-ico ico-elem-magic"></i> Ma</button>
                 </div>
                 <div id="gemGrid" class="gem-grid-layout"></div>
             </div>
@@ -201,7 +227,6 @@
             <div class="panel-bottom-dock">
                 <button class="btn-back-dock">
                     <span class="back-ico"><i class="rpg-ico ico-back-wind" ></i></span>
-                    <span class="back-text">TRỞ VỀ</span>
                 </button>
             </div>
         </div>
@@ -260,8 +285,7 @@
             <div class="panel-bottom-dock">
                 <button class="btn-back-dock">
                     <span class="back-ico"><i class="rpg-ico ico-back-wind" ></i></span>
-                    <span class="back-text">TRỞ VỀ</span>
-                </button>
+                  </button>
             </div>
         </div>
     </section>
@@ -294,8 +318,7 @@
              <div class="panel-bottom-dock">
                 <button class="btn-back-dock">
                     <span class="back-ico"><i class="rpg-ico ico-back-wind"></i></span>
-                    <span class="back-text">TRỞ VỀ</span>
-                </button>
+                      </button>
             </div>
         </div>
        </section>
@@ -393,8 +416,7 @@
             <div class="panel-bottom-dock">
                 <button class="btn-back-dock">
                     <span class="back-ico"><i class="rpg-ico ico-back-wind"></i></span>
-                    <span class="back-text">TRỞ VỀ</span>
-                </button>
+                     </button>
             </div>
         </div>
     </section>

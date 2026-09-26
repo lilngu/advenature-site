@@ -426,7 +426,7 @@ function triggerGachaSummon() {
     crystalHeader.textContent = gem.name;
 
     lootText.innerHTML = `
-        <div style="font-size: 15px; font-weight: bold; color: #ffe66d;">✦ ${gem.name} ✦</div>
+        <div style="font-size: large; font-weight: bold;font-family: Spectral SC; color: #fff9da;">✦ ${gem.name} ✦</div>
         <div style="font-size: 10px; color: #c9c3ff; letter-spacing: 1.5px; margin-top: 3px;">
             [${gem.shapeName.toUpperCase()}] • ${gem.faceCount} DIỆN THỂ • MÃ: ${gem.code}
         </div>
