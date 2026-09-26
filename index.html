@@ -68,7 +68,7 @@
 
             <div class="user-top-actions">
             <!-- Nút đăng nhập chỉ hiện khi chưa đăng nhập hoặc là khách -->
-            <button id="btnTopLogin" class="btn-top-login">✦ Đăng Nhập</button>
+            <button id="btnTopLogin" class="btn-top-login btn-celtic">✦ Đăng Nhập</button>
 
             <div class="user-avatar-frame" id="btnProfileQuick">
                 <img src="https://api.dicebear.com/7.x/bottts/svg?seed=advenature" alt="Avatar" id="userAvatarImg" class="avatar-img">
@@ -155,8 +155,7 @@
                             </div>
                             
                             <!-- Badge chi phí FREE -->
-                            <div class="core-cost-badge-orb" id="dockCostBadge">FREE</div>
-                        </div>
+                           </div>
                     </div>
                 </div>
                 
@@ -193,8 +192,8 @@
             </div>
             
             <div class="inv-tabs">
-                <button class="inv-tab-btn" data-sub="sub-gems">Tinh Quang Thạch (<span id="tabGemProgressCount">0/990</span>)</button>
-    <button class="inv-tab-btn active" data-sub="sub-items">Vật Phẩm & Thẻ</button>
+                <button class="inv-tab-btn btn-celtic" data-sub="sub-gems">Tinh Quang Thạch (<span id="tabGemProgressCount">0/990</span>)</button>
+    <button class="inv-tab-btn btn-celtic active" data-sub="sub-items">Vật Phẩm & Thẻ</button>
             </div>
 
             <!-- Tab 1: Lưới 5x5 Vật Phẩm -->
@@ -247,7 +246,7 @@
                     <h4 class="pin-title">Trạm Điểm Danh</h4>
                     <p class="pin-desc">Nhận 1 🔮/ngày. Chuỗi 7 ngày tặng thêm +1 🔮.</p>
                     <div class="pin-badge" id="streakDisplay">Chuỗi: 1/7 ngày</div>
-                    <button class="btn-action pin-btn" id="btnDoCheckin">Điểm Danh</button>
+                    <button class="btn-medieval pin-btn" id="btnDoCheckin">Điểm Danh</button>
                 </div>
 
                 <!-- Nhiệm vụ 2: Mật mã Rừng Tinh Linh -->
@@ -256,7 +255,7 @@
                     <h4 class="pin-title">Mật Mã Tinh Linh</h4>
                     <p class="pin-desc">Giải mã tri thức cổ đại từ Rừng Già nhận +1 🔮.</p>
                     <div class="pin-badge">10 Câu Đố Vui</div>
-                    <button class="btn-action pin-btn" id="btnOpenQuiz">Giải Mã</button>
+                    <button class="btn-medieval pin-btn" id="btnOpenQuiz">Giải Mã</button>
                 </div>
 
                 <!-- Nhiệm vụ 3: Truyền tin Group FB -->
@@ -265,7 +264,7 @@
                     <h4 class="pin-title">Truyền Tin Bang</h4>
                     <p class="pin-desc">Đăng bài Group Advenature, dán link nhận +1 🔮.</p>
                     <input type="text" id="inputFbLink" class="rpg-input pin-input" placeholder="Link bài viết...">
-                    <button class="btn-action pin-btn" id="btnSubmitFb">Gửi Duyệt</button>
+                    <button class="btn-medieval pin-btn" id="btnSubmitFb">Gửi Duyệt</button>
                 </div>
 
                 <!-- Nhiệm vụ 4: Kết nối bạn bè -->
@@ -278,7 +277,7 @@
         <input type="text" id="inputFriendCode" class="rpg-input pin-input" placeholder="Mã AWxxxx..." style="margin-bottom:0;">
         <button class="btn-action pin-btn" id="btnScanFriendQr" style="padding: 0 8px;" title="Quét mã QR">📷</button>
     </div>
-    <button class="btn-action pin-btn" id="btnSubmitRef">Xác Nhận</button>
+    <button class="btn-medieval pin-btn" id="btnSubmitRef">Xác Nhận</button>
 </div>
             </div>
 
@@ -313,7 +312,7 @@
                     <div>Đã chọn: <b id="cartCount">0</b> mục</div>
                     <div>Tổng: <b id="cartTotalTinhThach" style="color:#4cc9f0;">0 💎</b> (~<span id="cartTotalVnd">0</span> đ)</div>
                 </div>
-                <button class="btn-summon btn-buy" id="btnCheckoutShop">✦ ĐẶT MUA ✦</button>
+                <button class="btn-magical" id="btnCheckoutShop">✦ ĐẶT MUA ✦</button>
             </div>
              <div class="panel-bottom-dock">
                 <button class="btn-back-dock">
@@ -373,7 +372,7 @@
                         <b id="profStatTQ"><i class="rpg-ico ico-tq"></i> 1</b>
                     </div>
                     <div class="stat-pill">
-                        <span class="stat-lbl">Tinh Thạch</span>
+                        <span class="stat-lbl">Quang Thạch</span>
                         <b id="profStatTT"><i class="rpg-ico ico-tt"></i> 0</b>
                     </div>
                     <div class="stat-pill">
@@ -385,8 +384,8 @@
                 <!-- THANH BẬC BANG HỘI -->
                 <div class="rank-progress-box">
                     <div class="rank-label">
-                        <span>Bậc Bang Hội: <b id="profRankTitle">Tập Sự</b></span>
-                        <span id="profRankNeed">100 điểm lên Hạng</span>
+                        <span>Cấp Bậc: <b id="profRankTitle">Tập Sự</b></span>
+                        <span id="profRankNeed">100 Điểm Lên Cấp</span>
                     </div>
                     <div class="progress-bar-container">
                         <div class="progress-fill" id="rankProgressBar" style="width: 0%;"></div>
@@ -440,23 +439,23 @@
             <span class="close-modal" id="closeOnboardingModal">&times;</span>
             <!-- BƯỚC 1: BẮT BUỘC ĐĂNG NHẬP GOOGLE -->
             <div id="onboardStep1">
-                <h3 style="color: #ffd166; font-size: 15px; margin-bottom: 6px;">✦ ĐỊNH DANH NHÀ PHIÊU LƯU ✦</h3>
+                <h3 style="color: #ffd166; font-size: 15px; margin-bottom: 6px;">✦ ĐỊNH DANH TINH THỦ ✦</h3>
                 <p style="font-size: 11px; color: #c9c3ff; margin-bottom: 16px; line-height: 1.4;">
-                    Vui lòng xác thực tài khoản Google để lưu giữ vĩnh viễn Tinh Quang Thạch đầu tiên của bạn vào máy chủ.
+                    Vui lòng xác thực tài khoản Google để lưu giữ Quang Thạch đầu tiên của bạn.
                 </p>
                 <div id="googleBtnContainer" style="display: flex; justify-content: center; min-height: 44px; margin-bottom: 10px;"></div>              
-                <div style="font-size: 9px; color: #8e8aab;">*Bắt buộc để liên kết Căn Cước Hội Ngọc Lục</div>
+                <div style="font-size: 9px; color: #cabf1f;">*Bắt buộc để liên kết THẺ</div>
             </div>
 
             <!-- BƯỚC 2: KHAI BÁO THÔNG TIN CHI TIẾT (CHỈ HIỆN SAU KHI GOOGLE XÁC NHẬN) -->
             <div id="onboardStep2" class="hidden" style="text-align: left;">
                 <div style="text-align: center; margin-bottom: 10px;">
-                    <h3 style="color: #ffd166; font-size: 14px;">✦ THIẾT LẬP CĂN CƯỚC ✦</h3>
-                    <div id="googleBadgeVerified" style="font-size: 10px; color: #4cc9f0; margin-top: 2px;">✓ Google: user@gmail.com</div>
+                    <h3 style="color: #ffd166; font-size: 14px;">✦ THIẾT LẬP THẺ TINH THỦ ✦</h3>
+                    <div id="googleBadgeVerified" style="font-size: 10px; color: #4cc9f0; margin-top: 2px;">✓ Google: nhaphieuluu@gmail.com</div>
                 </div>
 
                 <div class="onboard-form-group">
-                    <label class="onboard-lbl">Tên Nhà Phiêu Lưu:</label>
+                    <label class="onboard-lbl">Tên Tinh Thủ:</label>
                     <input type="text" id="obName" class="rpg-input" placeholder="Nhập tên của bạn...">
                 </div>
 
@@ -466,6 +465,7 @@
                     <div class="gender-toggle-row">
                         <button type="button" class="btn-gender-opt active" data-gender="Nam">👨 Nam</button>
                         <button type="button" class="btn-gender-opt" data-gender="Nữ">👩 Nữ</button>
+                        <button type="button" class="btn-gender-opt" data-gender="Tự do">🌈 Tự do</button>
                     </div>
                 </div>
 
@@ -492,11 +492,11 @@
                     <input type="text" id="obTribe" class="rpg-input" placeholder="VD: Rừng Sương Mù, Gió Tây...">
                 </div>
                 <div class="onboard-form-group">
-                    <label class="onboard-lbl">Số điện thoại (Zalo liên hệ):</label>
+                    <label class="onboard-lbl">Số Zalo liên hệ:</label>
                     <input type="tel" id="obPhone" class="rpg-input" placeholder="VD: 0912345678">
                 </div>
 
-                <button id="btnCompleteRegister" class="btn-summon btn-claim" style="width: 100%; margin-top: 10px; padding: 10px; font-size: 12px;">
+                <button id="btnCompleteRegister" class="btn-celtic" style="width: 100%; margin-top: 10px; padding: 14px 20px; font-size: 13px;">
                     ✦ HOÀN TẤT & THU THẬP VÀO TÚI ✦
                 </button>
             </div>
@@ -710,6 +710,9 @@
 
 <!-- TOAST NOTIFICATION CONTAINER -->
 <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+<!-- VFX CANVAS FOR BUTTON PARTICLE EFFECTS -->
+<canvas id="vfxCanvas" class="vfx-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9998;"></canvas>
 
     <script type="module" src="app.js"></script>
 </body>

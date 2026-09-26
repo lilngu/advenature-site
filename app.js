@@ -16,6 +16,8 @@ import {
 } from './data.js';
 // TOAST NOTIFICATION SYSTEM
 import { toast } from './toast.js';
+// BUTTON VFX PARTICLE SYSTEM
+import { initButtonVFX } from './vfx.js';
 
 // ======================================================
 // 1. CONFIG & DATA SYNC (BỎ DẤU / Ở CUỐI TRÁNH LỖI 404)
@@ -141,12 +143,8 @@ function updateTopBarUI() {
     setSafeText("valCongHien", (currentUser.cong_hien_points || 0).toLocaleString());
     setSafeText("userAdvenCode", currentUser.adventurer_code || "AW----");
 
-    // 2. Chi phí nút Gacha đáy
-    const dockCostBadge = document.getElementById("dockCostBadge");
-    if (dockCostBadge) {
-        dockCostBadge.textContent = (currentUser.gacha_counter === 0) ? "FREE" : "🧊";
-    }
-
+    // 2. Chi phí nút Gacha đáy :huỷ
+    
     // 3. Thông tin Thẻ Căn Cước Nhà Phiêu Lưu
     setSafeText("profName", currentUser.full_name || "Nhà Phiêu Lưu");
     setSafeText("profCode", currentUser.adventurer_code || "AW----");
@@ -291,7 +289,7 @@ const particleGeometry = new THREE.BufferGeometry();
 particleGeometry.setAttribute("position", new THREE.BufferAttribute(particlePositions, 3));
 particleGeometry.setAttribute("color", new THREE.BufferAttribute(particleColors, 3));
 const particles = new THREE.Points(particleGeometry, new THREE.PointsMaterial({
-    size: 0.07, vertexColors: true, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false
+    size: 0.05, vertexColors: true, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false
 }));
 scene.add(particles);
 
@@ -467,7 +465,7 @@ document.getElementById("btnCloseBlessingModal").addEventListener("click", () =>
 // 5. LUỒNG THU THẬP: FIRST GACHA & GACHA THƯỜNG
 // ======================================================
 // ======================================================
-// HỆ THỐNG 8 AVATAR PRESET (4 NAM & 4 NỮ)
+// HỆ THỐNG 12 AVATAR PRESET (4 NAM, 4 NỮ, 4 TỰ DO)
 // ======================================================
 const AVATAR_PRESETS = {
     Nam: [
@@ -481,6 +479,12 @@ const AVATAR_PRESETS = {
         "https://api.dicebear.com/7.x/adventurer/svg?seed=Luna&hair=long02",
         "https://api.dicebear.com/7.x/adventurer/svg?seed=Maya&hair=long04",
         "https://api.dicebear.com/7.x/adventurer/svg?seed=Sophie&hair=long05"
+    ],
+    "Tự do": [
+        "https://api.dicebear.com/7.x/adventurer/svg?seed=Maya&hair=long04",
+        "https://api.dicebear.com/7.x/adventurer/svg?seed=Jack&hair=short05",
+        "https://api.dicebear.com/7.x/adventurer/svg?seed=Phoenix&hair=short03",
+        "https://api.dicebear.com/7.x/adventurer/svg?seed=Avery&hair=long03"
     ]
 };
 
@@ -2027,3 +2031,6 @@ updateTopBarUI();
 renderInventoryGems();
 renderInventory5x5();
 renderShop();
+
+// Khởi tạo Button VFX Particle System
+initButtonVFX();
