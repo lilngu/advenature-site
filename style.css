@@ -995,8 +995,8 @@ background: url(data:image/webp;base64,UklGRlANAABXRUJQVlA4WAoAAAAQAAAAawAAbAAAQ
         bottom: 0;
     }
     .gold-ring {
-        width: 200px;
-        height: 200px;
+        width: 140px;
+        height: 140px;
     }
     #gachaOrbCanvas {
         width: 200px;
@@ -1016,12 +1016,12 @@ background: url(data:image/webp;base64,UklGRlANAABXRUJQVlA4WAoAAAAQAAAAawAAbAAAQ
         bottom: 5px;
     }
     .gold-ring {
-        width: 210px;
-        height: 210px;
+        width: 180px;
+        height: 180px;
     }
     #gachaOrbCanvas {
-        width: 210px;
-        height: 210px;
+        width: 200px;
+        height: 200px;
     }
     .crystal-ball {
         width: 92px;
@@ -1049,8 +1049,8 @@ background: url(data:image/webp;base64,UklGRlANAABXRUJQVlA4WAoAAAAQAAAAawAAbAAAQ
         height: 32px;
     }
     .gold-ring {
-        width: 240px;
-        height: 240px;
+        width: 220px;
+        height: 220px;
         padding: 10px;
     }
     #gachaOrbCanvas {
@@ -1067,7 +1067,7 @@ background: url(data:image/webp;base64,UklGRlANAABXRUJQVlA4WAoAAAAQAAAAawAAbAAAQ
     }
     .dock-btn.sub-left { bottom: 20px; left: 12%; }
     .dock-btn.mid-left { bottom: 70px; left: 22%; }
-    .dock-btn.center-core { bottom: 60px; }
+    .dock-btn.center-core { bottom: 40px; }
     .dock-btn.mid-right { bottom: 70px; right: 22%; }
     .dock-btn.sub-right { bottom: 20px; right: 12%; }
 }
