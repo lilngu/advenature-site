@@ -974,6 +974,7 @@ function updateState(now) {
         updateParticles(elapsed, 0);
         lootBox.rotation.y += 0.008;
         lootBox.scale.lerp(new THREE.Vector3(0.5, 0.5, 0.5), 0.08);
+        lootBox.position.lerp(new THREE.Vector3(0, 0.5, 0), 0.08);
 
         particles.material.opacity = THREE.MathUtils.lerp(particles.material.opacity, 0.35, 0.05);
         particles.material.size = THREE.MathUtils.lerp(particles.material.size, 0.04, 0.05);
