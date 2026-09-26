@@ -83,12 +83,12 @@ body, html {
 
 /* Data URI SVG cho Tinh Quang (Tím) */
 .ico-tq {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23c77dff'%3E%3Cpath d='M12 2L4 7v10l8 5 8-5V7l-8-5zm0 2.8L17.5 8 12 11.2 6.5 8 12 4.8zm-6 5.1l5 2.9v6.4l-5-3.1V9.9zm12 6.2l-5 3.1v-6.4l5-2.9v6.2z'/%3E%3C/svg%3E");
+    background-image: url(data:image/webp;base64,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);
 }
 
 /* Data URI SVG cho Tinh Thạch (Lam Ngọc) */
 .ico-tt {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234cc9f0'%3E%3Cpath d='M6 3h12l4 7-10 11L2 10l4-7zm1.5 2l-2.5 4.5h4.2L8.5 5H7.5zm3.5 0l.7 4.5h4.6l.7-4.5h-6zm8 0h-1l-.7 4.5h4.2L19 5z'/%3E%3C/svg%3E");
+    background-image: url(data:image/webp;base64,UklGRkIFAABXRUJQVlA4WAoAAAAQAAAAPwAAPwAAQUxQSPQBAAABkLRtmyE771XHto3Ytm3bWTlr27aWdn6AnZVt207mnNNXXd+i9VVVtIyICcD/ztH5hnUPnE80qvZXKY9FGlT8lCTR7lBjEm+S4xphSOQRcpbTzQjeTe5ykhFLyKs10IAx0hMFumvXtZR8/mytWf2v5Ptzc6fk8loUPyfGj7UdRLSi+FwA6XeJ9XmxTXl6dSDyHDHfL3QS+WwiFPapxH49PdamMDLfFv6Sj3oGK0J0MYDh5N9y2ytUtVwABJ9nKHX7nOkgMgVPeiIE0FIyWNKFxglb6y21eZwPEqMsdTsVGgkgc1UqQ2gxkDkOyC/lIMvNqg6IYLCmzgFEbPP4JcQq3WgJ0LM3j3Ns8nuSah5HIjxeBSYQkWTw3BEKs9tCXCZey8tOFSIcDSWT9PI9WQGAraSOxinJ/cnl/YyS2lIDeUyoEAe9SMkipWwNpZkfPRBJDqLtUDzGE6ek1+mqgk+oIRoJ5VUDao4IdZij5HtFaBh5VcVkaNnU4rscrgfWsQUaQ9P4+zzy4wZo29ZiCdxN1AfrWKyu0Dj+Lsd2oRNaW/5epkLvdb5kb2gee9fPQaEbWpZ6e50O/Vd4kkNhYORNL/uFCWgccHudCTOnu8j+MDT0jNNBYQqKP9reZsPckbbhMFjsJzokTEL688/FMLt5T/zvBFZQOCAoAwAAEBEAnQEqQABAAD5dJIxFo6IhG/6uADgFxLQAZma8bH4ECrf3jFx4DO2c8wHRC3i/eNP3Y/Wb2sc0A2may5rjSuM5egB5MHsH8gBl6zKKisngbPvJo93vkrDrJCksP9Bmv9YUB2A+P+TVwQGczFl/YFlUkuzPaTOlomHraue2Se1YOczXKCsnBW0TaKZr8ggLgAD+/nyc30ozcs19Zuyr/u430uMEiZcMcxfCXKktgH1F7H41uNg9GLo2C/jz1cUO/1VxiiD9Ix5wXbuc1ov4/mf3a8mgJNvQg0ZoZoT3y77qt9xhJo098tBKfKW3dr7boXX+4QA888KK3AuPWWfWnRp85+4Jz1L0aarILnonro7RlgQ/TpFkOdvxylPEcLKh8F/LIwJruOQ4bBS5DnqZYQuEnfvt7q2CnAqULegLn6nalFre32J+a8xQ+g7TtYsEbe2McIbuMrMotVmzYpal2UriVoVClluk0G7ITimufbcO1o/YwpEIyHUSaVrOvGFnIuzMfd53vcqbu68pC0aPZc0dNhuXPHHHW4aR4TeFw3d/LvfdHt8rNa05SmcdX+wWJ0VHaqyJW/WtgxKzEr9gJBdSG/cxoYugi64Zpa52tdEVewgAtmOPQCZH00pzr7oM1elmteHZf+p2IDmahlSLoUeNjFfJTyGs1mZV9bO87j1am0e6JxHtuvK+Oz8h1haNh+gzq7Gq8juP3/IHJ/nx+mN0cIuq+QEeN0qe0wLtzMBDuyFRM9eM4OZvJtaEfRAaocB/pAspRFvMSe4Ger136ZU1wQuAJe1Z3byaB0qF2LNUkIQk4OjyX/lISR7EHYKKvIGM5yC9dG6KBRVPDbbqx5tc8JsOhi+y4BLgu2EtTv/AMZ7rU6x7KGce5MbGnyt42YROPqlqAUMX/4Xf//iHP/4f5//8Ow+7/ry5Ghtll/+rW/5Cgd0W5lUOvF3tAhIv4cl8Ca9eAJP3MKC0EYc5cdrO/mPrbLryS8xtpbo4n3SeDvYlt7iJ9ofZODaiwP50xctQsVIj7DehB9NcU8/08No0rbaswQ3+2ysBXZ27RxTHIwK7EBG0AA==);
 }
 
 /* Data URI SVG cho Cống Hiến (Khiên Vàng) */
@@ -305,9 +305,9 @@ body, html {
 .currency-group { display: flex; gap: 6px; }
 
 .currency-pill {
-    background: rgba(20, 16, 45, 0.75);
+    background: transparent;
     border: 1px solid var(--border-magic);
-    border-radius: 20px;
+    border-radius: 10px;
     padding: 3px 8px;
     display: flex;
     flex-direction: column;
@@ -635,7 +635,7 @@ body, html {
     width: 52px;
     height: 52px;
     border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, #241b35, #0c0817);
+    background: transparent;
     border: 2px solid #bfa15f;
     box-shadow: 
         0 4px 10px rgba(0,0,0,0.8),
@@ -2284,7 +2284,7 @@ body.guest-mode #btnProfileQuick {
 }
 body.guest-mode #btnTopLogin {
     display: block !important;
-    width: 150px; padding: 4%;}
+    width: 150px; padding: 4%; font-weight: bolder;}
 
 /* 2. Ẩn 4 nút menu ở Dock đáy, tắt nền Dock để không che màn hình */
 body.guest-mode .rpg-dock {
