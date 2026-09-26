@@ -14,6 +14,8 @@ import {
     SHOP_ITEMS, 
     QUIZ_LIST 
 } from './data.js';
+// TOAST NOTIFICATION SYSTEM
+import { toast } from './toast.js';
 
 // ======================================================
 // 1. CONFIG & DATA SYNC (BỎ DẤU / Ở CUỐI TRÁNH LỖI 404)
@@ -411,7 +413,7 @@ function triggerGachaSummon() {
     if (state !== STATE.IDLE && state !== STATE.CLAIMED) return;
 
     if (currentUser.gacha_counter > 0 && currentUser.tinh_quang_points < 1) {
-        alert("Bạn đã hết Điểm Tinh Quang 🔮! Hãy giải mã tri thức hoặc điểm danh để nhận thêm.");
+        toast.warning('HẾT TINH QUANG', 'Bạn đã hết Điểm Tinh Quang 🔮! Hãy giải mã tri thức hoặc điểm danh để nhận thêm.');
         return;
     }
 
@@ -657,7 +659,7 @@ async function handleGoogleSuccess(response) {
             if (claimContainer) claimContainer.classList.add("hidden");
             lootText.classList.remove("show");
 
-            alert(`🎉 CHÀO MỪNG QUAY TRỞ LẠI, ${currentUser.full_name}!\nĐã khôi phục Căn Cước [${currentUser.adventurer_code}] và đồng bộ toàn bộ kho đồ của bạn.`);
+            toast.magic('CHÀO MỪNG QUAY LẠI', `🎉 CHÀO MỪNG QUAY TRỞ LẠI, ${currentUser.full_name}!\nĐã khôi phục Căn Cước [${currentUser.adventurer_code}] và đồng bộ toàn bộ kho đồ của bạn.`);
             state = STATE.IDLE;
             return;
         }
@@ -721,11 +723,11 @@ btnCompleteRegister.addEventListener("click", async () => {
     const obClass = document.getElementById("obClass").value.trim();
     const obTribe = document.getElementById("obTribe").value.trim();
 
-    if (!obName) { alert("Vui lòng nhập Tên Nhà Phiêu Lưu!"); return; }
-    if (!obPhone) { alert("Vui lòng nhập Số điện thoại / Zalo!"); return; } // Bắt buộc
-    if (!obBirth) { alert("Vui lòng nhập Năm sinh!"); return; }
-    if (!obClass) { alert("Vui lòng nhập Chức nghiệp của bạn!"); return; }
-    if (!obTribe) { alert("Vui lòng nhập Bộ tộc của bạn!"); return; }
+    if (!obName) { toast.warning('THIẾU THÔNG TIN', 'Vui lòng nhập Tên Nhà Phiêu Lưu!'); return; }
+    if (!obPhone) { toast.warning('THIẾU THÔNG TIN', 'Vui lòng nhập Số điện thoại / Zalo!'); return; } // Bắt buộc
+    if (!obBirth) { toast.warning('THIẾU THÔNG TIN', 'Vui lòng nhập Năm sinh!'); return; }
+    if (!obClass) { toast.warning('THIẾU THÔNG TIN', 'Vui lòng nhập Chức nghiệp của bạn!'); return; }
+    if (!obTribe) { toast.warning('THIẾU THÔNG TIN', 'Vui lòng nhập Bộ tộc của bạn!'); return; }
 
     btnCompleteRegister.textContent = "Đang kích hoạt căn cước...";
     btnCompleteRegister.disabled = true;
@@ -769,10 +771,10 @@ btnCompleteRegister.addEventListener("click", async () => {
             openBlessingModal(data.blessing, "Chúc Phúc Tân Thủ dành riêng cho bạn!");
             state = STATE.IDLE;
         } else {
-            alert("Lỗi đăng ký: " + (data.error || "Vui lòng thử lại"));
+            toast.error('ĐĂNG KÝ THẤT BẠI', data.error || 'Vui lòng thử lại');
         }
     } catch (e) {
-        alert("Lỗi kết nối máy chủ! Vui lòng thử lại.");
+        toast.error('LỖI KẾT NỐI', 'Lỗi kết nối máy chủ! Vui lòng thử lại.');
     } finally {
         btnCompleteRegister.textContent = "✦ HOÀN TẤT & THU THẬP VÀO TÚI ✦";
         btnCompleteRegister.disabled = false;
@@ -825,7 +827,7 @@ async function processClaimAfterLoot() {
                 }, 100);
             }, 3000);
         } else {
-            alert(data.error || "Lỗi giao dịch Gacha!");
+            toast.error('GACHA THẤT BẠI', data.error || 'Lỗi giao dịch Gacha!');
             state = STATE.IDLE;
         }
     } catch (e) {
@@ -1409,12 +1411,12 @@ function openItemModal(item, itemIndex) {
                     if (data.buffApplied.tq) buffMsg.push(`+${data.buffApplied.tq} 🔮 Tinh Quang`);
                     if (data.buffApplied.tt) buffMsg.push(`+${data.buffApplied.tt} 💎 Tinh Thạch`);
                     if (data.buffApplied.ch) buffMsg.push(`+${data.buffApplied.ch} 🛡️ Cống Hiến`);
-                    alert(`✦ SỬ DỤNG THÀNH CÔNG!\nBạn nhận được: ${buffMsg.join(", ")}`);
+                    toast.success('SỬ DỤNG THÀNH CÔNG', `Bạn nhận được: ${buffMsg.join(", ")}`);
                 } else {
-                    alert(data.error || "Không thể sử dụng vật phẩm này!");
+                    toast.error('SỬ DỤNG THẤT BẠI', data.error || 'Không thể sử dụng vật phẩm này!');
                 }
             } catch (err) {
-                alert("Lỗi kết nối máy chủ!");
+                toast.error('LỖI KẾT NỐI', 'Lỗi kết nối máy chủ!');
             } finally {
                 btnUseBuff.textContent = "✦ SỬ DỤNG BUFF NGAY ✦";
                 btnUseBuff.disabled = false;
@@ -1469,7 +1471,7 @@ function openItemModal(item, itemIndex) {
                 const checkData = await checkRes.json();
                 if (checkData.success && checkData.isUsed) {
                     clearInterval(qrCheckPollTimer);
-                    alert(`🎉 XÁC THỰC THÀNH CÔNG TẠI THỰC ĐỊA!\nQuản lý đã xác nhận vật phẩm [${item.name}].`);
+                    toast.success('XÁC THỰC THÀNH CÔNG', `🎉 XÁC THỰC THÀNH CÔNG TẠI THỰC ĐỊA!\nQuản lý đã xác nhận vật phẩm [${item.name}].`);
                     item.quantity--;
                     if (item.quantity <= 0) currentUser.inventory.splice(itemIndex, 1);
                     saveUserData();
@@ -1553,7 +1555,7 @@ function updateShopCheckout() {
 
 document.getElementById("btnCheckoutShop")?.addEventListener("click", async () => {
     if (selectedShopIds.size === 0) {
-        alert("Vui lòng chạm chọn ít nhất 1 gói hoặc tiện ích!");
+        toast.warning('CHƯA CHỌN SẢN PHẨM', 'Vui lòng chạm chọn ít nhất 1 gói hoặc tiện ích!');
         return;
     }
     const phone = prompt("Nhập SĐT hoặc Zalo để Hội Ngọc Lục liên hệ xác nhận đơn:");
@@ -1573,7 +1575,7 @@ document.getElementById("btnCheckoutShop")?.addEventListener("click", async () =
         });
     } catch(e) {}
 
-    alert("✦ Thông tin đơn hàng đã gửi tới Hội Ngọc Lục! Trưởng đoàn sẽ liên hệ sớm nhất qua SĐT/Zalo.");
+    toast.success('ĐẶT HÀNG THÀNH CÔNG', '✦ Thông tin đơn hàng đã gửi tới Hội Ngọc Lục! Trưởng đoàn sẽ liên hệ sớm nhất qua SĐT/Zalo.');
     selectedShopIds.clear();
     renderShop();
     updateShopCheckout();
@@ -1609,14 +1611,14 @@ document.getElementById("btnDoCheckin")?.addEventListener("click", async () => {
             if (data.isBonus) {
                 alertMsg = `🎉 XUẤT SẮC! Đạt mốc chuỗi 7 ngày liên tục! Thưởng thêm +1 🔮 (Tổng nhận +2 🔮).`;
             }
-            alert(alertMsg);
+            toast.success('ĐIỂM DANH THÀNH CÔNG', alertMsg);
         } else {
-            alert(data.error || "Không thể điểm danh!");
+            toast.error('ĐIỂM DANH THẤT BẠI', data.error || 'Không thể điểm danh!');
             btn.textContent = "Điểm Danh";
             btn.disabled = false;
         }
     } catch (e) {
-        alert("Lỗi kết nối máy chủ điểm danh!");
+        toast.error('LỖI KẾT NỐI', 'Lỗi kết nối máy chủ điểm danh!');
         btn.textContent = "Điểm Danh";
         btn.disabled = false;
     }
@@ -1627,7 +1629,7 @@ document.getElementById("btnSubmitFb")?.addEventListener("click", async () => {
     const linkInput = document.getElementById("inputFbLink");
     const link = linkInput.value.trim();
     if (!link.startsWith("http")) {
-        alert("Vui lòng nhập đường link bài viết hợp lệ (bắt đầu bằng http...)!");
+        toast.warning('LINK KHÔNG HỢP LỆ', 'Vui lòng nhập đường link bài viết hợp lệ (bắt đầu bằng http...)!');
         return;
     }
 
@@ -1646,13 +1648,13 @@ document.getElementById("btnSubmitFb")?.addEventListener("click", async () => {
         });
         const data = await res.json();
         if (data.success) {
-            alert("✦ Đã gửi link bài viết cho Quản trị viên Telegram! Vui lòng chờ duyệt (+1 🔮).");
+            toast.success('GỬI THÀNH CÔNG', '✦ Đã gửi link bài viết cho Quản trị viên Telegram! Vui lòng chờ duyệt (+1 🔮).');
             linkInput.value = "";
         } else {
-            alert("Lỗi gửi link: " + (data.error || "Thử lại sau!"));
+            toast.error('GỬI THẤT BẠI', data.error || 'Thử lại sau!');
         }
     } catch (e) {
-        alert("Không thể kết nối đến máy chủ duyệt nhiệm vụ!");
+        toast.error('LỖI KẾT NỐI', 'Không thể kết nối đến máy chủ duyệt nhiệm vụ!');
     } finally {
         btn.textContent = "Gửi Duyệt";
         btn.disabled = false;
@@ -1664,7 +1666,7 @@ document.getElementById("btnSubmitRef")?.addEventListener("click", async () => {
     const input = document.getElementById("inputFriendCode");
     const code = input.value.trim().toUpperCase();
     if (!code.startsWith("AW")) {
-        alert("Mã bạn bè phải bắt đầu bằng AW (Ví dụ: AW8391)!");
+        toast.warning('MÃ KHÔNG HỢP LỆ', 'Mã bạn bè phải bắt đầu bằng AW (Ví dụ: AW8391)!');
         return;
     }
 
@@ -1679,13 +1681,13 @@ document.getElementById("btnSubmitRef")?.addEventListener("click", async () => {
             currentUser.tinh_quang_points = data.tinh_quang_points;
             saveUserData();
             updateTopBarUI();
-            alert(`🎉 Kết nối thành công với [${code}]! Cả 2 bạn đều nhận được +1 🔮.`);
+            toast.success('KẾT NỐI THÀNH CÔNG', `🎉 Kết nối thành công với [${code}]! Cả 2 bạn đều nhận được +1 🔮.`);
             input.value = "";
         } else {
-            alert(data.error || "Không thể kết nối bạn bè!");
+            toast.error('KẾT NỐI THẤT BẠI', data.error || 'Không thể kết nối bạn bè!');
         }
     } catch (e) {
-        alert("Lỗi kết nối máy chủ!");
+        toast.error('LỖI KẾT NỐI', 'Lỗi kết nối máy chủ!');
     }
 });
 
@@ -1710,7 +1712,7 @@ document.getElementById("btnOpenQuiz")?.addEventListener("click", async () => {
             quizModal.classList.remove("hidden");
         }
     } catch (e) {
-        alert("Chưa thể tải bộ câu đố Tinh Linh!");
+        toast.error('LỖI TẢI DỮ LIỆU', 'Chưa thể tải bộ câu đố Tinh Linh!');
     } finally {
         btn.textContent = "Giải Mã";
     }
@@ -1752,19 +1754,19 @@ function showQuizQuestion() {
                             saveUserData();
                             updateTopBarUI();
                             quizModal.classList.add("hidden");
-                            alert(`🎉 HOÀN THÀNH TRI THỨC TINH LINH!\nBạn đã trả lời đúng 10 câu và nhận được +1 💎 Tinh Thạch! (Hôm nay: ${completeData.countToday}/2 lượt)`);
+                            toast.magic('HOÀN THÀNH TRI THỨC', `🎉 HOÀN THÀNH TRI THỨC TINH LINH!\nBạn đã trả lời đúng 10 câu và nhận được +1 💎 Tinh Thạch! (Hôm nay: ${completeData.countToday}/2 lượt)`);
                         } else {
-                            alert(completeData.error);
+                            toast.error('NHẬN THƯỞNG THẤT BẠI', completeData.error);
                             quizModal.classList.add("hidden");
                         }
                     } catch (err) {
-                        alert("Lỗi kết nối khi nhận thưởng!");
+                        toast.error('LỖI KẾT NỐI', 'Lỗi kết nối khi nhận thưởng!');
                     }
                 } else {
                     showQuizQuestion();
                 }
             } else {
-                alert("Mật mã chưa chính xác! Hãy thử lại câu khác.");
+                toast.warning('SAI MẬT MÃ', 'Mật mã chưa chính xác! Hãy thử lại câu khác.');
                 currentQuizIdx++;
                 showQuizQuestion();
             }
@@ -1796,12 +1798,12 @@ document.getElementById("btnScanFriendQr")?.addEventListener("click", () => {
                     document.getElementById("inputFriendCode").value = friendCode;
                     stopScanner();
                     scanModal.classList.add("hidden");
-                    alert(`✓ Đã nhận diện mã bạn bè: [${friendCode}]! Hãy bấm Xác Nhận.`);
+                    toast.success('QUÉT THÀNH CÔNG', `✓ Đã nhận diện mã bạn bè: [${friendCode}]! Hãy bấm Xác Nhận.`);
                 }
             },
             (error) => {}
         ).catch(err => {
-            alert("Không thể truy cập Camera. Vui lòng cấp quyền máy ảnh!");
+            toast.error('LỖI CAMERA', 'Không thể truy cập Camera. Vui lòng cấp quyền máy ảnh!');
             scanModal.classList.add("hidden");
         });
     }
@@ -1895,17 +1897,17 @@ async function syncPointsToBackend(tq = 0, tt = 0, ch = 0) {
 // 2. CÁC NÚT BƠM ĐIỂM ADMIN (GỌI ĐỒNG BỘ VÀO D1)
 document.getElementById("admAddTQ")?.addEventListener("click", async () => {
     await syncPointsToBackend(99, 0, 0);
-    alert("⚡ Admin: +99 🔮 (Đã ghi nhận vào Database D1)");
+    toast.info('ADMIN TEST', '⚡ Admin: +99 🔮 (Đã ghi nhận vào Database D1)');
 });
 
 document.getElementById("admAddTT")?.addEventListener("click", async () => {
     await syncPointsToBackend(0, 99, 0);
-    alert("⚡ Admin: +99 💎 (Đã ghi nhận vào Database D1)");
+    toast.info('ADMIN TEST', '⚡ Admin: +99 💎 (Đã ghi nhận vào Database D1)');
 });
 
 document.getElementById("admAddCH")?.addEventListener("click", async () => {
     await syncPointsToBackend(0, 0, 100);
-    alert("⚡ Admin: +100 🛡️ (Đã ghi nhận vào Database D1)");
+    toast.info('ADMIN TEST', '⚡ Admin: +100 🛡️ (Đã ghi nhận vào Database D1)');
 });
 
 document.getElementById("admUnlockAllGems")?.addEventListener("click", () => {
@@ -1918,13 +1920,13 @@ document.getElementById("admUnlockAllGems")?.addEventListener("click", () => {
     currentUser.unlocked_gems = all;
     saveUserData();
     renderInventoryGems();
-    alert("⚡ Admin: Đã mở full 990 đá!");
+    toast.info('ADMIN TEST', '⚡ Admin: Đã mở full 990 đá!');
 });
 document.getElementById("admAddAllItems")?.addEventListener("click", () => {
     BLESSINGS_DATA.forEach(b => addItemToInventory(b));
     saveUserData();
     renderInventory5x5();
-    alert("⚡ Admin: Đã thêm đủ 30 Chúc Phúc vào túi!");
+    toast.info('ADMIN TEST', '⚡ Admin: Đã thêm đủ 30 Chúc Phúc vào túi!');
 });
 
 const fastGachaStatus = document.getElementById("admFastGachaStatus");
@@ -1959,7 +1961,7 @@ inputAvatarFile?.addEventListener("change", async (e) => {
 
     // Giới hạn dung lượng tối đa 5MB
     if (file.size > 5 * 1024 * 1024) {
-        alert("Vui lòng chọn ảnh có dung lượng dưới 5MB!");
+        toast.warning('FILE QUÁ LỚN', 'Vui lòng chọn ảnh có dung lượng dưới 5MB!');
         return;
     }
 
@@ -1996,12 +1998,12 @@ inputAvatarFile?.addEventListener("change", async (e) => {
             document.getElementById("profAvatar").src = newAvatarUrl;
             document.getElementById("userAvatarImg").src = newAvatarUrl;
 
-            alert("✦ Cập nhật ảnh đại diện thành công!");
+            toast.success('CẬP NHẬT THÀNH CÔNG', '✦ Cập nhật ảnh đại diện thành công!');
         } else {
-            alert("Lỗi tải ảnh: " + (imgData.error?.message || "Kiểm tra lại ImgBB API Key!"));
+            toast.error('TẢI ẢNH THẤT BẠI', imgData.error?.message || 'Kiểm tra lại ImgBB API Key!');
         }
     } catch (err) {
-        alert("Không thể kết nối đến máy chủ ảnh!");
+        toast.error('LỖI KẾT NỐI', 'Không thể kết nối đến máy chủ ảnh!');
     } finally {
         btnTriggerUpload.textContent = "📷";
         btnTriggerUpload.style.pointerEvents = "auto";
