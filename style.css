@@ -1710,6 +1710,7 @@ i.ico-back-wind {width: 64px; height: 64px;}
 /* --- STYLE 01: CELTIC FANTASY (Đăng ký, Đăng nhập, Tab Inventory) --- */
 .btn-celtic {
     font-family: "Handjet", sans-serif;
+    font-size: large;
     background: linear-gradient(135deg, #12291e 0%, #08140e 100%);
     border: 2px solid #38a169;
     color: #b7e4c7;
@@ -2283,7 +2284,7 @@ body.guest-mode #btnProfileQuick {
 }
 body.guest-mode #btnTopLogin {
     display: block !important;
-}
+    width: 150px; padding: 4%;}
 
 /* 2. Ẩn 4 nút menu ở Dock đáy, tắt nền Dock để không che màn hình */
 body.guest-mode .rpg-dock {
