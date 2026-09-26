@@ -413,7 +413,7 @@ function triggerGachaSummon() {
     if (state !== STATE.IDLE && state !== STATE.CLAIMED) return;
 
     if (currentUser.gacha_counter > 0 && currentUser.tinh_quang_points < 1) {
-        toast.warning('HẾT TINH QUANG', 'Bạn đã hết Điểm Tinh Quang 🔮! Hãy giải mã tri thức hoặc điểm danh để nhận thêm.');
+        toast.warning('HẾT TINH QUANG', 'Tinh Thủ đã hết Điểm Tinh Quang ✨! Hãy Làm Quest ngày để tích thêm Tinh Quang.');
         return;
     }
 
@@ -421,7 +421,7 @@ function triggerGachaSummon() {
     lootText.classList.remove("show");
     collectBanner.classList.add("hidden");
 
-    coreGroup.position.set(0, 0, 0);
+    coreGroup.position.set(0, 0.8, 0);
     coreGroup.scale.setScalar(0.001);
 
     const gem = createProceduralRock();
@@ -1661,14 +1661,18 @@ document.getElementById("btnSubmitFb")?.addEventListener("click", async () => {
     }
 });
 
-// app.js: Nhập mã bạn bè an toàn cho User thường
+// app.js: Xử lý kết nối bạn bè 2 chiều
 document.getElementById("btnSubmitRef")?.addEventListener("click", async () => {
     const input = document.getElementById("inputFriendCode");
     const code = input.value.trim().toUpperCase();
     if (!code.startsWith("AW")) {
-        toast.warning('MÃ KHÔNG HỢP LỆ', 'Mã bạn bè phải bắt đầu bằng AW (Ví dụ: AW8391)!');
+        alert("Vui lòng nhập đúng mã Nhà Phiêu Lưu (bắt đầu bằng AW, ví dụ: AW8391)!");
         return;
     }
+
+    const btn = document.getElementById("btnSubmitRef");
+    btn.disabled = true;
+    btn.textContent = "Đang kết nối...";
 
     try {
         const res = await fetch(`${API_URL}/api/quest/referral`, {
@@ -1677,17 +1681,22 @@ document.getElementById("btnSubmitRef")?.addEventListener("click", async () => {
             body: JSON.stringify({ userId: currentUser.id, friendCode: code })
         });
         const data = await res.json();
+
         if (data.success) {
             currentUser.tinh_quang_points = data.tinh_quang_points;
             saveUserData();
             updateTopBarUI();
-            toast.success('KẾT NỐI THÀNH CÔNG', `🎉 Kết nối thành công với [${code}]! Cả 2 bạn đều nhận được +1 🔮.`);
+
+            alert(`🎉 KẾT NỐI THÀNH CÔNG!\nBạn và [${data.friendName} - ${data.friendCode}] đã kết nối thành công. Cả 2 đều được nhận +1 🔮 Tinh Quang!`);
             input.value = "";
         } else {
-            toast.error('KẾT NỐI THẤT BẠI', data.error || 'Không thể kết nối bạn bè!');
+            alert(data.error || "Không thể kết nối với mã này!");
         }
     } catch (e) {
-        toast.error('LỖI KẾT NỐI', 'Lỗi kết nối máy chủ!');
+        alert("Lỗi kết nối đến máy chủ!");
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "Xác Nhận";
     }
 });
 
