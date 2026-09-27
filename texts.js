@@ -6,7 +6,7 @@
  * CẤU TRÚC KEY PHẢI KHỚP CHÍNH XÁC VỚI data-i18n TRONG index.html
  */
 
-export const TEXTS = {
+const TEXTS = {
     // ======================================================
     // META & DOCUMENT
     // ======================================================

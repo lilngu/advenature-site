@@ -104,22 +104,6 @@ export function applyI18nToElement(el) {
     applyI18n(el);
 }
 
-/**
- * Re-apply khi thay đổi ngôn ngữ (future)
- */
-export function refreshI18n() {
-    applyI18n(document);
-}
-
-// Auto-run khi DOM ready (nếu texts.js đã load)
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        if (window.TEXTS) applyI18n();
-    });
-} else if (window.TEXTS) {
-    applyI18n();
-}
-
 // Export cho global access
 window.applyI18n = applyI18n;
 window.applyI18nToElement = applyI18nToElement;
