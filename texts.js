@@ -20,7 +20,7 @@ const TEXTS = {
     // ======================================================
     welcome: {
         title: "✦ ĐANG KHỞI TẠO CỔNG DỊCH CHUYỂN ... ✦",
-        body: "Chào mừng TINH THỦ đã đặt chân tới RỪNG TINH LINH. </br> Hãy khai mở viên Quang Thạch định mệnh đầu tiên!",
+        body: "Chào mừng đến LINH CẢNH KHỞI NGUYÊN! <br> Điểm tập kết của Nhà Phiêu Lưu <br> trước khi đặt chân vào RỪNG TINH LINH thực cảnh. </br> Khai mở viên Quang Thạch định mệnh đầu tiên",
         tapHint: "✦ Chạm cổ thư để tiếp tục ✦",
     },
 

@@ -137,25 +137,16 @@ function saveUserData() {
 function updateTopBarUI() {
     if (!currentUser) return;
 
-    // Helper gán text an toàn: kiểm tra thẻ có tồn tại mới gán chữ, tránh lỗi null crash
-    const setSafeText = (id, val) => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = val;
-    };
-    const setSafeHtml = (id, val) => {
-        const el = document.getElementById(id);
-        if (el) el.innerHTML = val;
-    };
+    const setSafeText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    const setSafeHtml = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
 
-    // 1. Cập nhật Top Status Bar
+    // 1. Top Status Bar
     setSafeText("valTinhQuang", (currentUser.tinh_quang_points || 0).toLocaleString());
     setSafeText("valTinhThach", (currentUser.tinh_thach_points || 0).toLocaleString());
     setSafeText("valCongHien", (currentUser.cong_hien_points || 0).toLocaleString());
     setSafeText("userAdvenCode", currentUser.adventurer_code || "AW----");
 
-    // 2. Chi phí nút Gacha đáy (đã bỏ)
-
-    // 3. Thông tin Thẻ Căn Cước Nhà Phiêu Lưu
+    // 3. Thẻ Căn Cước
     setSafeText("profName", currentUser.full_name || "Nhà Phiêu Lưu");
     setSafeText("profCode", currentUser.adventurer_code || "AW----");
     setSafeText("profEmail", currentUser.email || "chua_lien_ket@advenature.local");
@@ -164,37 +155,37 @@ function updateTopBarUI() {
     setSafeText("profGender", currentUser.gender || "Nam");
     setSafeText("profBirth", currentUser.birth_year || "----");
 
-    // 4. Phân quyền hiển thị
+    // 4. Phân quyền
     const roleTitles = { admin: "Trưởng Quán (Admin)", manager: "Quản Lý (Manager)", user: "Tân Thủ Rừng Già" };
     setSafeText("profRole", roleTitles[currentUser.role] || (currentUser.role || "Tân Thủ Rừng Già"));
 
-    // 5. Cụm tài nguyên trong Hồ Sơ
+    // 5. Tài nguyên
     setSafeHtml("profStatTQ", `<i class="rpg-ico ico-tq"></i> ${currentUser.tinh_quang_points || 0}`);
     setSafeHtml("profStatTT", `<i class="rpg-ico ico-tt"></i> ${currentUser.tinh_thach_points || 0}`);
     setSafeHtml("profStatCH", `<i class="rpg-ico ico-ch"></i> ${currentUser.cong_hien_points || 0} CP`);
     setSafeText("myRefCodeDisplay", currentUser.adventurer_code || "AW----");
 
-    // 6. Cấp bậc Bang hội
+    // 6. Cấp bậc
     setSafeText("profRankTitle", currentUser.guild_rank_title || "Tập Sự");
     const needPoints = Math.max(0, 100 - (currentUser.cong_hien_points || 0));
     setSafeText("profRankNeed", `${needPoints} Điểm Lên Cấp`);
 
-    // 7. Thanh tiến trình Bang hội
-    const rankBar = document.getElementById("rankProgressBar");
+    // 7. Avatar
+    if (currentUser.avatar_url) {
         const profAv = document.getElementById("profAvatar");
         const topAv = document.getElementById("userAvatarImg");
         if (profAv) profAv.src = currentUser.avatar_url;
         if (topAv) topAv.src = currentUser.avatar_url;
     }
 
-    // 7. Thanh tiến trình Bang hội
+    // 8. Thanh tiến trình Bang hội
     const rankBar = document.getElementById("rankProgressBar");
     if (rankBar) {
         const pct = Math.min(100, Math.floor(((currentUser.cong_hien_points || 0) / 100) * 100));
         rankBar.style.width = pct + "%";
     }
 
-    // 8. Ẩn/hiện nút Đăng Nhập trên Topbar
+    // 9. Nút Đăng Nhập
     const btnTopLogin = document.getElementById("btnTopLogin");
     if (btnTopLogin) {
         if (currentUser.adventurer_code && currentUser.adventurer_code !== "AW----") {
@@ -204,14 +195,13 @@ function updateTopBarUI() {
         }
     }
 
-    // 9. QR Code hồ sơ cá nhân
+    // 10. QR Code
     const profQrContainer = document.getElementById("userProfileQr");
     if (profQrContainer && typeof QRCode !== "undefined") {
         profQrContainer.innerHTML = "";
         new QRCode(profQrContainer, {
             text: `ADVENATURE_USER:${currentUser.adventurer_code || "AW----"}`,
-            width: 100,
-            height: 100
+            width: 100, height: 100
         });
     }
 }

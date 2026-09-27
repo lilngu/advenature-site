@@ -104,6 +104,13 @@ export function applyI18nToElement(el) {
     applyI18n(el);
 }
 
+/**
+ * Re-apply khi thay đổi ngôn ngữ (future)
+ */
+export function refreshI18n() {
+    applyI18n(document);
+}
+
 // Export cho global access
 window.applyI18n = applyI18n;
 window.applyI18nToElement = applyI18nToElement;
