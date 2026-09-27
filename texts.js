@@ -42,7 +42,6 @@ const TEXTS = {
     // TOP STATUS BAR
     // ======================================================
     topbar: {
-        brand: "✦ ADVENATURE",
         currencies: {
             tinhQuang: "Tinh Quang",
             tinhThach: "Quang Thạch",
