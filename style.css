@@ -293,6 +293,7 @@ body, html {
 }
 
 .brand-logo {
+    width: 15%;
     font-size: 13px;
     font-weight: 800;
     letter-spacing: 1.5px;
@@ -301,7 +302,7 @@ body, html {
     cursor: pointer;
     touch-action: manipulation;
 }
-.brand-logo img {width: 20%; position: absolute; top: 0; left:5px;}
+.brand-logo img {height: 130%; position: absolute; top: 0; left:5px;}
 
 .currency-group { display: flex; gap: 6px; }
 
@@ -2633,6 +2634,354 @@ body.guest-mode .dock-btn:not(.center-core) {
     .guide-helper .helper-tooltip { font-size: 10px; padding: 5px 10px; top: -38px; }
 }
 
+/* ======================================================
+   LORE HELPER FAIRY (Cổ thư - Cách top-right Gacha Orb 150px bên phải)
+   ====================================================== */
+.lore-helper {
+    position: fixed;
+    z-index: 40;
+    pointer-events: auto;
+    cursor: pointer;
+    transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-origin: center center;
+}
+
+.lore-helper.hidden {
+    display: none !important;
+}
+
+/* Trạng thái khởi tạo: ẩn ở top-right viewport (xa hơn guide helper) */
+.lore-helper.enter-from-top-right-far {
+    top: 5vh;
+    right: 5vw;
+    opacity: 0;
+    transform: scale(0.5) rotate(-15deg);
+}
+
+/* Trạng thái active: bay đến vị trí cách top-right Gacha Orb 150px bên phải */
+.lore-helper.active {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+}
+
+/* Trạng thái exit */
+.lore-helper.exit-to-right {
+    opacity: 0;
+    transform: translateX(120vw) scale(0.5) rotate(20deg);
+    pointer-events: none;
+}
+
+.lore-helper .helper-fairy-img {
+    width: 90px;
+    height: 90px;
+    filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.9));
+    animation: fairyFloat 2.5s ease-in-out infinite alternate;
+}
+
+.lore-helper .helper-tooltip {
+    position: absolute;
+    top: -42px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    background: linear-gradient(135deg, #2a1a0a 0%, #1a0f05 100%);
+    border: 1.5px solid #d4af37;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-family: "Handjet", sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: #d4af37;
+    text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+    opacity: 0;
+    animation: tooltipPopIn 0.4s 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    pointer-events: none;
+}
+
+.lore-helper .helper-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #d4af37;
+}
+
+/* Sparkle effect vàng kim */
+.lore-helper::before {
+    content: '✦';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 14px;
+    color: #d4af37;
+    animation: sparkleSpin 2s linear infinite;
+    opacity: 0.8;
+    text-shadow: 0 0 8px #d4af37;
+}
+
+/* ======================================================
+   LORE READER MODAL (Cổ thư lật trang 3D)
+   ====================================================== */
+.lore-reader-modal {
+    position: fixed;
+    inset: 0;
+    background: transparent;
+    backdrop-filter: blur(10px);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.lore-reader-modal.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.lore-reader-container {
+    width: 100%;
+    max-width: 500px;
+    height: 95vh;
+    max-height: 95vh;
+    background: linear-gradient(180deg, #1e130c 0%, #0d0806 100%);
+    border-radius: 16px;
+    box-shadow: 
+        0 0 30px rgba(212, 175, 55, 0.3),
+        0 20px 60px rgba(0, 0, 0, 0.9),
+        inset 0 0 20px rgba(212, 175, 55, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: loreReaderPopIn 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes loreReaderPopIn {
+    0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.lore-reader-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: linear-gradient(180deg, #2a1b12 0%, #150d08 100%);
+    border-bottom: 2px solid #d4af37;
+    position: relative;
+}
+
+.lore-reader-header::before { top: 6px; left: 6px; border-top: 2px solid; border-left: 2px solid; }
+.lore-reader-header::after { top: 6px; right: 6px; border-top: 2px solid; border-right: 2px solid; }
+
+.lore-reader-title {
+    font-family: "Uncial Antiqua", "Handjet", cursive;
+    font-size: 18px;
+    color: #f3e5ab;
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+    letter-spacing: 1px;
+}
+
+.lore-reader-page-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #120a06;
+    border: 1px solid #d4af37;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-family: "Cinzel", serif;
+    font-size: 12px;
+    color: #d4af37;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.lore-reader-page-indicator i {
+    color: #d4af37;
+    font-size: 14px;
+}
+
+.lore-reader-close {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #3d2719 0%, #1c110a 100%);
+    border: 2px solid #d4af37;
+    color: #d4af37;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.2);
+}
+
+.lore-reader-close:hover {
+    border-color: #fff2a8;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.5), inset 0 0 5px rgba(212, 175, 55, 0.3);
+    transform: scale(1.1);
+}
+
+.lore-reader-viewport {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    background: #0a0604;
+    min-height: 0; /* Allow shrinking below 300px */
+}
+
+.lore-book-stage {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    perspective: 1600px;
+}
+
+.lore-comic-page {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    transform-origin: left center;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.6s ease;
+    user-select: none;
+    cursor: grab;
+    background-color: #111;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+}
+
+.lore-comic-page:active { cursor: grabbing; }
+
+.lore-page-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #0f0a07;
+    padding: 8px; /* Padding to ensure image doesn't touch edges */
+    box-sizing: border-box;
+}
+
+.lore-page-back {
+    transform: rotateY(180deg);
+    background: #18100b;
+}
+
+.lore-comic-img {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    border-radius: 4px;
+}
+
+.lore-page-shadow {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    background: linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.4) 100%);
+    z-index: 10;
+}
+
+.lore-spine-shadow {
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 30px;
+    background: linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0));
+    z-index: 11;
+    pointer-events: none;
+}
+
+.lore-reader-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: linear-gradient(180deg, #2a1b12 0%, #150d08 100%);
+    border-top: 2px solid #d4af37;
+    position: relative;
+}
+
+
+.lore-reader-footer::before { bottom: 6px; left: 6px; border-bottom: 2px solid; border-left: 2px solid; }
+.lore-reader-footer::after { bottom: 6px; right: 6px; border-bottom: 2px solid; border-right: 2px solid; }
+
+.lore-reader-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(180deg, #3d2719 0%, #1c110a 100%);
+    border: 2px solid #d4af37;
+    color: #d4af37;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-family: "Cinzel", serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.2);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+}
+
+.lore-reader-btn:hover:not(:disabled) {
+    border-color: #fff2a8;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.5), inset 0 0 5px rgba(212, 175, 55, 0.3);
+    transform: translateY(-2px);
+}
+
+.lore-reader-btn:active:not(:disabled) { transform: translateY(1px); }
+.lore-reader-btn:disabled { opacity: 0.4; filter: grayscale(0.8); cursor: not-allowed; border-color: #554333; }
+
+.lore-reader-emblem {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background: #25160d;
+    border: 2px solid #d4af37;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(212,175,55,0.1);
+}
+
+.lore-reader-emblem .rune-text {
+    font-family: "Uncial Antiqua", cursive;
+    font-size: 20px;
+    color: #d4af37;
+    animation: runeGlow 3s infinite ease-in-out;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .lore-helper .helper-fairy-img { width: 70px; height: 70px; }
+    .lore-helper .helper-tooltip { font-size: 10px; padding: 5px 10px; top: -38px; }
+    
+    .lore-reader-container { max-width: 95vw; height: 95vh; max-height: 95vh; }
+    .lore-reader-title { font-size: 15px; }
+    .lore-reader-btn { padding: 8px 12px; font-size: 11px; }
+}
+
 /* BANNER LỊCH PHIÊU LƯU */
 .adventure-schedule-banner {
     background: linear-gradient(135deg, rgba(20, 35, 60, 0.85), rgba(10, 15, 30, 0.95));
@@ -2849,4 +3198,288 @@ body.guest-mode .dock-btn:not(.center-core) {
     .toast {
         min-width: auto;
     }
+}
+
+/* ======================================================
+   GUIDE READER MODAL (Hướng dẫn Tinh Thủ - 2 trang lật)
+   ====================================================== */
+.guide-reader-modal {
+    position: fixed;
+    inset: 0;
+    background: transparent;
+    backdrop-filter: blur(10px);
+    z-index: 55;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.guide-reader-modal.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.guide-reader-container {
+    width: 100%;
+    max-width: 500px;
+    height: 95vh;
+    max-height: 95vh;
+    background: linear-gradient(180deg, #0c1a2e 0%, #060d16 100%);
+    border-radius: 16px;
+    box-shadow: 
+        0 0 30px rgba(76, 201, 240, 0.3),
+        0 20px 60px rgba(0, 0, 0, 0.9),
+        inset 0 0 20px rgba(76, 201, 240, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: guideReaderPopIn 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes guideReaderPopIn {
+    0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.guide-reader-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: linear-gradient(180deg, #122035 0%, #08101a 100%);
+    border-bottom: 2px solid #4cc9f0;
+    position: relative;
+}
+
+.guide-reader-header::before { 
+    content: '';
+    position: absolute;
+    top: 6px; left: 6px; 
+    width: 20px; height: 20px;
+    border-top: 2px solid #4cc9f0; 
+    border-left: 2px solid #4cc9f0; 
+}
+.guide-reader-header::after { 
+    content: '';
+    position: absolute;
+    top: 6px; right: 6px; 
+    width: 20px; height: 20px;
+    border-top: 2px solid #4cc9f0; 
+    border-right: 2px solid #4cc9f0; 
+}
+
+.guide-reader-title {
+    font-family: "Uncial Antiqua", "Handjet", cursive;
+    font-size: 18px;
+    color: #a8e6ff;
+    text-shadow: 0 0 10px rgba(76, 201, 240, 0.5);
+    letter-spacing: 1px;
+}
+
+.guide-reader-page-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #0a1522;
+    border: 1px solid #4cc9f0;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-family: "Cinzel", serif;
+    font-size: 12px;
+    color: #4cc9f0;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.guide-reader-page-indicator i {
+    color: #4cc9f0;
+    font-size: 14px;
+}
+
+.guide-reader-close {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #192e3f 0%, #0a151e 100%);
+    border: 2px solid #4cc9f0;
+    color: #4cc9f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.2);
+}
+
+.guide-reader-close:hover {
+    border-color: #a8e6ff;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(76, 201, 240, 0.5), inset 0 0 5px rgba(76, 201, 240, 0.3);
+    transform: scale(1.1);
+}
+
+.guide-reader-viewport {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    background: #050c14;
+    min-height: 0; /* Allow shrinking below 300px */
+}
+
+.guide-book-stage {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    perspective: 1600px;
+}
+
+.guide-comic-page {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    transform-origin: left center;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.6s ease;
+    user-select: none;
+    cursor: grab;
+    background-color: #0a1522;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+}
+
+.guide-comic-page:active { cursor: grabbing; }
+
+.guide-page-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #0a1522;
+    padding: 8px; /* Padding to ensure image doesn't touch edges */
+    box-sizing: border-box;
+}
+
+.guide-page-back {
+    transform: rotateY(180deg);
+    background: #0d1f33;
+}
+
+.guide-comic-img {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    border-radius: 4px;
+}
+
+.guide-page-shadow {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    background: linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.4) 100%);
+    z-index: 10;
+}
+
+.guide-spine-shadow {
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 30px;
+    background: linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0));
+    z-index: 11;
+    pointer-events: none;
+}
+
+.guide-reader-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: linear-gradient(180deg, #122035 0%, #08101a 100%);
+    border-top: 2px solid #4cc9f0;
+    position: relative;
+}
+
+.guide-reader-footer::before { 
+    content: '';
+    position: absolute;
+    bottom: 6px; left: 6px; 
+    width: 20px; height: 20px;
+    border-bottom: 2px solid #4cc9f0; 
+    border-left: 2px solid #4cc9f0; 
+}
+.guide-reader-footer::after { 
+    content: '';
+    position: absolute;
+    bottom: 6px; right: 6px; 
+    width: 20px; height: 20px;
+    border-bottom: 2px solid #4cc9f0; 
+    border-right: 2px solid #4cc9f0; 
+}
+
+.guide-reader-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(180deg, #192e3f 0%, #0a151e 100%);
+    border: 2px solid #4cc9f0;
+    color: #4cc9f0;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-family: "Cinzel", serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.2);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+}
+
+.guide-reader-btn:hover:not(:disabled) {
+    border-color: #a8e6ff;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(76, 201, 240, 0.5), inset 0 0 5px rgba(76, 201, 240, 0.3);
+    transform: translateY(-2px);
+}
+
+.guide-reader-btn:active:not(:disabled) { transform: translateY(1px); }
+.guide-reader-btn:disabled { opacity: 0.4; filter: grayscale(0.8); cursor: not-allowed; border-color: #335566; }
+
+.guide-reader-emblem {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background: #0a1522;
+    border: 2px solid #4cc9f0;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(76,201,240,0.1);
+}
+
+.guide-reader-emblem .rune-text {
+    font-family: "Uncial Antiqua", cursive;
+    font-size: 20px;
+    color: #4cc9f0;
+    animation: runeGlow 3s infinite ease-in-out;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .guide-reader-container { max-width: 95vw; height: 95vh; max-height: 95vh; }
+    .guide-reader-title { font-size: 15px; }
+    .guide-reader-btn { padding: 8px 12px; font-size: 11px; }
 }

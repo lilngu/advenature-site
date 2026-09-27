@@ -12,7 +12,9 @@ import {
     SHAPE_STYLES, 
     BLESSINGS_DATA, 
     SHOP_ITEMS, 
-    QUIZ_LIST 
+    QUIZ_LIST,
+    LORE_PAGES_DATA,
+    GUIDE_PAGES_DATA 
 } from './data.js';
 // TOAST NOTIFICATION SYSTEM
 import { toast } from './toast.js';
@@ -59,16 +61,22 @@ const isFirstTimeGuest = !currentUser || !currentUser.adventurer_code || current
 const scrollBanner = document.getElementById("welcomeScrollBanner");
 const guestHelper = document.getElementById("guestHelper");
 const guideHelper = document.getElementById("guideHelper");
-const guideHelperBanner = document.getElementById("guideHelperBanner");
+const guideReaderModal = document.getElementById("guideReaderModal");
+const loreHelper = document.getElementById("loreHelper");
+const loreReaderModal = document.getElementById("loreReaderModal");
 const dockGachaTrigger = document.getElementById("dockGachaTrigger");
 let guestHelperShown = false;
 let guideHelperShown = false;
+let guideReaderOpen = false;
+let loreHelperShown = false;
 
 if (isFirstTimeGuest) {
     // Bật chế độ khách: Ẩn menu đáy, đưa nút Gacha ra giữa màn hình
     document.body.classList.add("guest-mode");
     if (guideHelper) guideHelper.classList.add("hidden");
-    if (guideHelperBanner) guideHelperBanner.classList.add("hidden");
+    if (guideReaderModal) guideReaderModal.classList.add("hidden");
+    if (loreHelper) loreHelper.classList.add("hidden");
+    if (loreReaderModal) loreReaderModal.classList.add("hidden");
 
     // Bắt sự kiện click vào Cuộn giấy cổ: trượt xuống dưới rồi biến mất
     if (scrollBanner) {
@@ -87,6 +95,8 @@ if (isFirstTimeGuest) {
     if (guestHelper) guestHelper.classList.add("hidden");
     // Khởi tạo Guide Helper cho user đã login
     initGuideHelper();
+    // Khởi tạo Lore Helper cho user đã login
+    initLoreHelper();
 }
 
 // ======================================================
@@ -210,7 +220,7 @@ function getGuideHelperTargetPosition() {
 }
 
 function initGuideHelper() {
-    if (!guideHelper || !guideHelperBanner || document.body.classList.contains('guest-mode')) return;
+    if (!guideHelper || !guideReaderModal || document.body.classList.contains('guest-mode')) return;
     
     // Hiện guide helper sau 2s khi ở gacha-view
     const checkAndShowGuideHelper = () => {
@@ -235,21 +245,35 @@ function initGuideHelper() {
         });
     });
     
-    // Click guide helper -> hiện banner hình ảnh
+    // Click guide helper -> mở guide reader modal
     guideHelper.addEventListener("click", () => {
-        if (guideHelperBanner) {
-            guideHelperBanner.classList.remove("hidden");
-            guideHelperBanner.classList.add("show");
+        openGuideReaderModal();
+    });
+    
+    // Close guide reader modal
+    const closeGuideReader = document.getElementById("closeGuideReader");
+    closeGuideReader?.addEventListener("click", () => {
+        closeGuideReaderModal();
+    });
+    
+    // Click outside modal để đóng
+    guideReaderModal.addEventListener("click", (e) => {
+        if (e.target === guideReaderModal) {
+            closeGuideReaderModal();
         }
     });
     
-    // Click banner hình ảnh -> ẩn banner
-    guideHelperBanner.addEventListener("click", () => {
-        guideHelperBanner.classList.remove("show");
-        setTimeout(() => {
-            guideHelperBanner.classList.add("hidden");
-        }, 300);
-    });
+    // Guide reader navigation buttons
+    const guideBtnPrev = document.getElementById("guideBtnPrev");
+    const guideBtnNext = document.getElementById("guideBtnNext");
+    guideBtnPrev?.addEventListener("click", () => guidePrevPage());
+    guideBtnNext?.addEventListener("click", () => guideNextPage());
+    
+    // Keyboard navigation
+    document.addEventListener("keydown", handleGuideReaderKeydown);
+    
+    // Touch/drag support for page flip
+    initGuideReaderDrag();
 }
 
 function showGuideHelper() {
@@ -272,6 +296,563 @@ function showGuideHelper() {
         guideHelper.style.top = pos.top;
         guideHelper.style.left = pos.left;
     });
+}
+
+// ======================================================
+// LORE HELPER FAIRY LOGIC (Cổ thư lật trang - Cho user đã login)
+// ======================================================
+function getLoreHelperTargetPosition() {
+    const gachaBtn = dockGachaTrigger;
+    if (!gachaBtn) return { top: '20vh', right: '10vw' };
+    
+    const orbRect = gachaBtn.querySelector('.gold-ring')?.getBoundingClientRect() || gachaBtn.getBoundingClientRect();
+    
+    // Vị trí cách top-right Gacha Orb 150px bên phải
+    return {
+        top: (orbRect.top - 20) + 'px',
+        right: (window.innerWidth - orbRect.right + -150) + 'px'
+    };
+}
+
+function initLoreHelper() {
+    if (!loreHelper || !loreReaderModal || document.body.classList.contains('guest-mode')) return;
+    
+    // Hiện lore helper sau 5s khi ở gacha-view
+    const checkAndShowLoreHelper = () => {
+        const gachaView = document.getElementById("gacha-view");
+        if (gachaView && gachaView.classList.contains("active") && !gachaView.classList.contains("hidden")) {
+            if (!loreHelperShown) {
+                setTimeout(showLoreHelper, 5000);
+            }
+        }
+    };
+    
+    // Kiểm tra ngay lập tức
+    checkAndShowLoreHelper();
+    
+    // Theo dõi khi chuyển view về gacha-view
+    const navButtons = document.querySelectorAll(".nav-btn");
+    navButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            if (btn.dataset.target === "gacha-view") {
+                setTimeout(checkAndShowLoreHelper, 100);
+            }
+        });
+    });
+    
+    // Click lore helper -> mở lore reader modal
+    loreHelper.addEventListener("click", () => {
+        openLoreReaderModal();
+    });
+    
+    // Close lore reader modal
+    const closeLoreReader = document.getElementById("closeLoreReader");
+    closeLoreReader?.addEventListener("click", () => {
+        closeLoreReaderModal();
+    });
+    
+    // Click outside modal để đóng
+    loreReaderModal.addEventListener("click", (e) => {
+        if (e.target === loreReaderModal) {
+            closeLoreReaderModal();
+        }
+    });
+    
+    // Lore reader navigation buttons
+    const loreBtnPrev = document.getElementById("loreBtnPrev");
+    const loreBtnNext = document.getElementById("loreBtnNext");
+    loreBtnPrev?.addEventListener("click", () => lorePrevPage());
+    loreBtnNext?.addEventListener("click", () => loreNextPage());
+    
+    // Keyboard navigation
+    document.addEventListener("keydown", handleLoreReaderKeydown);
+    
+    // Touch/drag support for page flip
+    initLoreReaderDrag();
+}
+
+function showLoreHelper() {
+    if (loreHelperShown || document.body.classList.contains('guest-mode') || !loreHelper) return;
+    loreHelperShown = true;
+    
+    const pos = getLoreHelperTargetPosition();
+    
+    // Reset classes
+    loreHelper.classList.remove('hidden', 'exit-to-right');
+    loreHelper.classList.add('enter-from-top-right-far');
+    
+    // Force reflow
+    loreHelper.offsetHeight;
+    
+    // Bắt đầu animation vào
+    requestAnimationFrame(() => {
+        loreHelper.classList.remove('enter-from-top-right-far');
+        loreHelper.classList.add('active');
+        loreHelper.style.top = pos.top;
+        loreHelper.style.right = pos.right;
+    });
+}
+
+// ======================================================
+// LORE READER MODAL LOGIC (Cổ thư lật trang 3D)
+// ======================================================
+// Dùng LORE_PAGES_DATA từ data.js
+const lorePagesData = LORE_PAGES_DATA;
+
+let loreCurrentPageIndex = 0;
+let loreIsDragging = false;
+let loreStartX = 0;
+let loreCurrentDeltaX = 0;
+let loreActivePageElement = null;
+let loreReaderOpen = false;
+
+function openLoreReaderModal() {
+    if (!loreReaderModal) return;
+    loreReaderModal.classList.remove("hidden");
+    loreReaderOpen = true;
+    
+    // Reset to first page
+    loreCurrentPageIndex = 0;
+    
+    // Initialize pages
+    renderLorePages();
+    
+    // Force reflow then show
+    loreReaderModal.offsetHeight;
+    requestAnimationFrame(() => {
+        loreReaderModal.classList.add("show");
+    });
+    
+    // Disable body scroll
+    document.body.style.overflow = "hidden";
+}
+
+function closeLoreReaderModal() {
+    if (!loreReaderModal) return;
+    loreReaderModal.classList.remove("show");
+    loreReaderOpen = false;
+    
+    setTimeout(() => {
+        loreReaderModal.classList.add("hidden");
+        // Re-enable body scroll
+        document.body.style.overflow = "";
+    }, 400);
+}
+
+function renderLorePages() {
+    const bookStage = document.getElementById("loreBookStage");
+    if (!bookStage) return;
+    
+    bookStage.innerHTML = '';
+    
+    // Render sheets in reverse order so Page 1 is on top (highest z-index)
+    lorePagesData.forEach((page, index) => {
+        const pageEl = document.createElement('div');
+        pageEl.className = 'lore-comic-page';
+        pageEl.dataset.index = index;
+        pageEl.style.zIndex = lorePagesData.length - index;
+
+        // Front & Back faces
+        pageEl.innerHTML = `
+            <div class="lore-page-face lore-page-front">
+                <img src="${page.url}" alt="${page.title}" class="lore-comic-img" crossorigin="anonymous" onerror="this.src='https://placehold.co/600x900/2a1b12/d4af37?text=Lỗi+tải+ảnh'"/>
+                <div class="lore-page-shadow"></div>
+            </div>
+            <div class="lore-page-face lore-page-back">
+                <div class="w-full h-full flex items-center justify-center bg-[#150d08] border-r-4 border-amber-800/40 p-6 text-center">
+                    <div class="border border-amber-600/30 p-4 rounded-lg bg-[#1e130c]/80">
+                        <i class="fa-solid fa-scroll text-3xl text-amber-500 mb-2"></i>
+                        <p class="font-uncial text-amber-200 text-sm">Trang ${index + 1}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        bookStage.appendChild(pageEl);
+    });
+    
+    // Add spine shadow
+    const spineShadow = document.createElement('div');
+    spineShadow.className = 'lore-spine-shadow';
+    bookStage.appendChild(spineShadow);
+    
+    updateLoreReaderUI();
+}
+
+function updateLoreReaderUI() {
+    const pageIndicator = document.getElementById("lorePageIndicator");
+    const btnPrev = document.getElementById("loreBtnPrev");
+    const btnNext = document.getElementById("loreBtnNext");
+    
+    if (pageIndicator) {
+        pageIndicator.innerText = `${loreCurrentPageIndex + 1} / ${lorePagesData.length}`;
+    }
+    
+    if (btnPrev) btnPrev.disabled = loreCurrentPageIndex === 0;
+    if (btnNext) btnNext.disabled = loreCurrentPageIndex === lorePagesData.length - 1;
+    
+    // Update 3D transforms for each page sheet based on current active index
+    const pages = document.querySelectorAll('#loreBookStage .lore-comic-page');
+    pages.forEach((page, index) => {
+        page.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
+        if (index < loreCurrentPageIndex) {
+            page.style.transform = 'rotateY(-180deg)';
+        } else {
+            page.style.transform = 'rotateY(0deg)';
+        }
+    });
+}
+
+function loreNextPage() {
+    if (loreCurrentPageIndex < lorePagesData.length - 1) {
+        loreCurrentPageIndex++;
+        updateLoreReaderUI();
+    }
+}
+
+function lorePrevPage() {
+    if (loreCurrentPageIndex > 0) {
+        loreCurrentPageIndex--;
+        updateLoreReaderUI();
+    }
+}
+
+function handleLoreReaderKeydown(e) {
+    if (!loreReaderOpen) return;
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+        loreNextPage();
+    } else if (e.key === 'ArrowLeft') {
+        lorePrevPage();
+    } else if (e.key === 'Escape') {
+        closeLoreReaderModal();
+    }
+}
+
+// Touch/drag support for page flip
+function initLoreReaderDrag() {
+    const bookStage = document.getElementById("loreBookStage");
+    if (!bookStage) return;
+    
+    bookStage.addEventListener('mousedown', (e) => {
+        if (!loreReaderOpen) return;
+        e.preventDefault();
+        handleLoreDragStart(e.clientX);
+    });
+    
+    window.addEventListener('mousemove', (e) => {
+        handleLoreDragMove(e.clientX);
+    });
+    
+    window.addEventListener('mouseup', () => {
+        handleLoreDragEnd();
+    });
+    
+    // Touch Events for Mobile
+    bookStage.addEventListener('touchstart', (e) => {
+        if (!loreReaderOpen || e.touches.length !== 1) return;
+        handleLoreDragStart(e.touches[0].clientX);
+    }, { passive: true });
+    
+    bookStage.addEventListener('touchmove', (e) => {
+        if (!loreReaderOpen || e.touches.length !== 1) return;
+        handleLoreDragMove(e.touches[0].clientX);
+    }, { passive: true });
+    
+    bookStage.addEventListener('touchend', () => {
+        handleLoreDragEnd();
+    });
+}
+
+function handleLoreDragStart(x) {
+    if (!loreReaderOpen) return;
+    loreIsDragging = true;
+    loreStartX = x;
+    loreCurrentDeltaX = 0;
+    
+    const pages = document.querySelectorAll('#loreBookStage .lore-comic-page');
+    loreActivePageElement = pages[loreCurrentPageIndex];
+    
+    if (loreActivePageElement) {
+        loreActivePageElement.style.transition = 'none';
+    }
+}
+
+function handleLoreDragMove(x) {
+    if (!loreIsDragging || !loreReaderOpen) return;
+    loreCurrentDeltaX = x - loreStartX;
+    
+    const containerWidth = document.querySelector('#loreBookStage')?.clientWidth || 300;
+    let percentage = loreCurrentDeltaX / containerWidth;
+    
+    if (percentage < -1) percentage = -1;
+    if (percentage > 1) percentage = 1;
+    
+    if (loreCurrentDeltaX < 0 && loreCurrentPageIndex < lorePagesData.length - 1) {
+        // Dragging Left -> Flip Next Page
+        const angle = percentage * 180;
+        if (loreActivePageElement) {
+            loreActivePageElement.style.transform = `rotateY(${angle}deg)`;
+        }
+    } else if (loreCurrentDeltaX > 0 && loreCurrentPageIndex > 0) {
+        // Dragging Right -> Flip Back Previous Page
+        const pages = document.querySelectorAll('#loreBookStage .lore-comic-page');
+        const prevPageEl = pages[loreCurrentPageIndex - 1];
+        if (prevPageEl) {
+            prevPageEl.style.transition = 'none';
+            const angle = -180 + (percentage * 180);
+            prevPageEl.style.transform = `rotateY(${angle}deg)`;
+        }
+    }
+}
+
+function handleLoreDragEnd() {
+    if (!loreIsDragging || !loreReaderOpen) return;
+    loreIsDragging = false;
+    
+    const threshold = 60;
+    
+    if (loreCurrentDeltaX < -threshold && loreCurrentPageIndex < lorePagesData.length - 1) {
+        loreNextPage();
+    } else if (loreCurrentDeltaX > threshold && loreCurrentPageIndex > 0) {
+        lorePrevPage();
+    } else {
+        // Snap back to original position
+        updateLoreReaderUI();
+    }
+    
+    loreCurrentDeltaX = 0;
+    loreActivePageElement = null;
+}
+
+// ======================================================
+// GUIDE READER MODAL LOGIC (Hướng dẫn Tinh Thủ - 2 trang lật)
+// ======================================================
+// Dùng GUIDE_PAGES_DATA từ data.js
+const guidePagesData = GUIDE_PAGES_DATA;
+
+let guideCurrentPageIndex = 0;
+let guideIsDragging = false;
+let guideStartX = 0;
+let guideCurrentDeltaX = 0;
+let guideActivePageElement = null;
+// guideReaderOpen already declared at line 70
+
+function openGuideReaderModal() {
+    if (!guideReaderModal) return;
+    guideReaderModal.classList.remove("hidden");
+    guideReaderOpen = true;
+    
+    // Reset to first page
+    guideCurrentPageIndex = 0;
+    
+    // Initialize pages
+    renderGuidePages();
+    
+    // Force reflow then show
+    guideReaderModal.offsetHeight;
+    requestAnimationFrame(() => {
+        guideReaderModal.classList.add("show");
+    });
+    
+    // Disable body scroll
+    document.body.style.overflow = "hidden";
+}
+
+function closeGuideReaderModal() {
+    if (!guideReaderModal) return;
+    guideReaderModal.classList.remove("show");
+    guideReaderOpen = false;
+    
+    setTimeout(() => {
+        guideReaderModal.classList.add("hidden");
+        // Re-enable body scroll
+        document.body.style.overflow = "";
+    }, 400);
+}
+
+function renderGuidePages() {
+    const bookStage = document.getElementById("guideBookStage");
+    if (!bookStage) return;
+    
+    bookStage.innerHTML = '';
+    
+    // Render sheets in reverse order so Page 1 is on top (highest z-index)
+    guidePagesData.forEach((page, index) => {
+        const pageEl = document.createElement('div');
+        pageEl.className = 'lore-comic-page'; // Reuse same CSS classes
+        pageEl.dataset.index = index;
+        pageEl.style.zIndex = guidePagesData.length - index;
+
+        // Front & Back faces
+        pageEl.innerHTML = `
+            <div class="lore-page-face lore-page-front">
+                <img src="${page.url}" alt="${page.title}" class="lore-comic-img" crossorigin="anonymous" onerror="this.src='https://placehold.co/600x900/2a1b12/d4af37?text=Lỗi+tải+ảnh'"/>
+                <div class="lore-page-shadow"></div>
+            </div>
+            <div class="lore-page-face lore-page-back">
+                <div class="w-full h-full flex items-center justify-center bg-[#150d08] border-r-4 border-amber-800/40 p-6 text-center">
+                    <div class="border border-amber-600/30 p-4 rounded-lg bg-[#1e130c]/80">
+                        <i class="fa-solid fa-scroll text-3xl text-amber-500 mb-2"></i>
+                        <p class="font-uncial text-amber-200 text-sm">Trang ${index + 1}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        bookStage.appendChild(pageEl);
+    });
+    
+    // Add spine shadow
+    const spineShadow = document.createElement('div');
+    spineShadow.className = 'lore-spine-shadow';
+    bookStage.appendChild(spineShadow);
+    
+    updateGuideReaderUI();
+}
+
+function updateGuideReaderUI() {
+    const pageIndicator = document.getElementById("guidePageIndicator");
+    const btnPrev = document.getElementById("guideBtnPrev");
+    const btnNext = document.getElementById("guideBtnNext");
+    
+    if (pageIndicator) {
+        pageIndicator.innerText = `TRANG ${guideCurrentPageIndex + 1} / ${guidePagesData.length}`;
+    }
+    
+    if (btnPrev) btnPrev.disabled = guideCurrentPageIndex === 0;
+    if (btnNext) btnNext.disabled = guideCurrentPageIndex === guidePagesData.length - 1;
+    
+    // Update 3D transforms for each page sheet based on current active index
+    const pages = document.querySelectorAll('#guideBookStage .lore-comic-page');
+    pages.forEach((page, index) => {
+        page.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
+        if (index < guideCurrentPageIndex) {
+            page.style.transform = 'rotateY(-180deg)';
+        } else {
+            page.style.transform = 'rotateY(0deg)';
+        }
+    });
+}
+
+function guideNextPage() {
+    if (guideCurrentPageIndex < guidePagesData.length - 1) {
+        guideCurrentPageIndex++;
+        updateGuideReaderUI();
+    }
+}
+
+function guidePrevPage() {
+    if (guideCurrentPageIndex > 0) {
+        guideCurrentPageIndex--;
+        updateGuideReaderUI();
+    }
+}
+
+function handleGuideReaderKeydown(e) {
+    if (!guideReaderOpen) return;
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+        guideNextPage();
+    } else if (e.key === 'ArrowLeft') {
+        guidePrevPage();
+    } else if (e.key === 'Escape') {
+        closeGuideReaderModal();
+    }
+}
+
+// Touch/drag support for page flip
+function initGuideReaderDrag() {
+    const bookStage = document.getElementById("guideBookStage");
+    if (!bookStage) return;
+    
+    bookStage.addEventListener('mousedown', (e) => {
+        if (!guideReaderOpen) return;
+        e.preventDefault();
+        handleGuideDragStart(e.clientX);
+    });
+    
+    window.addEventListener('mousemove', (e) => {
+        handleGuideDragMove(e.clientX);
+    });
+    
+    window.addEventListener('mouseup', () => {
+        handleGuideDragEnd();
+    });
+    
+    // Touch Events for Mobile
+    bookStage.addEventListener('touchstart', (e) => {
+        if (!guideReaderOpen || e.touches.length !== 1) return;
+        handleGuideDragStart(e.touches[0].clientX);
+    }, { passive: true });
+    
+    bookStage.addEventListener('touchmove', (e) => {
+        if (!guideReaderOpen || e.touches.length !== 1) return;
+        handleGuideDragMove(e.touches[0].clientX);
+    }, { passive: true });
+    
+    bookStage.addEventListener('touchend', () => {
+        handleGuideDragEnd();
+    });
+}
+
+function handleGuideDragStart(x) {
+    if (!guideReaderOpen) return;
+    guideIsDragging = true;
+    guideStartX = x;
+    guideCurrentDeltaX = 0;
+    
+    const pages = document.querySelectorAll('#guideBookStage .lore-comic-page');
+    guideActivePageElement = pages[guideCurrentPageIndex];
+    
+    if (guideActivePageElement) {
+        guideActivePageElement.style.transition = 'none';
+    }
+}
+
+function handleGuideDragMove(x) {
+    if (!guideIsDragging || !guideReaderOpen) return;
+    guideCurrentDeltaX = x - guideStartX;
+    
+    const containerWidth = document.querySelector('#guideBookStage')?.clientWidth || 300;
+    let percentage = guideCurrentDeltaX / containerWidth;
+    
+    if (percentage < -1) percentage = -1;
+    if (percentage > 1) percentage = 1;
+    
+    if (guideCurrentDeltaX < 0 && guideCurrentPageIndex < guidePagesData.length - 1) {
+        // Dragging Left -> Flip Next Page
+        const angle = percentage * 180;
+        if (guideActivePageElement) {
+            guideActivePageElement.style.transform = `rotateY(${angle}deg)`;
+        }
+    } else if (guideCurrentDeltaX > 0 && guideCurrentPageIndex > 0) {
+        // Dragging Right -> Flip Back Previous Page
+        const pages = document.querySelectorAll('#guideBookStage .lore-comic-page');
+        const prevPageEl = pages[guideCurrentPageIndex - 1];
+        if (prevPageEl) {
+            prevPageEl.style.transition = 'none';
+            const angle = -180 + (percentage * 180);
+            prevPageEl.style.transform = `rotateY(${angle}deg)`;
+        }
+    }
+}
+
+function handleGuideDragEnd() {
+    if (!guideIsDragging || !guideReaderOpen) return;
+    guideIsDragging = false;
+    
+    const threshold = 60;
+    
+    if (guideCurrentDeltaX < -threshold && guideCurrentPageIndex < guidePagesData.length - 1) {
+        guideNextPage();
+    } else if (guideCurrentDeltaX > threshold && guideCurrentPageIndex > 0) {
+        guidePrevPage();
+    } else {
+        // Snap back to original position
+        updateGuideReaderUI();
+    }
+    
+    guideCurrentDeltaX = 0;
+    guideActivePageElement = null;
 }
 
 // ======================================================
@@ -1185,6 +1766,14 @@ window.addEventListener("resize", () => {
         const pos = getGuideHelperTargetPosition();
         guideHelper.style.top = pos.top;
         guideHelper.style.left = pos.left;
+    }
+
+    // Cập nhật vị trí lore helper nếu đang active
+    if (loreHelperShown && loreHelper && !loreHelper.classList.contains('hidden') && 
+        loreHelper.classList.contains('active')) {
+        const pos = getLoreHelperTargetPosition();
+        loreHelper.style.top = pos.top;
+        loreHelper.style.right = pos.right;
     }
 });
 

@@ -6,6 +6,15 @@
 	<meta name="referrer" content="no-referrer">
     <title data-i18n="meta.title">Advenature - Loot Box Tinh Quang</title>
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Google Fonts for Celtic/Fantasy Theme (Lore Reader Modal) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Uncial+Antiqua&family=Handjet:wght@300;400;500;600;700;800&family=Spectral+SC:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Celtic/Fantasy Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <!-- QRCode JS (Xác thực Offline) -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -126,11 +135,70 @@
                 <div class="helper-tooltip" data-i18n="guideHelper.tooltip"></div>
             </div>
 
-            <!-- GUIDE HELPER IMAGE BANNER (Hiện khi click guideHelper) -->
-            <div id="guideHelperBanner" class="guide-helper-banner hidden">
-                <div class="guide-banner-content">
-                    <img src="https://i.postimg.cc/MHxxk9cX/2026-09-27-20-37-28.png" 
-                         alt="Hướng dẫn Tinh Thủ" class="guide-banner-img">
+            <!-- GUIDE READER MODAL (Hướng dẫn Tinh Thủ - 2 trang lật) -->
+            <div id="guideReaderModal" class="guide-reader-modal hidden">
+                <div class="guide-reader-container">
+                    <div class="guide-reader-header">
+                        <div class="guide-reader-title" data-i18n="guideReader.title"></div>
+                        <div class="guide-reader-page-indicator">
+                            <i class="fa-solid fa-scroll"></i>
+                            <span id="guidePageIndicator">TRANG 1 / 2</span>
+                        </div>
+                        <button id="closeGuideReader" class="guide-reader-close" data-i18n-title="common.close">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    
+                    <div id="guideReaderViewport" class="guide-reader-viewport">
+                        <div class="guide-book-stage" id="guideBookStage"></div>
+                    </div>
+                    
+                    <div class="guide-reader-footer">
+                        <button id="guideBtnPrev" class="guide-reader-btn" data-i18n="guideReader.prevBtn">
+                            <i class="fa-solid fa-chevron-left"></i> TRƯỚC
+                        </button>
+                        <div class="guide-reader-emblem">
+                            <span class="rune-text">᚛ᚔ᚜</span>
+                        </div>
+                        <button id="guideBtnNext" class="guide-reader-btn" data-i18n="guideReader.nextBtn">
+                            TIẾP <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LORE HELPER FAIRY (Cho user đã login - non guest mode) - Vị trí cách top-right Gacha Orb 150px bên phải -->
+            <div id="loreHelper" class="lore-helper hidden">
+                <img src="https://img.pikbest.com/png-images/20251016/whimsical-fairy-with-wings-magic-and-fantasy-art_11947079.jpg!sw800" 
+                     alt="Tinh Linh Cổ Thư" class="helper-fairy-img">
+                   </div>
+
+            <!-- LORE READER MODAL (Cổ thư lật trang) -->
+            <div id="loreReaderModal" class="lore-reader-modal hidden">
+                <div class="lore-reader-container">
+                    <div class="lore-reader-header">
+                        <div class="lore-reader-title" data-i18n="loreReader.title"></div>
+                        <div class="lore-reader-page-indicator">
+                            <i class="fa-solid fa-scroll"></i>
+                            <span id="lorePageIndicator"> 1 / 2</span>
+                        </div>
+                        <button id="closeLoreReader" class="lore-reader-close" data-i18n-title="common.close">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    
+                    <div id="loreReaderViewport" class="lore-reader-viewport">
+                        <div class="lore-book-stage" id="loreBookStage"></div>
+                    </div>
+                    
+                    <div class="lore-reader-footer">
+                        <button id="loreBtnPrev" class="lore-reader-btn" data-i18n="loreReader.prevBtn">
+                            <i class="fa-solid fa-chevron-left"></i> TRƯỚC
+                        </button>
+                        <button id="loreBtnNext" class="lore-reader-btn" data-i18n="loreReader.nextBtn">
+                            TIẾP <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </main>

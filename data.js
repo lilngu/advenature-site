@@ -117,3 +117,31 @@ export const QUIZ_LIST = [
     { q: "Biến thể Tinh Quang Thạch có bao nhiêu bậc số mặt?", a: ["11 bậc", "6 bậc", "3 bậc", "30 bậc"], c: 0 },
     { q: "Hệ đá nào đại diện cho Hỏa Diệm & Huyết Tinh?", a: ["🔥 Hệ 1", "☀️ Hệ 2", "❄️ Hệ 4", "⚡ Hệ 5"], c: 0 }
 ];
+
+// 6. CỔ THƯ LINH THỦ - DANH SÁCH TRANG (LORE READER)
+export const LORE_PAGES_DATA = [
+    {
+        id: 1,
+        title: "Trang 1: Khởi Nguyên",
+        url: "https://cdn.imagecomics.com/assets/i/features/454463/rose-vol-1-tp_65f5bec524_f323f3edd8d10410261aff6cc56efcc3.jpg"
+    },
+    {
+        id: 2,
+        title: "Trang 2: Tinh Linh",
+        url: "https://www.square-enix.com/ffvii/assets/revelation/images/common/KV-mobile_1x.webp"
+    }
+];
+
+// 7. HƯỚNG DẪN TINH THỦ - DANH SÁCH TRANG (GUIDE READER - 2 trang lật)
+export const GUIDE_PAGES_DATA = [
+    {
+        id: 1,
+        title: "Trang 1: Chào Mừng Tinh Thủ",
+        url: "https://i.postimg.cc/MHxxk9cX/2026-09-27-20-37-28.png"
+    },
+    {
+        id: 2,
+        title: "Trang 2: Cơ Chế Gacha",
+        url: "https://cdn.imagecomics.com/assets/i/features/454463/rose-vol-1-tp_65f5bec524_f323f3edd8d10410261aff6cc56efcc3.jpg"
+    }
+];
