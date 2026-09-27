@@ -20,7 +20,7 @@ const TEXTS = {
     // ======================================================
     welcome: {
         title: "✦ ĐANG KHỞI TẠO CỔNG DỊCH CHUYỂN ... ✦",
-        body: "Chào mừng đến LINH CẢNH KHỞI NGUYÊN! <br> Điểm tập kết của Nhà Phiêu Lưu <br> trước khi đặt chân vào RỪNG TINH LINH thực cảnh. </br> Khai mở viên Quang Thạch định mệnh đầu tiên",
+        body: "Chào mừng đến LINH CẢNH KHỞI NGUYÊN! <br> Điểm tập kết của Nhà Phiêu Lưu <br> trước khi đặt chân vào RỪNG TINH LINH thực cảnh. </br> Khai mở viên Quang Thạch định mệnh đầu tiên </br> ⋆｡‧˚ʚ🔮ɞ˚‧｡⋆",
         tapHint: "✦ Chạm cổ thư để tiếp tục ✦",
     },
 
@@ -95,7 +95,6 @@ const TEXTS = {
         checkin: {
             cardTitle: "Trạm Điểm Danh",
             cardDesc: "Nhận 1 🔮/ngày. Chuỗi 7 ngày tặng thêm +1 🔮.",
-            streakDisplay: "Chuỗi: {streak}%7/7 ngày (Tổng: {total} ngày)",
             btn: "Điểm Danh",
             btnLoading: "Đang kiểm tra...",
             btnDone: "Đã Điểm Danh",

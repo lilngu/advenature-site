@@ -1076,7 +1076,7 @@ background: url(data:image/webp;base64,UklGRlANAABXRUJQVlA4WAoAAAAQAAAAawAAbAAAQ
 /* Guest mode - nút Gacha ở giữa màn hình */
 body.guest-mode .dock-btn.center-core {
     pointer-events: auto;
-    bottom: 45vh !important;
+    bottom: 55vh !important;
     left: 50% !important;
     transform: translate(-50%, 50%) !important;
     transition: all 0.7s cubic-bezier(0.2, 0.8, 0.2, 1.2);
