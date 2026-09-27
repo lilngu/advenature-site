@@ -174,20 +174,6 @@
         ctx.shadowColor = colors.shadowColors[2];
         drawMagicWisp(colors.wispColors[2], 4, 3.5, 2.5, 1.3);
 
-        // C. Vẽ Core Glow ở trung tâm (bổ sung cho crystal-ball CSS)
-        ctx.shadowBlur = 30;
-        ctx.shadowColor = colors.shadowColors[3];
-        const coreGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, orbRadius * 0.45);
-        coreGradient.addColorStop(0, colors.coreGradient[0]);
-        coreGradient.addColorStop(0.2, colors.coreGradient[1]);
-        coreGradient.addColorStop(0.8, colors.coreGradient[2]);
-        coreGradient.addColorStop(1, colors.coreGradient[3]);
-        
-        ctx.fillStyle = coreGradient;
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, orbRadius * 0.6, 0, Math.PI * 2);
-        ctx.fill();
-
         requestAnimationFrame(animate);
     }
 

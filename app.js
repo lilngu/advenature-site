@@ -1037,7 +1037,7 @@ navButtons.forEach(btn => {
         }
         if (targetId === "gacha-view") {
             controls.enabled = true;
-            document.getElementById("tabIndicator").textContent = "Home Gacha";
+            document.getElementById("tabIndicator").textContent = "✦LINH CẢNH KHỞI NGUYÊN✦";
             viewPanels.forEach(p => {
                 if (p.id !== "gacha-view") p.classList.add("hidden");
             });
@@ -1068,7 +1068,7 @@ function returnToGachaHome() {
     dockGachaTrigger.classList.add("active");
     document.getElementById("gacha-view").classList.remove("hidden");
     document.getElementById("gacha-view").classList.add("active");
-    document.getElementById("tabIndicator").textContent = "Home Gacha";
+    document.getElementById("tabIndicator").textContent = "✦LINH CẢNH KHỞI NGUYÊN✦";
     if (state !== STATE.LOOT && claimContainer) {
         claimContainer.classList.add("hidden");
     }
