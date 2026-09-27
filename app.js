@@ -58,12 +58,17 @@ const isFirstTimeGuest = !currentUser || !currentUser.adventurer_code || current
 
 const scrollBanner = document.getElementById("welcomeScrollBanner");
 const guestHelper = document.getElementById("guestHelper");
+const guideHelper = document.getElementById("guideHelper");
+const guideHelperBanner = document.getElementById("guideHelperBanner");
 const dockGachaTrigger = document.getElementById("dockGachaTrigger");
 let guestHelperShown = false;
+let guideHelperShown = false;
 
 if (isFirstTimeGuest) {
     // Bật chế độ khách: Ẩn menu đáy, đưa nút Gacha ra giữa màn hình
     document.body.classList.add("guest-mode");
+    if (guideHelper) guideHelper.classList.add("hidden");
+    if (guideHelperBanner) guideHelperBanner.classList.add("hidden");
 
     // Bắt sự kiện click vào Cuộn giấy cổ: trượt xuống dưới rồi biến mất
     if (scrollBanner) {
@@ -80,6 +85,8 @@ if (isFirstTimeGuest) {
     // Người dùng đã có tài khoản: ẩn banner cuộn giấy ngay từ đầu
     if (scrollBanner) scrollBanner.style.display = "none";
     if (guestHelper) guestHelper.classList.add("hidden");
+    // Khởi tạo Guide Helper cho user đã login
+    initGuideHelper();
 }
 
 // ======================================================
@@ -184,6 +191,87 @@ function hideGuestHelper() {
         guestHelper.classList.add('hidden');
         guestHelper.classList.remove('exit-to-right');
     }, 800);
+}
+
+// ======================================================
+// GUIDE HELPER FAIRY LOGIC (Cho user đã login)
+// ======================================================
+function getGuideHelperTargetPosition() {
+    const gachaBtn = dockGachaTrigger;
+    if (!gachaBtn) return { top: '20vh', left: '10vw' };
+    
+    const orbRect = gachaBtn.querySelector('.gold-ring')?.getBoundingClientRect() || gachaBtn.getBoundingClientRect();
+    
+    // Góc top-left của orb (trừ kích thước fairy ~90px)
+    return {
+        top: (orbRect.top - 50) + 'px',
+        left: (orbRect.left - 100) + 'px'
+    };
+}
+
+function initGuideHelper() {
+    if (!guideHelper || !guideHelperBanner || document.body.classList.contains('guest-mode')) return;
+    
+    // Hiện guide helper sau 2s khi ở gacha-view
+    const checkAndShowGuideHelper = () => {
+        const gachaView = document.getElementById("gacha-view");
+        if (gachaView && gachaView.classList.contains("active") && !gachaView.classList.contains("hidden")) {
+            if (!guideHelperShown) {
+                setTimeout(showGuideHelper, 2000);
+            }
+        }
+    };
+    
+    // Kiểm tra ngay lập tức
+    checkAndShowGuideHelper();
+    
+    // Theo dõi khi chuyển view về gacha-view
+    const navButtons = document.querySelectorAll(".nav-btn");
+    navButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            if (btn.dataset.target === "gacha-view") {
+                setTimeout(checkAndShowGuideHelper, 100);
+            }
+        });
+    });
+    
+    // Click guide helper -> hiện banner hình ảnh
+    guideHelper.addEventListener("click", () => {
+        if (guideHelperBanner) {
+            guideHelperBanner.classList.remove("hidden");
+            guideHelperBanner.classList.add("show");
+        }
+    });
+    
+    // Click banner hình ảnh -> ẩn banner
+    guideHelperBanner.addEventListener("click", () => {
+        guideHelperBanner.classList.remove("show");
+        setTimeout(() => {
+            guideHelperBanner.classList.add("hidden");
+        }, 300);
+    });
+}
+
+function showGuideHelper() {
+    if (guideHelperShown || document.body.classList.contains('guest-mode') || !guideHelper) return;
+    guideHelperShown = true;
+    
+    const pos = getGuideHelperTargetPosition();
+    
+    // Reset classes
+    guideHelper.classList.remove('hidden', 'exit-to-right');
+    guideHelper.classList.add('enter-from-bottom-left');
+    
+    // Force reflow
+    guideHelper.offsetHeight;
+    
+    // Bắt đầu animation vào
+    requestAnimationFrame(() => {
+        guideHelper.classList.remove('enter-from-bottom-left');
+        guideHelper.classList.add('active');
+        guideHelper.style.top = pos.top;
+        guideHelper.style.left = pos.left;
+    });
 }
 
 // ======================================================
@@ -836,7 +924,7 @@ btnCompleteRegister.addEventListener("click", async () => {
             claimContainer.classList.add("hidden");
             lootText.classList.remove("show");
 
-            openBlessingModal(data.blessing, "Chúc Phúc Tân Thủ dành riêng cho bạn!");
+            openBlessingModal(data.blessing, "Chúc phúc dành riêng cho Tân Thủ!");
             state = STATE.IDLE;
         } else {
             toast.error('ĐĂNG KÝ THẤT BẠI', data.error || 'Vui lòng thử lại');
@@ -1089,6 +1177,14 @@ window.addEventListener("resize", () => {
         const pos = getGuestHelperTargetPosition();
         guestHelper.style.top = pos.top;
         guestHelper.style.right = pos.right;
+    }
+
+    // Cập nhật vị trí guide helper nếu đang active
+    if (guideHelperShown && guideHelper && !guideHelper.classList.contains('hidden') && 
+        guideHelper.classList.contains('active')) {
+        const pos = getGuideHelperTargetPosition();
+        guideHelper.style.top = pos.top;
+        guideHelper.style.left = pos.left;
     }
 });
 

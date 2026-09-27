@@ -25,10 +25,17 @@ const TEXTS = {
     },
 
     // ======================================================
-    // GUEST HELPER FAIRY
+    // GUEST HELPER FAIRY (Chỉ cho Guest mode)
     // ======================================================
     guestHelper: {
-        tooltip: "Khai mở viên Quang Thạch đầu tiên",
+        tooltip: "Khai mở viên Quang Thạch đầu tiên!",
+    },
+
+    // ======================================================
+    // GUIDE HELPER FAIRY (Cho user đã login)
+    // ======================================================
+    guideHelper: {
+        tooltip: "HƯỚNG DẪN TINH THỦ",
     },
 
     // ======================================================
@@ -48,7 +55,7 @@ const TEXTS = {
     // GACHA VIEW
     // ======================================================
     gacha: {
-        tabIndicator: "✦LINH CẢNH KHỞI NGUYÊN✦",
+        tabIndicator: "✦LINH CẢNH \n KHỞI NGUYÊN✦",
         crystalTitleDefault: "Bệ Đá Tinh Quang",
         claimButton: "✦ THU THẬP VÀO TÚI ✦",
         collectBanner: "ĐÃ THU THẬP QUANG THẠCH VÀO TÚI",
@@ -271,9 +278,9 @@ const TEXTS = {
         tierTag: "{tier}",
         title: "Chúc Phúc Tinh Linh",
         descPrefix: "{reason}\n{desc}",
-        note: "*Chúc phúc có hiệu lực khi tham gia phiêu lưu tại Rừng Tinh Linh!",
+        note: "*Chúc phúc có hiệu lực khi tham gia phiêu lưu\n tại Rừng Tinh Linh!",
         shopBtn: "✦ KHÁM PHÁ GÓI TÂN THỦ 2N1Đ ✦",
-        closeBtn: "Cất Vào Túi Đồ",
+        closeBtn: "CẤT VÀO TÚI ĐỒ",
     },
 
     // ======================================================
@@ -288,15 +295,7 @@ const TEXTS = {
     // GEM PREVIEW MODAL
     // ======================================================
     gemPreview: {
-        sysTagTemplate: "<i class=\"rpg-ico ico-elem-fire\"></i> Hỏa Diệm",
-        codeTag: "☀️3243",
-        title: "Tinh Thể Thái Dương",
-        shapeLabel: "Hình Thái",
-        shapeValue: "Phiến Thạch",
-        facesLabel: "Cấp Bậc Mặt",
-        facesValue: "24 Diện Thể",
-        desc: "Khoáng thạch cổ thụ tích tụ linh lực nguyên tố tinh khiết của Rừng Tinh Linh.",
-        // Locked state texts (dùng khi đá chưa mở khóa)
+        // Locked state texts (dùng khi đá chưa mở khóa - hiển thị trong inventory grid)
         lockedTitle: "Tinh Quang Thạch Ẩn Danh",
         lockedShape: "Chưa khám phá",
         lockedFaces: "?? Mặt",
