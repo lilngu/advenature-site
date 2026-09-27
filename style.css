@@ -345,7 +345,7 @@ body, html {
     top: 68px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: x-large;
+    font-size: large;
     letter-spacing: 2px;
     color: rgb(247 230 89 / 59%);
     text-transform: uppercase;

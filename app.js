@@ -18,6 +18,11 @@ import {
 import { toast } from './toast.js';
 // BUTTON VFX PARTICLE SYSTEM
 import { initButtonVFX } from './vfx.js';
+// I18N SYSTEM
+import { applyI18n, applyI18nToElement } from './i18n.js';
+
+// Hằng số toán học dùng chung (Golden Angle cho phân bố đều trên cầu)
+const GOLDEN_ANGLE = Math.PI * (Math.sqrt(5) - 1);
 
 // ======================================================
 // 1. CONFIG & DATA SYNC (BỎ DẤU / Ở CUỐI TRÁNH LỖI 404)
@@ -70,6 +75,11 @@ if (isFirstTimeGuest) {
     // Người dùng đã có tài khoản: ẩn banner cuộn giấy ngay từ đầu
     if (scrollBanner) scrollBanner.style.display = "none";
 }
+
+// ======================================================
+// I18N: Apply translations ngay sau khi DOM elements đã có
+// ======================================================
+applyI18n();
 
 // ======================================================
 // PHASE 3: ĐỒNG BỘ DỮ LIỆU TỪ D1 KHI MỞ TRANG HOẶC VÀO TÚI ĐỒ
@@ -143,8 +153,8 @@ function updateTopBarUI() {
     setSafeText("valCongHien", (currentUser.cong_hien_points || 0).toLocaleString());
     setSafeText("userAdvenCode", currentUser.adventurer_code || "AW----");
 
-    // 2. Chi phí nút Gacha đáy :huỷ
-    
+    // 2. Chi phí nút Gacha đáy (đã bỏ)
+
     // 3. Thông tin Thẻ Căn Cước Nhà Phiêu Lưu
     setSafeText("profName", currentUser.full_name || "Nhà Phiêu Lưu");
     setSafeText("profCode", currentUser.adventurer_code || "AW----");
@@ -164,8 +174,13 @@ function updateTopBarUI() {
     setSafeHtml("profStatCH", `<i class="rpg-ico ico-ch"></i> ${currentUser.cong_hien_points || 0} CP`);
     setSafeText("myRefCodeDisplay", currentUser.adventurer_code || "AW----");
 
-    // 6. Ảnh đại diện
-    if (currentUser.avatar_url) {
+    // 6. Cấp bậc Bang hội
+    setSafeText("profRankTitle", currentUser.guild_rank_title || "Tập Sự");
+    const needPoints = Math.max(0, 100 - (currentUser.cong_hien_points || 0));
+    setSafeText("profRankNeed", `${needPoints} Điểm Lên Cấp`);
+
+    // 7. Thanh tiến trình Bang hội
+    const rankBar = document.getElementById("rankProgressBar");
         const profAv = document.getElementById("profAvatar");
         const topAv = document.getElementById("userAvatarImg");
         if (profAv) profAv.src = currentUser.avatar_url;
@@ -188,16 +203,17 @@ function updateTopBarUI() {
             btnTopLogin.classList.remove("hidden");
         }
     }
-    // app.js: Thêm vào cuối hàm updateTopBarUI()
-const profQrContainer = document.getElementById("userProfileQr");
-if (profQrContainer && typeof QRCode !== "undefined") {
-    profQrContainer.innerHTML = "";
-    new QRCode(profQrContainer, {
-        text: `ADVENATURE_USER:${currentUser.adventurer_code || "AW----"}`,
-        width: 100,
-        height: 100
-    });
-}
+
+    // 9. QR Code hồ sơ cá nhân
+    const profQrContainer = document.getElementById("userProfileQr");
+    if (profQrContainer && typeof QRCode !== "undefined") {
+        profQrContainer.innerHTML = "";
+        new QRCode(profQrContainer, {
+            text: `ADVENATURE_USER:${currentUser.adventurer_code || "AW----"}`,
+            width: 100,
+            height: 100
+        });
+    }
 }
 
 // ======================================================
@@ -257,11 +273,11 @@ const colorPalette = [
 for (let i = 0; i < PARTICLE_COUNT; i++) {
     const radius = THREE.MathUtils.randFloat(2.5, 8.5);
     const theta = Math.random() * Math.PI * 2;
-    const phi = Math.acos(THREE.MathUtils.randFloat(-1, 1));
+    const phiParticle = Math.acos(THREE.MathUtils.randFloat(-1, 1));
 
-    const x = radius * Math.sin(phi) * Math.cos(theta);
-    const y = radius * Math.cos(phi);
-    const z = radius * Math.sin(phi) * Math.sin(theta);
+    const x = radius * Math.sin(phiParticle) * Math.cos(theta);
+    const y = radius * Math.cos(phiParticle);
+    const z = radius * Math.sin(phiParticle) * Math.sin(theta);
 
     particlePositions[i * 3] = x;
     particlePositions[i * 3 + 1] = y;
@@ -330,7 +346,6 @@ function createProceduralRock() {
     };
 
     const points = [];
-    const phi = Math.PI * (Math.sqrt(5) - 1);
     const rx = THREE.MathUtils.randFloat(...shape.rx);
     const ry = THREE.MathUtils.randFloat(...shape.ry);
     const rz = THREE.MathUtils.randFloat(...shape.rz);
@@ -338,7 +353,7 @@ function createProceduralRock() {
     for (let i = 0; i < faceCount; i++) {
         const y = 1 - (i / (faceCount - 1 || 1)) * 2;
         const radiusAtY = Math.sqrt(Math.max(0, 1 - y * y));
-        const theta = phi * i + THREE.MathUtils.randFloatSpread(0.6);
+        const theta = GOLDEN_ANGLE * i + THREE.MathUtils.randFloatSpread(0.6);
         const noise = THREE.MathUtils.randFloat(0.85, 1.25);
         points.push(new THREE.Vector3(
             Math.cos(theta) * radiusAtY * rx * noise,
@@ -620,11 +635,10 @@ async function handleGoogleSuccess(response) {
     if (response.mock) {
         tempGoogleProfile = response.profile;
     } else {
-        // Giải mã JWT Payload từ Google Token
+        // Giải mã JWT Payload từ Google Token (an toàn, đơn giản)
         const base64Url = response.credential.split('.')[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
-        tempGoogleProfile = JSON.parse(jsonPayload);
+        tempGoogleProfile = JSON.parse(atob(base64));
     }
 
     // Hiển thị trạng thái an toàn trên khung chứa nút Google (KHÔNG dùng googleBtnText cũ)
@@ -1183,7 +1197,6 @@ function openGemPreviewModal(gemData) {
 
     const shape = SHAPE_STYLES.find(s => s.id === gemData.shapeId) || SHAPE_STYLES[0];
     const points = [];
-    const phi = Math.PI * (Math.sqrt(5) - 1);
     const rx = (shape.rx[0] + shape.rx[1]) / 2;
     const ry = (shape.ry[0] + shape.ry[1]) / 2;
     const rz = (shape.rz[0] + shape.rz[1]) / 2;
@@ -1191,7 +1204,7 @@ function openGemPreviewModal(gemData) {
     for (let i = 0; i < gemData.face; i++) {
         const y = 1 - (i / (gemData.face - 1 || 1)) * 2;
         const radiusAtY = Math.sqrt(Math.max(0, 1 - y * y));
-        const theta = phi * i;
+        const theta = GOLDEN_ANGLE * i;
         points.push(new THREE.Vector3(
             Math.cos(theta) * radiusAtY * rx,
             y * ry,
@@ -1228,6 +1241,7 @@ function openGemPreviewModal(gemData) {
 
     isPreviewActive = true;
     gemPreviewModal.classList.remove("hidden");
+    applyI18nToElement(gemPreviewModal);
     previewCamera.position.set(0, 0.4, 4.2);
     previewControls.target.set(0, 0, 0);
 
@@ -1267,6 +1281,9 @@ function renderInventoryGems() {
 
     const tabCountEl = document.getElementById("tabGemProgressCount");
     if (tabCountEl) tabCountEl.textContent = `${count}/990`; // Hiển thị tỉ lệ trên nút Tab
+
+    const tabGemsBtn = document.getElementById("tabGemsBtn");
+    if (tabGemsBtn) tabGemsBtn.innerHTML = `✦ Tinh Quang Thạch <span id="tabGemProgressCount">${count}/990</span>`;
 
     const pct = ((count / 990) * 100).toFixed(1);
     const pctEl = document.getElementById("gemProgressPct");
@@ -1314,10 +1331,12 @@ function renderInventoryGems() {
             <div class="gem-slot ${g.isUnlocked ? 'unlocked' : 'locked'}" data-idx="${idx}">
                 <div class="gem-slot-icon"><i class="rpg-ico ${elemIconClass}"></i></div>
                 <div class="gem-slot-code">${g.isUnlocked ? g.code : '???'}</div>
-                <div class="gem-slot-name">${g.isUnlocked ? g.name : 'Chưa mở'}</div>
+                <div class="gem-slot-name" ${g.isUnlocked ? '' : 'data-i18n="gemPreview.lockedName"'}>${g.isUnlocked ? g.name : ''}</div>
             </div>
         `;
     }).join('');
+
+    applyI18nToElement(grid);
 
     grid.querySelectorAll(".gem-slot").forEach(slot => {
         slot.addEventListener("click", () => {
@@ -1347,6 +1366,8 @@ function renderInventory5x5() {
     }
     grid.innerHTML = slotsHtml;
 
+    applyI18nToElement(grid);
+
     grid.querySelectorAll(".item-slot:not(.empty)").forEach(slot => {
         slot.addEventListener("click", () => {
             const idx = parseInt(slot.dataset.index);
@@ -1368,6 +1389,7 @@ function openItemModal(item, itemIndex) {
     if (qrCheckPollTimer) clearInterval(qrCheckPollTimer);
 
     itemModal.classList.remove("hidden");
+    applyI18nToElement(itemModal);
     document.getElementById("modalItemTitle").innerHTML = `<i class="item-ico ${item.iconClass}"></i> ${item.name}`;
     document.getElementById("modalItemDesc").textContent = item.desc || "Vật phẩm dã ngoại thuộc Hội Ngọc Lục.";
     
@@ -1540,6 +1562,7 @@ function openShopDetail(item) {
     };
 
     shopDetailModal.classList.remove("hidden");
+    applyI18nToElement(shopDetailModal);
 }
 document.getElementById("closeShopDetailModal")?.addEventListener("click", () => shopDetailModal.classList.add("hidden"));
 
