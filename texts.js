@@ -72,7 +72,7 @@ const TEXTS = {
     // GACHA VIEW
     // ======================================================
     gacha: {
-        tabIndicator: "✦LINH CẢNH \n KHỞI NGUYÊN✦",
+        tabIndicator: "✦LINH CẢNH✦",
         crystalTitleDefault: "Bệ Đá Tinh Quang",
         claimButton: "✦ THU THẬP VÀO TÚI ✦",
         collectBanner: "ĐÃ THU THẬP QUANG THẠCH VÀO TÚI",
@@ -122,13 +122,10 @@ const TEXTS = {
     // QUEST PANEL
     // ======================================================
     quest: {
-        panelTitle: "📜 NHIỆM VỤ HẰNG NGÀY (DAILY QUESTS)",
+        panelTitle: "📜 NHIỆM VỤ HẰNG NGÀY",
         guide: {
-            title: "✦ KHÁM PHÁ PHÚC LỢI LINH CẢNH ✦",
+            title: "✦ DAILY QUESTS ✦",
             desc: "Hoàn thành quest mỗi ngày để tích luỹ năng lượng Tinh Quang, quay Gacha thu thập Quang Thạch đổi đặc quyền tại Rừng Tinh Linh! ",
-            step1: "Điểm danh hàng ngày nhận Tinh Quang - Chuỗi 7 ngày có thưởng đặc biệt.",
-            step2: "Kết nối bạn bè bằng mã Căn Cước - Cả 2 đều nhận +1 🔮.",
-            step3: "Giải Mật Mã Rừng Tinh Linh & Truyền tin Group FB để nhận thêm phần thưởng.",
         },
         checkin: {
             cardTitle: "KẾT NỐI LINH CẢNH",
@@ -192,13 +189,6 @@ const TEXTS = {
             cta: "✦ Khám phá lịch trình ✦",
         },
         scheduleNote: "*Sở hữu ít nhất 1 Gói Tân Thủ trong túi để đăng ký giữ chỗ chính thức.",
-        detailModal: {
-            title: "Tên Sản Phẩm",
-            price: "0 💎",
-            desc: "Mô tả sản phẩm...",
-            selectBtn: "CHỌN MỤC NÀY",
-            deselectBtn: "BỎ CHỌN MỤC NÀY",
-        },
         checkoutSuccess: "✦ Thông tin đơn hàng đã gửi tới Hội Ngọc Lục! Trưởng đoàn sẽ liên hệ sớm nhất qua SĐT/Zalo.",
         checkoutError: "Vui lòng chạm chọn ít nhất 1 gói hoặc tiện ích!",
     },
@@ -241,11 +231,11 @@ const TEXTS = {
         },
         guildBanners: {
             guild: {
-                title: "ĐIỀU LỆ & LẬP BANG HỘI",
+                title: "THÀNH LẬP BANG HỘI",
                 desc: "Quy chế lập Hội, quyền lợi thủ lĩnh.",
             },
             ranger: {
-                title: "CHIÊU MỘ NPC RỪNG",
+                title: "CHIÊU MỘ NPC & QUÁI RỪNG",
                 desc: "Ứng tuyển người dẫn đường thực địa & nhận thù lao.",
             },
         },
@@ -396,12 +386,7 @@ const TEXTS = {
     // GUILD MODAL
     // ======================================================
     guild: {
-        title: "🏰 ĐIỀU LỆ HỘI NGỌC LỤC",
-        rules: [
-            "1. Hội Ngọc Lục là liên minh những người đam mê thám hiểm thiên nhiên và thu thập khoáng thạch.",
-            "2. Điểm Cống Hiến (🛡️ CP) được tích lũy qua các chuyến dã ngoại và hoạt động bang.",
-            "3. Đạt mốc 100 CP để thăng cấp thành viên chính thức và mở quyền lập phân hội riêng.",
-        ],
+        title: "​📜 THÀNH LẬP BANG HỘI GUILD",
         registerBtn: "✦ ĐĂNG KÝ THÀNH LẬP BANG ✦",
     },
 
@@ -409,13 +394,8 @@ const TEXTS = {
     // RANGER MODAL
     // ======================================================
     ranger: {
-        title: "🌲 ỨNG TUYỂN NPC RANGER",
-        desc: [
-            "• <b>Vai trò:</b> Người dẫn đoàn thám hiểm, phát thẻ Quest và hỗ trợ người chơi tại thực địa.",
-            "• <b>Quyền lợi:</b> Hỗ trợ chi phí di chuyển, lưu trú Glamping miễn phí và nhận trang bị độc bản.",
-            "• <b>Yêu cầu:</b> Yêu thích cắm trại, có kỹ năng sinh tồn cơ bản và trách nhiệm cao.",
-        ],
-        applyBtn: "✦ NỘP HỒ SƠ RANGER ✦",
+        title: "🏹 CHIÊU MỘ NPC & QUÁI RỪNG </br> ​HỘI MẠO HIỂM NGỌC LỤC",
+        applyBtn: "✦ NỘP HỒ SƠ NPC✦",
     },
 
     // ======================================================

@@ -1146,7 +1146,7 @@ body.guest-mode #gachaOrbCanvas {
     align-items: center;
     cursor: pointer;
     position: fixed;
-    bottom: 0;
+    top: 0;
     left: 0;
     transform: none;
     will-change: transform;
@@ -1367,7 +1367,7 @@ i.ico-back-wind {width: 64px; height: 64px;}
 }
 
 .guide-text {
-    font-size: 11px;
+    font-size: small;
     color: #d4c084;
     line-height: 1.5;
     margin: 0;
@@ -1406,7 +1406,7 @@ i.ico-back-wind {width: 64px; height: 64px;}
     background: linear-gradient(135deg, #d4a237 0%, #ffd166 100%);
     color: #1a0f00;
     border-radius: 50%;
-    font-size: 11px;
+    font-size: small;
     font-weight: 900;
     font-family: 'Handjet', sans-serif;
     flex-shrink: 0;
@@ -1432,6 +1432,7 @@ i.ico-back-wind {width: 64px; height: 64px;}
     padding: 12px;
     border-radius: 12px;
     border: 1px solid rgba(212, 192, 132, 0.3);
+    font-family: 'Handjet';
 }
 .pin-card {
     background: #fffbe8;
@@ -1451,9 +1452,9 @@ i.ico-back-wind {width: 64px; height: 64px;}
     transform: translateX(-50%);
     font-size: 14px;
 }
-.pin-title { font-size: 11px; font-weight: bold; color: #8a4b00; margin-top: 4px; }
-.pin-desc { font-size: 9px; color: #5a4a35; margin: 4px 0; line-height: 1.25; }
-.pin-badge { font-size: 8px; font-weight: bold; color: #0077b6; margin-bottom: 4px; }
+.pin-title { font-size: medium; font-weight: bold; color: #8a4b00; margin-top: 4px; }
+.pin-desc { font-size: small; color: #5a4a35; margin: 4px 0; line-height: 1.25; }
+.pin-badge { font-size: 10px; font-weight: bold; color: #0077b6; margin-bottom: 4px; }
 /* pin-btn legacy style (only when not using btn-medieval) */
 .pin-btn:not(.btn-medieval) {
     background: transparent;
@@ -3065,26 +3066,6 @@ body.guest-mode .dock-btn:not(.center-core) {
 
 .lore-reader-btn:active:not(:disabled) { transform: translateY(1px); }
 .lore-reader-btn:disabled { opacity: 0.4; filter: grayscale(0.8); cursor: not-allowed; border-color: #554333; }
-
-.lore-reader-emblem {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 50px;
-    height: 50px;
-    background: #25160d;
-    border: 2px solid #d4af37;
-    border-radius: 50%;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(212,175,55,0.1);
-}
-
-.lore-reader-emblem .rune-text {
-    font-family: "Uncial Antiqua", cursive;
-    font-size: 20px;
-    color: #d4af37;
-    animation: runeGlow 3s infinite ease-in-out;
-}
-
 /* Responsive */
 @media (max-width: 480px) {
     .lore-helper .helper-fairy-img { width: 70px; height: 70px; }
@@ -3595,4 +3576,9 @@ body.guest-mode .dock-btn:not(.center-core) {
     .guide-reader-container { max-width: 95vw; height: 95vh; max-height: 95vh; }
     .guide-reader-title { font-size: 15px; }
     .guide-reader-btn { padding: 8px 12px; font-size: 11px; }
+}
+
+#guildModal h3, #rangerModal h3 {
+    font-family: 'Spectral SC';
+    font-weight: 600;
 }

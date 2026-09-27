@@ -122,12 +122,12 @@ export const QUIZ_LIST = [
 export const LORE_PAGES_DATA = [
     {
         id: 1,
-        title: "Trang 1: Khởi Nguyên",
+        title: "Trang 1",
         url: "https://cdn.imagecomics.com/assets/i/features/454463/rose-vol-1-tp_65f5bec524_f323f3edd8d10410261aff6cc56efcc3.jpg"
     },
     {
         id: 2,
-        title: "Trang 2: Tinh Linh",
+        title: "Trang 2",
         url: "https://www.square-enix.com/ffvii/assets/revelation/images/common/KV-mobile_1x.webp"
     }
 ];

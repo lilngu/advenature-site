@@ -157,9 +157,6 @@
                         <button id="guideBtnPrev" class="guide-reader-btn" data-i18n="guideReader.prevBtn">
                             <i class="fa-solid fa-chevron-left"></i> TRƯỚC
                         </button>
-                        <div class="guide-reader-emblem">
-                            <span class="rune-text">᚛ᚔ᚜</span>
-                        </div>
                         <button id="guideBtnNext" class="guide-reader-btn" data-i18n="guideReader.nextBtn">
                             TIẾP <i class="fa-solid fa-chevron-right"></i>
                         </button>
@@ -342,21 +339,7 @@
                 </div>
                 <div class="guide-content">
                     <p class="guide-text" data-i18n="quest.guide.desc"></p>
-                    <div class="guide-steps">
-                        <div class="guide-step">
-                            <span class="step-number">1</span>
-                            <span class="step-text" data-i18n="quest.guide.step1"></span>
-                        </div>
-                        <div class="guide-step">
-                            <span class="step-number">2</span>
-                            <span class="step-text" data-i18n="quest.guide.step2"></span>
-                        </div>
-                        <div class="guide-step">
-                            <span class="step-number">3</span>
-                            <span class="step-text" data-i18n="quest.guide.step3"></span>
-                        </div>
-                    </div>
-                </div>
+                     </div>
             </div>
 
             <div class="pin-board-grid">
@@ -392,7 +375,7 @@
 <div class="pin-card">
     <span class="pin-tack">📌</span>
     <h4 class="pin-title" data-i18n="quest.referral.cardTitle"></h4>
-    <p class="pin-desc">Mã: <b id="myRefCodeDisplay" style="color:#ffe66d;">AW----</b> (+1 🔮 cả 2).</p>
+    <p class="pin-desc">Mã: <b id="myRefCodeDisplay" style="color:#651799;">AW----</b> (+1 🔮 cả 2).</p>
     <div style="display: flex; gap: 4px; margin-bottom: 4px;">
         <input type="text" id="inputFriendCode" class="rpg-input pin-input" data-i18n-placeholder="quest.referral.codePlaceholder" style="margin-bottom:0;">
         <button class="btn-action pin-btn" id="btnScanFriendQr" style="padding: 0 8px;" data-i18n-title="quest.referral.scanBtnAria">📷</button>
@@ -541,10 +524,10 @@
         <div class="modal-box rpg-glass-box">
             <span class="close-modal" id="closeShopDetailModal" data-i18n-title="common.close">&times;</span>
             <div id="shopModalIconBox" class="shop-modal-ico-box"></div>
-            <h3 id="shopModalTitle" style="color: #ffe66d; margin: 8px 0;" data-i18n="shop.detailModal.title"></h3>
-            <div id="shopModalPrice" style="color: #4cc9f0; font-weight: bold; font-size: 13px; margin-bottom: 8px;" data-i18n="shop.detailModal.price"></div>
-            <p id="shopModalDesc" class="shop-modal-desc" data-i18n="shop.detailModal.desc"></p>
-            <button id="btnToggleCartItem" class="btn-magical" style="width: 100%; margin-top: 14px; padding: 10px;" data-i18n="shop.detailModal.selectBtn"></button>
+            <h3 id="shopModalTitle" style="color: #ffe66d; margin: 8px 0;"></h3>
+            <div id="shopModalPrice" style="color: #4cc9f0; font-weight: bold; font-size: 13px; margin-bottom: 8px;"></div>
+            <p id="shopModalDesc" class="shop-modal-desc"></p>
+            <button id="btnToggleCartItem" class="btn-magical" style="width: 100%; margin-top: 14px; padding: 10px;"></button>
         </div>
     </div>    <!-- ====================================================== -->
     <!-- MODAL RPG: CAN CUOC NHA PHIEU LUU (2 BUOC CHUAN UX)    -->
@@ -755,11 +738,7 @@
     <div class="modal-box rpg-glass-box" style="max-width: 340px; text-align: left;">
         <span class="close-modal" id="closeGuildModal" data-i18n-title="common.close">&times;</span>
         <h3 style="color: #ffd166; font-size: 14px; text-align: center; margin-bottom: 8px;" data-i18n="guild.title"></h3>
-        <p style="font-size: 10px; color: #e2dcff; line-height: 1.4; margin-bottom: 8px;">
-            <span data-i18n="guild.rules.0"></span><br>
-            <span data-i18n="guild.rules.1"></span><br>
-            <span data-i18n="guild.rules.2"></span>
-        </p>
+        <img src="https://iili.io/n5ZDa6P.png" width="100%">
         <button class="btn-action btn-celtic" style="width: 100%; font-size: 11px;" onclick="window.open('https://forms.gle/', '_blank')" data-i18n="guild.registerBtn"></button>
     </div>
 </div><!-- MODAL: CHIEU MO NPC RANGER -->
@@ -767,11 +746,7 @@
     <div class="modal-box rpg-glass-box" style="max-width: 340px; text-align: left;">
         <span class="close-modal" id="closeRangerModal" data-i18n-title="common.close">&times;</span>
         <h3 style="color: #4cc9f0; font-size: 14px; text-align: center; margin-bottom: 8px;" data-i18n="ranger.title"></h3>
-        <p style="font-size: 10px; color: #e2dcff; line-height: 1.4; margin-bottom: 8px;">
-            <span data-i18n="ranger.desc.0"></span><br>
-            <span data-i18n="ranger.desc.1"></span><br>
-            <span data-i18n="ranger.desc.2"></span>
-        </p>
+        <img src="https://iili.io/n5Z4a6J.png" width="100%">
         <button class="btn-action btn-dark" style="width: 100%; font-size: 11px;" onclick="window.open('https://forms.gle/', '_blank')" data-i18n="ranger.applyBtn"></button>
     </div>
 </div><!-- MODAL: CAMERA QUET QR BAN BE -->
