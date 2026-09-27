@@ -28,7 +28,7 @@ const TEXTS = {
     // GUEST HELPER FAIRY
     // ======================================================
     guestHelper: {
-        tooltip: "Khai mở viên Quang Thạch đầu tiên!",
+        tooltip: "Khai mở viên Quang Thạch đầu tiên",
     },
 
     // ======================================================
@@ -228,39 +228,38 @@ const TEXTS = {
     onboarding: {
         step1: {
             title: "✦ ĐỊNH DANH TINH THỦ ✦",
-            desc: "Vui lòng xác thực tài khoản Google để lưu giữ Quang Thạch đầu tiên của bạn.",
-            requiredNote: "*Bắt buộc để liên kết THẺ",
+            desc: "Kích hoạt Khế Ước Google để bảo hộ Quang Thạch và Túi Đồ của bạn.",
+            requiredNote: "*Bắt buộc để đồng bộ Thẻ",
         },
         step2: {
             title: "✦ THIẾT LẬP THẺ TINH THỦ ✦",
-            verifiedBadge: "✓ Đã xác thực: {email}",
             labels: {
-                name: "Tên Tinh Thủ:",
+                name: "Danh tính Tinh Thủ:",
                 gender: "Giới tính:",
                 avatar: "Chọn hình đại diện ban đầu:",
-                birth: "Năm sinh:",
+                birth: "Sanh thần:",
                 class: "Chức nghiệp:",
-                tribe: "Bộ tộc:",
-                phone: "Số Zalo liên hệ:",
+                tribe: "Chủng tộc:",
+                phone: "ZépLào liên hệ:",
             },
             genderOptions: [
                 "👨 Nam",
                 "👩 Nữ",
                 "🌈 Tự do"
             ],
-            avatarNote: "*Có thể đổi sang ảnh cá nhân ở trang Hồ Sơ sau.",
-            namePlaceholder: "Nhập tên của bạn...",
-            birthPlaceholder: "VD: 1998",
-            classPlaceholder: "VD: Thợ săn, Bác sĩ...",
-            tribePlaceholder: "VD: Rừng Sương Mù, Gió Tây...",
+            avatarNote: "*Có thể đổi ảnh cá nhân ở trang Hồ Sơ sau.",
+            namePlaceholder: "Nhập biệt danh của bạn...",
+            birthPlaceholder: "VD: 19xx",
+            classPlaceholder: "VD: Hiệp sĩ mù, Pháp sư Sinh tố...",
+            tribePlaceholder: "VD: Human, Elf, Orc...",
             phonePlaceholder: "VD: 0912345678",
-            submitBtn: "✦ HOÀN TẤT & THU THẬP VÀO TÚI ✦",
+            submitBtn: "✦ TIẾN VÀO LINH CẢNH ✦",
             validation: {
-                name: "Vui lòng nhập Tên Nhà Phiêu Lưu!",
-                phone: "Vui lòng nhập Số điện thoại / Zalo!",
+                name: "Vui lòng nhập Tên TINH THỦ!",
+                phone: "Vui lòng nhập Số điện thoại hoặc Zalo!",
                 birth: "Vui lòng nhập Năm sinh!",
                 class: "Vui lòng nhập Chức nghiệp của bạn!",
-                tribe: "Vui lòng nhập Bộ tộc của bạn!",
+                tribe: "Vui lòng nhập Chủng tộc của bạn!",
             },
         },
     },
@@ -272,8 +271,8 @@ const TEXTS = {
         tierTag: "{tier}",
         title: "Chúc Phúc Tinh Linh",
         descPrefix: "{reason}\n{desc}",
-        note: "*Chúc phúc này có hiệu lực khi bạn tham gia hoạt động tại Rừng Tinh Linh!",
-        shopBtn: "✦ KHÁM PHÁ GÓI TÂN THỦ ✦",
+        note: "*Chúc phúc có hiệu lực khi tham gia phiêu lưu tại Rừng Tinh Linh!",
+        shopBtn: "✦ KHÁM PHÁ GÓI TÂN THỦ 2N1Đ ✦",
         closeBtn: "Cất Vào Túi Đồ",
     },
 

@@ -2392,6 +2392,11 @@ body.guest-mode .dock-btn:not(.center-core) {
     transform-origin: center center;
 }
 
+/* Ẩn hoàn toàn khi không hoạt động */
+.guest-helper.hidden {
+    display: none !important;
+}
+
 /* Trạng thái khởi tạo: ẩn ở top-right viewport */
 .guest-helper.enter-from-top-right {
     top: 5vh;
@@ -2416,8 +2421,8 @@ body.guest-mode .dock-btn:not(.center-core) {
 
 /* Fairy image */
 .helper-fairy-img {
-    width: 90px;
-    height: 90px;
+    width: 100px;
+    height: 100px;
     filter: drop-shadow(0 0 12px rgba(255, 209, 102, 0.8));
     animation: fairyFloat 2.5s ease-in-out infinite alternate;
 }
@@ -2434,7 +2439,7 @@ body.guest-mode .dock-btn:not(.center-core) {
     border-radius: 8px;
     padding: 6px 12px;
     font-family: "Handjet", sans-serif;
-    font-size: 11px;
+    font-size: small;
     font-weight: 700;
     color: #ffe66d;
     text-shadow: 0 0 8px rgba(255, 230, 109, 0.6);
