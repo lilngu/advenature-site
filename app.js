@@ -57,6 +57,9 @@ if (!currentUser) {
 const isFirstTimeGuest = !currentUser || !currentUser.adventurer_code || currentUser.adventurer_code === "AW----";
 
 const scrollBanner = document.getElementById("welcomeScrollBanner");
+const guestHelper = document.getElementById("guestHelper");
+const dockGachaTrigger = document.getElementById("dockGachaTrigger");
+let guestHelperShown = false;
 
 if (isFirstTimeGuest) {
     // Bật chế độ khách: Ẩn menu đáy, đưa nút Gacha ra giữa màn hình
@@ -68,12 +71,15 @@ if (isFirstTimeGuest) {
             scrollBanner.classList.add("slide-down-exit");
             setTimeout(() => {
                 scrollBanner.style.display = "none";
+                // Show Guest Helper sau khi banner ẩn xong
+                setTimeout(showGuestHelper, 300);
             }, 600); // Ẩn hoàn toàn sau khi chạy xong animation 0.6s
         });
     }
 } else {
     // Người dùng đã có tài khoản: ẩn banner cuộn giấy ngay từ đầu
     if (scrollBanner) scrollBanner.style.display = "none";
+    if (guestHelper) guestHelper.classList.add("hidden");
 }
 
 // ======================================================
@@ -129,6 +135,55 @@ async function syncUserDataFromBackend() {
 
 function saveUserData() {
     localStorage.setItem("advenature_user", JSON.stringify(currentUser));
+}
+
+// ======================================================
+// GUEST HELPER FAIRY LOGIC
+// ======================================================
+function getGuestHelperTargetPosition() {
+    const gachaBtn = dockGachaTrigger;
+    if (!gachaBtn) return { top: '20vh', right: '10vw' };
+    
+    const orbRect = gachaBtn.querySelector('.gold-ring')?.getBoundingClientRect() || gachaBtn.getBoundingClientRect();
+    
+    // Góc top-right của orb (trừ kích thước fairy ~90px)
+    return {
+        top: (orbRect.top - 20) + 'px',      
+        right: (window.innerWidth - orbRect.right - 10) + 'px'
+    };
+}
+
+function showGuestHelper() {
+    if (guestHelperShown || !document.body.classList.contains('guest-mode') || !guestHelper) return;
+    guestHelperShown = true;
+    
+    const pos = getGuestHelperTargetPosition();
+    
+    // Reset classes
+    guestHelper.classList.remove('hidden', 'exit-to-right');
+    guestHelper.classList.add('enter-from-top-right');
+    
+    // Force reflow
+    guestHelper.offsetHeight;
+    
+    // Bắt đầu animation vào
+    requestAnimationFrame(() => {
+        guestHelper.classList.remove('enter-from-top-right');
+        guestHelper.classList.add('active');
+        guestHelper.style.top = pos.top;
+        guestHelper.style.right = pos.right;
+    });
+}
+
+function hideGuestHelper() {
+    if (!guestHelperShown || !guestHelper) return;
+    guestHelper.classList.remove('active', 'enter-from-top-right');
+    guestHelper.classList.add('exit-to-right');
+    
+    setTimeout(() => {
+        guestHelper.classList.add('hidden');
+        guestHelper.classList.remove('exit-to-right');
+    }, 800);
 }
 
 // ======================================================
@@ -403,7 +458,6 @@ const STATE = { IDLE: "idle", GACHA: "gacha", CORE: "core", LOOT: "loot", CLAIME
 let state = STATE.IDLE;
 let stateStart = performance.now();
 
-const dockGachaTrigger = document.getElementById("dockGachaTrigger");
 const claimContainer = document.getElementById("claimContainer");
 if (claimContainer) claimContainer.classList.add("hidden");
 const claimBtn = document.getElementById("claimButton");
@@ -447,6 +501,9 @@ dockGachaTrigger.addEventListener("click", () => {
                               !document.getElementById("gacha-view").classList.contains("hidden");
 
     if (isGachaViewActive) {
+        // Hide Guest Helper trước khi trigger gacha
+        hideGuestHelper();
+        
         dockGachaTrigger.classList.add("moved"); 
         triggerGachaSummon();
     }
@@ -658,6 +715,7 @@ async function handleGoogleSuccess(response) {
             currentUser = data.user;
             saveUserData();
             document.body.classList.remove("guest-mode");
+            hideGuestHelper(); // Ẩn fairy khi thoát guest mode
             updateTopBarUI();
             renderInventoryGems();
             renderInventory5x5();
@@ -667,7 +725,7 @@ async function handleGoogleSuccess(response) {
             if (claimContainer) claimContainer.classList.add("hidden");
             lootText.classList.remove("show");
 
-            toast.magic('CHÀO MỪNG QUAY LẠI', `🎉 CHÀO MỪNG QUAY TRỞ LẠI, ${currentUser.full_name}!\nĐã khôi phục Căn Cước [${currentUser.adventurer_code}] và đồng bộ toàn bộ kho đồ của bạn.`);
+            toast.magic('CHÀO MỪNG QUAY LẠI', `🎉 CHÀO MỪNG QUAY TRỢ LẠI, ${currentUser.full_name}!\nĐã khôi phục Căn Cước [${currentUser.adventurer_code}] và đồng bộ toàn bộ kho đồ của bạn.`);
             state = STATE.IDLE;
             return;
         }
@@ -694,6 +752,7 @@ document.getElementById("closeOnboardingModal")?.addEventListener("click", () =>
     const onboardingModal = document.getElementById("onboardingModal");
     if (onboardingModal) {
         onboardingModal.classList.add("hidden");
+        hideGuestHelper(); // Ẩn fairy khi đóng modal đăng ký
     }
 });
 // Bắt sự kiện bấm nút "✦ Đăng Nhập" trực tiếp trên Topbar
@@ -768,6 +827,7 @@ btnCompleteRegister.addEventListener("click", async () => {
             };
             saveUserData();
             document.body.classList.remove("guest-mode");
+            hideGuestHelper(); // Ẩn fairy khi thoát guest mode
             updateTopBarUI();
             renderInventoryGems();
             renderInventory5x5();
@@ -1022,6 +1082,14 @@ window.addEventListener("resize", () => {
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
     composer.setSize(window.innerWidth, window.innerHeight);
+
+    // Cập nhật vị trí guest helper nếu đang active
+    if (guestHelperShown && guestHelper && !guestHelper.classList.contains('hidden') && 
+        guestHelper.classList.contains('active')) {
+        const pos = getGuestHelperTargetPosition();
+        guestHelper.style.top = pos.top;
+        guestHelper.style.right = pos.right;
+    }
 });
 
 // ======================================================

@@ -20,8 +20,15 @@ const TEXTS = {
     // ======================================================
     welcome: {
         title: "✦ ĐANG KHỞI TẠO CỔNG DỊCH CHUYỂN ... ✦",
-        body: "Chào mừng đến LINH CẢNH KHỞI NGUYÊN! <br> Điểm tập kết của Nhà Phiêu Lưu <br> trước khi đặt chân vào RỪNG TINH LINH thực cảnh. </br> Khai mở viên Quang Thạch định mệnh đầu tiên </br> ⋆｡‧˚ʚ🔮ɞ˚‧｡⋆",
+        body: "Chào mừng đến LINH CẢNH KHỞI NGUYÊN! <br> Điểm tập kết của Nhà Phiêu Lưu <br> trước khi vào RỪNG TINH LINH thực cảnh. </br> ⋆｡‧˚ʚ🔮ɞ˚‧｡⋆",
         tapHint: "✦ Chạm cổ thư để tiếp tục ✦",
+    },
+
+    // ======================================================
+    // GUEST HELPER FAIRY
+    // ======================================================
+    guestHelper: {
+        tooltip: "Khai mở viên Quang Thạch đầu tiên!",
     },
 
     // ======================================================
