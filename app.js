@@ -880,7 +880,7 @@ function updateTopBarUI() {
     setSafeText("profBirth", currentUser.birth_year || "----");
 
     // 4. Phân quyền
-    const roleTitles = { admin: "Trưởng Quán (Admin)", manager: "Quản Lý (Manager)", user: "Tân Thủ Rừng Già" };
+    const roleTitles = { admin: "Trưởng Quán (Admin)", manager: "Quản Lý (Manager)", user: "Tân Thủ" };
     setSafeText("profRole", roleTitles[currentUser.role] || (currentUser.role || "Tân Thủ Rừng Già"));
 
     // 5. Tài nguyên
