@@ -70,6 +70,10 @@ let guideHelperShown = false;
 let guideReaderOpen = false;
 let loreHelperShown = false;
 
+// Timeout IDs để cancel khi Gacha bắt đầu
+let guideHelperInitTimeout = null;
+let loreHelperInitTimeout = null;
+
 if (isFirstTimeGuest) {
     // Bật chế độ khách: Ẩn menu đáy, đưa nút Gacha ra giữa màn hình
     document.body.classList.add("guest-mode");
@@ -227,9 +231,10 @@ function initGuideHelper() {
         const gachaView = document.getElementById("gacha-view");
         if (gachaView && gachaView.classList.contains("active") && !gachaView.classList.contains("hidden")) {
             if (!guideHelperShown) {
-                setTimeout(showGuideHelper, 2000);
+                return setTimeout(showGuideHelper, 2000);
             }
         }
+        return null;
     };
     
     // Kiểm tra ngay lập tức
@@ -240,7 +245,9 @@ function initGuideHelper() {
     navButtons.forEach(btn => {
         btn.addEventListener("click", () => {
             if (btn.dataset.target === "gacha-view") {
-                setTimeout(checkAndShowGuideHelper, 100);
+                setTimeout(() => {
+                    guideHelperInitTimeout = checkAndShowGuideHelper();
+                }, 100);
             }
         });
     });
@@ -277,6 +284,8 @@ function initGuideHelper() {
 }
 
 function showGuideHelper() {
+    // Không show nếu Gacha đang chạy
+    if (state !== STATE.IDLE) return;
     if (guideHelperShown || document.body.classList.contains('guest-mode') || !guideHelper) return;
     guideHelperShown = true;
     
@@ -299,6 +308,33 @@ function showGuideHelper() {
 }
 
 // ======================================================
+// HIDE HELPER FUNCTIONS (Khi Gacha triggered)
+// ======================================================
+function hideGuideHelper() {
+    if (!guideHelperShown || !guideHelper) return;
+    guideHelperShown = false;  // Reset flag để có thể show lại sau
+    guideHelper.classList.remove('active', 'enter-from-bottom-left');
+    guideHelper.classList.add('exit-to-left');  // Bay sang trái
+    
+    setTimeout(() => {
+        guideHelper.classList.add('hidden');
+        guideHelper.classList.remove('exit-to-left');
+    }, 800);
+}
+
+function hideLoreHelper() {
+    if (!loreHelperShown || !loreHelper) return;
+    loreHelperShown = false;  // Reset flag để có thể show lại sau
+    loreHelper.classList.remove('active', 'enter-from-top-right-far');
+    loreHelper.classList.add('exit-to-right');  // Bay sang phải
+    
+    setTimeout(() => {
+        loreHelper.classList.add('hidden');
+        loreHelper.classList.remove('exit-to-right');
+    }, 800);
+}
+
+// ======================================================
 // LORE HELPER FAIRY LOGIC (Cổ thư lật trang - Cho user đã login)
 // ======================================================
 function getLoreHelperTargetPosition() {
@@ -310,7 +346,7 @@ function getLoreHelperTargetPosition() {
     // Vị trí cách top-right Gacha Orb 150px bên phải
     return {
         top: (orbRect.top - 20) + 'px',
-        right: (window.innerWidth - orbRect.right + -150) + 'px'
+        right: (window.innerWidth - orbRect.right + -100) + 'px'
     };
 }
 
@@ -322,20 +358,23 @@ function initLoreHelper() {
         const gachaView = document.getElementById("gacha-view");
         if (gachaView && gachaView.classList.contains("active") && !gachaView.classList.contains("hidden")) {
             if (!loreHelperShown) {
-                setTimeout(showLoreHelper, 5000);
+                return setTimeout(showLoreHelper, 5000);
             }
         }
+        return null;
     };
     
     // Kiểm tra ngay lập tức
-    checkAndShowLoreHelper();
+    loreHelperInitTimeout = checkAndShowLoreHelper();
     
     // Theo dõi khi chuyển view về gacha-view
     const navButtons = document.querySelectorAll(".nav-btn");
     navButtons.forEach(btn => {
         btn.addEventListener("click", () => {
             if (btn.dataset.target === "gacha-view") {
-                setTimeout(checkAndShowLoreHelper, 100);
+                setTimeout(() => {
+                    loreHelperInitTimeout = checkAndShowLoreHelper();
+                }, 100);
             }
         });
     });
@@ -372,6 +411,8 @@ function initLoreHelper() {
 }
 
 function showLoreHelper() {
+    // Không show nếu Gacha đang chạy
+    if (state !== STATE.IDLE) return;
     if (loreHelperShown || document.body.classList.contains('guest-mode') || !loreHelper) return;
     loreHelperShown = true;
     
@@ -948,6 +989,8 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.33; // Tăng sáng nhẹ để hạt lấp lánh như hình thiết kế
 document.getElementById("app-3d").appendChild(renderer.domElement);
+// Performance: will-change cho compositor layer
+renderer.domElement.style.willChange = 'transform, opacity';
 
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
@@ -974,8 +1017,11 @@ scene.add(pointLight);
 
 const clock = new THREE.Clock();
 
+// Detect mobile để giảm particle count
+const isMobile = window.innerWidth <= 768 || /Mobi|Android/i.test(navigator.userAgent);
+const PARTICLE_COUNT = isMobile ? 600 : 1500;
+
 // Particles Vortex
-const PARTICLE_COUNT = 1500;
 const particlePositions = new Float32Array(PARTICLE_COUNT * 3);
 const particleColors = new Float32Array(PARTICLE_COUNT * 3);
 const particleData = [];
@@ -1143,8 +1189,18 @@ function triggerGachaSummon() {
         return;
     }
 
+    // Cancel init timeouts nếu đang chạy (an toàn cho gọi programmatic)
+    if (guideHelperInitTimeout) clearTimeout(guideHelperInitTimeout);
+    if (loreHelperInitTimeout) clearTimeout(loreHelperInitTimeout);
+
     claimContainer.classList.add("hidden");
     lootText.classList.remove("show");
+    
+    // Hard reset collectBanner state trước khi gacha mới
+    collectBanner.classList.remove("slide-down-exit");
+    collectBanner.style.transform = '';
+    collectBanner.style.opacity = '';
+    collectBanner.style.transition = '';
     collectBanner.classList.add("hidden");
 
     coreGroup.position.set(0, 0.8, 0);
@@ -1170,8 +1226,15 @@ dockGachaTrigger.addEventListener("click", () => {
                               !document.getElementById("gacha-view").classList.contains("hidden");
 
     if (isGachaViewActive) {
+        // Cancel init timeouts nếu đang chạy
+        if (guideHelperInitTimeout) clearTimeout(guideHelperInitTimeout);
+        if (loreHelperInitTimeout) clearTimeout(loreHelperInitTimeout);
+        
         // Hide Guest Helper trước khi trigger gacha
         hideGuestHelper();
+        // Hide Guide & Lore Helpers khi Gacha triggered
+        hideGuideHelper();
+        hideLoreHelper();
         
         dockGachaTrigger.classList.add("moved"); 
         triggerGachaSummon();
@@ -1394,7 +1457,7 @@ async function handleGoogleSuccess(response) {
             if (claimContainer) claimContainer.classList.add("hidden");
             lootText.classList.remove("show");
 
-            toast.magic('CHÀO MỪNG QUAY LẠI', `🎉 CHÀO MỪNG QUAY TRỢ LẠI, ${currentUser.full_name}!\nĐã khôi phục Căn Cước [${currentUser.adventurer_code}] và đồng bộ toàn bộ kho đồ của bạn.`);
+            toast.magic('CHÀO MỪNG QUAY LẠI', `🎉 CHÀO MỪNG QUAY TRỞ LẠI, ${currentUser.full_name}!\nĐã khôi phục Danh tính [${currentUser.adventurer_code}] và kho đồ của bạn.`);
             state = STATE.IDLE;
             return;
         }
@@ -1551,21 +1614,75 @@ async function processClaimAfterLoot() {
             renderInventoryGems();
             renderInventory5x5();
 
-            collectBanner.classList.remove("hidden");
-            setTimeout(() => {
-                collectBanner.classList.add("hidden");
-                if (data.blessing) {
-                    openBlessingModal(data.blessing, `Lượt quay thứ ${data.counter} là Số Nguyên Tố! Tinh Linh ban chúc phúc:`);
+            // Hiển thị banner - dùng requestIdleCallback để không block main thread
+            const showBanner = () => {
+                collectBanner.classList.remove("hidden");
+                
+                requestAnimationFrame(() => {
+                    // Force reflow sau khi browser đã paint frame mới
+                    collectBanner.offsetHeight;
+                    
+                    // Hiển thị 3 giây rồi bắt đầu slide down
+                    setTimeout(startBannerExit, 3000);
+                });
+            };
+
+            // Ưu tiên requestIdleCallback (non-blocking), fallback requestAnimationFrame
+            if (typeof requestIdleCallback !== 'undefined') {
+                requestIdleCallback(showBanner, { timeout: 200 });
+            } else {
+                requestAnimationFrame(showBanner);
+            }
+
+            function startBannerExit() {
+                // Bắt đầu animation slide down
+                collectBanner.classList.add("slide-down-exit");
+                
+                // Named function để removeEventListener chắc chắn work
+                function handleBannerExit(e) {
+                    if (e.propertyName !== 'transform') return;
+                    collectBanner.removeEventListener('transitionend', handleBannerExit);
+                    
+                    // Chỉ ẩn hẳn sau khi animation xong
+                    collectBanner.classList.add("hidden");
+                    collectBanner.classList.remove("slide-down-exit");
+                    
+                    // Bây giờ mới xử lý blessing, fade canvas, reset state
+                    if (data.blessing) {
+                        openBlessingModal(data.blessing, `Lượt quay thứ ${data.counter} là Số Nguyên Tố! Tinh Linh ban chúc phúc:`);
+                    }
+                    
+                    // Fade canvas mượt
+                    app3dCanvas.style.transition = 'opacity 0.4s ease';
+                    app3dCanvas.style.opacity = "0.2";
+                    
+                    setTimeout(() => {
+                        app3dCanvas.style.opacity = "1";
+                        // Reset state IDLE ở cuối chain animation
+                        state = STATE.IDLE;
+                        
+                        // Show Guide & Lore Helpers lại khi về IDLE (chỉ non-guest mode)
+                        if (!document.body.classList.contains('guest-mode')) {
+                            guideHelperShown = false;
+                            loreHelperShown = false;
+                            setTimeout(showGuideHelper, 3000);
+                            setTimeout(showLoreHelper, 3500);
+                        }
+                    }, 400);
                 }
-                app3dCanvas.style.opacity = "0.2";
-                setTimeout(() => {
-                    app3dCanvas.style.opacity = "1";
-                    state = STATE.IDLE;
-                }, 100);
-            }, 3000);
+                
+                collectBanner.addEventListener('transitionend', handleBannerExit);
+            }
         } else {
             toast.error('GACHA THẤT BẠI', data.error || 'Lỗi giao dịch Gacha!');
             state = STATE.IDLE;
+            // Show helpers again on error
+            if (!document.body.classList.contains('guest-mode')) {
+                guideHelperShown = false;
+                loreHelperShown = false;
+                setTimeout(showGuideHelper, 3000);
+                setTimeout(showLoreHelper, 3500);
+            }
         }
     } catch (e) {
         // Fallback Offline
@@ -1579,6 +1696,13 @@ async function processClaimAfterLoot() {
         renderInventoryGems();
         renderInventory5x5();
         state = STATE.IDLE;
+        // Show helpers again on offline fallback
+        if (!document.body.classList.contains('guest-mode')) {
+            guideHelperShown = false;
+            loreHelperShown = false;
+            setTimeout(showGuideHelper, 500);
+            setTimeout(showLoreHelper, 1000);
+        }
     }
 }
 
@@ -1794,7 +1918,7 @@ navButtons.forEach(btn => {
         }
         if (targetId === "gacha-view") {
             controls.enabled = true;
-            document.getElementById("tabIndicator").textContent = "✦LINH CẢNH KHỞI NGUYÊN✦";
+            document.getElementById("tabIndicator").textContent = "✦LINH CẢNH✦";
             viewPanels.forEach(p => {
                 if (p.id !== "gacha-view") p.classList.add("hidden");
             });
@@ -1825,7 +1949,7 @@ function returnToGachaHome() {
     dockGachaTrigger.classList.add("active");
     document.getElementById("gacha-view").classList.remove("hidden");
     document.getElementById("gacha-view").classList.add("active");
-    document.getElementById("tabIndicator").textContent = "✦LINH CẢNH KHỞI NGUYÊN✦";
+    document.getElementById("tabIndicator").textContent = "✦LINH CẢNH✦";
     if (state !== STATE.LOOT && claimContainer) {
         claimContainer.classList.add("hidden");
     }
@@ -2610,6 +2734,11 @@ document.getElementById("btnOpenScheduleModal")?.addEventListener("click", () =>
 });
 document.getElementById("closeScheduleModal")?.addEventListener("click", () => {
     document.getElementById("scheduleModal").classList.add("hidden");
+});
+
+// Mở / Đóng Modal Brochure (dùng chung scheduleModal)
+document.getElementById("btnOpenBrochureModal")?.addEventListener("click", () => {
+    document.getElementById("scheduleModal").classList.remove("hidden");
 });
 
 // Mở / Đóng Modal Bang Hội

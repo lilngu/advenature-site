@@ -96,7 +96,7 @@ const TEXTS = {
     // INVENTORY PANEL
     // ======================================================
     inventory: {
-        panelTitle: "✦ TÚI TRỮ VẬT ✦",
+        panelTitle: "✦ TÚI VẬT PHẨM ✦",
         tabs: {
             gems: "✦ Tinh Quang Thạch ({count}/990)",
             items: "✦ Vật Phẩm & Thẻ",
@@ -174,8 +174,8 @@ const TEXTS = {
     // SHOP PANEL
     // ======================================================
     shop: {
-        panelTitle: "🛒 SHOP LỮ HÀNH RỪNG TINH LINH",
-        subtitle: "Chạm vào gói hoặc tiện ích để xem chi tiết",
+        panelTitle: "🛒 THƯƠNG QUÁN EMERALD",
+        subtitle: "Chọn gói Nạp Tinh Thạch, mở khoá camp Tân Thủ 2N1Đ",
         priceTemplate: "💎 {tt} Tinh Thạch (~{vnd} đ)",
         checkout: {
             count: "Đã chọn: {count} mục",
@@ -423,7 +423,7 @@ const TEXTS = {
     // ======================================================
     common: {
         close: "Đóng",
-        timesSymbol: "×",
+        timesSymbol: "x",
         avatarAlt: "Avatar",
     },
 };
