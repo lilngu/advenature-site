@@ -129,7 +129,7 @@ const TEXTS = {
         },
         checkin: {
             cardTitle: "KẾT NỐI LINH CẢNH",
-            cardDesc: "Đăng nhập mỗi ngày để duy trì kết nối với Linh Cảnh.\n Phần thưởng: +1 ✨ Tinh Quang",
+            cardDesc: "Đăng nhập mỗi ngày để duy trì kết nối với Linh Cảnh.\n +1 ✨ Tinh Quang",
             btn: "KÍCH HOẠT ĐIỂM DANH",
             btnLoading: "Đang kiểm tra...",
             btnDone: "Đã Điểm Danh",
@@ -140,7 +140,7 @@ const TEXTS = {
         },
         fbShare: {
             cardTitle: "💬 TRUYỀN TIN TINH LINH ",
-            cardDesc: "Đăng bài Group Advenature, dán link nhận +1 ✨.",
+            cardDesc: "Đăng bài FB Group Advenature,\n dán link nhận +1 ✨.",
             inputPlaceholder: "Link bài viết...",
             btn: "CHIA SẺ TIN",
             btnLoading: "Đang gửi...",
@@ -151,8 +151,8 @@ const TEXTS = {
         },
         referral: {
             cardTitle: "KẾT NỐI TINH THỦ",
-            codeLabel: "Mã: {code} (+1 ✨ cả 2).",
-            codePlaceholder: "Mã AWxxxx...",
+            codeLabel: "Mã: {code} ( chia sẻ bạn bè \n +1 ✨ Tinh Quang cho cả 2).",
+            codePlaceholder: "Nhập Mã của bạn bè AWxxxx...",
             scanBtnAria: "Quét mã QR",
             btn: "XÁC NHẬN",
             btnLoading: "Đang kết nối...",
@@ -163,7 +163,7 @@ const TEXTS = {
         },
         quiz: {
             cardTitle: "Mật Mã Tinh Linh",
-            cardDesc: "Giải mã tri thức từ RỪNG TINH LINH +1 ✨ .",
+            cardDesc: "Giải mã tri thức từ RỪNG TINH LINH \n +1 ✨ .",
             badge: "Hoàn thành 10 câu hỏi",
             btn: "Giải Mã",
         },
@@ -175,7 +175,7 @@ const TEXTS = {
     // ======================================================
     shop: {
         panelTitle: "🛒 THƯƠNG QUÁN EMERALD",
-        subtitle: "Chọn gói Nạp Tinh Thạch, mở khoá camp Tân Thủ 2N1Đ",
+        subtitle: "Chọn gói Nạp Tinh Thạch, mở khoá camp Tân Thủ 2N1Đ. \n 1 Tinh Thạch💎 ~ 25🐟.",
         priceTemplate: "💎 {tt} Tinh Thạch (~{vnd} đ)",
         checkout: {
             count: "Đã chọn: {count} mục",
@@ -184,9 +184,15 @@ const TEXTS = {
         },
         scheduleBtn: {
             badge: "SỰ KIỆN THỰC ĐỊA",
-            title: "📅 LỊCH TRÌNH THÁM HIỂM RỪNG TINH LINH",
-            desc: "Xem lịch khởi hành các tour cắm trại, săn thạch và số lượng người tham gia.",
+            title: "📅 LỊCH TRÌNH CAMP TÂN THỦ 2N1Đ",
+            desc: "Xem lịch mở Cổng Dịch Chuyển & số lượng Tinh Thủ  gia nhập.",
             cta: "✦ Khám phá lịch trình ✦",
+        },
+        brochureBtn: {
+            badge: "📖 BROCHURE",
+            title: "SỰ KIỆN ADVENATURE CAMP ",
+            desc: "Khám phá cốt truyện diễn biến 5 Nhiệm Vụ Nguyên Tố.",
+            cta: "Xem ngay →",
         },
         scheduleNote: "*Sở hữu ít nhất 1 Gói Tân Thủ trong túi để đăng ký giữ chỗ chính thức.",
         checkoutSuccess: "✦ Thông tin đơn hàng đã gửi tới Hội Ngọc Lục! Trưởng đoàn sẽ liên hệ sớm nhất qua SĐT/Zalo.",

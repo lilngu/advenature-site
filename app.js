@@ -111,6 +111,7 @@ applyI18n();
 // ======================================================
 // PHASE 3: ĐỒNG BỘ DỮ LIỆU TỪ D1 KHI MỞ TRANG HOẶC VÀO TÚI ĐỒ
 // ======================================================
+// app.js: Cập nhật hàm syncUserDataFromBackend để phát hiện điểm mới từ bạn bè
 async function syncUserDataFromBackend() {
     if (!currentUser || !currentUser.id || currentUser.id.startsWith("AW_USER_")) return;
 
@@ -118,15 +119,23 @@ async function syncUserDataFromBackend() {
         const res = await fetch(`${API_URL}/api/user/sync?userId=${currentUser.id}`);
         const data = await res.json();
         if (data.success && data.user) {
-            currentUser.tinh_quang_points = data.user.tinh_quang_points;
+            // Kiểm tra nếu điểm Tinh Quang từ D1 cao hơn số điểm hiện tại ở máy
+            const oldTQ = currentUser.tinh_quang_points || 0;
+            const newTQ = data.user.tinh_quang_points || 0;
+
+            if (newTQ > oldTQ) {
+                const gained = newTQ - oldTQ;
+                // Bật thông báo nhẹ nhàng cho người chơi
+                console.log(`🎉 Bạn nhận được +${gained} 🔮 Tinh Quang mới từ hệ thống hoặc bạn bè!`);
+            }
+
+            currentUser.tinh_quang_points = newTQ;
             currentUser.tinh_thach_points = data.user.tinh_thach_points;
             currentUser.cong_hien_points = data.user.cong_hien_points;
             currentUser.gacha_counter = data.user.gacha_counter;
             currentUser.role = data.user.role || currentUser.role;
-            const serverGems = Array.isArray(data.user.unlocked_gems) ? data.user.unlocked_gems : [];
-            currentUser.unlocked_gems = Array.from(new Set([...currentUser.unlocked_gems, ...serverGems]));
+            currentUser.unlocked_gems = data.user.unlocked_gems || [];
 
-            // Ánh xạ iconClass và mô tả từ BLESSINGS_DATA cho từng món đồ từ D1
             if (data.user.inventory) {
                 currentUser.inventory = data.user.inventory.map(invItem => {
                     const masterItem = BLESSINGS_DATA.find(b => b.id === invItem.item_code);
@@ -150,7 +159,7 @@ async function syncUserDataFromBackend() {
             renderInventory5x5();
         }
     } catch (e) {
-        console.warn("Chưa đồng bộ được với D1 (chế độ offline):", e);
+        console.warn("Chưa đồng bộ được với D1:", e);
     }
 }
 
@@ -335,6 +344,27 @@ function hideLoreHelper() {
 }
 
 // ======================================================
+// HELPER: Trigger Guide & Lore Helpers sau khi login xong
+// ======================================================
+function triggerHelpersAfterLogin() {
+    // Chỉ trigger nếu đang ở gacha-view và state IDLE
+    const gachaView = document.getElementById("gacha-view");
+    if (gachaView && gachaView.classList.contains("active") && !gachaView.classList.contains("hidden") && state === STATE.IDLE) {
+        // Clear any existing init timeouts
+        if (guideHelperInitTimeout) clearTimeout(guideHelperInitTimeout);
+        if (loreHelperInitTimeout) clearTimeout(loreHelperInitTimeout);
+        
+        // Reset flags
+        guideHelperShown = false;
+        loreHelperShown = false;
+        
+        // Show both after 3 seconds
+        guideHelperInitTimeout = setTimeout(showGuideHelper, 3000);
+        loreHelperInitTimeout = setTimeout(showLoreHelper, 3000);
+    }
+}
+
+// ======================================================
 // LORE HELPER FAIRY LOGIC (Cổ thư lật trang - Cho user đã login)
 // ======================================================
 function getLoreHelperTargetPosition() {
@@ -345,7 +375,7 @@ function getLoreHelperTargetPosition() {
     
     // Vị trí cách top-right Gacha Orb 150px bên phải
     return {
-        top: (orbRect.top - 20) + 'px',
+        top: (orbRect.top - 150) + 'px',
         right: (window.innerWidth - orbRect.right + -100) + 'px'
     };
 }
@@ -1451,6 +1481,10 @@ async function handleGoogleSuccess(response) {
             updateTopBarUI();
             renderInventoryGems();
             renderInventory5x5();
+            
+            // Khởi tạo Guide & Lore Helpers (attach click handlers) sau khi thoát guest-mode
+            initGuideHelper();
+            initLoreHelper();
 
             // Đóng Modal ngay lập tức, KHÔNG bắt điền lại thông tin!
             onboardingModal.classList.add("hidden");
@@ -1459,6 +1493,8 @@ async function handleGoogleSuccess(response) {
 
             toast.magic('CHÀO MỪNG QUAY LẠI', `🎉 CHÀO MỪNG QUAY TRỞ LẠI, ${currentUser.full_name}!\nĐã khôi phục Danh tính [${currentUser.adventurer_code}] và kho đồ của bạn.`);
             state = STATE.IDLE;
+            // Trigger helpers sau 3s khi đã login xong
+            triggerHelpersAfterLogin();
             return;
         }
 
@@ -1563,6 +1599,10 @@ btnCompleteRegister.addEventListener("click", async () => {
             updateTopBarUI();
             renderInventoryGems();
             renderInventory5x5();
+            
+            // Khởi tạo Guide & Lore Helpers (attach click handlers) sau khi thoát guest-mode
+            initGuideHelper();
+            initLoreHelper();
 
             onboardingModal.classList.add("hidden");
             claimContainer.classList.add("hidden");
@@ -1570,6 +1610,8 @@ btnCompleteRegister.addEventListener("click", async () => {
 
             openBlessingModal(data.blessing, "Chúc phúc dành riêng cho Tân Thủ!");
             state = STATE.IDLE;
+            // Trigger helpers sau 3s khi đã đăng ký xong
+            triggerHelpersAfterLogin();
         } else {
             toast.error('ĐĂNG KÝ THẤT BẠI', data.error || 'Vui lòng thử lại');
         }
@@ -1649,7 +1691,7 @@ async function processClaimAfterLoot() {
                     
                     // Bây giờ mới xử lý blessing, fade canvas, reset state
                     if (data.blessing) {
-                        openBlessingModal(data.blessing, `Lượt quay thứ ${data.counter} là Số Nguyên Tố! Tinh Linh ban chúc phúc:`);
+                        openBlessingModal(data.blessing, `Lượt quay thứ ${data.counter}! Nhận Tinh Linh ban chúc phúc:`);
                     }
                     
                     // Fade canvas mượt
@@ -2395,7 +2437,7 @@ function renderShop() {
         <div class="shop-2col-card ${selectedShopIds.has(p.id) ? 'selected' : ''}" data-id="${p.id}">
             <div class="shop-2col-icon"><i class="rpg-ico ${p.iconClass}" style="width:32px;height:32px;"></i></div>
             <div class="shop-2col-title">${p.name}</div>
-            <div class="shop-2col-tag">💎 ${p.tt} TT</div>
+            <div class="shop-2col-tag">💎 ${p.tt} Tinh Thạch</div>
         </div>
     `).join('');
 
@@ -2736,9 +2778,9 @@ document.getElementById("closeScheduleModal")?.addEventListener("click", () => {
     document.getElementById("scheduleModal").classList.add("hidden");
 });
 
-// Mở / Đóng Modal Brochure (dùng chung scheduleModal)
+// Mở / Đóng Modal Brochure -> mở Lore Reader Modal
 document.getElementById("btnOpenBrochureModal")?.addEventListener("click", () => {
-    document.getElementById("scheduleModal").classList.remove("hidden");
+    openLoreReaderModal();
 });
 
 // Mở / Đóng Modal Bang Hội
@@ -2930,3 +2972,19 @@ renderShop();
 
 // Khởi tạo Button VFX Particle System
 initButtonVFX();
+
+// Tự động kiểm tra điểm mới mỗi khi người chơi quay lại tab web hoặc chạm vào màn hình
+window.addEventListener("focus", () => {
+    syncUserDataFromBackend();
+});
+
+document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+        syncUserDataFromBackend();
+    }
+});
+
+// Kiểm tra định kỳ mỗi 15 giây (Polling nhẹ)
+setInterval(() => {
+    syncUserDataFromBackend();
+}, 15000);
