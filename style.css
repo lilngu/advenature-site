@@ -2706,8 +2706,8 @@ body.guest-mode .dock-btn:not(.center-core) {
 
 /* Pulse animation khi show */
 @keyframes gachaTooltipPulse {
-    0%, 100% { box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1), 0 0 12px rgba(171, 238, 255, 0.479); }
-    50% { box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1), 0 0 24px rgba(141, 213, 255, 0.8); }
+    0%, 100% {text-shadow: #cfb8ff 1px 1px 8px;}
+    50% { text-shadow: #ffffff 1px 1px 15px;}
 }
 
 .gacha-ready-tooltip.show {
@@ -3201,6 +3201,17 @@ body.guest-mode .dock-btn:not(.center-core) {
     .lore-reader-container { max-width: 95vw; height: 85vh; max-height: 90vh;}
     .lore-reader-title { font-size: 15px; }
     .lore-reader-btn { padding: 8px 12px; font-size: 11px; }
+    
+    /* GIẢM 3D COMPLEXITY CHO MOBILE: Chỉ bật preserve-3d cho trang đang animation */
+    .lore-book-stage { perspective: 1000px; }
+    .lore-comic-page { transform-style: flat; } /* Mặc định flat để tiết kiệm GPU layer */
+    .lore-comic-page.animating { transform-style: preserve-3d; } /* Chỉ bật 3D khi đang lật */
+    .lore-page-face { backface-visibility: hidden; }
+}
+
+/* Tablet cũng giảm perspective */
+@media (min-width: 481px) and (max-width: 1024px) {
+    .lore-book-stage { perspective: 1200px; }
 }
 
 /* BANNER LỊCH PHIÊU LƯU */
@@ -3745,6 +3756,17 @@ body.guest-mode .dock-btn:not(.center-core) {
     .guide-reader-container { max-width: 95vw; height: 85vh; max-height: 90vh; }
     .guide-reader-title { font-size: 15px; }
     .guide-reader-btn { padding: 8px 12px; font-size: 11px; }
+    
+    /* GIẢM 3D COMPLEXITY CHO MOBILE: Chỉ bật preserve-3d cho trang đang animation */
+    .guide-book-stage { perspective: 1000px; }
+    .guide-reader-viewport .lore-comic-page { transform-style: flat; }
+    .guide-reader-viewport .lore-comic-page.animating { transform-style: preserve-3d; }
+    .guide-reader-viewport .lore-page-face { backface-visibility: hidden; }
+}
+
+/* Tablet cũng giảm perspective */
+@media (min-width: 481px) and (max-width: 1024px) {
+    .guide-book-stage { perspective: 1200px; }
 }
 
 #guildModal h3, #rangerModal h3 {

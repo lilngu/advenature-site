@@ -184,9 +184,8 @@ export const LORE_PAGES_DATA = [
         id: 13,
         title: "Trang 13",
         url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677740/d3l55mbk4c1cganfkipx.png"
-    },
-    
-];
+    }
+ ];
 
 // 7. HƯỚNG DẪN TINH THỦ - DANH SÁCH TRANG (GUIDE READER - 2 trang lật)
 export const GUIDE_PAGES_DATA = [

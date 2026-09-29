@@ -667,6 +667,11 @@ function updateLoreReaderUI() {
             page.style.transform = 'rotateY(0deg)';
         }
     });
+    
+    // Remove animating class from all pages after transition completes
+    setTimeout(() => {
+        pages.forEach(page => page.classList.remove('animating'));
+    }, 600); // Match transition duration
 }
 
 function loreNextPage() {
@@ -740,6 +745,7 @@ function handleLoreDragStart(x) {
     
     if (loreActivePageElement) {
         loreActivePageElement.style.transition = 'none';
+        loreActivePageElement.classList.add('animating'); // Bật 3D chỉ khi đang lật
     }
 }
 
@@ -784,6 +790,11 @@ function handleLoreDragEnd() {
     } else {
         // Snap back to original position
         updateLoreReaderUI();
+    }
+    
+    // Tắt 3D sau khi xong animation
+    if (loreActivePageElement) {
+        loreActivePageElement.classList.remove('animating');
     }
     
     loreCurrentDeltaX = 0;
@@ -892,6 +903,11 @@ function updateGuideReaderUI() {
             page.style.transform = 'rotateY(0deg)';
         }
     });
+    
+    // Remove animating class from all pages after transition completes
+    setTimeout(() => {
+        pages.forEach(page => page.classList.remove('animating'));
+    }, 600); // Match transition duration
 }
 
 function guideNextPage() {
@@ -965,6 +981,7 @@ function handleGuideDragStart(x) {
     
     if (guideActivePageElement) {
         guideActivePageElement.style.transition = 'none';
+        guideActivePageElement.classList.add('animating'); // Bật 3D chỉ khi đang lật
     }
 }
 
@@ -1009,6 +1026,11 @@ function handleGuideDragEnd() {
     } else {
         // Snap back to original position
         updateGuideReaderUI();
+    }
+    
+    // Tắt 3D sau khi xong animation
+    if (guideActivePageElement) {
+        guideActivePageElement.classList.remove('animating');
     }
     
     guideCurrentDeltaX = 0;

@@ -216,7 +216,7 @@ const TEXTS = {
         defaultBirth: "----",
         infoLabels: {
             class: "Chức Nghiệp",
-            tribe: "Bộ Tộc",
+            tribe: "Dòng máu",
             gender: "Giới Tính",
             birth: "Năm Sinh",
         },
