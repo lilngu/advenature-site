@@ -55,10 +55,10 @@ export const SHAPE_STYLES = [
 // 3. DANH MỤC 30 CHÚC PHÚC TINH LINH
 export const BLESSINGS_DATA = [
      // ✦ 4 Chúc Phúc Free Tân Thủ (Đồng bộ với worker.js)
-    { id: "BLESS_FREE_TEA", name: "+1 CHÚC PHÚC TINH LINH: Trà Thảo Mộc", tier: "common", iconClass: "ico-item-10", isBuff: false, desc: "Nhận tách trà Thảo Mộc ấm trong không khí se lạnh của Rừng Tinh Linh." },
-    { id: "BLESS_FREE_BREAKFAST", name: "+1 CHÚC PHÚC TINH LINH: Thẻ Bữa Sáng Bên Suối", tier: "common", iconClass: "ico-food", isBuff: false, desc: "Phiếu ăn sáng tiêu chuẩn bên suối tự nhiên Rừng Tinh Linh." },
-    { id: "BLESS_FREE_BBQ", name: "+1 CHÚC PHÚC TINH LINH: Vé BBQ Đêm Tinh Nghịch", tier: "common", iconClass: "ico-item-12", isBuff: false, desc: "Thêm 01 phần thịt nướng cao cấp bên bếp lửa hồng Hội Ngọc Lục." },
-    { id: "BLESS_FREE_GACHA", name: "+1 CHÚC PHÚC TINH LINH: Vé Gacha Phiên Chợ", tier: "rare", iconClass: "ico-item-24", isBuff: false, desc: "01 lượt quay may mắn 100% trúng quà độc bản tại Phiên Chợ Tinh Linh." },
+    { id: "BLESS_FREE_THUY", name: "+1 CHÚC PHÚC THUỶ TINH LINH", tier: "rare", iconClass: "ico-item-suong", isBuff: false, desc: "GIỌT SƯƠNG ĐIỆU ĐÀ buff Dược Thủy Tăng Lực, mạo hiểm giả được refill không giới hạn Potion Thảo Mộc Hồi HP tại Quầy Bar Tavern Hội Mạo Hiểm." },
+    { id: "BLESS_FREE_HOA", name: "+1 CHÚC PHÚC HOẢ TINH LINH", tier: "rare", iconClass: "ico-item-than", isBuff: false, desc: "ĐỐM THAN TINH NGHỊCH thắp lên ngọn lửa niềm vui, mạo hiểm giả được 1 lần quay Gacha nhận vật phẩm tại Phiên Chợ Tinh Linh." },
+    { id: "BLESS_FREE_QUANG", name: "+1 CHÚC PHÚC QUANG TINH LINH", tier: "rare", iconClass: "ico-item-thach", isBuff: false, desc: "Thạch Yêu Lúc Lắc buff chỉ số may mắn cho mạo hiểm giả,\n ​X2 Tinh Thạch Thưởng khi làm các Quest Nguyên Tố." },
+    { id: "BLESS_FREE_THO", name: "+1 CHÚC PHÚC THỔ TINH LINH", tier: "legendary", iconClass: "ico-item-mam", isBuff: false, desc: "BÉ MẦM CHÚT CHÍT mở ra những góc khuất và truyền thuyết bị phong ấn, kích hoạt 01 Nhiệm vụ ẩn chỉ dành riêng cho người có Chúc Phúc này." },
     // Common (1-12)
     { id: "BLESS_01", name: "1 ống tre", tier: "common", iconClass: "ico-item-01", isBuff: false, desc: "Ống tre rừng nguyên sinh dùng trữ nước hoặc thủ công." },
     { id: "BLESS_02", name: "Nhựa thông", tier: "common", iconClass: "ico-item-02", isBuff: false, desc: "Nhựa thông khô nhóm lửa thắp sáng lều trại ban đêm." },
@@ -102,13 +102,13 @@ export const SHOP_ITEMS = [
     { id: "PKG_3", name: "👑 Tân Thủ Nạp Thẻ ", tt: 80, vnd: 2000000, iconClass: "ico-pkg3", desc: "📦 01 Mystery Loot Box  (Trang bị cơ bản) \n ⛺ 1 Đêm Lưu Trú Lều /  Dorm. \n 🥩 03 Bữa ăn Tối, Sáng, Trưa. \n 🎁 Áp dụng Chúc Phúc Tinh Linh \n Tất cả 5 Nhiệm Vụ Quest Chính. \n +1 Huy Hiệu NHÀ PHIÊU LƯU XANH \n +1 Thẻ bài Tinh Linh ngẫu nhiên.\n +Túi 4 Tinh Thạch  \n +1 Lần GACHA Tại Phiên Chợ Tinh Linh." },
     { id: "PKG_4", name: "⛺ Lưu Trú 1 Đêm", tt: 16, vnd: 400000, iconClass: "ico-pkg4", desc: "⛺ 01 Đêm Lưu Trú Lều Trại hoặc Dorm \n 🏚️ Sử dụng tự do Tavern Emerald Guild \n 🌿 Đã bao gồm bộ đệm ấm & túi ngủ." },
     { id: "Q_1", name: "🌬️ Quest Phong Tinh", tt: 8, vnd: 200000, iconClass: "ico-quest2", desc: "📜 Nhiệm Vụ Lá Thư Rừng Tập Sự \n 🍵 Thưởng thức Trà Thảo Mộc trên đồi" },
-    { id: "Q_2", name: "✨ Quest Quang Tinh", tt: 8, vnd: 200000, iconClass: "ico-quest1", desc: "📜 Nhiệm Vụ Kích Hoạt Cổng Quang Thạch tại Phiên Chợ Tinh Linh.\n 🔮 Nhận thưởng +1 Tinh Thạch " },
+    { id: "Q_2", name: "✨ Quest Quang Tinh", tt: 8, vnd: 200000, iconClass: "ico-quest1", desc: "📜 Nhiệm Vụ Quang Tinh Linh tại Phiên Chợ Tinh Linh.\n 🔮 Nhận thưởng +1 Tinh Thạch " },
     { id: "Q_3", name: "🔥 Quest Hỏa Tinh", tt: 8, vnd: 200000, iconClass: "ico-quest3", desc: "📜 Nhiệm Vụ Truyền Đuốc Lửa Đêm \n🔥 Kích hoạt Ngọn Lửa Trại Nguyên Tố \nNhận thưởng +1 Tinh Thạch " },
-    { id: "Q_4", name: "💧 Quest Thủy Tinh", tt: 8, vnd: 200000, iconClass: "ico-quest4", desc: "​Nhiệm Vụ Thanh Lọc tại Suối Tinh Linh.\n Nhận thưởng +1 Tinh Thạch" },
-    { id: "Q_5", name: "🗿 Quest Thổ Tinh", tt: 8, vnd: 200000, iconClass: "ico-quest5", desc: "🪨 Nhiệm Vụ Thạch Yêu Lúc Lắc\n Nhận thưởng +1 Tinh Thạch" },
-    { id: "F_1", name: "🍢  Bữa Tối BBQ", tt: 6, vnd: 150000, iconClass: "ico-food1", desc: "Tiệc nướng thịt thơm lừng bên ánh lửa trại ấm cúng." },
+    { id: "Q_4", name: "💧 Quest Thủy Tinh", tt: 8, vnd: 200000, iconClass: "ico-quest4", desc: "​Nhiệm Vụ Thuỷ Tinh Linh tại Suối Tinh Linh.\n Nhận thưởng +1 Tinh Thạch" },
+    { id: "Q_5", name: "🗿 Quest Thổ Tinh", tt: 8, vnd: 200000, iconClass: "ico-quest5", desc: "🪨 Nhiệm Vụ Thổ Tinh Linh \n Nhận thưởng +1 Tinh Thạch" },
+    { id: "F_1", name: "🍢  Bữa Tối BBQ", tt: 6, vnd: 150000, iconClass: "ico-food1", desc: "Bữa thịt nướng thơm lừng bên ánh lửa trại ấm cúng." },
     { id: "F_2", name: "🥪Bữa Sáng Bên Suối", tt: 6, vnd: 150000, iconClass: "ico-food2", desc: "​🥪 01 Suất Bữa Sáng bên Bờ Suối Tinh Linh.\n 🌿 Có thể ngâm mình trong suối lạnh giữa rừng" },
-    { id: "F_3", name: "🍱 Bữa Trưa Tại Phiên Chợ ", tt: 3, vnd: 75000, iconClass: "ico-food3", desc: "​🍱 01 Suất Bữa Trưa tại Phiên Chợ Tinh Linh nhập vai vui vẻ." }
+    { id: "F_3", name: "🍱 Bữa Trưa Tại Phiên Chợ ", tt: 2, vnd: 50000, iconClass: "ico-food3", desc: "​🍱 01 Suất Bữa Trưa tại Phiên Chợ Tinh Linh nhập vai vui vẻ." }
 ];
 
 // 5. CÂU HỎI MẬT MÃ RỪNG TINH LINH
@@ -178,7 +178,7 @@ export const LORE_PAGES_DATA = [
     {
         id: 12,
         title: "Trang 12",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677739/uonvrij8iobqpp4icsmt.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790719395/gqg0jitvnn3m1u9gufao.png"
     },
     {
         id: 13,
@@ -192,7 +192,7 @@ export const GUIDE_PAGES_DATA = [
     {
         id: 1,
         title: "Trang 1: Chào Mừng Tinh Thủ",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790667812/tp7lecfdywmw13mhgr7f.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790719275/u0nu9m4xfcnee1s8xrc0.png"
     },
     {
         id: 2,

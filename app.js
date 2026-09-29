@@ -812,7 +812,7 @@ function updateTopBarUI() {
     setSafeText("myRefCodeDisplay", currentUser.adventurer_code || "AW----");
 
     // 6. Cấp bậc
-    setSafeText("profRankTitle", currentUser.guild_rank_title || "Tập Sự");
+    setSafeText("profRankTitle", currentUser.guild_rank_title || "Tân Thủ");
     const needPoints = Math.max(0, 100 - (currentUser.cong_hien_points || 0));
     setSafeText("profRankNeed", `${needPoints} Điểm Lên Cấp`);
 
@@ -1130,7 +1130,7 @@ const blessingModal = document.getElementById("blessingModal");
 function openBlessingModal(blessing, reasonText) {
     document.getElementById("blessTierTag").textContent = (blessing.tier || "common").toUpperCase();
     document.getElementById("blessTierTag").className = `blessing-tier-tag tier-${blessing.tier || "common"}`;
-    document.getElementById("blessIconBox").innerHTML = `<i class="item-ico ${blessing.iconClass}" style="width:48px;height:48px;"></i>`;
+    document.getElementById("blessIconBox").innerHTML = `<i class="item-ico ${blessing.iconClass}" style="width:88px;height:88px;"></i>`;
     document.getElementById("blessTitle").textContent = blessing.name;
     document.getElementById("blessDesc").textContent = `${reasonText}\n${blessing.desc || ''}`;
     blessingModal.classList.remove("hidden");
@@ -1147,22 +1147,22 @@ document.getElementById("btnCloseBlessingModal").addEventListener("click", () =>
 // ======================================================
 const AVATAR_PRESETS = {
     "Nam": [
-        "https://api.dicebear.com/7.x/adventurer/svg?seed=Felix&hair=short01",
-        "https://api.dicebear.com/7.x/adventurer/svg?seed=Leo&hair=short02",
-        "https://api.dicebear.com/7.x/adventurer/svg?seed=Oliver&hair=short04",
-        "https://api.dicebear.com/7.x/adventurer/svg?seed=Jack&hair=short05"
+        "https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790720386/trtjjovqp4expfjv5ny1.png",
+        "https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790720389/cigyb5oyxs9ubotet3lf.png",
+        "https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790720390/gx0ked2bnhn7w3z5qcyu.png",
+        "https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790720393/skzpe30auffafzdednkl.png"
     ],
     "Nữ": [
-        "https://api.dicebear.com/7.x/adventurer/svg?seed=Bella&hair=long01",
-        "https://api.dicebear.com/7.x/adventurer/svg?seed=Luna&hair=long02",
-        "https://api.dicebear.com/7.x/adventurer/svg?seed=Maya&hair=long04",
-        "https://api.dicebear.com/7.x/adventurer/svg?seed=Sophie&hair=long05"
+        "https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790720387/lzwrwpho48ul6b1tml1v.png",
+        "https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790720390/hvfxpqvqoghqpcyvfzyd.png",
+        "https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790720392/dkdmmysvn8d7setmzgyl.png",
+        "https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790720395/niwihrjomrmqekdaecls.png"
     ],
     "Tự do": [
-        "https://api.dicebear.com/7.x/adventurer/svg?seed=Maya&hair=long04",
-        "https://api.dicebear.com/7.x/adventurer/svg?seed=Jack&hair=short05",
-        "https://api.dicebear.com/7.x/adventurer/svg?seed=Phoenix&hair=short03",
-        "https://api.dicebear.com/7.x/adventurer/svg?seed=Avery&hair=long03"
+        "https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790720396/x4vsosyiyv4m8f48hovf.png",
+        "https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790720402/dd2gipxmttiumh6d2bhk.png",
+        "https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790720400/hugshm4nkvprsadmcabf.png",
+        "https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790720402/gcc00qifqlqfv1uhjxea.png"
     ]
 };
 
@@ -1464,7 +1464,7 @@ btnCompleteRegister.addEventListener("click", async () => {
             claimContainer.classList.add("hidden");
             lootText.classList.remove("show");
 
-            openBlessingModal(data.blessing, "Chúc phúc dành riêng cho Tân Thủ!");
+            openBlessingModal(data.blessing, "✧");
             state = STATE.IDLE;
             // Trigger helpers sau 3s khi đã đăng ký xong
             triggerHelpersAfterLogin();
@@ -1547,7 +1547,7 @@ async function processClaimAfterLoot() {
                     
                     // Bây giờ mới xử lý blessing, fade canvas, reset state
                     if (data.blessing) {
-                        openBlessingModal(data.blessing, `Lượt quay thứ ${data.counter}! Nhận Tinh Linh ban chúc phúc:`);
+                        openBlessingModal(data.blessing, `Lượt quay thứ ${data.counter}! Nhận Tinh Linh chúc phúc:`);
                     }
                     
                     // Fade canvas mượt
@@ -1822,7 +1822,7 @@ navButtons.forEach(btn => {
         }
         if (targetId === "gacha-view") {
             controls.enabled = true;
-            document.getElementById("tabIndicator").textContent = "✧LINH CẢNH✧";
+            document.getElementById("tabIndicator").textContent = "✧LINH CẢNH✦ \n CỔNG KẾT NỐI TINH LINH RỪNG";
             viewPanels.forEach(p => {
                 if (p.id !== "gacha-view") p.classList.add("hidden");
             });
@@ -1858,7 +1858,7 @@ function returnToGachaHome() {
     dockGachaTrigger.classList.add("active");
     document.getElementById("gacha-view").classList.remove("hidden");
     document.getElementById("gacha-view").classList.add("active");
-    document.getElementById("tabIndicator").textContent = "✧LINH CẢNH✧";
+    document.getElementById("tabIndicator").textContent = "✧LINH CẢNH✦ \n CỔNG KẾT NỐI TINH LINH RỪNG";
     if (state !== STATE.LOOT && claimContainer) {
         claimContainer.classList.add("hidden");
     }
@@ -2061,7 +2061,7 @@ function renderInventoryGems() {
     if (tabCountEl) tabCountEl.textContent = `${count}/990`; // Hiển thị tỉ lệ trên nút Tab
 
     const tabGemsBtn = document.getElementById("tabGemsBtn");
-    if (tabGemsBtn) tabGemsBtn.innerHTML = `✧ Tinh Quang Thạch <span id="tabGemProgressCount">${count}/990</span>`;
+    if (tabGemsBtn) tabGemsBtn.innerHTML = `✧ Quang Thạch <span id="tabGemProgressCount">${count}/990</span>`;
 
     const pct = ((count / 990) * 100).toFixed(1);
     const pctEl = document.getElementById("gemProgressPct");

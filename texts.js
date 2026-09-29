@@ -20,7 +20,7 @@ const TEXTS = {
     // ======================================================
     welcome: {
         title: "✦ ĐANG KHỞI TẠO CỔNG DỊCH CHUYỂN ... ✦",
-        body: "Chào mừng đến LINH CẢNH KHỞI NGUYÊN! <br> Điểm tập kết của Nhà Phiêu Lưu <br> trước khi vào RỪNG TINH LINH thực cảnh. </br> ⋆｡‧˚ʚ🔮ɞ˚‧｡⋆",
+        body: "Chào mừng đến LINH CẢNH KHỞI NGUYÊN! <br> Cổng kết nối giữa Tinh Linh Rừng🍀 <br> cùng những tâm hồn yêu thiên nhiên. <br> Hãy chạm vào TINH CẦU nhận CHÚC PHÚC<br> trước khi vào RỪNG TINH LINH thực cảnh. </br> ⋆｡‧˚ʚ🔮ɞ˚‧｡⋆",
         tapHint: "✦ Chạm cổ thư để tiếp tục ✦",
     },
 
@@ -35,7 +35,7 @@ const TEXTS = {
     // GUIDE HELPER FAIRY (Cho user đã login)
     // ======================================================
     guideHelper: {
-        tooltip: "HƯỚNG DẪN TINH THỦ",
+        tooltip: "HƯỚNG DẪN TÂN THỦ",
     },
 
     // ======================================================
@@ -48,10 +48,10 @@ const TEXTS = {
     },
 
     // ======================================================
-    // GUIDE READER MODAL (Hướng dẫn Tinh Thủ)
+    // GUIDE READER MODAL (Hướng dẫn NHÀ PHIÊU LƯU)
     // ======================================================
     guideReader: {
-        title: "✦ HƯỚNG DẪN TINH THỦ ✦",
+        title: "✦ HƯỚNG DẪN TÂN THỦ ✦",
         prevBtn: "TRƯỚC",
         nextBtn: "TIẾP",
     },
@@ -72,7 +72,7 @@ const TEXTS = {
     // GACHA VIEW
     // ======================================================
     gacha: {
-        tabIndicator: "✦LINH CẢNH✦",
+        tabIndicator: "✧LINH CẢNH✦ \n CỔNG KẾT NỐI TINH LINH RỪNG",
         crystalTitleDefault: "Bệ Đá Tinh Quang",
         claimButton: "✦ THU THẬP VÀO TÚI ✦",
         collectBanner: "ĐÃ THU THẬP QUANG THẠCH VÀO TÚI",
@@ -151,14 +151,14 @@ const TEXTS = {
             networkError: "Không thể kết nối đến máy chủ duyệt nhiệm vụ!",
         },
         referral: {
-            cardTitle: "KẾT NỐI TINH THỦ",
+            cardTitle: "KẾT NỐI NHÀ PHIÊU LƯU",
             codeLabel: "Mã: {code} ( chia sẻ bạn bè \n +1 ✨ Tinh Quang cho cả 2).",
             codePlaceholder: "Nhập Mã của bạn bè AWxxxx...",
             scanBtnAria: "Quét mã QR",
             btn: "XÁC NHẬN",
             btnLoading: "Đang kết nối...",
             success: "🎉 KẾT NỐI THÀNH CÔNG!\nBạn và [{friendName} - {friendCode}] đã kết nối thành công. Cả 2 đều được nhận +1 🔮 Tinh Quang!",
-            invalidCode: "Vui lòng nhập đúng mã TINH THỦ (bắt đầu bằng AW, ví dụ: AW8391)!",
+            invalidCode: "Vui lòng nhập đúng mã PHIÊU LƯU (bắt đầu bằng AW, ví dụ: AW8391)!",
             error: "Không thể kết nối với mã này!",
             networkError: "Lỗi kết nối đến máy chủ!",
         },
@@ -184,10 +184,10 @@ const TEXTS = {
             btn: "✦ ĐẶT MUA ✦",
         },
         scheduleBtn: {
-            badge: "SỰ KIỆN THỰC ĐỊA",
-            title: "📅 LỊCH TRÌNH CAMP TÂN THỦ 2N1Đ",
-            desc: "Xem lịch mở Cổng Dịch Chuyển & số lượng Tinh Thủ  gia nhập.",
-            cta: "✦ Khám phá lịch trình ✦",
+            badge: "SỰ KIỆN LARP CAMP",
+            title: "📅 LỊCH TRÌNH ADVENATURE CAMP",
+            desc: "Xem lịch mở Cổng Dịch Chuyển & số lượng Nhà Phiêu Lưu gia nhập.",
+            cta: "✦ Tối thiểu 5 Nhà Phiêu Lưu tham gia ✦",
         },
         brochureBtn: {
             badge: "📖 BROCHURE",
@@ -204,10 +204,10 @@ const TEXTS = {
     // PROFILE PANEL
     // ======================================================
     profile: {
-        panelTitle: "✦THẺ TINH THỦ",
+        panelTitle: "✦THẺ NHÀ PHIÊU LƯU",
         uploadBadgeTitle: "Đổi ảnh đại diện",
         defaultCode: "AW----",
-        defaultName: "TINH THỦ",
+        defaultName: "NHÀ PHIÊU LƯU",
         defaultEmail: "chua_lien_ket@advenature.local",
         defaultRole: "Tân Thủ",
         defaultClass: "Chưa có",
@@ -255,14 +255,14 @@ const TEXTS = {
     // ======================================================
     onboarding: {
         step1: {
-            title: "✦ ĐỊNH DANH TINH THỦ ✦",
+            title: "✦ ĐỊNH DANH NHÀ PHIÊU LƯU ✦",
             desc: "Kích hoạt Khế Ước Google để bảo hộ Quang Thạch và Túi Đồ của bạn.",
             requiredNote: "*Bắt buộc để đồng bộ Thẻ",
         },
         step2: {
-            title: "✦ THIẾT LẬP THẺ TINH THỦ ✦",
+            title: "✦ THIẾT LẬP THẺ NHÀ PHIÊU LƯU ✦",
             labels: {
-                name: "Danh tính Tinh Thủ:",
+                name: "Danh tính NHÀ PHIÊU LƯU:",
                 gender: "Giới tính:",
                 avatar: "Chọn hình đại diện ban đầu:",
                 birth: "Sanh thần:",
@@ -283,7 +283,7 @@ const TEXTS = {
             phonePlaceholder: "VD: 0912345678",
             submitBtn: "✦ TIẾN VÀO LINH CẢNH ✦",
             validation: {
-                name: "Vui lòng nhập Tên TINH THỦ!",
+                name: "Vui lòng nhập Tên NHÀ PHIÊU LƯU!",
                 phone: "Vui lòng nhập Số điện thoại hoặc Zalo!",
                 birth: "Vui lòng nhập Năm sinh!",
                 class: "Vui lòng nhập Chức nghiệp của bạn!",
@@ -317,7 +317,7 @@ const TEXTS = {
     // ======================================================
     gemPreview: {
         // Locked state texts (dùng khi đá chưa mở khóa - hiển thị trong inventory grid)
-        lockedTitle: "Tinh Quang Thạch Ẩn Danh",
+        lockedTitle: "Quang Thạch Ẩn Danh",
         lockedShape: "Chưa khám phá",
         lockedFaces: "?? Mặt",
         lockedDesc: "Biến thể huyền bí này chưa được khai mở. Hãy triệu hồi tại Bệ Đá Tinh Quang để thu thập vào bộ sưu tập!",
@@ -353,25 +353,25 @@ const TEXTS = {
     // SCHEDULE MODAL
     // ======================================================
     schedule: {
-        title: "✦ LỊCH TRÌNH SỰ KIỆN THỰC ĐỊA ✦",
+        title: "✦ LỊCH TRÌNH SỰ KIỆN LARP CAMP ✦",
         events: [
             {
-                date: "15 THÁNG NÀY",
-                title: "Đêm Lửa Trại & Khai Mở Thạch Quán",
-                location: "Địa điểm: Rừng Tinh Linh, Bảo Lộc",
-                slots: "18/25 chỗ",
+                date: "10-11 Tháng 10",
+                title: "CHƯƠNG 1: TÂN THỦ",
+                location: "Địa điểm: Rừng Tinh Linh",
+                slots: "0/15 chỗ",
             },
             {
-                date: "CUỐI TUẦN NÀY",
-                title: "Hành Trình Băng Suối Vực Mây",
-                location: "Trekking 8km + Thưởng trà bình minh",
-                slots: "22/30 chỗ",
+                date: "24-25 Tháng 10",
+                title: "CHƯƠNG 1: TÂN THỦ",
+                location: "Địa điểm: Rừng Tinh Linh",
+                slots: "0/15 chỗ",
             },
             {
-                date: "MÙNG 1 ĐẦU THÁNG",
-                title: "Phiên Chợ Đổi Thạch Tinh Linh",
-                location: "Giao lưu khoáng thạch & BBQ đêm",
-                slots: "35/50 chỗ",
+                date: "Chưa cập nhật",
+                title: "chưa cập nhật",
+                location: "chưa cập nhật",
+                slots: "--/-- chỗ",
             },
         ],
     },
