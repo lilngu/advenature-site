@@ -2669,14 +2669,14 @@ body.guest-mode .dock-btn:not(.center-core) {
     top: 50%;
     transform: translateY(-50%) scale(0.8);
     white-space: nowrap;
-    background: linear-gradient(135deg, #0a2a1a 0%, #051a0f 100%);
-    border: 1.5px solid #4ade80;
+    background: transparent;
+    border: transparent;
     border-radius: 6px;
     padding: 4px 10px;
-    font-family: "Handjet", sans-serif;
+    font-family: "retro2k";
     font-size: 11px;
     font-weight: 700;
-    color: #4ade80;
+    color: #c9ffff;
     text-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
     box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
     opacity: 0;
@@ -2698,7 +2698,7 @@ body.guest-mode .dock-btn:not(.center-core) {
 .gacha-ready-tooltip.show {
     opacity: 1;
     transform: translateY(-50%) scale(1);
-    right: -110px;
+    right: -50px;
 }
 
 .gacha-ready-tooltip.hidden {
@@ -2718,12 +2718,12 @@ body.guest-mode .dock-btn:not(.center-core) {
 /* Responsive */
 @media (max-width: 480px) {
     .gacha-ready-tooltip {
-        right: -100px;
+        right: -80px;
         font-size: 10px;
         padding: 3px 8px;
     }
     .gacha-ready-tooltip.show {
-        right: -90px;
+        right: -60px;
     }
 }
 
