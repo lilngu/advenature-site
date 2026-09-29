@@ -123,13 +123,69 @@ export const LORE_PAGES_DATA = [
     {
         id: 1,
         title: "Trang 1",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_WebP/f_auto/q_auto/2026-09-28_04-00-49_ihqc1e.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677727/qez3zw9rlkzbfejsmsde.png"
     },
     {
         id: 2,
         title: "Trang 2",
-        url: "https://www.square-enix.com/ffvii/assets/revelation/images/common/KV-mobile_1x.webp"
-    }
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677728/r58ikjqkwlichgxoxndy.png"
+    },
+    {
+        id: 3,
+        title: "Trang 3",
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677734/gffshdqnb9udkn7jwgxs.png"
+    },
+    {
+        id: 4,
+        title: "Trang 4",
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677729/yhd2z6xt70dvqetc4wbr.png"
+    },
+    {
+        id: 5,
+        title: "Trang 5",
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677730/oniwhawez2ao9xxjah9y.png"
+    },
+    {
+        id: 6,
+        title: "Trang 6",
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677732/mx0alds1sd2aw445dslf.png"
+    },
+    {
+        id: 7,
+        title: "Trang 7",
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677733/rryxx0gyv3xuxsz8oi4w.png"
+    },
+    {
+        id: 8,
+        title: "Trang 8",
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677735/p3tkybdatsii76dmekhh.png"
+    },
+    {
+        id: 9,
+        title: "Trang 9",
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677736/pfhzump4tax9svv4pqfs.png"
+    },
+    {
+        id: 10,
+        title: "Trang 10",
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677737/mr9nggyrjouvnhrxmluz.png"
+    },
+    {
+        id: 11,
+        title: "Trang 11",
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677738/f3fqz5vc3vh1yqkyt1cy.png"
+    },
+    {
+        id: 12,
+        title: "Trang 12",
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677739/uonvrij8iobqpp4icsmt.png"
+    },
+    {
+        id: 13,
+        title: "Trang 13",
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677740/d3l55mbk4c1cganfkipx.png"
+    },
+    
 ];
 
 // 7. HƯỚNG DẪN TINH THỦ - DANH SÁCH TRANG (GUIDE READER - 2 trang lật)
