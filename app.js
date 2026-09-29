@@ -658,9 +658,13 @@ function updateLoreReaderUI() {
     if (btnNext) btnNext.disabled = loreCurrentPageIndex === lorePagesData.length - 1;
     
     // Update 3D transforms for each page sheet based on current active index
+    // CRITICAL: Always use transform-style: flat to prevent GPU layer conflicts on mobile
+    // Only restore preserve-3d when actively dragging (animating class)
     const pages = document.querySelectorAll('#loreBookStage .lore-comic-page');
     pages.forEach((page, index) => {
         page.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
+        page.style.transformStyle = 'flat'; /* Always flat for GPU performance */
+        page.style.willChange = 'transform';
         if (index < loreCurrentPageIndex) {
             page.style.transform = 'rotateY(-180deg)';
         } else {
@@ -670,7 +674,11 @@ function updateLoreReaderUI() {
     
     // Remove animating class from all pages after transition completes
     setTimeout(() => {
-        pages.forEach(page => page.classList.remove('animating'));
+        pages.forEach(page => {
+            page.classList.remove('animating');
+            // When animation ends, ensure transform-style stays flat
+            page.style.transformStyle = 'flat';
+        });
     }, 600); // Match transition duration
 }
 
