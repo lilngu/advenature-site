@@ -31,7 +31,8 @@ const GOLDEN_ANGLE = Math.PI * (Math.sqrt(5) - 1);
 // ======================================================
 const API_URL = "https://advenature-api.lilnguyen-dcr.workers.dev";
 const GOOGLE_CLIENT_ID = "581456693359-uuhqadehjdotrjr37mo8iei02pvilthf.apps.googleusercontent.com";
-const IMGBB_API_KEY = "452ef7a840767c5950ace92ef266c8bd";
+const CLOUDINARY_CLOUD_NAME = "aurorawoods"; 
+const CLOUDINARY_UPLOAD_PRESET = "advenature";
 
 let tempGoogleProfile = null;
 let selectedClass = "Ranger";
@@ -65,14 +66,34 @@ const guideReaderModal = document.getElementById("guideReaderModal");
 const loreHelper = document.getElementById("loreHelper");
 const loreReaderModal = document.getElementById("loreReaderModal");
 const dockGachaTrigger = document.getElementById("dockGachaTrigger");
+const gachaReadyTooltip = document.getElementById("gachaReadyTooltip");
 let guestHelperShown = false;
 let guideHelperShown = false;
 let guideReaderOpen = false;
+let guideCurrentPageIndex = 0;
+let guideIsDragging = false;
+let guideStartX = 0;
+let guideCurrentDeltaX = 0;
+let guideActivePageElement = null;
 let loreHelperShown = false;
+let gachaReadyTooltipShown = false;
 
 // Timeout IDs để cancel khi Gacha bắt đầu
 let guideHelperInitTimeout = null;
 let loreHelperInitTimeout = null;
+
+// State machine - MUST be declared early for helpers to access
+const STATE = { IDLE: "idle", GACHA: "gacha", CORE: "core", LOOT: "loot", CLAIMED: "claimed" };
+let state = STATE.IDLE;
+let stateStart = performance.now();
+
+// Lore Reader state - MUST be declared early for event handlers
+let loreCurrentPageIndex = 0;
+let loreIsDragging = false;
+let loreStartX = 0;
+let loreCurrentDeltaX = 0;
+let loreActivePageElement = null;
+let loreReaderOpen = false;
 
 if (isFirstTimeGuest) {
     // Bật chế độ khách: Ẩn menu đáy, đưa nút Gacha ra giữa màn hình
@@ -101,6 +122,8 @@ if (isFirstTimeGuest) {
     initGuideHelper();
     // Khởi tạo Lore Helper cho user đã login
     initLoreHelper();
+    // Initialize Gacha Ready Tooltip check
+    updateGachaReadyTooltip();
 }
 
 // ======================================================
@@ -256,6 +279,7 @@ function initGuideHelper() {
             if (btn.dataset.target === "gacha-view") {
                 setTimeout(() => {
                     guideHelperInitTimeout = checkAndShowGuideHelper();
+                    updateGachaReadyTooltip();
                 }, 100);
             }
         });
@@ -344,6 +368,79 @@ function hideLoreHelper() {
 }
 
 // ======================================================
+// GACHA READY TOOLTIP LOGIC
+// ======================================================
+function getTinhQuangValue() {
+    const valElement = document.getElementById('valTinhQuang');
+    return valElement ? parseInt(valElement.textContent.replace(/,/g, '')) || 0 : 0;
+}
+
+function updateGachaReadyTooltip() {
+    if (!gachaReadyTooltip) return;
+    
+    // Không show tooltip ở guest mode
+    if (document.body.classList.contains('guest-mode')) {
+        hideGachaReadyTooltip();
+        return;
+    }
+    
+    const tinhQuangValue = getTinhQuangValue();
+    const gachaView = document.getElementById("gacha-view");
+    const isGachaViewActive = gachaView && gachaView.classList.contains("active") && !gachaView.classList.contains("hidden");
+    const isIdle = state === STATE.IDLE;
+    
+    // Show tooltip when: in gacha-view, IDLE state, and valTinhQuang > 0
+    const shouldShow = isGachaViewActive && isIdle && tinhQuangValue > 0;
+    
+    if (shouldShow && !gachaReadyTooltipShown) {
+        showGachaReadyTooltip();
+    } else if (!shouldShow && gachaReadyTooltipShown) {
+        hideGachaReadyTooltip();
+    }
+}
+
+function showGachaReadyTooltip() {
+    if (gachaReadyTooltipShown || !gachaReadyTooltip) return;
+    // Không show nếu Gacha đang chạy
+    if (state !== STATE.IDLE) return;
+    
+    const tinhQuangValue = getTinhQuangValue();
+    if (tinhQuangValue <= 0) return;
+    
+    const gachaView = document.getElementById("gacha-view");
+    if (!gachaView || !gachaView.classList.contains("active") || gachaView.classList.contains("hidden")) return;
+    
+    gachaReadyTooltipShown = true;
+    gachaReadyTooltip.classList.remove('hidden');
+    // Force reflow
+    gachaReadyTooltip.offsetHeight;
+    // Trigger animation
+    requestAnimationFrame(() => {
+        gachaReadyTooltip.classList.add('show');
+    });
+}
+
+function hideGachaReadyTooltip() {
+    if (!gachaReadyTooltipShown || !gachaReadyTooltip) return;
+    gachaReadyTooltipShown = false;
+    gachaReadyTooltip.classList.remove('show');
+    // Add exit animation
+    gachaReadyTooltip.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+    gachaReadyTooltip.style.opacity = '0';
+    gachaReadyTooltip.style.transform = 'translateY(-50%) scale(0.8)';
+    gachaReadyTooltip.style.right = '-120px';
+    
+    setTimeout(() => {
+        gachaReadyTooltip.classList.add('hidden');
+        // Reset inline styles
+        gachaReadyTooltip.style.transition = '';
+        gachaReadyTooltip.style.opacity = '';
+        gachaReadyTooltip.style.transform = '';
+        gachaReadyTooltip.style.right = '';
+    }, 300);
+}
+
+// ======================================================
 // HELPER: Trigger Guide & Lore Helpers sau khi login xong
 // ======================================================
 function triggerHelpersAfterLogin() {
@@ -361,6 +458,9 @@ function triggerHelpersAfterLogin() {
         // Show both after 3 seconds
         guideHelperInitTimeout = setTimeout(showGuideHelper, 3000);
         loreHelperInitTimeout = setTimeout(showLoreHelper, 3000);
+        
+        // Update Gacha Ready Tooltip
+        updateGachaReadyTooltip();
     }
 }
 
@@ -404,6 +504,7 @@ function initLoreHelper() {
             if (btn.dataset.target === "gacha-view") {
                 setTimeout(() => {
                     loreHelperInitTimeout = checkAndShowLoreHelper();
+                    updateGachaReadyTooltip();
                 }, 100);
             }
         });
@@ -469,13 +570,7 @@ function showLoreHelper() {
 // ======================================================
 // Dùng LORE_PAGES_DATA từ data.js
 const lorePagesData = LORE_PAGES_DATA;
-
-let loreCurrentPageIndex = 0;
-let loreIsDragging = false;
-let loreStartX = 0;
-let loreCurrentDeltaX = 0;
-let loreActivePageElement = null;
-let loreReaderOpen = false;
+// State variables declared at top of file
 
 function openLoreReaderModal() {
     if (!loreReaderModal) return;
@@ -700,13 +795,7 @@ function handleLoreDragEnd() {
 // ======================================================
 // Dùng GUIDE_PAGES_DATA từ data.js
 const guidePagesData = GUIDE_PAGES_DATA;
-
-let guideCurrentPageIndex = 0;
-let guideIsDragging = false;
-let guideStartX = 0;
-let guideCurrentDeltaX = 0;
-let guideActivePageElement = null;
-// guideReaderOpen already declared at line 70
+// State variables declared at top of file
 
 function openGuideReaderModal() {
     if (!guideReaderModal) return;
@@ -787,7 +876,7 @@ function updateGuideReaderUI() {
     const btnNext = document.getElementById("guideBtnNext");
     
     if (pageIndicator) {
-        pageIndicator.innerText = `TRANG ${guideCurrentPageIndex + 1} / ${guidePagesData.length}`;
+        pageIndicator.innerText = `${guideCurrentPageIndex + 1} / ${guidePagesData.length}`;
     }
     
     if (btnPrev) btnPrev.disabled = guideCurrentPageIndex === 0;
@@ -999,6 +1088,9 @@ function updateTopBarUI() {
             width: 100, height: 100
         });
     }
+    
+    // Update Gacha Ready Tooltip
+    updateGachaReadyTooltip();
 }
 
 // ======================================================
@@ -1199,9 +1291,7 @@ function addItemToInventory(item) {
 // ======================================================
 // 4. GACHA CONTROLLER & STATE MACHINE
 // ======================================================
-const STATE = { IDLE: "idle", GACHA: "gacha", CORE: "core", LOOT: "loot", CLAIMED: "claimed" };
-let state = STATE.IDLE;
-let stateStart = performance.now();
+// STATE and state are now declared at the top of the file
 
 const claimContainer = document.getElementById("claimContainer");
 if (claimContainer) claimContainer.classList.add("hidden");
@@ -1265,6 +1355,8 @@ dockGachaTrigger.addEventListener("click", () => {
         // Hide Guide & Lore Helpers khi Gacha triggered
         hideGuideHelper();
         hideLoreHelper();
+        // Hide Gacha Ready Tooltip khi Gacha triggered
+        hideGachaReadyTooltip();
         
         dockGachaTrigger.classList.add("moved"); 
         triggerGachaSummon();
@@ -1710,6 +1802,8 @@ async function processClaimAfterLoot() {
                             setTimeout(showGuideHelper, 3000);
                             setTimeout(showLoreHelper, 3500);
                         }
+                        // Update Gacha Ready Tooltip
+                        updateGachaReadyTooltip();
                     }, 400);
                 }
                 
@@ -1725,6 +1819,8 @@ async function processClaimAfterLoot() {
                 setTimeout(showGuideHelper, 3000);
                 setTimeout(showLoreHelper, 3500);
             }
+            // Update Gacha Ready Tooltip
+            updateGachaReadyTooltip();
         }
     } catch (e) {
         // Fallback Offline
@@ -1745,6 +1841,8 @@ async function processClaimAfterLoot() {
             setTimeout(showGuideHelper, 500);
             setTimeout(showLoreHelper, 1000);
         }
+        // Update Gacha Ready Tooltip
+        updateGachaReadyTooltip();
     }
 }
 
@@ -1966,6 +2064,8 @@ navButtons.forEach(btn => {
             });
             document.getElementById("gacha-view").classList.remove("hidden");
             document.getElementById("gacha-view").classList.add("active");
+            // Update Gacha Ready Tooltip when entering gacha-view
+            updateGachaReadyTooltip();
             return;
         }
 
@@ -1973,6 +2073,9 @@ navButtons.forEach(btn => {
         viewPanels.forEach(p => {
             if (p.id !== "gacha-view") p.classList.add("hidden");
         });
+        
+        // Hide Gacha Ready Tooltip when leaving gacha-view
+        hideGachaReadyTooltip();
 
         const activePanel = document.getElementById(targetId);
         if (activePanel) {
@@ -1995,6 +2098,8 @@ function returnToGachaHome() {
     if (state !== STATE.LOOT && claimContainer) {
         claimContainer.classList.add("hidden");
     }
+    // Update Gacha Ready Tooltip when returning to gacha-view
+    updateGachaReadyTooltip();
 }
 
 document.querySelectorAll(".btn-back-dock").forEach(btn => btn.addEventListener("click", returnToGachaHome));
@@ -2897,7 +3002,7 @@ document.getElementById("admResetData")?.addEventListener("click", () => {
 });
 
 // ======================================================
-// XỬ LÝ UPLOAD ẢNH ĐẠI DIỆN LÊN IMGBB & LƯU VÀO D1
+// XỬ LÝ UPLOAD ẢNH ĐẠI DIỆN LÊN Cloudinary & LƯU VÀO D1
 // ======================================================
 const inputAvatarFile = document.getElementById("inputAvatarFile");
 const btnTriggerUpload = document.getElementById("btnTriggerUpload");
@@ -2920,20 +3025,23 @@ inputAvatarFile?.addEventListener("change", async (e) => {
     btnTriggerUpload.style.pointerEvents = "none";
 
     const formData = new FormData();
-    formData.append("image", file);
+    // 1. Cloudinary dùng tham số "file" và "upload_preset" (Khác với ImgBB dùng "image")
+    formData.append("file", file);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
 
     try {
-        // 1. Gửi ảnh trực tiếp lên ImgBB API
-        const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+        // 2. Gửi trực tiếp lên Cloudinary API
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
             method: "POST",
             body: formData
         });
-        const imgData = await res.json();
+        const uploadData = await res.json();
 
-        if (imgData.success) {
-            const newAvatarUrl = imgData.data.url;
+        // 3. Cloudinary trả về link ảnh an toàn trong trường "secure_url"
+        if (uploadData.secure_url) {
+             const newAvatarUrl = uploadData.secure_url.replace("/image/upload/", "/image/upload/t_avatar/");
 
-            // 2. Gửi link ảnh mới lên Cloudflare Worker để cập nhật bảng D1
+            // Gửi link ảnh mới lên Cloudflare Worker để lưu vào Database D1
             await fetch(`${API_URL}/api/user/update-avatar`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -2943,18 +3051,18 @@ inputAvatarFile?.addEventListener("change", async (e) => {
                 })
             });
 
-            // 3. Cập nhật giao diện người dùng
+            // Cập nhật giao diện người dùng
             currentUser.avatar_url = newAvatarUrl;
             saveUserData();
             document.getElementById("profAvatar").src = newAvatarUrl;
             document.getElementById("userAvatarImg").src = newAvatarUrl;
 
-            toast.success('CẬP NHẬT THÀNH CÔNG', '✦ Cập nhật ảnh đại diện thành công!');
+            alert("✦ Cập nhật ảnh đại diện thành công qua Cloudinary!");
         } else {
-            toast.error('TẢI ẢNH THẤT BẠI', imgData.error?.message || 'Kiểm tra lại ImgBB API Key!');
+            alert("Lỗi tải ảnh: " + (uploadData.error?.message || "Kiểm tra lại Cloud Name / Preset!"));
         }
     } catch (err) {
-        toast.error('LỖI KẾT NỐI', 'Không thể kết nối đến máy chủ ảnh!');
+        alert("Không thể kết nối đến máy chủ Cloudinary!");
     } finally {
         btnTriggerUpload.textContent = "📷";
         btnTriggerUpload.style.pointerEvents = "auto";

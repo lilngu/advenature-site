@@ -144,7 +144,7 @@
                         <div class="guide-reader-title" data-i18n="guideReader.title"></div>
                         <div class="guide-reader-page-indicator">
                             <i class="fa-solid fa-scroll"></i>
-                            <span id="guidePageIndicator">TRANG 1 / 2</span>
+                            <span id="guidePageIndicator">1 / 2</span>
                         </div>
                         <button id="closeGuideReader" class="close-panel-btn" data-i18n-title="common.close">
                             <span>&nbsp;<span>
@@ -179,7 +179,7 @@
                         <div class="lore-reader-title" data-i18n="loreReader.title"></div>
                         <div class="lore-reader-page-indicator">
                             <i class="fa-solid fa-scroll"></i>
-                            <span id="lorePageIndicator"> 1 / 2</span>
+                            <span id="lorePageIndicator">1 / 2</span>
                         </div>
                         <button id="closeLoreReader" class="close-panel-btn" data-i18n-title="common.close">
                             <span>&nbsp;</span>
@@ -226,6 +226,7 @@
             <!-- Nút 3: Gacha Core - Magic Orb Button (Quả cầu phép thuật hào quang) -->
             <button class="dock-btn center-core nav-btn active" id="dockGachaTrigger" data-target="gacha-view" data-i18n-title="dock.gachaTooltip">
                 <div class="magic-orb-wrapper" id="magicOrbWrapper">
+                    <div id="gachaReadyTooltip" class="gacha-ready-tooltip hidden" data-i18n="gacha.readyTooltip">Sẵn sàng Gacha</div>
                     <!-- Vành vàng kim với móc răng (Gold Ring with Spikes) -->
                     <div class="gold-ring">
                         <!-- Buồng năng lượng bên trong -->
@@ -672,26 +673,26 @@
             <span class="close-modal" id="closeItemModal" data-i18n-title="common.close">&nbsp;</span>
             
             <div id="modalItemHeader" style="margin-bottom: 8px;">
-                <h3 id="modalItemTitle" style="color: #ffe66d; font-size: 14px; margin-bottom: 4px;" data-i18n="itemModal.title"></h3>
-                <span id="modalItemBadge" class="qr-status-badge" data-i18n="itemModal.badgeOffline"></span>
+                <h3 id="modalItemTitle" style="color: #ffe66d; font-size: 14px; margin-bottom: 4px;"></h3>
+                <span id="modalItemBadge" class="qr-status-badge">VẬT PHẨM THỰC ĐỊA</span>
             </div>
 
-            <p id="modalItemDesc" style="font-size: 10px; color: #c9c3ff; margin-bottom: 12px; line-height: 1.35;" data-i18n="itemModal.desc"></p>
+            <p id="modalItemDesc" style="font-size: 10px; color: #c9c3ff; margin-bottom: 12px; line-height: 1.35;"></p>
 
             <!-- KHUNG HIEN THI MA QR DONG OFFLINE -->
             <div id="qrWrapperOffline" class="qr-ticket-box">
                 <div class="qr-scanner-glow"></div>
                 <div id="qrcodeContainer" class="qr-box" style="margin: 6px auto;"></div>
-                <div class="qr-token-txt" id="modalQrTokenTxt" data-i18n="itemModal.qrTokenLabel"></div>
+                <div class="qr-token-txt" id="modalQrTokenTxt"></div>
                 <div class="qr-live-status" id="qrLiveStatus">
-                    <span class="status-dot-pulse"></span> <span data-i18n="itemModal.qrLiveStatus"></span>
+                    <span class="status-dot-pulse"></span> <span>Sẵn sàng xác thực thực địa</span>
                 </div>
             </div>
 
             <!-- NUT SU DUNG DANH CHO ITEM BUFF DIEM TRUC TIEP -->
-            <button id="btnUseBuffItem" class="btn-celtic btn-celtic-wood btn-claim hidden" style="width: 100%; margin-top: 10px; font-size: 12px; padding: 10px;" data-i18n="itemModal.useBuffBtn"></button>
+            <button id="btnUseBuffItem" class="btn-celtic btn-celtic-wood btn-claim hidden" style="width: 100%; margin-top: 10px; font-size: 12px; padding: 10px;"></button>
 
-            <p class="qr-note" id="modalQrNote" style="margin-top: 8px;" data-i18n="itemModal.qrNoteService"></p>
+            <p class="qr-note" id="modalQrNote" style="margin-top: 8px;"></p>
         </div>
     </div>    <!-- 10. ADMIN TEST MODAL -->
     <div id="adminGodModal" class="modal-overlay hidden">

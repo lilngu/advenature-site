@@ -42,7 +42,7 @@ const TEXTS = {
     // LORE READER MODAL
     // ======================================================
     loreReader: {
-        title: "✦ CỔ THƯ RỪNG TINH LINH ✦",
+        title: "✦Advenature Chronicles✦",
         prevBtn: "TRƯỚC",
         nextBtn: "TIẾP",
     },
@@ -79,6 +79,7 @@ const TEXTS = {
         lootTitlePrefix: "✦ ",
         lootTitleSuffix: " ✦",
         lootMetaTemplate: "[{shapeName}] • {faceCount} DIỆN THỂ • MÃ: {code}",
+        readyTooltip: "Sẵn sàng Gacha",
     },
 
     // ======================================================
@@ -320,19 +321,6 @@ const TEXTS = {
         lockedShape: "Chưa khám phá",
         lockedFaces: "?? Mặt",
         lockedDesc: "Biến thể huyền bí này chưa được khai mở. Hãy triệu hồi tại Bệ Đá Tinh Quang để thu thập vào bộ sưu tập!",
-    },
-
-    // ======================================================
-    // ITEM MODAL
-    // ======================================================
-    itemModal: {
-        title: "Tên Vật Phẩm",
-        badgeOffline: "VẬT PHẨM THỰC ĐỊA",
-        desc: "Mô tả vật phẩm...",
-        qrTokenLabel: "MÃ: QR_XXXXXXXX",
-        qrLiveStatus: "Sẵn sàng xác thực thực địa",
-        useBuffBtn: "✦ SỬ DỤNG BUFF NGAY ✦",
-        qrNoteService: "Đưa mã này cho Trưởng Hội / NPC tại Hội Ngọc Lục để đổi lấy dịch vụ thực tế.",
     },
 
     // ======================================================

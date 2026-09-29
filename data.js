@@ -107,7 +107,7 @@ export const SHOP_ITEMS = [
     { id: "Q_4", name: "💧 Quest Thủy Tinh", tt: 8, vnd: 200000, iconClass: "ico-quest4", desc: "​Nhiệm Vụ Thanh Lọc tại Suối Tinh Linh.\n Nhận thưởng +1 Tinh Thạch" },
     { id: "Q_5", name: "🗿 Quest Thổ Tinh", tt: 8, vnd: 200000, iconClass: "ico-quest5", desc: "🪨 Nhiệm Vụ Thạch Yêu Lúc Lắc\n Nhận thưởng +1 Tinh Thạch" },
     { id: "F_1", name: "🍢  Bữa Tối BBQ", tt: 6, vnd: 150000, iconClass: "ico-food1", desc: "Tiệc nướng thịt thơm lừng bên ánh lửa trại ấm cúng." },
-    { id: "F_2", name: "🥪Bữa Sáng Bên Suối", tt: 6, vnd: 15000, iconClass: "ico-food2", desc: "​🥪 01 Suất Bữa Sáng bên Bờ Suối Tinh Linh.\n 🌿 Có thể ngâm mình trong suối lạnh giữa rừng" },
+    { id: "F_2", name: "🥪Bữa Sáng Bên Suối", tt: 6, vnd: 150000, iconClass: "ico-food2", desc: "​🥪 01 Suất Bữa Sáng bên Bờ Suối Tinh Linh.\n 🌿 Có thể ngâm mình trong suối lạnh giữa rừng" },
     { id: "F_3", name: "🍱 Bữa Trưa Tại Phiên Chợ ", tt: 3, vnd: 75000, iconClass: "ico-food3", desc: "​🍱 01 Suất Bữa Trưa tại Phiên Chợ Tinh Linh nhập vai vui vẻ." }
 ];
 
@@ -123,7 +123,7 @@ export const LORE_PAGES_DATA = [
     {
         id: 1,
         title: "Trang 1",
-        url: "https://cdn.imagecomics.com/assets/i/features/454463/rose-vol-1-tp_65f5bec524_f323f3edd8d10410261aff6cc56efcc3.jpg"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_WebP/f_auto/q_auto/2026-09-28_04-00-49_ihqc1e.png"
     },
     {
         id: 2,
@@ -137,11 +137,11 @@ export const GUIDE_PAGES_DATA = [
     {
         id: 1,
         title: "Trang 1: Chào Mừng Tinh Thủ",
-        url: "https://i.postimg.cc/MHxxk9cX/2026-09-27-20-37-28.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790667812/tp7lecfdywmw13mhgr7f.png"
     },
     {
         id: 2,
         title: "Trang 2: Cơ Chế Gacha",
-        url: "https://cdn.imagecomics.com/assets/i/features/454463/rose-vol-1-tp_65f5bec524_f323f3edd8d10410261aff6cc56efcc3.jpg"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790669761/mfrd4ibq5xardaop7z8e.png"
     }
 ];
