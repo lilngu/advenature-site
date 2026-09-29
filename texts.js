@@ -234,7 +234,7 @@ const TEXTS = {
         rank: {
             label: "Cấp Bậc: {title}",
             need: "{need} Điểm Lên Cấp",
-            defaultTitle: "Tập Sự",
+            defaultTitle: "Tân Thủ",
         },
         guildBanners: {
             guild: {
