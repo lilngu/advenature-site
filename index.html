@@ -22,6 +22,9 @@
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <!-- Gacha Orb Magic Effect -->
     <script src="gacha-orb-effect.js" defer></script>
+    <!-- Swiper CSS & JS for Lore/Guide Reader page flip effect -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js" defer></script>
 
     <!-- Importmap Three.js Engine -->
     <script type="importmap">
@@ -137,7 +140,7 @@
                 <div class="helper-tooltip" data-i18n="guideHelper.tooltip"></div>
             </div>
 
-            <!-- GUIDE READER MODAL (Hướng dẫn Tinh Thủ - 2 trang lật) -->
+            <!-- GUIDE READER MODAL (Hướng dẫn Tinh Thủ - Swiper Flip Effect) -->
             <div id="guideReaderModal" class="guide-reader-modal hidden">
                 <div class="guide-reader-container">
                     <div class="guide-reader-header">
@@ -147,12 +150,20 @@
                             <span id="guidePageIndicator">1 / 2</span>
                         </div>
                         <button id="closeGuideReader" class="close-panel-btn" data-i18n-title="common.close">
-                            <span>&nbsp;<span>
+                            <span>&nbsp;</span>
                         </button>
                     </div>
                     
                     <div id="guideReaderViewport" class="guide-reader-viewport">
-                        <div class="guide-book-stage" id="guideBookStage"></div>
+                        <!-- Swiper Container -->
+                        <div class="swiper guideSwiper">
+                            <div class="swiper-wrapper" id="guideSwiperWrapper">
+                                <!-- Slides will be rendered by JS -->
+                            </div>
+                            <!-- Navigation arrows -->
+                            <div class="swiper-button-prev guide-swiper-btn"></div>
+                            <div class="swiper-button-next guide-swiper-btn"></div>
+                        </div>
                     </div>
                     
                     <div class="guide-reader-footer">
@@ -172,14 +183,14 @@
                      alt="Tinh Linh Cổ Thư" class="helper-fairy-img">
                    </div>
 
-            <!-- LORE READER MODAL (Cổ thư lật trang) -->
+            <!-- LORE READER MODAL (Cổ thư lật trang - Swiper Flip Effect) -->
             <div id="loreReaderModal" class="lore-reader-modal hidden">
                 <div class="lore-reader-container">
                     <div class="lore-reader-header">
                         <div class="lore-reader-title" data-i18n="loreReader.title"></div>
                         <div class="lore-reader-page-indicator">
                             <i class="fa-solid fa-scroll"></i>
-                            <span id="lorePageIndicator">1 / 2</span>
+                            <span id="lorePageIndicator">1 / 13</span>
                         </div>
                         <button id="closeLoreReader" class="close-panel-btn" data-i18n-title="common.close">
                             <span>&nbsp;</span>
@@ -187,7 +198,15 @@
                     </div>
                     
                     <div id="loreReaderViewport" class="lore-reader-viewport">
-                        <div class="lore-book-stage" id="loreBookStage"></div>
+                        <!-- Swiper Container -->
+                        <div class="swiper loreSwiper">
+                            <div class="swiper-wrapper" id="loreSwiperWrapper">
+                                <!-- Slides will be rendered by JS -->
+                            </div>
+                            <!-- Navigation arrows -->
+                            <div class="swiper-button-prev lore-swiper-btn"></div>
+                            <div class="swiper-button-next lore-swiper-btn"></div>
+                        </div>
                     </div>
                     
                     <div class="lore-reader-footer">

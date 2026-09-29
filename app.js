@@ -1,4 +1,4 @@
-import * as THREE from "three";
+﻿import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
@@ -70,11 +70,6 @@ const gachaReadyTooltip = document.getElementById("gachaReadyTooltip");
 let guestHelperShown = false;
 let guideHelperShown = false;
 let guideReaderOpen = false;
-let guideCurrentPageIndex = 0;
-let guideIsDragging = false;
-let guideStartX = 0;
-let guideCurrentDeltaX = 0;
-let guideActivePageElement = null;
 let loreHelperShown = false;
 let gachaReadyTooltipShown = false;
 
@@ -88,12 +83,13 @@ let state = STATE.IDLE;
 let stateStart = performance.now();
 
 // Lore Reader state - MUST be declared early for event handlers
-let loreCurrentPageIndex = 0;
-let loreIsDragging = false;
-let loreStartX = 0;
-let loreCurrentDeltaX = 0;
-let loreActivePageElement = null;
 let loreReaderOpen = false;
+
+// Keyboard navigation for readers (added once)
+document.addEventListener("keydown", (e) => {
+    if (guideReaderOpen) handleGuideReaderKeydown(e);
+    if (loreReaderOpen) handleLoreReaderKeydown(e);
+});
 
 if (isFirstTimeGuest) {
     // Bật chế độ khách: Ẩn menu đáy, đưa nút Gacha ra giữa màn hình
@@ -302,18 +298,6 @@ function initGuideHelper() {
             closeGuideReaderModal();
         }
     });
-    
-    // Guide reader navigation buttons
-    const guideBtnPrev = document.getElementById("guideBtnPrev");
-    const guideBtnNext = document.getElementById("guideBtnNext");
-    guideBtnPrev?.addEventListener("click", () => guidePrevPage());
-    guideBtnNext?.addEventListener("click", () => guideNextPage());
-    
-    // Keyboard navigation
-    document.addEventListener("keydown", handleGuideReaderKeydown);
-    
-    // Touch/drag support for page flip
-    initGuideReaderDrag();
 }
 
 function showGuideHelper() {
@@ -527,18 +511,6 @@ function initLoreHelper() {
             closeLoreReaderModal();
         }
     });
-    
-    // Lore reader navigation buttons
-    const loreBtnPrev = document.getElementById("loreBtnPrev");
-    const loreBtnNext = document.getElementById("loreBtnNext");
-    loreBtnPrev?.addEventListener("click", () => lorePrevPage());
-    loreBtnNext?.addEventListener("click", () => loreNextPage());
-    
-    // Keyboard navigation
-    document.addEventListener("keydown", handleLoreReaderKeydown);
-    
-    // Touch/drag support for page flip
-    initLoreReaderDrag();
 }
 
 function showLoreHelper() {
@@ -566,22 +538,25 @@ function showLoreHelper() {
 }
 
 // ======================================================
-// LORE READER MODAL LOGIC (Cổ thư lật trang 3D)
+// LORE READER MODAL LOGIC (Cổ thư lật trang - Swiper Flip Effect)
 // ======================================================
 // Dùng LORE_PAGES_DATA từ data.js
 const lorePagesData = LORE_PAGES_DATA;
-// State variables declared at top of file
+let loreSwiper = null;
 
 function openLoreReaderModal() {
     if (!loreReaderModal) return;
     loreReaderModal.classList.remove("hidden");
     loreReaderOpen = true;
     
-    // Reset to first page
-    loreCurrentPageIndex = 0;
-    
-    // Initialize pages
-    renderLorePages();
+    // Initialize Swiper if not already initialized
+    if (!loreSwiper) {
+        initLoreSwiper();
+    } else {
+        // Reset to first page
+        loreSwiper.slideTo(0, 0);
+    }
+    updateLorePageIndicator(0);
     
     // Force reflow then show
     loreReaderModal.offsetHeight;
@@ -598,234 +573,110 @@ function closeLoreReaderModal() {
     loreReaderModal.classList.remove("show");
     loreReaderOpen = false;
     
+    // Destroy Swiper to release grabCursor styles
+    if (loreSwiper) {
+        loreSwiper.destroy(true, true);
+        loreSwiper = null;
+    }
+    
     setTimeout(() => {
         loreReaderModal.classList.add("hidden");
         // Re-enable body scroll
         document.body.style.overflow = "";
+        // Ensure cursor resets on body
+        document.body.style.cursor = "";
     }, 400);
 }
 
-function renderLorePages() {
-    const bookStage = document.getElementById("loreBookStage");
-    if (!bookStage) return;
+function initLoreSwiper() {
+    const wrapper = document.getElementById("loreSwiperWrapper");
+    if (!wrapper) return;
     
-    bookStage.innerHTML = '';
-    
-    // Render sheets in reverse order so Page 1 is on top (highest z-index)
+    // Render slides
+    wrapper.innerHTML = "";
     lorePagesData.forEach((page, index) => {
-        const pageEl = document.createElement('div');
-        pageEl.className = 'lore-comic-page';
-        pageEl.dataset.index = index;
-        pageEl.style.zIndex = lorePagesData.length - index;
-
-        // Front & Back faces
-        pageEl.innerHTML = `
-            <div class="lore-page-face lore-page-front">
-                <img src="${page.url}" alt="${page.title}" class="lore-comic-img" crossorigin="anonymous" onerror="this.src='https://placehold.co/600x900/2a1b12/d4af37?text=Lỗi+tải+ảnh'"/>
-                <div class="lore-page-shadow"></div>
-            </div>
-            <div class="lore-page-face lore-page-back">
-                <div class="w-full h-full flex items-center justify-center bg-[#150d08] border-r-4 border-amber-800/40 p-6 text-center">
-                    <div class="border border-amber-600/30 p-4 rounded-lg bg-[#1e130c]/80">
-                        <i class="fa-solid fa-scroll text-3xl text-amber-500 mb-2"></i>
-                        <p class="font-uncial text-amber-200 text-sm">Trang ${index + 1}</p>
-                    </div>
-                </div>
-            </div>
+        const slide = document.createElement("div");
+        slide.className = "swiper-slide";
+        slide.innerHTML = `
+            <img src="${page.url}" alt="${page.title}" class="lore-comic-img" crossorigin="anonymous" onerror="this.src='https://placehold.co/600x900/2a1b12/d4af37?text=Lỗi+tải+ảnh'"/>
         `;
-
-        bookStage.appendChild(pageEl);
+        wrapper.appendChild(slide);
     });
     
-    // Add spine shadow
-    const spineShadow = document.createElement('div');
-    spineShadow.className = 'lore-spine-shadow';
-    bookStage.appendChild(spineShadow);
+    // Initialize Swiper with flip effect
+    loreSwiper = new Swiper(".loreSwiper", {
+        effect: "flip",
+        grabCursor: true,
+        speed: 500,
+        flipEffect: {
+            slideShadows: true,
+            limitRotation: true
+        },
+        navigation: {
+            nextEl: ".lore-swiper-btn.swiper-button-next",
+            prevEl: ".lore-swiper-btn.swiper-button-prev",
+        },
+        keyboard: {
+            enabled: true,
+            onlyInViewport: true,
+        },
+        on: {
+            slideChange: () => {
+                updateLorePageIndicator(loreSwiper.activeIndex);
+            }
+        }
+    });
     
-    updateLoreReaderUI();
+    // Also handle footer button clicks
+    const btnPrev = document.getElementById("loreBtnPrev");
+    const btnNext = document.getElementById("loreBtnNext");
+    btnPrev?.addEventListener("click", () => loreSwiper?.slidePrev());
+    btnNext?.addEventListener("click", () => loreSwiper?.slideNext());
 }
 
-function updateLoreReaderUI() {
+function updateLorePageIndicator(index) {
     const pageIndicator = document.getElementById("lorePageIndicator");
     const btnPrev = document.getElementById("loreBtnPrev");
     const btnNext = document.getElementById("loreBtnNext");
     
     if (pageIndicator) {
-        pageIndicator.innerText = `${loreCurrentPageIndex + 1} / ${lorePagesData.length}`;
+        pageIndicator.innerText = `${index + 1} / ${lorePagesData.length}`;
     }
-    
-    if (btnPrev) btnPrev.disabled = loreCurrentPageIndex === 0;
-    if (btnNext) btnNext.disabled = loreCurrentPageIndex === lorePagesData.length - 1;
-    
-    // Update 3D transforms for each page sheet based on current active index
-    // CRITICAL: Always use transform-style: flat to prevent GPU layer conflicts on mobile
-    // Only restore preserve-3d when actively dragging (animating class)
-    const pages = document.querySelectorAll('#loreBookStage .lore-comic-page');
-    pages.forEach((page, index) => {
-        page.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
-        page.style.transformStyle = 'flat'; /* Always flat for GPU performance */
-        page.style.willChange = 'transform';
-        if (index < loreCurrentPageIndex) {
-            page.style.transform = 'rotateY(-180deg)';
-        } else {
-            page.style.transform = 'rotateY(0deg)';
-        }
-    });
-    
-    // Remove animating class from all pages after transition completes
-    setTimeout(() => {
-        pages.forEach(page => {
-            page.classList.remove('animating');
-            // When animation ends, ensure transform-style stays flat
-            page.style.transformStyle = 'flat';
-        });
-    }, 600); // Match transition duration
-}
-
-function loreNextPage() {
-    if (loreCurrentPageIndex < lorePagesData.length - 1) {
-        loreCurrentPageIndex++;
-        updateLoreReaderUI();
-    }
-}
-
-function lorePrevPage() {
-    if (loreCurrentPageIndex > 0) {
-        loreCurrentPageIndex--;
-        updateLoreReaderUI();
-    }
+    if (btnPrev) btnPrev.disabled = index === 0;
+    if (btnNext) btnNext.disabled = index === lorePagesData.length - 1;
 }
 
 function handleLoreReaderKeydown(e) {
     if (!loreReaderOpen) return;
-    if (e.key === 'ArrowRight' || e.key === ' ') {
-        loreNextPage();
-    } else if (e.key === 'ArrowLeft') {
-        lorePrevPage();
-    } else if (e.key === 'Escape') {
+    if (e.key === "ArrowRight" || e.key === " ") {
+        loreSwiper?.slideNext();
+    } else if (e.key === "ArrowLeft") {
+        loreSwiper?.slidePrev();
+    } else if (e.key === "Escape") {
         closeLoreReaderModal();
     }
 }
 
-// Touch/drag support for page flip
-function initLoreReaderDrag() {
-    const bookStage = document.getElementById("loreBookStage");
-    if (!bookStage) return;
-    
-    bookStage.addEventListener('mousedown', (e) => {
-        if (!loreReaderOpen) return;
-        e.preventDefault();
-        handleLoreDragStart(e.clientX);
-    });
-    
-    window.addEventListener('mousemove', (e) => {
-        handleLoreDragMove(e.clientX);
-    });
-    
-    window.addEventListener('mouseup', () => {
-        handleLoreDragEnd();
-    });
-    
-    // Touch Events for Mobile
-    bookStage.addEventListener('touchstart', (e) => {
-        if (!loreReaderOpen || e.touches.length !== 1) return;
-        handleLoreDragStart(e.touches[0].clientX);
-    }, { passive: true });
-    
-    bookStage.addEventListener('touchmove', (e) => {
-        if (!loreReaderOpen || e.touches.length !== 1) return;
-        handleLoreDragMove(e.touches[0].clientX);
-    }, { passive: true });
-    
-    bookStage.addEventListener('touchend', () => {
-        handleLoreDragEnd();
-    });
-}
-
-function handleLoreDragStart(x) {
-    if (!loreReaderOpen) return;
-    loreIsDragging = true;
-    loreStartX = x;
-    loreCurrentDeltaX = 0;
-    
-    const pages = document.querySelectorAll('#loreBookStage .lore-comic-page');
-    loreActivePageElement = pages[loreCurrentPageIndex];
-    
-    if (loreActivePageElement) {
-        loreActivePageElement.style.transition = 'none';
-        loreActivePageElement.classList.add('animating'); // Bật 3D chỉ khi đang lật
-    }
-}
-
-function handleLoreDragMove(x) {
-    if (!loreIsDragging || !loreReaderOpen) return;
-    loreCurrentDeltaX = x - loreStartX;
-    
-    const containerWidth = document.querySelector('#loreBookStage')?.clientWidth || 300;
-    let percentage = loreCurrentDeltaX / containerWidth;
-    
-    if (percentage < -1) percentage = -1;
-    if (percentage > 1) percentage = 1;
-    
-    if (loreCurrentDeltaX < 0 && loreCurrentPageIndex < lorePagesData.length - 1) {
-        // Dragging Left -> Flip Next Page
-        const angle = percentage * 180;
-        if (loreActivePageElement) {
-            loreActivePageElement.style.transform = `rotateY(${angle}deg)`;
-        }
-    } else if (loreCurrentDeltaX > 0 && loreCurrentPageIndex > 0) {
-        // Dragging Right -> Flip Back Previous Page
-        const pages = document.querySelectorAll('#loreBookStage .lore-comic-page');
-        const prevPageEl = pages[loreCurrentPageIndex - 1];
-        if (prevPageEl) {
-            prevPageEl.style.transition = 'none';
-            const angle = -180 + (percentage * 180);
-            prevPageEl.style.transform = `rotateY(${angle}deg)`;
-        }
-    }
-}
-
-function handleLoreDragEnd() {
-    if (!loreIsDragging || !loreReaderOpen) return;
-    loreIsDragging = false;
-    
-    const threshold = 60;
-    
-    if (loreCurrentDeltaX < -threshold && loreCurrentPageIndex < lorePagesData.length - 1) {
-        loreNextPage();
-    } else if (loreCurrentDeltaX > threshold && loreCurrentPageIndex > 0) {
-        lorePrevPage();
-    } else {
-        // Snap back to original position
-        updateLoreReaderUI();
-    }
-    
-    // Tắt 3D sau khi xong animation
-    if (loreActivePageElement) {
-        loreActivePageElement.classList.remove('animating');
-    }
-    
-    loreCurrentDeltaX = 0;
-    loreActivePageElement = null;
-}
-
 // ======================================================
-// GUIDE READER MODAL LOGIC (Hướng dẫn Tinh Thủ - 2 trang lật)
+// GUIDE READER MODAL LOGIC (Hướng dẫn Tinh Thủ - Swiper Flip Effect)
 // ======================================================
 // Dùng GUIDE_PAGES_DATA từ data.js
 const guidePagesData = GUIDE_PAGES_DATA;
-// State variables declared at top of file
+let guideSwiper = null;
 
 function openGuideReaderModal() {
     if (!guideReaderModal) return;
     guideReaderModal.classList.remove("hidden");
     guideReaderOpen = true;
     
-    // Reset to first page
-    guideCurrentPageIndex = 0;
-    
-    // Initialize pages
-    renderGuidePages();
+    // Initialize Swiper if not already initialized
+    if (!guideSwiper) {
+        initGuideSwiper();
+    } else {
+        // Reset to first page
+        guideSwiper.slideTo(0, 0);
+    }
+    updateGuidePageIndicator(0);
     
     // Force reflow then show
     guideReaderModal.offsetHeight;
@@ -842,207 +693,88 @@ function closeGuideReaderModal() {
     guideReaderModal.classList.remove("show");
     guideReaderOpen = false;
     
+    // Destroy Swiper to release grabCursor styles
+    if (guideSwiper) {
+        guideSwiper.destroy(true, true);
+        guideSwiper = null;
+    }
+    
     setTimeout(() => {
         guideReaderModal.classList.add("hidden");
         // Re-enable body scroll
         document.body.style.overflow = "";
+        // Ensure cursor resets on body
+        document.body.style.cursor = "";
     }, 400);
 }
 
-function renderGuidePages() {
-    const bookStage = document.getElementById("guideBookStage");
-    if (!bookStage) return;
+function initGuideSwiper() {
+    const wrapper = document.getElementById("guideSwiperWrapper");
+    if (!wrapper) return;
     
-    bookStage.innerHTML = '';
-    
-    // Render sheets in reverse order so Page 1 is on top (highest z-index)
+    // Render slides
+    wrapper.innerHTML = "";
     guidePagesData.forEach((page, index) => {
-        const pageEl = document.createElement('div');
-        pageEl.className = 'lore-comic-page'; // Reuse same CSS classes
-        pageEl.dataset.index = index;
-        pageEl.style.zIndex = guidePagesData.length - index;
-
-        // Front & Back faces
-        pageEl.innerHTML = `
-            <div class="lore-page-face lore-page-front">
-                <img src="${page.url}" alt="${page.title}" class="lore-comic-img" crossorigin="anonymous" onerror="this.src='https://placehold.co/600x900/2a1b12/d4af37?text=Lỗi+tải+ảnh'"/>
-                <div class="lore-page-shadow"></div>
-            </div>
-            <div class="lore-page-face lore-page-back">
-                <div class="w-full h-full flex items-center justify-center bg-[#150d08] border-r-4 border-amber-800/40 p-6 text-center">
-                    <div class="border border-amber-600/30 p-4 rounded-lg bg-[#1e130c]/80">
-                        <i class="fa-solid fa-scroll text-3xl text-amber-500 mb-2"></i>
-                        <p class="font-uncial text-amber-200 text-sm">Trang ${index + 1}</p>
-                    </div>
-                </div>
-            </div>
+        const slide = document.createElement("div");
+        slide.className = "swiper-slide";
+        slide.innerHTML = `
+            <img src="${page.url}" alt="${page.title}" class="lore-comic-img" crossorigin="anonymous" onerror="this.src='https://placehold.co/600x900/2a1b12/d4af37?text=Lỗi+tải+ảnh'"/>
         `;
-
-        bookStage.appendChild(pageEl);
+        wrapper.appendChild(slide);
     });
     
-    // Add spine shadow
-    const spineShadow = document.createElement('div');
-    spineShadow.className = 'lore-spine-shadow';
-    bookStage.appendChild(spineShadow);
+    // Initialize Swiper with flip effect
+    guideSwiper = new Swiper(".guideSwiper", {
+        effect: "flip",
+        grabCursor: true,
+        speed: 500,
+        flipEffect: {
+            slideShadows: true,
+            limitRotation: true
+        },
+        navigation: {
+            nextEl: ".guide-swiper-btn.swiper-button-next",
+            prevEl: ".guide-swiper-btn.swiper-button-prev",
+        },
+        keyboard: {
+            enabled: true,
+            onlyInViewport: true,
+        },
+        on: {
+            slideChange: () => {
+                updateGuidePageIndicator(guideSwiper.activeIndex);
+            }
+        }
+    });
     
-    updateGuideReaderUI();
+    // Also handle footer button clicks
+    const btnPrev = document.getElementById("guideBtnPrev");
+    const btnNext = document.getElementById("guideBtnNext");
+    btnPrev?.addEventListener("click", () => guideSwiper?.slidePrev());
+    btnNext?.addEventListener("click", () => guideSwiper?.slideNext());
 }
 
-function updateGuideReaderUI() {
+function updateGuidePageIndicator(index) {
     const pageIndicator = document.getElementById("guidePageIndicator");
     const btnPrev = document.getElementById("guideBtnPrev");
     const btnNext = document.getElementById("guideBtnNext");
     
     if (pageIndicator) {
-        pageIndicator.innerText = `${guideCurrentPageIndex + 1} / ${guidePagesData.length}`;
+        pageIndicator.innerText = `${index + 1} / ${guidePagesData.length}`;
     }
-    
-    if (btnPrev) btnPrev.disabled = guideCurrentPageIndex === 0;
-    if (btnNext) btnNext.disabled = guideCurrentPageIndex === guidePagesData.length - 1;
-    
-    // Update 3D transforms for each page sheet based on current active index
-    const pages = document.querySelectorAll('#guideBookStage .lore-comic-page');
-    pages.forEach((page, index) => {
-        page.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
-        if (index < guideCurrentPageIndex) {
-            page.style.transform = 'rotateY(-180deg)';
-        } else {
-            page.style.transform = 'rotateY(0deg)';
-        }
-    });
-    
-    // Remove animating class from all pages after transition completes
-    setTimeout(() => {
-        pages.forEach(page => page.classList.remove('animating'));
-    }, 600); // Match transition duration
-}
-
-function guideNextPage() {
-    if (guideCurrentPageIndex < guidePagesData.length - 1) {
-        guideCurrentPageIndex++;
-        updateGuideReaderUI();
-    }
-}
-
-function guidePrevPage() {
-    if (guideCurrentPageIndex > 0) {
-        guideCurrentPageIndex--;
-        updateGuideReaderUI();
-    }
+    if (btnPrev) btnPrev.disabled = index === 0;
+    if (btnNext) btnNext.disabled = index === guidePagesData.length - 1;
 }
 
 function handleGuideReaderKeydown(e) {
     if (!guideReaderOpen) return;
-    if (e.key === 'ArrowRight' || e.key === ' ') {
-        guideNextPage();
-    } else if (e.key === 'ArrowLeft') {
-        guidePrevPage();
-    } else if (e.key === 'Escape') {
+    if (e.key === "ArrowRight" || e.key === " ") {
+        guideSwiper?.slideNext();
+    } else if (e.key === "ArrowLeft") {
+        guideSwiper?.slidePrev();
+    } else if (e.key === "Escape") {
         closeGuideReaderModal();
     }
-}
-
-// Touch/drag support for page flip
-function initGuideReaderDrag() {
-    const bookStage = document.getElementById("guideBookStage");
-    if (!bookStage) return;
-    
-    bookStage.addEventListener('mousedown', (e) => {
-        if (!guideReaderOpen) return;
-        e.preventDefault();
-        handleGuideDragStart(e.clientX);
-    });
-    
-    window.addEventListener('mousemove', (e) => {
-        handleGuideDragMove(e.clientX);
-    });
-    
-    window.addEventListener('mouseup', () => {
-        handleGuideDragEnd();
-    });
-    
-    // Touch Events for Mobile
-    bookStage.addEventListener('touchstart', (e) => {
-        if (!guideReaderOpen || e.touches.length !== 1) return;
-        handleGuideDragStart(e.touches[0].clientX);
-    }, { passive: true });
-    
-    bookStage.addEventListener('touchmove', (e) => {
-        if (!guideReaderOpen || e.touches.length !== 1) return;
-        handleGuideDragMove(e.touches[0].clientX);
-    }, { passive: true });
-    
-    bookStage.addEventListener('touchend', () => {
-        handleGuideDragEnd();
-    });
-}
-
-function handleGuideDragStart(x) {
-    if (!guideReaderOpen) return;
-    guideIsDragging = true;
-    guideStartX = x;
-    guideCurrentDeltaX = 0;
-    
-    const pages = document.querySelectorAll('#guideBookStage .lore-comic-page');
-    guideActivePageElement = pages[guideCurrentPageIndex];
-    
-    if (guideActivePageElement) {
-        guideActivePageElement.style.transition = 'none';
-        guideActivePageElement.classList.add('animating'); // Bật 3D chỉ khi đang lật
-    }
-}
-
-function handleGuideDragMove(x) {
-    if (!guideIsDragging || !guideReaderOpen) return;
-    guideCurrentDeltaX = x - guideStartX;
-    
-    const containerWidth = document.querySelector('#guideBookStage')?.clientWidth || 300;
-    let percentage = guideCurrentDeltaX / containerWidth;
-    
-    if (percentage < -1) percentage = -1;
-    if (percentage > 1) percentage = 1;
-    
-    if (guideCurrentDeltaX < 0 && guideCurrentPageIndex < guidePagesData.length - 1) {
-        // Dragging Left -> Flip Next Page
-        const angle = percentage * 180;
-        if (guideActivePageElement) {
-            guideActivePageElement.style.transform = `rotateY(${angle}deg)`;
-        }
-    } else if (guideCurrentDeltaX > 0 && guideCurrentPageIndex > 0) {
-        // Dragging Right -> Flip Back Previous Page
-        const pages = document.querySelectorAll('#guideBookStage .lore-comic-page');
-        const prevPageEl = pages[guideCurrentPageIndex - 1];
-        if (prevPageEl) {
-            prevPageEl.style.transition = 'none';
-            const angle = -180 + (percentage * 180);
-            prevPageEl.style.transform = `rotateY(${angle}deg)`;
-        }
-    }
-}
-
-function handleGuideDragEnd() {
-    if (!guideIsDragging || !guideReaderOpen) return;
-    guideIsDragging = false;
-    
-    const threshold = 60;
-    
-    if (guideCurrentDeltaX < -threshold && guideCurrentPageIndex < guidePagesData.length - 1) {
-        guideNextPage();
-    } else if (guideCurrentDeltaX > threshold && guideCurrentPageIndex > 0) {
-        guidePrevPage();
-    } else {
-        // Snap back to original position
-        updateGuideReaderUI();
-    }
-    
-    // Tắt 3D sau khi xong animation
-    if (guideActivePageElement) {
-        guideActivePageElement.classList.remove('animating');
-    }
-    
-    guideCurrentDeltaX = 0;
-    guideActivePageElement = null;
 }
 
 // ======================================================
@@ -1360,7 +1092,7 @@ function triggerGachaSummon() {
     crystalHeader.textContent = gem.name;
 
     lootText.innerHTML = `
-        <div style="font-size: large; font-weight: bold;font-family: Spectral SC; color: #fff9da;">✦ ${gem.name} ✦</div>
+        <div style="font-size: large; font-weight: bold; font-family: 'Spectral SC', serif; color: #fff9da;">✧ ${gem.name} ✧</div>
         <div style="font-size: 10px; color: #c9c3ff; letter-spacing: 1.5px; margin-top: 3px;">
             [${gem.shapeName.toUpperCase()}] • ${gem.faceCount} DIỆN THỂ • MÃ: ${gem.code}
         </div>
@@ -1414,13 +1146,13 @@ document.getElementById("btnCloseBlessingModal").addEventListener("click", () =>
 // HỆ THỐNG 12 AVATAR PRESET (4 NAM, 4 NỮ, 4 TỰ DO)
 // ======================================================
 const AVATAR_PRESETS = {
-    Nam: [
+    "Nam": [
         "https://api.dicebear.com/7.x/adventurer/svg?seed=Felix&hair=short01",
         "https://api.dicebear.com/7.x/adventurer/svg?seed=Leo&hair=short02",
         "https://api.dicebear.com/7.x/adventurer/svg?seed=Oliver&hair=short04",
         "https://api.dicebear.com/7.x/adventurer/svg?seed=Jack&hair=short05"
     ],
-    Nữ: [
+    "Nữ": [
         "https://api.dicebear.com/7.x/adventurer/svg?seed=Bella&hair=long01",
         "https://api.dicebear.com/7.x/adventurer/svg?seed=Luna&hair=long02",
         "https://api.dicebear.com/7.x/adventurer/svg?seed=Maya&hair=long04",
@@ -1537,7 +1269,7 @@ function initGoogleAuth() {
                         Không thể kết nối Google (thường do AdBlock hoặc mạng chậm)
                     </div>
                     <button type="button" class="btn-action" id="btnBypassGoogle" style="font-size: 10px; padding: 6px 12px;">
-                        ✦ Nhập Gmail để tiếp tục ✦
+                        ✧ Nhập Gmail để tiếp tục ✧
                     </button>
                 </div>
             `;
@@ -1637,7 +1369,8 @@ async function handleGoogleSuccess(response) {
         renderAvatarOptions();
     }
 }
-//  Bổ sung sự kiện đóng onboarding modal
+
+// Bổ sung sự kiện đóng onboarding modal
 document.getElementById("closeOnboardingModal")?.addEventListener("click", () => {
     const onboardingModal = document.getElementById("onboardingModal");
     if (onboardingModal) {
@@ -1645,7 +1378,8 @@ document.getElementById("closeOnboardingModal")?.addEventListener("click", () =>
         hideGuestHelper(); // Ẩn fairy khi đóng modal đăng ký
     }
 });
-// Bắt sự kiện bấm nút "✦ Đăng Nhập" trực tiếp trên Topbar
+
+// Bắt sự kiện bấm nút "✧ Đăng Nhập" trực tiếp trên Topbar
 document.getElementById("btnTopLogin")?.addEventListener("click", () => {
     initGoogleAuth();
     onboardingModal.classList.remove("hidden");
@@ -1655,7 +1389,7 @@ document.getElementById("btnTopLogin")?.addEventListener("click", () => {
 claimBtn.addEventListener("click", () => {
     if (state !== STATE.LOOT) return;
 
-     if (currentGemResult && currentGemResult.code) {
+    if (currentGemResult && currentGemResult.code) {
         if (!Array.isArray(currentUser.unlocked_gems)) currentUser.unlocked_gems = [];
         if (!currentUser.unlocked_gems.includes(currentGemResult.code)) {
             currentUser.unlocked_gems.push(currentGemResult.code);
@@ -1740,7 +1474,7 @@ btnCompleteRegister.addEventListener("click", async () => {
     } catch (e) {
         toast.error('LỖI KẾT NỐI', 'Lỗi kết nối máy chủ! Vui lòng thử lại.');
     } finally {
-        btnCompleteRegister.textContent = "✦ HOÀN TẤT & THU THẬP VÀO TÚI ✦";
+        btnCompleteRegister.textContent = "✧ HOÀN TẤT & THU THẬP VÀO TÚI ✧";
         btnCompleteRegister.disabled = false;
     }
 });
@@ -2072,7 +1806,7 @@ window.addEventListener("resize", () => {
 });
 
 // ======================================================
-// 7. ĐIỀU HƯỚNG & NÚT TRỞ VỀ 🎐
+// 7. ĐIỀU HƯỚNG & NÚT TRỞ VỀ 🎪
 // ======================================================
 const navButtons = document.querySelectorAll(".nav-btn");
 const viewPanels = document.querySelectorAll(".view-panel");
@@ -2088,7 +1822,7 @@ navButtons.forEach(btn => {
         }
         if (targetId === "gacha-view") {
             controls.enabled = true;
-            document.getElementById("tabIndicator").textContent = "✦LINH CẢNH✦";
+            document.getElementById("tabIndicator").textContent = "✧LINH CẢNH✧";
             viewPanels.forEach(p => {
                 if (p.id !== "gacha-view") p.classList.add("hidden");
             });
@@ -2124,7 +1858,7 @@ function returnToGachaHome() {
     dockGachaTrigger.classList.add("active");
     document.getElementById("gacha-view").classList.remove("hidden");
     document.getElementById("gacha-view").classList.add("active");
-    document.getElementById("tabIndicator").textContent = "✦LINH CẢNH✦";
+    document.getElementById("tabIndicator").textContent = "✧LINH CẢNH✧";
     if (state !== STATE.LOOT && claimContainer) {
         claimContainer.classList.add("hidden");
     }
@@ -2319,7 +2053,7 @@ function renderInventoryGems() {
     const unlockedSet = new Set(currentUser.unlocked_gems);
     const count = unlockedSet.size;
 
-    // SỬA TẠI ĐÂY: Cập nhật chuẩn xác cho cả Topbar và Nút bấm Tab
+    // Cập nhật chuẩn xác cho cả Topbar và Nút bấm Tab
     const topbarCountEl = document.getElementById("topbarGemCount");
     if (topbarCountEl) topbarCountEl.textContent = count; // Hiển thị số đá đã có trên Topbar
 
@@ -2327,7 +2061,7 @@ function renderInventoryGems() {
     if (tabCountEl) tabCountEl.textContent = `${count}/990`; // Hiển thị tỉ lệ trên nút Tab
 
     const tabGemsBtn = document.getElementById("tabGemsBtn");
-    if (tabGemsBtn) tabGemsBtn.innerHTML = `✦ Tinh Quang Thạch <span id="tabGemProgressCount">${count}/990</span>`;
+    if (tabGemsBtn) tabGemsBtn.innerHTML = `✧ Tinh Quang Thạch <span id="tabGemProgressCount">${count}/990</span>`;
 
     const pct = ((count / 990) * 100).toFixed(1);
     const pctEl = document.getElementById("gemProgressPct");
@@ -2489,12 +2223,12 @@ function openItemModal(item, itemIndex) {
             } catch (err) {
                 toast.error('LỖI KẾT NỐI', 'Lỗi kết nối máy chủ!');
             } finally {
-                btnUseBuff.textContent = "✦ SỬ DỤNG BUFF NGAY ✦";
+                btnUseBuff.textContent = "✧ SỬ DỤNG BUFF NGAY ✧";
                 btnUseBuff.disabled = false;
             }
         };
     } 
-   // TRƯỜNG HỢP 2: VẬT PHẨM DỊCH VỤ / QUY ĐỔI THỰC ĐỊA (MÃ QR ĐỘNG)
+    // TRƯỜNG HỢP 2: VẬT PHẨM DỊCH VỤ / QUY ĐỔI THỰC ĐỊA (MÃ QR ĐỘNG)
     else {
         qrWrapper.classList.remove("hidden");
         btnUseBuff.classList.add("hidden");
@@ -2558,7 +2292,6 @@ document.getElementById("closeItemModal").addEventListener("click", () => {
     if (qrCheckPollTimer) clearInterval(qrCheckPollTimer);
     itemModal.classList.add("hidden");
 });
-document.getElementById("closeItemModal").addEventListener("click", () => itemModal.classList.add("hidden"));
 
 const selectedShopIds = new Set();
 const shopDetailModal = document.getElementById("shopDetailModal");
@@ -2647,7 +2380,7 @@ document.getElementById("btnCheckoutShop")?.addEventListener("click", async () =
         });
     } catch(e) {}
 
-    toast.success('ĐẶT HÀNG THÀNH CÔNG', '✦ Thông tin đơn hàng đã gửi tới Hội Ngọc Lục! Trưởng đoàn sẽ liên hệ sớm nhất qua SĐT/Zalo.');
+    toast.success('ĐẶT HÀNG THÀNH CÔNG', '✧ Thông tin đơn hàng đã gửi tới Hội Ngọc Lục! Trưởng đoàn sẽ liên hệ sớm nhất qua SĐT/Zalo.');
     selectedShopIds.clear();
     renderShop();
     updateShopCheckout();
@@ -2679,7 +2412,7 @@ document.getElementById("btnDoCheckin")?.addEventListener("click", async () => {
             document.getElementById("streakDisplay").textContent = streakText;
             btn.textContent = "Đã Điểm Danh";
 
-            let alertMsg = `✦ Điểm danh thành công! Nhận +1 🔮 Tinh Quang.`;
+            let alertMsg = `✧ Điểm danh thành công! Nhận +1 🔮 Tinh Quang.`;
             if (data.isBonus) {
                 alertMsg = `🎉 XUẤT SẮC! Đạt mốc chuỗi 7 ngày liên tục! Thưởng thêm +1 🔮 (Tổng nhận +2 🔮).`;
             }
@@ -2720,7 +2453,7 @@ document.getElementById("btnSubmitFb")?.addEventListener("click", async () => {
         });
         const data = await res.json();
         if (data.success) {
-            toast.success('GỬI THÀNH CÔNG', '✦ Đã gửi link bài viết cho Quản trị viên Telegram! Vui lòng chờ duyệt (+1 🔮).');
+            toast.success('GỬI THÀNH CÔNG', '✧ Đã gửi link bài viết cho Quản trị viên Telegram! Vui lòng chờ duyệt (+1 🔮).');
             linkInput.value = "";
         } else {
             toast.error('GỬI THẤT BẠI', data.error || 'Thử lại sau!');
@@ -2772,7 +2505,7 @@ document.getElementById("btnSubmitRef")?.addEventListener("click", async () => {
     }
 });
 
-//CỤM XỬ LÝ QUIZ
+// CỤM XỬ LÝ QUIZ
 let quizPool = [];
 let quizCorrectCount = 0;
 let currentQuizIdx = 0;
@@ -2811,7 +2544,7 @@ function showQuizQuestion() {
 
     const ansBox = document.getElementById("quizAnswersBox");
     ansBox.innerHTML = qData.a.map((ans, idx) => `
-        <button class="btn-quiz-ans" data-idx="${idx}">✦ ${ans}</button>
+        <button class="btn-quiz-ans" data-idx="${idx}">✧ ${ans}</button>
     `).join('');
 
     ansBox.querySelectorAll(".btn-quiz-ans").forEach(btn => {
@@ -2856,7 +2589,7 @@ function showQuizQuestion() {
 }
 document.getElementById("closeQuizModal")?.addEventListener("click", () => quizModal.classList.add("hidden"));
 
-//BẬT CAMERA QUÉT QR KẾT NỐI
+// BẬT CAMERA QUÉT QR KẾT NỐI
 let html5QrScanner = null;
 
 document.getElementById("btnScanFriendQr")?.addEventListener("click", () => {
@@ -2904,7 +2637,7 @@ document.getElementById("closeFriendQrScanModal")?.addEventListener("click", () 
     document.getElementById("friendQrScanModal").classList.add("hidden");
 });
 
-//MỞ MODAL LỊCH PHIÊU LƯU, BANG HỘI, RANGER
+// MỞ MODAL LỊCH PHIÊU LƯU, BANG HỘI, RANGER
 // Mở / Đóng Modal Lịch Trình Shop
 document.getElementById("btnOpenScheduleModal")?.addEventListener("click", () => {
     document.getElementById("scheduleModal").classList.remove("hidden");
@@ -3069,7 +2802,7 @@ inputAvatarFile?.addEventListener("change", async (e) => {
 
         // 3. Cloudinary trả về link ảnh an toàn trong trường "secure_url"
         if (uploadData.secure_url) {
-             const newAvatarUrl = uploadData.secure_url.replace("/image/upload/", "/image/upload/t_avatar/");
+            const newAvatarUrl = uploadData.secure_url.replace("/image/upload/", "/image/upload/t_avatar/");
 
             // Gửi link ảnh mới lên Cloudflare Worker để lưu vào Database D1
             await fetch(`${API_URL}/api/user/update-avatar`, {
@@ -3087,7 +2820,7 @@ inputAvatarFile?.addEventListener("change", async (e) => {
             document.getElementById("profAvatar").src = newAvatarUrl;
             document.getElementById("userAvatarImg").src = newAvatarUrl;
 
-            alert("✦ Cập nhật ảnh đại diện thành công qua Cloudinary!");
+            alert("✧ Cập nhật ảnh đại diện thành công qua Cloudinary!");
         } else {
             alert("Lỗi tải ảnh: " + (uploadData.error?.message || "Kiểm tra lại Cloud Name / Preset!"));
         }

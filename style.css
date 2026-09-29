@@ -1,4 +1,4 @@
-/* ======================================================
+﻿/* ======================================================
    DESIGN SYSTEM: AETHERPUNK / DARK FANTASY RPG
 ====================================================== */
 @import url('https://fonts.googleapis.com/css2?family=Handjet:wght,ELSH@100..900,2&family=Spectral+SC:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
@@ -60,7 +60,7 @@ body, html {
     overflow: hidden;
 }
 
-/* KHUNG CẢNH BACKGROUND HUYỀN BÍ (TỐI 40%) */
+/* KHUNG Cáº¢NH BACKGROUND HUYá»€N BÃ (Tá»I 40%) */
 #bg-scene-backdrop {
     position: absolute;
     inset: 0;
@@ -71,7 +71,7 @@ body, html {
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(3, 3, 10, 0.4); /* Độ tối 40% chuẩn xác */
+    background: rgba(3, 3, 10, 0.4); /* Äá»™ tá»‘i 40% chuáº©n xÃ¡c */
 }
 
 #app-3d {
@@ -87,11 +87,11 @@ body, html {
     display: block;
     width: 100% !important;
     height: 100% !important;
-    mix-blend-mode: screen; /* Khử nền đen, viên đá & hạt sáng rực trên nền rừng */
+    mix-blend-mode: screen; /* Khá»­ ná»n Ä‘en, viÃªn Ä‘Ã¡ & háº¡t sÃ¡ng rá»±c trÃªn ná»n rá»«ng */
 }
 
 /* ======================================================
-   HỆ THỐNG ICON CSS ::before & SVG DATA URI
+   Há»† THá»NG ICON CSS ::before & SVG DATA URI
 ====================================================== */
 .rpg-ico {
     display: inline-block;
@@ -104,22 +104,22 @@ body, html {
     flex-shrink: 0;
 }
 
-/* Data URI SVG cho Tinh Quang (Tím) */
+/* Data URI SVG cho Tinh Quang (TÃ­m) */
 .ico-tq {
     background-image: url(data:image/webp;base64,UklGRgIJAABXRUJQVlA4WAoAAAAQAAAAPwAAPQAAQUxQSIsFAAABuTJE9D80uFXbdiVJUmmtta6n+q36aq21aq21NvPI8D+YXg0XewhjHQiI5My2AoPbwuGCQ8DerQwuERMwAV/9d/gHCeRt3uUdunu07TtpS6MxBnLn30od/Rsz4U4DSBuB4Fv59zAIRIhEA4QzPgBIVQAJYMDGCJz5R9EgMRI5jAQhvB2XcFghUQhqBwxnH4yARAhCAIMEDJwvBENVJ4CxQcgj5xgAqQ5IIph0UAiQx1yIkL8ihypgHi+CEBKECBgD0ACBYLxcgJDyoMXA4wUwakgZmh6Z5Qf4ZyJW0sFAPD8YQwoYGMz5zKFBsUryPks7T/0JnP5Ef8jv4M4g+aCP+bmSVESQM+ccAUE70+U9ApsTlrR/4ViMQbhcIokNcL4YiIABWJYtBdDXQG9/4vd8DizLUxkDnP7ApQHSIOd/BBBjAHoshDsVliWTQhLAT9n/CPFyBhjB8yUYhAA9Ft6wjs3Mp/U6DjpF5PwANp4fkAgE7WvzzEGI2NvIaVRJ/cryERKDwQ4SCTDCuPGMCUiEsrHHVjMFoWPw/GCat3sAg3BtsvHMSqDAqm4cY5RrCGDgfGGcHzjavnadC88sIBEgVd24bXFOYiCC/3rhqNtnZP7vjePx4LhEMFW0jKGZxfHz32vuuI28fG0QQvPsEkNnpsUFyQ4Y4C5ezfXVUgyoljdsJDAzxGVsrCeI8dIgwdvTT7y4TgdUy3M0SNwzxDEWTjvE2BikX3zPZ4xZDdXNcxVinBkAfauVw2gUXvxmW+ZUYnOPpqoboMkRxGC/evNhpoQMnrcxmqoWKAZgFIRXp4UEqcE9aqWZUWHfxIAcvnp5gzLofUQgZfarI4lwh70PiKG5X4OBud+8Pkk0R7oaCMb7kACErnXpV6eKRJCYATF4L4cG5lheMrYqiZEANaAUud8gseyaW1tBAEMQIuaeDEdNtQABCVYGEeI9YeiETrAnyPEgRMl9ISVEwEjuuDveG0hMByQ8YwMSc0+agCEDwADxYEQEyvuIIAHSQjocRmKfFg3h3iOaakkaIDHinAsCxHtJ1MjcoDiIBNjW2sADnn+MQJrUAtMDQpAiNoDlc4sQidlmrrBuEjASInM7gPi8IBIU163JuoAxAUYyGfcUYxCy1VzCzgaxDPg6vx0vt3FgIQTfQBAiEXrtK6wOJCaQU/liZTsgUSDPYpAgARw1t6ZOt4yUGOAkm7MbkJnWxGeIEWKkO6zc4MnFXhuSgJlj7LUJdKpsSeIxJJF0Wsx+k7neWNYYKSRYY6/eAEOSFkkOQpouiQJzLOR/t+3K/24xhiCmYI4B9A5ENFICHUoYqabGBk9cl+3NTWPKQFOxqDGgew0BBLqaEEQGsmbZWPfr9dW39CLEwggBqrI0jG2dncqxtPtGpDFrX2U/Xf9r+RpvELwkGEMMyVwGuFjNnKOtpKpndzfs83qFfX39sP7b8orDv/f4n3lMB4gkqW0ASg8Bxyy7kexzuzYkr/vNX/mvzQNJGYAIIUltG5Ai2QTHkMwZ+tYA+vK322vkMFJgiAGhKrVt4v5StwWgmJOxjMHh/nJel+ZoPF+oXN4uHBrSzNq3q1yX/806hH2d47Z0ADKf5vJfL34zj0SCUx4ecxAxULV62xiv83Jt9n25LmQvpfa9F+fcxBB9eIQiHBruTJ5quTUuSca15+kEoWtmbGQ+vW5iMIApeTgTJEcknFZui1nZTdGbUrMdIxggRnN5jDCJlzMBj0Tiflr7dl1qWxOKgswsG3fHeLko4g48PELAIMGQfZ1uS1/bSlUqEltijMTLRWiBKnw4Y8AgAaTmPm1Hd4ejNWnFAF4umqaB1Fd8X50vQJAggCGZBUqDiFSUKFzOmO4ugHzTl3XOZzDcnY6EJDGiAqRQ4PKIaUEAVlA4IFADAADwEACdASpAAD4APm0skUWkIqGYCgZ8QAbEsQBaM9pFHku5J6U8KVetdnDxvr+sMdNI0GganmVLjRaTFNAzJkvEkygoDNvlbazQZX1NgMOdc6Igov4Zr+cIeujdW3QTuETsqkMC7ljUyhvNW0hsxoFUKA5IeOHr0g2ZcPVYgv9il0XanJ9r8qHYPAfAbMhO0AAA/vuGVk2+6elnDPP0XDBEvyOkrJ3hK3Q/lyd1B4MgmZHPc6VCMViEFXjgFMfZ+3XiuqH0cGeIqV9TNO0LxRqZNbyvlnZ7X15QKcMyyygnVdXfSNuApIEaM60EBJ18SLc+18kNqFvtGvOoX1N34BW/Y2vHKfPbyWm1zlL6Za9scOXuxSxSq0K3do5yymXEXE3preuLdq1MpEE2ffcTdVH3uIoPcd7tgOvEfEfVTv3LsLO0mZQZaTz68g017cp/LBFdYSIzM2uvJtZs9ibtbI6wfakR3ewpUwPorUI/V2p73JSr+kGRDfy/R9NEMSjRkOZAJKv9OhssLVKxrm3mpuDcnDeECCiJkWXRinuki4MwipJQAMXBNE/CJ4gSP8B+DmBiVtQg8xWK6stTeDVwHGi91BpjP6k1JJaMGa67EqhmJVxUShL/s70b/VayWmHJHCfv54blNnmN425BBS9x0+Gw3ISINNBejPs1EnQjKB3tu/mpHa5F2umEgf0YLP92yU0GvOkl/iIIoQfNGOust9RllZ2ea0oiqHUn5QCltfdljNSgJg5T2H9L8MX1OejhaI9HyK7ljqr2d4zQkNVfjxFPS3JdC0kQnKNCy4Oqf0fgs26PzbxiBGqnz+ZeTceXJiE5joEm6n6ufJU0wXb9+O8XxI8YPlh7lbM6R1JKzmkYEJvG5vCbUGNzu8O0UmQnZTRIPwGbKlYrNPgLt0gFrIG5LPT1+WM8Esi81qkxoKmBEEkUY8yT79vCDVlU+yfnAvW1UiHHmEUwY3HJ6fuoEzKe+O+d5B3Rdq6s2vBy42ja/LeXfmyhQwUOagSWDaaiZIo7YjOPfO0W1JNjajqC+LLF1pH0fJ3y6LRJjZqpoNGZEQjCsg75JxAB2c0/kOKdcVczuTH0w92yRBOgwjte2idG1/yjjVzHORR5sDpHgYgAAA==);
 }
 
-/* Data URI SVG cho Tinh Thạch (Lam Ngọc) */
+/* Data URI SVG cho Tinh Tháº¡ch (Lam Ngá»c) */
 .ico-tt {
     background-image: url(data:image/webp;base64,UklGRkIFAABXRUJQVlA4WAoAAAAQAAAAPwAAPwAAQUxQSPQBAAABkLRtmyE771XHto3Ytm3bWTlr27aWdn6AnZVt207mnNNXXd+i9VVVtIyICcD/ztH5hnUPnE80qvZXKY9FGlT8lCTR7lBjEm+S4xphSOQRcpbTzQjeTe5ykhFLyKs10IAx0hMFumvXtZR8/mytWf2v5Ptzc6fk8loUPyfGj7UdRLSi+FwA6XeJ9XmxTXl6dSDyHDHfL3QS+WwiFPapxH49PdamMDLfFv6Sj3oGK0J0MYDh5N9y2ytUtVwABJ9nKHX7nOkgMgVPeiIE0FIyWNKFxglb6y21eZwPEqMsdTsVGgkgc1UqQ2gxkDkOyC/lIMvNqg6IYLCmzgFEbPP4JcQq3WgJ0LM3j3Ns8nuSah5HIjxeBSYQkWTw3BEKs9tCXCZey8tOFSIcDSWT9PI9WQGAraSOxinJ/cnl/YyS2lIDeUyoEAe9SMkipWwNpZkfPRBJDqLtUDzGE6ek1+mqgk+oIRoJ5VUDao4IdZij5HtFaBh5VcVkaNnU4rscrgfWsQUaQ9P4+zzy4wZo29ZiCdxN1AfrWKyu0Dj+Lsd2oRNaW/5epkLvdb5kb2gee9fPQaEbWpZ6e50O/Vd4kkNhYORNL/uFCWgccHudCTOnu8j+MDT0jNNBYQqKP9reZsPckbbhMFjsJzokTEL688/FMLt5T/zvBFZQOCAoAwAAEBEAnQEqQABAAD5dJIxFo6IhG/6uADgFxLQAZma8bH4ECrf3jFx4DO2c8wHRC3i/eNP3Y/Wb2sc0A2may5rjSuM5egB5MHsH8gBl6zKKisngbPvJo93vkrDrJCksP9Bmv9YUB2A+P+TVwQGczFl/YFlUkuzPaTOlomHraue2Se1YOczXKCsnBW0TaKZr8ggLgAD+/nyc30ozcs19Zuyr/u430uMEiZcMcxfCXKktgH1F7H41uNg9GLo2C/jz1cUO/1VxiiD9Ix5wXbuc1ov4/mf3a8mgJNvQg0ZoZoT3y77qt9xhJo098tBKfKW3dr7boXX+4QA888KK3AuPWWfWnRp85+4Jz1L0aarILnonro7RlgQ/TpFkOdvxylPEcLKh8F/LIwJruOQ4bBS5DnqZYQuEnfvt7q2CnAqULegLn6nalFre32J+a8xQ+g7TtYsEbe2McIbuMrMotVmzYpal2UriVoVClluk0G7ITimufbcO1o/YwpEIyHUSaVrOvGFnIuzMfd53vcqbu68pC0aPZc0dNhuXPHHHW4aR4TeFw3d/LvfdHt8rNa05SmcdX+wWJ0VHaqyJW/WtgxKzEr9gJBdSG/cxoYugi64Zpa52tdEVewgAtmOPQCZH00pzr7oM1elmteHZf+p2IDmahlSLoUeNjFfJTyGs1mZV9bO87j1am0e6JxHtuvK+Oz8h1haNh+gzq7Gq8juP3/IHJ/nx+mN0cIuq+QEeN0qe0wLtzMBDuyFRM9eM4OZvJtaEfRAaocB/pAspRFvMSe4Ger136ZU1wQuAJe1Z3byaB0qF2LNUkIQk4OjyX/lISR7EHYKKvIGM5yC9dG6KBRVPDbbqx5tc8JsOhi+y4BLgu2EtTv/AMZ7rU6x7KGce5MbGnyt42YROPqlqAUMX/4Xf//iHP/4f5//8Ow+7/ry5Ghtll/+rW/5Cgd0W5lUOvF3tAhIv4cl8Ca9eAJP3MKC0EYc5cdrO/mPrbLryS8xtpbo4n3SeDvYlt7iJ9ofZODaiwP50xctQsVIj7DehB9NcU8/08No0rbaswQ3+2ysBXZ27RxTHIwK7EBG0AA==);
 }
 
-/* Data URI SVG cho Cống Hiến (Khiên Vàng) */
+/* Data URI SVG cho Cá»‘ng Hiáº¿n (KhiÃªn VÃ ng) */
 .ico-ch {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffd166'%3E%3Cpath d='M12 2L4 5v6.1c0 5.6 3.4 10.7 8 11.9 4.6-1.2 8-6.3 8-11.9V5l-8-3zm0 2.2l6 2.3v4.6c0 4.5-2.6 8.7-6 9.8-3.4-1.1-6-5.3-6-9.8V6.5l6-2.3z'/%3E%3C/svg%3E");
 }
 
-/* Data URI SVG cho Sản Phẩm Gói Tân Thủ */
+/* Data URI SVG cho Sáº£n Pháº©m GÃ³i TÃ¢n Thá»§ */
 .ico-pkg1 {
     background-image: url("data:image/webp;base64,UklGRrIDAABXRUJQVlA4IKYDAAAQEQCdASpAAEAAPm0skUakIiGhLhbaqIANiUAWI+oKINjYiUqu2eu6qBT9LpRhllZAmIqzRqPkkfQrxGmeLEzM5aoNXVSTYX1W+Ntfw2S89zJauzWv5ipmGg6S1e7RTjryOvrxelL4ax2eDAXZdj88/V83xYpvVNncJbDUDFJ/2zoBFCg7e7TKLtNV4oVkFeqAAP7+/EdGs36EC46DfIIM9cotBICvO4I7bLyFXpofml1aeS6L2BMM2T+5FWAnA08wmNUfsLLIk1sp380wNQpVmgviKO2EXGhbYXFlb0gwW/NKG3g7C27Z6OrsrHVdsQMiK7U/ZT9lpa1y9ClpRJiYjHplJnC58olGehM8ctfevj1dX5c/WO0+5Z0NO84ss67ytNi+PEpJ3X4vH10SnKeUpR1HJGKou4vBSIgvkmJbsnNs06ku4v2uipvfG81nF+TqtVZt2yzMfSoKAjivnJ+sM9gyP2aIB/Gxap33btJp7LSfgr4PHNKGNQlNxixsQQ3qLrzJSZ4D0nrvRa9uum6zxX8F39mn60RQZ5gaMzN4X0+10+Dzk0ciT8DpkJpl8qbpxe0B2V4juzqBV5DINwwE2126PippH8E8uS+vu0KT3Yqh1tjlKkD9uawjtezVcHapybU5QtIoLqOZTHeZquVkeJis4U/2qsBS2ePqtITeNRM0AEyC9BRZhjxx1dsllibjbX7Tt5Q95YsMRX5fIEgiGGY6/RppN+pBpo+Xsni+fRzsUmoThCdGIL0Emd2zxM5+4SSmVS03W5eq4qr33isiaIzCd6/VA8YCv2g4fcNE29fVxGt+pPRtOYyNIOHVlEU6gpQX/YS9uIL52RiiCqNQWpF+YgfeC4rvdcJk3v6CNVCWHD9A33+dY4sJgZFsZ25Dn4zI/MKLDMq51Bg/hGJ48XPmHnCH5QF3ueBrGHeUk3z+JUl0tS0OFMJaR9L3i1iImq+WIFRs/G40Lx0XnZv9rI10T2qUKFxXDf1OiAroKHThaQGXuDmeaR+qmlwEac80wsqFGUH7Z/vcmEgPQXv5AdcGr5EtfKukX2mb5lULraWYrtw8ux36sCprBmB0jnSzq/H/vD695iuh93wFuhXK/waS+Hok6/CbuCe0qu6zWHEPIBpBBRu4f0gl6g/x6h6X95YMoWTCA2DElF2CNqLGRbZiDorqmqLTPzWeCMtW+/ZSJGcBsLtz1b0yHZksvnUymEaTQz7B6Fv6OWCztD9j3kDoZxAA");
 }
@@ -133,7 +133,7 @@ body, html {
     background-image: url("data:image/webp;base64,UklGRgQEAABXRUJQVlA4IPgDAACQEQCdASpAAEIAPm0sk0WkIqGWbAZUQAbEoAyFP3Ehl/Sovw4LG3C54DTXt5tnxzPM4PZ12uy0NLi0Ee1c3Cxi/3kIq/78YVg0nhw2hQtSdawYYhYaQn//Zs8jFzbThCol5UPh0vB9zj6nDVeELE8iyFL9AtvTuqNHa9E+5y+E5QL39DSTMqjKRldDS2i9/oyYPCHAAAD++yCPd+d5hds935WyRwKu/QDpG3Bv7NmWX6P5LFXN8e0JSxu322DSxz4jSs6fjnfr3rFpvlgGSWQ9q+SwMR4wqQONQP/TKpwAaJ6CGw3BB7/TKQm/khAcvZBggFMsy25SRf7e8yCiCihjuGPIhCYyW9EPAgPyXe7BV+VHVKKm93j8GHzzMC+m6db4X3JuRegSfGKFA15K2A8XmBC3sSmAC2PvHNN4uNer5OSNah2QC/12Mc7d38If9EJSxoUU2WxcWKWpPFX5ID78hka7GsIrbg3z56EPWIn707qsk1rgfryMmNOhGRCXnpFnh1BeJdryvDPb4reyciS60HymLb7VH4BUCKe3qoJqaQpC0AQS7R46G5pBFwWZ1FEEJcE350bgERzp8d/pwX7uZ7IZ7WMMm2fNvb5CvxPzi3ajjJQalEO+uwfa7k3dhxED2ECDl2ycWpVH8ioI5nzj63AlCyV+JLeYAxxNE6lg5wYcJyW30rotQ/1ZYwMBPOqXHzWvATXcb1PlZyuVpBN0vQ8Us+UPL7Ps2xFLvlNsOTM9XpHVISmm5Pd8szR9Xc9G92kKdfuloufYHdaLVzrpKy+rjUwvYv2MIicSS3M+ILAJ8LvU9T0W8nuTD6QZHZhzpSRYdfvuspyAYCuHE3GZksuQ6jNlwPLcOwm7MRAczOk8MyC8gLTRHtXoCexymaGnUj7dWGFD2Peps66w+L4VK3cD4AE+1aetjBMnU7PD4lgxwBEJqVZaj9ATaaUreuytNzTgtIQmCz7kKh1bTalcKUTDzR3+93siFA6dYbf4O5ek8nO4u4Tan9pYwkShOChvcPuJT4gIs3EN5WbPSThFNBsRyL+nk0koqtUvJXoDynttf/ts1DeW/VJzivbH0sRnmvatld8ikGzibatK6/zeohqOAUkRDSorwyvDGeDNPBHttL9G2ESOjQu/fmLZuyjVKi7z47+fAoXeP3Wl29tsXYkNje1nkNiztWg8ZsNd/O53ee6bMtWKcI4ZKThj0ui7fbxEFRGV0C8ZCne75/+X/+4gUOkEth08rAfQ3XnsvPWLeESvOsx+D3EcPeWAsNcpHg5vW1Gtge2j8VdMEe3k/9OjXjmS+7v52t8nV/2plAn9ofnvuNaC0Fu5ncmkYFdfy0RT2ueAAA==");
 }
 
-/* Data URI SVG cho Quest Dã Ngoại */
+/* Data URI SVG cho Quest DÃ£ Ngoáº¡i */
 .ico-quest1 {
     background-image: url("data:image/webp;base64,UklGRkwEAABXRUJQVlA4IEAEAADwEgCdASpAAEAAPm0qkkWkIqGXC26oQAbEswBOmZomGkgWH/E8LYcuEjtuOdu01negpk/+R/KDKhfnOI00pqp5ovkk+o1r3ByPW1b2bS2OYHoRosC25fNXHUb7kKgEbsHA0jg3b0XZiil9vwJh38ugHtYGCzqYR/NwblDO2dpFdLPLYHpSxrGjqZM0D7ymHr5L5eqS3XyMHO8fxcAZLLFgAP7/TNT7gwVvIOdxsXw/SQ96XESm/u/kRP+/pLnvNifn4gTD7Yc1wh7knvbLm6GR+/dTm/tkaI82Gl6pZx8OtqHU6Hp80f5KMLfqgVH35vz2RXIerCd4F/z2Fa1pmB6Edr6GvbvZwj+rbrHeGvb4tugY/1Kc0zqVDR13z+JrqdfgOtd1RIC+c4riCXrqe3VCKrzZVBRtNjiHzil6CMdzz361FYTgs29fQJYKb8OpigmRdBGW3YRwnn5p09F0wsWt4MWkzMLFD/TcSeYXjhYDn/eO0MRuLzTbmpvrWgTahN31/Uk4c/mjWkHgCquI3YAe3qt/5x3zieCTz4PvgbHNCaVQSuxa9nG/xQqCkwej+SQT+Eh8aQpsB+lma6K8bPhz1VNeR0ZsxSXAXTO/OxylL3kVpFP38gYbHsdBD7+31mwSKWWfxEX/Zg4vcQYd1bYDfo3I8tr3l6y2YYr/mNa9AQzVLD70KGHNDUy6m8GV8dRl+v+7G4wrPPAQuudASP9GqlbXtNY3fNY1DuiGJo9XzHCDEQejwLk0cCr6p6ocgC3+u4v2IwlFhEXedm39VZv4hjabHokXAxwQ3sQCd6D2jy24RuwLA1/GVuC0SbaNdvHEZG1McfOftObK+19WfYGv3vBQyaGf6bU3EjRAhC0vbX3LZCRnUmp4400YQeQiqNCy1VT8m8SFf6XYWIjKg/KkpmvEI7no7pp8QE5ZY8wcP+2Wzhzn0tMhIQqHiSoUDifdl8vJnorT/iqq0fvwCA/sSSF4pOb/alN+cdSJ/UP+GrFKb2IIadcVEM8SnWHxcBfiDtlicYYaRBNY3Lnw0m3Qw/F9yHeNzZNYyU7MMmA9y3WBwkV4ypOimUyhrkj1E6CiuwnsBZEP6xrI6DRfSD9LrtHvahmdORi0HynGbTNfjc4c9yDo5Gt7Oe/69451V02wmeHCcunz/lx7iSf7ISMWbtKoM1UkoS5F9JXCGu7jhGF5nJwTcC0t+/R8cXkPDN8a1Nl8p/VDe1Sqs3cJds9VwyJyDo6Tasd0RCSctC3+Ib+yLvm0y+TtAi0G8IQpYALol5fqdu5K60L4EDB504h8hsrSSa9eaIysPviZT8fvv1offZOkgd2ngPWes77Vc9pITQ8+LVFSPf6+iYjFtUSfOxr/f3CXBywM1Zj2D1N3gxH6eJOehPI7SferYW8TC4M3Qzhe1mBEoz6RSUeH23nBc0TC8nMFrsdmYrhoCvkAAA==");
 }
@@ -149,7 +149,7 @@ body, html {
 .ico-quest5 {
     background-image: url("data:image/webp;base64,UklGRioDAABXRUJQVlA4IB4DAAAwEACdASpAAEcAPm0qk0YkIiGhLNv6qIANiUAZbAJI1zfw5u3tu6B9PeowabI85Y272IdNQEZX4DIZtoKl+m8JJS5s0ySMeOeWVM0yU6rK6utw6h/srxk3bKXakzwS7ViqhrbblUJw9Ar701Al5NTRH+CiAn/4Wkanr2EMnm9Yyqs3tIZgWBZNsAAA/v4XcrEi+6zGmPQ86tImOZ+pTf+X+LGUOUQ5ckvIsN1jivdTcCR+fkNnnZI6pxOdo/r08vQQiW/Lm1/ybPGr2ZGZTet0mmDuTm6KpbdRRrBDn6f9P+PQHV44DC1lISCBqEWn6rqFYlQxA71X+W1sR4fduj3Cy9wdGa4Oc5TvBqhpypDnJWuxLr6fph6vs+sa9jo5hmZOGjqmsbGqp7zLXNck/nrB8ctOtrwqGeYo/w2vpIutTisuPLPhL4VsSnRHO3lO/FPR+gMasGwhvzLsVCP97VhxUsn3MkIE1Bsxwue/PqMuNtWra1UReTC+AzY9QTw+V9DutY8HRu3zYKfCiB71I//T60KMy5+ynO2cM0NHnH/OGxi87kpjFfKCJvbhNDBOBYg6ba4l7llLrhuSYyFFja142AjfXNu2WT1sFBsQGnmgGAzyMiPzRaZv+vtGGRxBay3RFwP+OJhv8+CHW7JhhfYjZyoXQCfD27LId+7Ians+NS0U3X4R6gF/G2FDnWZ4ssZJ95Gn6ioYTxSJ1aGUMfVK2hvCPaLN+Rub+MBL/ClT2HDHv3UWmYvm2PmygZRAMM3uKHySVvgialuNknFhtGXfteGOdVx3h+wjINRBIrKZrMo6Uq3RRqSbWaPF6v9I+qag39O9v1CBd+ARX03rSJ6PH5aAEhib8zUMK89N3MrjfNKqMvLjR8u8in59YusN51y5NYhqp/TGd1wkkWs8+SnGrN/ZtvV7Jx97ju2QWbmrdnA568TUlhwJDMFhbBn5bSZim72QNujOSB2Sx0qeF3nAl/oHLDXjZokrbS0sQtNzSAQRppRf1tW+L/pPeysKAVOWobcC26RP/kmFf0PETc4Cu6MyTKiFMG4vjJrAAAA=");
 }
-/* Data URI SVG cho Ẩm Thực Rừng */
+/* Data URI SVG cho áº¨m Thá»±c Rá»«ng */
 .ico-food1 {
     background-image: url("data:image/webp;base64,UklGRooEAABXRUJQVlA4IH4EAADwEgCdASpAAEcAPm0yk0akIyGhKbgMAIANiWIAybw5h5ClO4BmdurzwHpJ3jreXJ99zUiWXB9OPe/KB4H6UqZ/5A/rH2BOlD+4DBK63Tye3ZhK410xzUJ6clPSbuZaww58/NeKe3LPAz+5mlG7BtYzJB6Xc6QnVEEwWm1C/sAwwbnnbiiDCobWRG+imNmpTLqvQKW6XliBymzFdBSZyQNQAP7/IBd5sAHJC+qjRg/IRF8zSIcLNsj0VFTCx+eDJ3d/Ha5mT27mPx3csaMeO/Y0KO6iVlfilODYbR9kNb+FFoWHVaudN5vyNrbq/Stuj5qfz+qa1sV2ul0kfzNfrq0dD8Y7rUsSdYDec8L9ia1Ec3j0odqokkwd7vLpwn/iPSB+YHMJklrVVJL5WJtm7fwLST78Rc0RmV/ouQqnsyUf/x0bTioUIB4LyGMZEXO9jHm01ViWovg54PK4tAouZVbGXslYvx3ty80fqz5L1kEWGO+MibjFgOZqGJEGXdyduMy0kHBJbYw94weTeH/4B895Jthx9zO/SP4T7jKzWNhQNGJiO1xlCACQ3JHtIImuQh4DoaO4u9J8yl9x6fpuSGN5RN7eFYD09VkkIiYIh2Bud4nMLJFv/hL4g1aXa4U36uHHx/RjiAX+FmkXlVS2jLs5fA1qEX1EdOHIszAD/1QCYqnctdkptTLHaakas7VTAhB4FSqB64BAIGNiAbw9X1+Fdoy5l6eMdXiR68xUXNrcH4KO7zC/7IqwyNoYpHEdkOQFVeCiHRrg9ibIyi0KTi/SEWpEg/owKFyoLrBIbdqjoQwQ5jutbLn9fbtAbBEEq39wRDSflNFzWEzLoHKsGfgRDmcHqN7HvYcZmPtnPjV5JcfVMFiKk8t5ikwfEe+I27Q9r80ikPxnRPQ8mHWAqPtq7ffmRwpEka11bI4Cn425P5QKPPbSOxO3zhqC9uLPUC096WKF1Mjv2MbVqpGGVylMdMcKWnEyy14oIxG8KGTE4mF34xb/X3mI3fBrxKo7cZ9WE7i3PvuXTPIomDzWMHdb5Mn9hq71ekDXjlV5cPWX+F6kzrXfo00IBcsddb5ewagDsg3Esqn+X3z+aBKkl3GZM9UPaHG7yv/jBPBDErs/2Q1i46HkN+lL1tEl6dnzjef9/8qdoOVH7giRgtYzcOl8/U0LpRvgc7U8tyWd+XOrfXiO0EQNivjhxdsVm1TJEUnkufuWsnOP4/Gst3Lg74su1rIvzUHB2MkGDhRH5KXu1jp8BzWS+mp0G40EvOXl7hocftL03AKnOZf3c8p1643GbhZbT8w2aIjTIX7nB/7eG2WA5IkdCM4/DrDNn75fmrXfuHsEWss9MyvVHYAI3B6npv+jJmaZnIleMRblP9ju46C/sY+6f2y6I4KX3Zf5NrXSSyzrqGBnLXLkL6WB9Ouau7pT6PupUoDesNXR+pgV+JQ70FoTsLt4N1lrpfUA0fhDYImC0aXUkDfzgsRspPc9z3hD/mcfRHTJaIomAI3HABcYmQFHDTT82MxAAAAA");
 }
@@ -160,8 +160,8 @@ body, html {
     background-image: url("data:image/webp;base64,UklGRngDAABXRUJQVlA4IGwDAAAQEQCdASpAAEEAPm0ukkYkIqGhLNQNUIANiWIAyyR20caF/lOO5MxCt21XPi6Y1vPkyLGoDh5b2luZ6/ZY7yJMZ7Ono4BLr+xpN76Ub0Ch39F/w9n2hFEIY8rfRisVzQaiaVPIn8KLN29GmNleCnlr09jmRwtozQFBv8YDoZ0wJgk204raS9N1P2A28yZgUYEAAP796IQx1AjB1FIC1sC6rur/Mh+fGcYSNtfBWFGVlnscaRhM5RgMZdx9jMpCHcmRl8OzzDPz5i422p5vRuvLa1UiK/pf4+4+TVVfFAHAmIrO92/8OhY0DJmK4i9Q1nmmxI6DzRIhpOxpTiLJrhRb4GFGB2JQDrGARtmtmscLDSHN38Np4ZgLScR5X6RSitpfCYbxkNvnXe8+gbq0yTxB4ATf/3go5Ujp1iG79fjfGyqssgIXZ085G8Z6NWdG+HI0GwXJFACLpahJTHsPHjO8v6zRL1jxAT6Qb9nglkrwogkU/s7FrfkYy06HiTRCbVu/DAkqdOgYPC/QjwnKPyxDHtOFVQaEKcMxpJYOJepve/lHT1EQ6MZVKfzBf6JXgSgsgpEcSyq5vmwV1h6T3iRlFCthVsYk8MgwscFtBKlzIyM+20jUtHZPbzbw6b9NrJHeHfbeF0AFrAT60i41tOJ/82m+eaBB6S99rOI2R59bSrvjVCKTx7oHSvKYd314Um4wiLp+gWKg8UFHds0oaZsJpTVFiyB7SBXTdxpifMC3fhqGWg8MyYG4fS5xHBZ8V1ozf8SLO6jMgc0XTwIk9HFIoIoCwI0/n9cxa0VOOW8HXZh9jHFVwa8jBgDdSLcvqUhJJYSzx6iyaTp2WtWNb7JFbf4Ju8mj59FVE7BupJvo3XKG/TPx1P2YeYKBFC4tYSxQqW4LMuwPCZq4JUpLTz+YZMcR7fzFze0SwBryVNzP6lXdR2o7Epfz+cUShljH+oOZ38DYLti0ARTVVeoZLa7s4aqhiQ/AV1ZXswe4b0E2TBB0oX0LHah0PbDD8NaYFLdY+ZhIhr1utVEggg8cJiVoSfNWyTQRJagaYHlS/KNvZKCp5rnftvdoIBgxEgOW+zhsObYIuK/St2KE7NBkGuQRF8jdFQQl3yubKp/jw10Ay1HowNzS8RMAF7svVESnX8zfvNdvZ+vmyAAAAAA=");
 }
 /* ======================================================
-   HỆ THỐNG ICON 30 VẬT PHẨM CHÚC PHÚC (DATA URI BASE64)
-   Chuẩn hóa class để Admin Bot Telegram có thể quản lý/thay thế
+   Há»† THá»NG ICON 30 Váº¬T PHáº¨M CHÃšC PHÃšC (DATA URI BASE64)
+   Chuáº©n hÃ³a class Ä‘á»ƒ Admin Bot Telegram cÃ³ thá»ƒ quáº£n lÃ½/thay tháº¿
 ====================================================== */
 .item-ico {
     display: inline-block;
@@ -182,72 +182,72 @@ body, html {
     background-position: center;
 }
 
-/* 🟢 COMMON ITEMS (01 -> 12) */
-/* 01: Ống tre */
+/* ðŸŸ¢ COMMON ITEMS (01 -> 12) */
+/* 01: á»ng tre */
 .ico-item-01::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzVjOTQ2ZSI+PHBhdGggZD0iTTcgMnYyMGgyVjJoLTJ6bTYgMHYyMGgyVjJoLTJ6bS04IDdoMTB2Mkg1di0yeiIvPjwvc3ZnPg=="); }
-/* 02: Nhựa thông */
+/* 02: Nhá»±a thÃ´ng */
 .ico-item-02::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2Q0OGIwMCI+PHBhdGggZD0iTTEyIDJjLTQgNi03IDgtNyAxMSAwIDMuOSA1IDkgNyA5cyA3LTUuMSA3LTljMC0zLTMtNS03LTExem0wIDExYy0xLjEgMC0yLS45LTItMiAwLS42LjktMS44IDItM3Y1eiIvPjwvc3ZnPg=="); }
 /* 03: +1 Tinh Quang */
-.ico-item-03::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2M3N2RmZiI+PHBhdGggZD0iTTEyIDJMNC خانdjh2MTBsOCA1IDgtNVY3bC04LTV6bTAgMi44TDE3LjUgOCAxMiAxMS4yIDYuNSA4IDEyIDQuOHoiLz48L3N2Zz4="); }
-/* 04: Mảnh vải */
+.ico-item-03::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2M3N2RmZiI+PHBhdGggZD0iTTEyIDJMNC Ø®Ø§Ù†djh2MTBsOCA1IDgtNVY3bC04LTV6bTAgMi44TDE3LjUgOCAxMiAxMS4yIDYuNSA4IDEyIDQuOHoiLz48L3N2Zz4="); }
+/* 04: Máº£nh váº£i */
 .ico-item-04::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2RiMmI1NSI+PHBhdGggZD0iTTQgNmgxNnYySDRWNmptMCA1aDE2djJINFYxMWptMCA1aDE2djJINFYxNnoiLz48L3N2Zz4="); }
-/* 05: Gậy gỗ */
+/* 05: Gáº­y gá»— */
 .ico-item-05::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzgyNTIydSI+PHBhdGggZD0iTTE0LjEgMi45TDcuMSAyMGwtMS40LS41TDExLjkgMWwxLjYgMS40eiIvPjwvc3ZnPg=="); }
-/* 06: Trứng gà */
+/* 06: Trá»©ng gÃ  */
 .ico-item-06::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmYjcwMyI+PHBhdGggZD0iTTEyIDNDOCA5IDUgMTMgNSAxN2MwIDMuOSAzLjEgNyA3IDdzNy0zLjEgNy03Yy0wLTQtMy04LTctMTR6Ii8+PC9zdmc+"); }
-/* 07: Bắp ngô */
+/* 07: Báº¯p ngÃ´ */
 .ico-item-07::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZDE2NiI+PHBhdGggZD0iTTcgNWMwIDUgMyA5IDggMTJsMS0xYy01LTgtNS04LTgtMTEtMSAwLTEgMC0xIDB6Ii8+PC9zdmc+"); }
-/* 08 & 09: Cống Hiến */
+/* 08 & 09: Cá»‘ng Hiáº¿n */
 .ico-item-08::before, .ico-item-09::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZDE2NiI+PHBhdGggZD0iTTEyIDJMNCA1djYuMWMwIDUuNiAzLjQgMTAuNyA4IDExLjkgNC42LTEuMiA4LTYuMyA4LTExLjlWNWwtOC0zem0wIDIuMmw2IDIuM3Y0LjZjMCA0LjUtMi42IDguNy02IDkuOC0zLjQtMS4xLTYtNS4zLTYtOS44VjYuNWw2LTIuM3oiLz48L3N2Zz4="); }
-/* 10: Trà thảo mộc */
+/* 10: TrÃ  tháº£o má»™c */
 .ico-item-10::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzUyYjc4OCI+PHBhdGggZD0iTTIgNXY4YzAgMi4yIDEuOCA0IDQgNGgxMGMxLjEgMCAyLS45IDItMlY5aDJjMS4xIDAgMi0uOSAyLTJWN2MtMS4xIDAtMiAuOS0yIDJoLTJ2LTJINnptMTQgNHYyaDJWOWgtMnoiLz48L3N2Zz4="); }
 /* 11: Khoai lang */
 .ico-item-11::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzk5MmU2MyI+PHBhdGggZD0iTTE3IDNjLTcgMC0xMiA1LTEyIDExIDAgNCA1IDcgMTAgNyA3IDAgMTItNSAxMi0xMSAwLTQtNS03LTEwLTd6Ii8+PC9zdmc+"); }
-/* 12: Thịt nướng */
+/* 12: Thá»‹t nÆ°á»›ng */
 .ico-item-12::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmNGQ2ZCI+PHBhdGggZD0iTTE4LjIgNS44Yy0xLjktMS45LTUtMS45LTYuOCAwTDUuNiAxMS42Yy0xLjkgMS45LTEuOSA1IDAgNi44cyA1IDEuOSA2LjggMGw1LjgtNS44YzEuOS0xLjkgMS45LTUgMC02Ljh6Ii8+PC9zdmc+"); }
 
-/* 🔵 UNCOMMON ITEMS (13 -> 21) */
-/* 13: Bình Potion */
+/* ðŸ”µ UNCOMMON ITEMS (13 -> 21) */
+/* 13: BÃ¬nh Potion */
 .ico-item-13::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzAwZjVkNCI+PHBhdGggZD0iTTE5IDEwLjVWMjBhMyAzIDAgMCAxLTMgM0g4YTMgMyAwIDAgMS0zLTN2LTkuNWwtMS0xLjVWOEg2VjVoMlYzbDItMXYzaDJ2MmgxbDEgMS41djIuNXoiLz48L3N2Zz4="); }
 /* 14: Cocktail */
 .ico-item-14::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2Y3MjU4NSI+PHBhdGggZD0iTTcgLjVsLTEwIDhoMTRsLTEwLTh6bTggMTF2N2g0djJIMXYtMmg0di03eiIvPjwvc3ZnPg=="); }
-/* 15: Thẻ X2 Main Quest */
+/* 15: Tháº» X2 Main Quest */
 .ico-item-15::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzQzNjFlZSI+PHBhdGggZD0iTTE5IDNINWMtMS4xIDAtMiAuOS0yIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMlY1YzAtMS4xLS45LTItMi0yem0tMiAxMGgtNHY0aC0ydi00SDd2LTJoNHYtNGgydjRoNHYyeiIvPjwvc3ZnPg=="); }
-/* 16: Áo choàng */
+/* 16: Ão choÃ ng */
 .ico-item-16::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzNhMGNhMyI+PHBhdGggZD0iTTEyIDJMNiA1djE1bDUtMmw1IDJWNWwtNi0zem0wIDN2MTRsLTMtMS4yVjZ2LS4xeiIvPjwvc3ZnPg=="); }
-/* 17: Trợ thủ NPC */
+/* 17: Trá»£ thá»§ NPC */
 .ico-item-17::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzcwZTAwMCI+PHBhdGggZD0iTTEyIDJhNSA1IDAgMSAwIDUgNWExIDAgMCAwLTUtNXptMCAxMmMtNS4zIDAtOCAyLjctOCA0djJoMTZ2LTJjMC0xLjMtMi43LTQtOC00eiIvPjwvc3ZnPg=="); }
-/* 18 & 19: Tinh Thạch */
+/* 18 & 19: Tinh Tháº¡ch */
 .ico-item-18::before, .ico-item-19::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzRjYzlmMCI+PHBhdGggZD0iTTYgM2gxMmw0IDctMTAgMTFMMiAxMGw0LTd6bTEuNSAyTC01IDQuNWg0LjJMOC41IDVINy41em0zLjUgMCAuNyA0LjVoNC42bC43LTQuNWgtNnoiLz48L3N2Zz4="); }
-/* 20: Đạo cụ Quest */
+/* 20: Äáº¡o cá»¥ Quest */
 .ico-item-20::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzRlOGRhNCI+PHBhdGggZD0iTTEyIDJDNi41IDIgMiA2LjUgMiAxMnM0LjUgMTAgMTAgMTAgMTAtNC41IDEwLTEwUzE3LjUgMiAxMiAyem0xIDE0LjEtMS41LS45LS45LTEuNWw0LjYtMi4xLTIuMiA0LjV6Ii8+PC9zdmc+"); }
-/* 21: Đèn bão đêm */
+/* 21: ÄÃ¨n bÃ£o Ä‘Ãªm */
 .ico-item-21::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmOTkwMCI+PHBhdGggZD0iTTkgMmg2djJoLTZ6bTgtM2gtMTBWOGgxMHptMiAxMGgtMTR2OGgydjNoOHYtM2gyeiIvPjwvc3ZnPg=="); }
 
-/* 🟣 RARE ITEMS (22 -> 27) */
-/* 22: Huy hiệu xanh */
+/* ðŸŸ£ RARE ITEMS (22 -> 27) */
+/* 22: Huy hiá»‡u xanh */
 .ico-item-22::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzJlYzRiNiI+PHBhdGggZD0iTTEyIDJMMyA2djZoMWMwIDUgMy41IDkuMyA4IDEwIDQuNS0uNyA4LTUgOC0xMGgxVjZsLTktNHptMCAxNC44Yy0yLjctLjctNC44LTMuMy00LjgtNi44VjhsNC44LTIuMSA0LjggMi4xdjQuOGMtLjAgMy41LTIuMSA2LjEtNC44IDYuOHoiLz48L3N2Zz4="); }
-/* 23: Dịch chuyển */
+/* 23: Dá»‹ch chuyá»ƒn */
 .ico-item-23::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzc2NTVmNSI+PHBhdGggZD0iTTEyIDJhMTAgMTAgMCAxIDAgMTAgMTAgMTAgMTAgMCAwIDAtMTAtMTB6bTAgMThhOCA4IDAgMSAxIDgtOCA4IDggMCAwIDEtOCA4em0wLTE0YTQgNCAwIDEgMCA0IDQgNCA0IDAgMCAwLTQtNHoiLz48L3N2Zz4="); }
-/* 24: Vé Gacha Chợ */
+/* 24: VÃ© Gacha Chá»£ */
 .ico-item-24::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2Y3MjU4NSI+PHBhdGggZD0iTTIyIDEwaC0xYTIgMiAwIDAgMSAwLTRoMXYtMkgydjJoMWExIDAgMCAxIDAgNGgtMXY2aDIwdjZ6Ii8+PC9zdmc+"); }
-/* 25: Dây chuyền */
+/* 25: DÃ¢y chuyá»n */
 .ico-item-25::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2JkZTBmZSI+PHBhdGggZD0iTTEyIDJDNi41IDIgMiA2LjUgMiAxMmMyLjEgMyA3IDQgMTAgOXM3LjktNiAxMC05YzAtNS41LTQuNS0xMC0xMC0xMHptMCAxMmMtMS4xIDAtMi0uOS0yLTJzLjktMiAyLTIgMiAuOSAyIDItLjkgMi0yIDJ6Ii8+PC9zdmc+"); }
-/* 26: Quà bí mật */
+/* 26: QuÃ  bÃ­ máº­t */
 .ico-item-26::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzk5MmU2MyI+PHBhdGggZD0iTTIwIDZINHY0aDE2VjZ6bS0yIDZIOHY4aDEwdi04eiIvPjwvc3ZnPg=="); }
-/* 27: Thẻ bài ma thuật */
+/* 27: Tháº» bÃ i ma thuáº­t */
 .ico-item-27::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2M3N2RmZiI+PHBhdGggZD0iTTMgM2gxOHYxOEgzVjN6bTE2IDE2VjVIN1YxOWgxMnoiLz48L3N2Zz4="); }
 
-/* 🟡 LEGENDARY ITEMS (28 -> 30) */
-/* 28: Nâng cấp phòng */
+/* ðŸŸ¡ LEGENDARY ITEMS (28 -> 30) */
+/* 28: NÃ¢ng cáº¥p phÃ²ng */
 .ico-item-28::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZDE2NiI+PHBhdGggZD0iTTEyLjY1IDEwQzExLjcgOC4zMSA5Ljk5IDcgOCA3Yy0yLjc2IDAtNSAydjEwYzAgMi43NiAyLjI0IDUgNSA1cyAyLjMtMSAxLjcxLTNsNS4yOS01LjI5djEuMjl6Ii8+PC9zdmc+"); }
-/* 29: Thẻ lưu trú free */
+/* 29: Tháº» lÆ°u trÃº free */
 .ico-item-29::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmYjcwMyI+PHBhdGggZD0iTTEyIDJMNiA1djE1bDUtMmw1IDJWNWwtNi0zem0wIDN2MTRsLTMtMS4yVjZ2LS4xeiIvPjwvc3ZnPg=="); }
-/* 30: Trang bị Ranger */
+/* 30: Trang bá»‹ Ranger */
 .ico-item-30::before { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZDcwMCI+PHBhdGggZD0iTTcgMmwtMiAyIDUgNSA1LTVsLTItMkg3em0tMyA4bDIgMiA4IDgtMiAyeiIvPjwvc3ZnPg=="); }
 
 /* ======================================================
-   ICON MENU DOCK NAVIGATION & NÚT TRỞ VỀ (DATA URI BASE64)
+   ICON MENU DOCK NAVIGATION & NÃšT TRá»ž Vá»€ (DATA URI BASE64)
 ====================================================== */
 .dock-ico {
     display: flex;
@@ -260,65 +260,65 @@ body, html {
     height: 80px;
 }
 
-/* 📜 Menu Nhiệm Vụ */
+/* ðŸ“œ Menu Nhiá»‡m Vá»¥ */
 .ico-menu-quest {
     background-image: url("data:image/webp;base64,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");
 }
 
-/* 🎒 Menu Túi Đồ */
+/* ðŸŽ’ Menu TÃºi Äá»“ */
 .ico-menu-bag {
     background-image: url("data:image/webp;base64,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");
 }
 
-/* 🛒 Menu Shop */
+/* ðŸ›’ Menu Shop */
 .ico-menu-shop {
     background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzRjYzlmMCI+PHBhdGggZD0iTTcgMThjLTEuMSAwLTIgLjktMiAycy45IDIgMiAyIDItLjkgMi0yLS45LTItMi0yem0xMCAwYy0xLjEgMC0yIC45LTIgMnMuOSAyIDIgMiAyLS45IDItMi0uOS0yLTItMnpNNC4zIDRsLjYgMmgxNS41YTEgMSAwIDAgMSAuOSAxLjRsLTMuMiA2LjRhMiAyIDAgMCAxLTEuOCAxLjJINC4zbC0uNiAxLjJhLjUuNSAwIDAgMCAuNS44SDE5djJIN2EyIDIgMCAwIDEtMS44LTIuOUw2LjUgMTMgMy4zIDJIMVYwaDMuMmwualA0eiIvPjwvc3ZnPg==");
 }
 
-/* 🛡️ Menu Căn Cước */
+/* ðŸ›¡ï¸ Menu CÄƒn CÆ°á»›c */
 .ico-menu-profile {
     background-image: url("data:image/webp;base64,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");
 }
 
-/* 🎐 Nút Trở Về */
+/* ðŸŽ NÃºt Trá»Ÿ Vá» */
 .ico-back-wind {
     background-image: url(data:image/webp;base64,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);
 }
 
 /* ======================================================
-   ICON 6 HỆ NGUYÊN TỐ TINH QUANG THẠCH (DATA URI BASE64)
+   ICON 6 Há»† NGUYÃŠN Tá» TINH QUANG THáº CH (DATA URI BASE64)
 ====================================================== */
-/* 🔥 Hệ 1: Hỏa Diệm */
+/* ðŸ”¥ Há»‡ 1: Há»a Diá»‡m */
 .ico-elem-fire {
     background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmNGQ2ZCI+PHBhdGggZD0iTTEyIDIzYy00Ljk3IDAtOS00LjAzLTktOSAwLTQuOTIgMy4xMi04LjU4IDYuNDItMTEuNDUuNjQtLjU2IDEuNjItLjIgMS43Ny42NC40NCAyLjQ1IDEuODEgNC4zMSAzLjgxIDQuODEuNzEuMTggMS4xOC44OSAxLjA1IDEuNjEtLjMxIDEuNzUuMjUgMy40OSAxLjQ1IDQuNTkgMS40NSAxLjMzIDIuNSAzLjIgMi41IDUuOCAwIDQuOTctNC4wMyA5LTkgOXptMC0xNS41Yy0yLjMgMi4xLTQgNC41LTQgNi41IDAgMi4yIDEuOCA0IDQgNHM0LTEuOCA0LTRjMC0xLjgtMS41LTMuOC00LTYuNXoiLz48L3N2Zz4=");
 }
 
-/* ☀️ Hệ 2: Thái Dương */
+/* â˜€ï¸ Há»‡ 2: ThÃ¡i DÆ°Æ¡ng */
 .ico-elem-sun {
     background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZDE2NiI+PHBhdGggZD0iTTEyIDdjLTIuNzYgMC01IDIuMjQtNSA1czIuMjQgNSA1IDUgNS0yLjI0IDUtNS0yLjI0LTUtNS01ek0yIDEzaDJjLjU1IDAgMS0uNDUgMS0xcy0uNDUtMS0xLTFIMmMtLjU1IDAtMSAuNDUtMSAxcy40NSAxIDEgMXptMTggMGgyYy41NSAwIDEtLjQ1IDEtMXMtLjQ1LTEtMS0xaC0yYy0uNTUgMC0xIC40NS0xIDFzLjQ1IDEgMSAxdk0xMSAyMnYyYzAgLjU1LjQ1IDEgMSAxczEtLjQ1IDEtMVYyYzAtLjU1LS40NS0xLTEtMXMtMSAuNDUtMSAxem0wIDE4djJjMCAuNTUuNDUgMSAxIDFzMS0uNDUgMS0xdi0yYzAtLjU1LS40NS0xLTEtMXMtMSAuNDUtMSAxek01Ljk5IDQuNThhMSAxIDAgMCAwLTEuNDEgMCAxIDEgMCAwIDAgMCAxLjQxbDEuNDIgMS40MmMuMzkuMzkgMS4wMi4zOSAxLjQxIDAgLjM5LS4zOS4zOS0xLjAyIDAtMS40MUw1Ljk5IDQuNTh6bTEyLjAyIDEyLjAyYTEgMSAwIDAgMC0xLjQxIDAgMSAxIDAgMCAwIDAgMS40MWwxLjQyIDEuNDJjLjM5LjM5IDEuMDIuMzkgMS40MSAwIC4zOS0uMzkuMzktMS4wMiAwLTEuNDFsLTEuNDItMS40MnptMS40MS0xMy40M2ExIDEgMCAwIDAtMS40MSAwbC0xLjQyIDEuNDJjLS4zOS4zOS0uMzkgMS4wMiAwIDEuNDEuMzkuMzkgMS4wMi4zOSAxLjQxIDBsMS40Mi0xLjQyYy4zOS0uMzguMzktMS4wMiAwLTEuNDF6TTcuMDUgMTguMzZsLTEuNDIgMS40MmExIDEgMCAwIDAgMCAxLjQxYy4zOS4zOSAxLjAyLjM5IDEuNDEgMGwxLjQyLTEuNDJjLjM5LS4zOS4zOS0xLjAyIDAtMS40MS0uMzktLjM5LTEuMDItLjM5LTEuNDEgMHoiLz48L3N2Zz4=");
 }
 
-/* 🌿 Hệ 3: Thảo Mộc */
+/* ðŸŒ¿ Há»‡ 3: Tháº£o Má»™c */
 .ico-elem-wood {
     background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzJlYzRiNiI+PHBhdGggZD0iTTE3IDhDOCAxMCA1LjkgMTYuMTcgMy44MiAyMS4zNGwxLjg5LjY2QzcuNSAxNy41IDkuNSAxMiAxNyAxMFY4em00LTZjLTYuNjMgMC0xMiA1LjM3LTEyIDEyIDAgMi4yNC42MiA0LjM0IDEuNyA2LjEzIDEuOTUtMy43OSA1LjA4LTcuMDUgOS4zLTguODhWOWgyVjVjMC0xLjY2LTEuMzQtMy0zLTN6Ii8+PC9zdmc+");
 }
 
-/* ❄️ Hệ 4: Băng Tinh */
+/* â„ï¸ Há»‡ 4: BÄƒng Tinh */
 .ico-elem-ice {
     background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzRjYzlmMCI+PHBhdGggZD0iTTIyIDExaC00LjE0bDIuNTctMi41Ny0xLjQyLTEuNDJMMTUuNDIgMTBIMTNWNy41OGwyLjk5LTIuOTktMS40MS0xLjQyTDEyIDUuNzUgOS40MiAzLjE3IDguMDEgNC41OSAxMSA3LjU4VjEwSDguNThMNS41OSA3LjAxIDQuMTcgOC40MyA2Ljc0IDExSDJ2Mmg0Ljc0bC0yLjU3IDIuNTcgMS40MiAxLjQyTDguNTggMTRIMTF2Mi40MmwtMi45OSAyLjk5IDEuNDEgMS40MkwxMiAxOC4yNWwyLjU4IDIuNTggMS40MS0xLjQyTDEzIDE2LjQyVjE0aDIuNDJsMi45OSAyLjk5IDEuNDItMS40MkwxNy4yNiAxM0gyMnYtMnoiLz48L3N2Zz4=");
 }
 
-/* ⚡ Hệ 5: Thiên Hà */
+/* âš¡ Há»‡ 5: ThiÃªn HÃ  */
 .ico-elem-lightning {
     background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2EwYzRmZiI+PHBhdGggZD0iTTcgMnYxMWgzdjlsNy0xMmgtNGw0LThIN3oiLz48L3N2Zz4=");
 }
 
-/* 🔮 Hệ 6: Ma Pháp */
+/* ðŸ”® Há»‡ 6: Ma PhÃ¡p */
 .ico-elem-magic {
     background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2M3N2RmZiI+PHBhdGggZD0iTTEyIDJhOSA5IDAgMCAwLTkgOWMwIDQuMTcgMi44NCA3LjY3IDYuNjkgOC42N0w4IDIyaDhsLTEuNjktMi4zM0MxOC4xNiAxOC42NyAyMSAxNS4xNyAyMSAxMWExIDkgMCAwIDAtOS05em0tMyA3YTMgMyAwIDAgMSAzLTNjLjU1IDAgMSAuNDUgMSAxcy0uNDUgMS0xIDFhMSAxIDAgMCAwLTEgMWMwIC41NS0uNDUgMS0xIDFzLTEtLjQ1LTEtMXoiLz48L3N2Zz4=");
 }
 
-/* ❓ Đá chưa mở khóa (Silhouette Silhouette) */
+/* â“ ÄÃ¡ chÆ°a má»Ÿ khÃ³a (Silhouette Silhouette) */
 .ico-elem-unknown {
     background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzY2NjE4NSI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTEgMTZoLTJ2LTJoMnYyem0xLjA3LTcuNzVsLS45LjkyQzEyLjQ1IDExLjkgMTIgMTIuNSAxMiAxNGgtMnYtLjVjMC0xLjEuNDUtMi4xIDEuMTctMi44M2wxLjI0LTEuMjZjLjM3LS4zNi41OS0uODYuNTktMS40MSAwLTEuMS0uOS0yLTItMnMtMiAuOS0yIDJIN2MwLTIuNzYgMi4yNC01IDUtNXM1IDIuMjQgNSA1YzAgMS4wNC0uNDIgMS45OS0xLjA3IDIuNzV6Ii8+PC9zdmc=");
 }
@@ -405,7 +405,7 @@ body, html {
 }
 
 /* ======================================================
-   VIEWPORT GACHA (BỆ ĐÁ & THÔNG BÁO)
+   VIEWPORT GACHA (Bá»† ÄÃ & THÃ”NG BÃO)
 ====================================================== */
 .crystal-title-box {
     position: absolute;
@@ -445,7 +445,7 @@ body, html {
 
 #claimContainer {
     position: absolute;
-    bottom: 30%; /* Đặt chuẩn xác 30% từ bottom lên */
+    bottom: 30%; /* Äáº·t chuáº©n xÃ¡c 30% tá»« bottom lÃªn */
     left: 50%;
     transform: translateX(-50%);
     z-index: 35;
@@ -455,14 +455,14 @@ body, html {
     pointer-events: auto;
 }
 
-/* Ẩn dứt điểm khi chưa mở được đá */
+/* áº¨n dá»©t Ä‘iá»ƒm khi chÆ°a má»Ÿ Ä‘Æ°á»£c Ä‘Ã¡ */
 #claimContainer.hidden,
 #claimContainer[style*="display: none"] {
     display: none !important;
     pointer-events: none !important;
 }
 
-/* Nút Thu Thập với hiệu ứng Scale to ra + Hào quang bập bùng */
+/* NÃºt Thu Tháº­p vá»›i hiá»‡u á»©ng Scale to ra + HÃ o quang báº­p bÃ¹ng */
 #claimContainer:not(.hidden) .btn-claim {
     font-family: "Handjet", sans-serif;
     background: #f0f8ff00;
@@ -476,13 +476,13 @@ body, html {
     white-space: nowrap;
     text-shadow: 0 1px 3px rgb(79 113 207 / 85%);
     
-    /* Kết hợp 2 hiệu ứng: Phóng to lúc xuất hiện (0.4s) + Bập bùng lặp vô tận */
+    /* Káº¿t há»£p 2 hiá»‡u á»©ng: PhÃ³ng to lÃºc xuáº¥t hiá»‡n (0.4s) + Báº­p bÃ¹ng láº·p vÃ´ táº­n */
     animation: 
         claimPopIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards,
         claimGlowPulse 2s infinite ease-in-out 0.45s;
 }
 
-/* 1. Hiệu ứng phóng to nở ra từ tâm */
+/* 1. Hiá»‡u á»©ng phÃ³ng to ná»Ÿ ra tá»« tÃ¢m */
 @keyframes claimPopIn {
     0% {
         opacity: 0;
@@ -494,7 +494,7 @@ body, html {
     }
 }
 
-/* 2. Hiệu ứng nhịp thở bập bùng (Scale nhẹ + Hào quang vàng rực) */
+/* 2. Hiá»‡u á»©ng nhá»‹p thá»Ÿ báº­p bÃ¹ng (Scale nháº¹ + HÃ o quang vÃ ng rá»±c) */
 @keyframes claimGlowPulse {
     0%, 100% {
         transform: scale(1);
@@ -506,7 +506,7 @@ body, html {
     }
 }
 
-/* BANNER THU THẬP THÀNH CÔNG 3S */
+/* BANNER THU THáº¬P THÃ€NH CÃ”NG 3S */
 .collect-banner {
     position: fixed;
     top: 30%;
@@ -516,13 +516,13 @@ body, html {
     background: transparent;
     border-radius: 12px;
     padding: 16px 32px;
-     /* Exit transition chỉ trên container */
+     /* Exit transition chá»‰ trÃªn container */
     transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), 
                 opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: transform, opacity;
 }
 
-/* Inner element chạy float animation */
+/* Inner element cháº¡y float animation */
 .collect-banner-float {
     animation: bannerFloatAndGlow 3s ease-in-out infinite alternate;
     background: #00000069;
@@ -530,31 +530,31 @@ body, html {
     border-style: inset;
 }
 
-/* Ẩn banner khi có class hidden */
+/* áº¨n banner khi cÃ³ class hidden */
 .collect-banner.hidden {
     display: none!important;
 }
 
-/* Slide-down exit animation - trên container */
+/* Slide-down exit animation - trÃªn container */
 .collect-banner.slide-down-exit {
     transform: translateX(-50%) translateY(180%) scale(0.7);
     opacity: 0;
     pointer-events: none;
 }
 
-/* --- 2. Định dạng phần nội dung chữ và ngôi sao --- */
+/* --- 2. Äá»‹nh dáº¡ng pháº§n ná»™i dung chá»¯ vÃ  ngÃ´i sao --- */
 .collect-banner-content {
     display: grid;
     align-items: center;
     gap: 15px;
-    color: #fff3cd; /* Màu vàng kem hoàng gia */
+    color: #fff3cd; /* MÃ u vÃ ng kem hoÃ ng gia */
     font-family: "Handjet", sans-serif;
-    font-size: x-large; /* Chữ to bản */
+    font-size: x-large; /* Chá»¯ to báº£n */
     font-weight: 700;
     text-align: center;
     letter-spacing: 2px;
     
-    /* Hiệu ứng phát sáng chữ chuyển động */
+    /* Hiá»‡u á»©ng phÃ¡t sÃ¡ng chá»¯ chuyá»ƒn Ä‘á»™ng */
     text-shadow: 
         0 0 5px #ffae00,
         0 0 10px #ffae00,
@@ -563,7 +563,7 @@ body, html {
     animation: textGlowPulse 2s ease-in-out infinite alternate;
 }
 
-/* --- 3. Hiệu ứng cho các ngôi sao (✦) --- */
+/* --- 3. Hiá»‡u á»©ng cho cÃ¡c ngÃ´i sao (âœ¦) --- */
 .banner-star {
     color: #ffcc00;
     font-size: 30px;
@@ -572,9 +572,9 @@ body, html {
     animation: starRotateAndShine 2s linear infinite;
 }
 
-/* --- 4. Các Keyframes tạo chuyển động ánh sáng --- */
+/* --- 4. CÃ¡c Keyframes táº¡o chuyá»ƒn Ä‘á»™ng Ã¡nh sÃ¡ng --- */
 
-/* Hiệu ứng nổi bồng bềnh và đổi độ sáng viền banner */
+/* Hiá»‡u á»©ng ná»•i bá»“ng bá»nh vÃ  Ä‘á»•i Ä‘á»™ sÃ¡ng viá»n banner */
 @keyframes bannerFloatAndGlow {
     0% {
         transform: translateY(0);
@@ -585,7 +585,7 @@ body, html {
         border-color: #00ffaa98;
     }
     100% {
-        transform: translateY(-8px); /* Nổi lên xuống nhẹ */
+        transform: translateY(-8px); /* Ná»•i lÃªn xuá»‘ng nháº¹ */
         box-shadow: 
             0 0 25px rgba(255, 215, 0, 0.8),
             0 0 50px rgba(255, 140, 0, 0.6),
@@ -594,7 +594,7 @@ body, html {
     }
 }
 
-/* Hiệu ứng nhấp nháy ánh sáng chữ (Glowing Pulse) */
+/* Hiá»‡u á»©ng nháº¥p nhÃ¡y Ã¡nh sÃ¡ng chá»¯ (Glowing Pulse) */
 @keyframes textGlowPulse {
     0% {
         text-shadow: 
@@ -613,7 +613,7 @@ body, html {
     }
 }
 
-/* Hiệu ứng ngôi sao lấp lánh / xoay nhẹ */
+/* Hiá»‡u á»©ng ngÃ´i sao láº¥p lÃ¡nh / xoay nháº¹ */
 @keyframes starRotateAndShine {
     0% {
         transform: scale(1) rotate(0deg);
@@ -634,7 +634,7 @@ body, html {
 }
 
 /* ======================================================
-   BOTTOM ARC WHEEL DOCK - BỆ ĐÁ MA PHÁP CHUẨN MOCKUP
+   BOTTOM ARC WHEEL DOCK - Bá»† ÄÃ MA PHÃP CHUáº¨N MOCKUP
 ====================================================== */
 .rpg-dock {
     position: absolute;
@@ -642,13 +642,13 @@ body, html {
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
-    max-width: 480px; /* Khống chế bề rộng tối đa, không để tràn màn hình trên PC */
+    max-width: 480px; /* Khá»‘ng cháº¿ bá» rá»™ng tá»‘i Ä‘a, khÃ´ng Ä‘á»ƒ trÃ n mÃ n hÃ¬nh trÃªn PC */
     height: 180px;
     z-index: 30;
     pointer-events: none;
 }
 
-/* Bệ đá chạm khắc cổ kính dưới đáy dock */
+/* Bá»‡ Ä‘Ã¡ cháº¡m kháº¯c cá»• kÃ­nh dÆ°á»›i Ä‘Ã¡y dock */
 .dock-stone-pedestal {
     position: absolute;
     bottom: -15px;
@@ -668,10 +668,10 @@ body, html {
 }
 
 .rpg-dock::before {
-    display: none; /* Bỏ viền mảnh cũ */
+    display: none; /* Bá» viá»n máº£nh cÅ© */
 }
 
-/* Định dạng các nút huân chương tròn viền vàng */
+/* Äá»‹nh dáº¡ng cÃ¡c nÃºt huÃ¢n chÆ°Æ¡ng trÃ²n viá»n vÃ ng */
 .dock-btn {
     pointer-events: auto;
     position: absolute;
@@ -738,7 +738,7 @@ body, html {
     height: 28px;
 }
 
-/* Badge dấu cộng xanh sáng như trong ảnh */
+/* Badge dáº¥u cá»™ng xanh sÃ¡ng nhÆ° trong áº£nh */
 .badge-plus {
     position: absolute;
     top: -2px;
@@ -778,7 +778,7 @@ body, html {
 /*ICON QUEST*/
 .dock-btn.sub-left { bottom: 18px; left: 14%; transform: translateX(-50%);
 background: url(data:image/webp;base64,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) no-repeat center / contain fixed; }
-/*ICON TÚI*/
+/*ICON TÃšI*/
 .dock-btn.mid-left { bottom: 58px; left: 24%; transform: translateX(-50%);
 background: url(data:image/webp;base64,UklGRgYIAABXRUJQVlA4WAoAAAAQAAAAPwAAQAAAQUxQSHoCAAABkPVs2yHJu3rz5kul06l0OqNsxubatm3btm3b3iPbu505Mo7WGJuL8XQqlS/fuqu+NyImAAxHRfXwb9m9d8/uzb1VBUFyxaPp7AsJhU6d6zrnWmnCmcmBijxoa745qVa47Exa7o1SoMfAm9+FwdXXWjPT0N7zvlOYqF2PRHOUyCOVwuTqHTYzbIPTuDBdT2iORmGjpaVCysqpaAwGH6gXkupbFSMw/IoupOUnFNcw/IouJObHFFfQ/5gmpOZr0QW3lbVCcm3k/1lG5grpS0P/B1vGCoIOy3947dIo8Ln/Yv3TBclCr394n+E0xD78CxuYKYh+9/6L1xFORWz8A7u+FmTTrQCgLq+nI/oCQPBNQfgSAvb+SCnbApa5lZR4NLjt45TETAi+LUifgpZxtBzY9yOtdDYyl9Z3y8RCWpo6uZiWUCcX0uK2icSc6thcWuXWge9pfVQ6p9B6yRo/pXUCfc9xUtPBtrGSkt4YlInplNJVwPaxlM4xAN8TTjq8LwBYZqbTeW8HAGx+WyezFgEAbMvzqZQGwp/Y9j4nskf5C9hXF9LI9oe/Y8eHGgU+l/0D7IvfU3jqBv/G0CPl8uU2xf8A1vV2vWy14xn8t3WkQ5NLX6uCi26z43SZ9GMe4LLH9DhdHv2IFxjoNdPhlKV+lxcYah9997sc5QvdwGC167F0bh5P6quC4Sx8+ctKs74eiWRgIrp135VSa0bt7b5uCOYy7+GHEr4bVX53rDcD8xXvnmvvf6zmrvDKtAM9vRWQE+2Nh64853hbWOnkQnCtMj/t9ubhje0IEjPVu3H3kTMXr1y9cvHMkd0be6sM5EemWK2q1aowBDMBVlA4IGYFAACQFgCdASpAAEEAPl0mi0WjoiEczP4AOAXEoAy1/tEfa7g/Xs9oT0V7b3nXfO09KrqY955tD/dzjB5tYSmT8ana53r/uPm58u2uYGRc5/1d7BfSR/bP2Wv2KTr63ItP9xW3///7KgyeKLNzlmCaAkwJ9+eOFm05aC8lk6FmR4eLjBXbOGu49dYlaZJJG+m4beZVqkWZtx7QttQMVvfSY+LfyVoTVHfR2cBFBpWlhblr1ywwcuAIGtA2G1+hCgAA/v858mABBL7LMOPAL3cRgIOnO3Stku0bPO6azkimHn0txmvda3b6dU1SrmhQeGrk7R0N9fbEht2W23Fr54vaniGnOi/70cMUpyCM8oyDfW6YsNclOoZx+TLWtunUipdQwj7xFfPQmAElXGAwZXAu59viYktuhHaoiwcuBMaWy4vQM7AosL+v8xF5KjT5Rv6aNs4DH9kEF5/5frfhw752atgbNtj2uMiFsmBwqx4Rspnn0xkUrMU88+VxluebS5cmVzfsPOPEgU15xRm+V+9WNrhBtaddPh5tmSN8aTTKx25v5xTlTzVlHf23xoxpOhwmxudAQY/01wERdmr5YMt2LfOw+daO7aKP+jA+7DR8v9JW6FeiF4Q4pa8aH2nPkVUrBGgAKrNwQd8p+VUCEE9TAudEpvOeM3C9Jh1ZXqKh/vq3ndnBh71yCulDAQRdSg8u9oVqoQk4ImcN+OHo6M6ZTYkg4GuFxP1/nGSlHWMWB3JB/dwdn7i8rG6xyR8v5YkkPf28g/+LqffdJlsVBtOj+wUV+dh7/5CV/VE44s7qPg/eAuqWEs5VNZnnIdf68keL9cAXUWjRV+8GFcj4+MUCRLRcdLG/FzezOCmR8DksG3yrVK6YQMPnL9R3B37xva6j2bcMMvW7I0hHd9EHB1Jv/xD5lmaIUYKbFhCo4Q6mmnF2vmqAUEyC2VyxsWsiSKhkCz436sw+oaI2BA8EFKQOca/uRf7udMH5HGuxyTzOD4O6FjZbzXvoeT3cx+5myfUfEhkgiBdYFFEnocfGHGsNvPSjQpfTkP0oLmEGBN4kY2t8S2Dbvr8z/+S6BV1d5vwODqOvCVX+AqQ7dNLXvIRjfwX+LJ/OmzYgCEmon3OfZMv3l3/1MhmJJBHPNVa5Op0/oj2GvhWyjCHd8VFrW3Jb7N4ORFRI0zHUaZGt+/m7mLecHggkZlfhgLeR+tngHPMGuXJvzwCxChaASBatmtHFBN3b8jzICwzDt++RWLiWh4hlFcbvEGa/y70QisOexSZPqnbmJozajYdY0kK/3iiNe5xj7uA8LbRS/3x/atuJ1SO46MmHDQUmA5zpBZf3eF2gL0PbGNpjEUeEkujE3FPa3tN3tw75jGb82M6clCLy7WCV5pzyQJtj7orq9vydWJkrjLYSdeyKNHwc/bwvmz4cfRHyB2fQXFGw6Ajbo3qift2z2MEZFrHzkxpDwfCCnYjV/xXe5ianlqHUocMdv24pGiY1OnZXN3KUeXjsryknPoAYBFdFRhyIUIG3VOpStYyXVp6d5jMrnI7JT8X5qdL5QU52HrbgNdLAFva7VL4uEZzK440EQeTjHlMzeDN95TWoZE3iUpngDc28uc0dnKaCbl8ZLQe9D+SityrH3ogWRFVVCcRhAHvu/72HJpNuXue4eDNR4vWmL0CsbMrkFkg8BdNAgtgwKpPRy4mX8gQ3pNLgGHaP9xDd4Dr+1luu9CwvzLsYzyQJ7znIESX42uJXEHp/+xxjZzIGNUb0q9aFnElBjizKysdCqUieMD2OMoT3Np2o49tUrrcb8rrcJWXIyXcjmFpv0X1gydRxn8ryVBKBlAEYAAAAAA==) no-repeat center / cover fixed;}
 .dock-btn.center-core { bottom: 52px; left: 50%; transform: translateX(-50%); z-index: 10; }
@@ -790,7 +790,7 @@ background:url(data:image/webp;base64,UklGRnwVAABXRUJQVlA4WAoAAAAQAAAAfwAAgAAAQU
 background: url(data:image/webp;base64,UklGRt4GAABXRUJQVlA4WAoAAAAQAAAAPwAAQgAAQUxQSHUCAAABkMX+nyFJ//xTqXQ6k87atp42+3S2bdu2bdu2bdu2rTU6vbxOpx5G3VWH14iYAPifRSSEIIqB1K/KsJVHr968fv7kxpnt4ihfKKdOuq4yl/WPG5vYuMGAfnd1Zmb60gTkAf2GfGSmF21NQsvkZk+ZpdpcD2swbL3OrH5fDS2glR4zDktGEdOkNumMS2OpZJLURWW87pVNkTqpjN/dkgm0US7jeTVxC9PeMq6NIehO2EnGeVEFN2yTDN7YUw+XsEI6438SuuK3lwmYHeYCaaaJwBajs6DDTEg1wgnWyxeDTUBHHiuZoG9tjlKei2LUckBalIjCFqOdspAJ+1Cyi7oojhYGAFjpozhGNQAgLfLFYYMAgPYrE2g5Atgm6ALtJADKbEOgoxRAmS/SWRnAY6FIp2UAZb5IhymAbZIu0EEKIA0qEWizBEB75As0gQCQZt/FMToBAFZ6LE5ZOQCApOPifA2z81taJsxRxU7q91MUYwixwwpXRclMA4d+81VB9vs4Is0ei1HUgjiCmI1FQpwNAadSl+ciaO2oM4hbrwpwNAhcpI0u69yl1yOugNeI97zpc73AZUxYnc2XcTQBXQNSab/G1csKBNyVm50v4ehzGxncVzpdLOHmawcFzPTodF7j5GMHBcz1aHEwkwfjYSsFzJYrLX+rW6btryGD+SRhzNV8a4zXE1IoWIl+zdY/LzLPSN/eyAfBYhrXa+dL1TBF/3m0WxQFDuWUXutvftUMN/T8x+u7pMjAqRRVb8Tq448//szWNE1TM7+/vLxxWI0QCThGW1Bqk15Dps6dO3fu9GG9GqSGyAjcI5UVLy8vLw+ZIvzJAQBWUDggQgQAABATAJ0BKkAAQwA+ZSqRRaQioZprFbRABkSxgGKF7vtAgD0v7e7neniAdieM7GYGtyztJfNK8eP1ZwDv2q9k/9jlleZXzTT4tDzOMgC5d/KPzh8R3OqKWJY39KRd79N88h8gFnp3/3qlkDj8ClA779hQRbHuK4lbkZetyQi65tClfNbnTAOFgS/dvhLRgV0jYIQRwzoxuO0wq0ETB8aJH4p0AP78UNjl6rsPtwHp5rVL6JC4C62O52e+dg709vVnUgHp/l+Ga5GqdxUE+C4MzFxrqRWyHhdBLixLIY843a3WCZ8/JT6dBKSjauZtP99j0N/rhLzb4NiBVtUDJH5tFY05gSJjYCcSYwAM5VX+52l3dIreZ0N5ns7jlZ0VyT/6g6GiK9zAuJ4Sk7Y5y0IJcFKwqgQpc7wTDAwh/1vGpm/tEHu5AviLiEp7bBZmq3vcGIsjNDzSzAOGTGlwc6SW5bTE6NQQOwyUEV3uEJuEvEA9kowSfD7ZVYaECPsLk+gF2GvQnmPNnQU4sRuwG8ufvzqHUiJOcDwv3+k811IkydHQqseLTBNIb9Z6RhhzzRShpmfr30apbi0RjKqrLfZH3SXCifWXGUIyA5mXoOwfdcdhPFEQt2Q8wEx+Wknn1jQQQGgbJ639eR+hQianmBFk4syODtCySRCH5vS7UbXnWoX//QXiqW+oClJ19d5sZl9UtMqlHYmRv6LqIzIjXR0/mNQ4pdXH5G/VSg/pJwU8B5vvs9z8c9jFDqjkteIrFSipZWyMpk9M+aBdcrRy1ihxx9B0c6GAh84Y1t6+mUk8Krim601lmec9gMWF7xgy2Z/yJD7Wu1GMUpnTjTOU7+JWQ8qwEA5Y2evoPcil8iT8htiRI8XyLWZBg/dAneS3783d9mcolplQHOclQOeUA5UHLI5U26YQCSOeeeCKrGD6zYwn9QNq3GdPe/UAv5XWilbZVhfRO3oc3UMlBukBxaruPMQjWQuXBucxBVEfbQvsMxNLCPfPTmfc8T8Ox7dZqqaMbWMl5OzxaPz31XTVEdwKyblDlyktBzmuCRxL1bdaOgWHgpYFugPx6M2+n9NvXqpv99kij8z32EH9iRE9UMIvYD0JoD3ES9NxnFKav6wKz2zuiossiHiGVIux4fx1v3K+OslH5PZg5hklKkqzuRfpSboPm4BW0zHSpVX5RzrvIXbO6yIhFfp18J0dCRv1sQWwvogdoGx080xRYCjMwOTT5hiCuFVtsxXNxby7bQnHoEHaJcfvHUy75KYZl+BoJwD7XKFolDYNKGc+sNNto1elnDJwmLRBq4SruMtFxmOvyZIvjok2LHkO4DyBZ+pl0O116PpBmcALm9xGSCYF26rQC2YulHmfqCVTkv2CW6cLbfM5CC9ohVrjeyjYCmjw3ekKafC9UyNtWlpmD1jSaeLu5gtgs+tPPgs9miSXiYUKJAAAAAA=) no-repeat center / cover fixed; }
 
 /* ======================================================
-   MAGIC ORB BUTTON - GACHA CORE (THIẾT KẾ MỚI)
+   MAGIC ORB BUTTON - GACHA CORE (THIáº¾T Káº¾ Má»šI)
 ====================================================== */
 
 .magic-orb-wrapper {
@@ -1007,10 +1007,10 @@ background: url(data:image/webp;base64,UklGRt4GAABXRUJQVlA4WAoAAAAQAAAAPwAAQgAAQ
 }
 
 /* ======================================================
-   BỘ RESPONSIVE TOÀN DIỆN CHO DOCK (MAGIC ORB BUTTON)
+   Bá»˜ RESPONSIVE TOÃ€N DIá»†N CHO DOCK (MAGIC ORB BUTTON)
 ====================================================== */
 
-/* 1. Màn hình điện thoại siêu nhỏ (< 360px: iPhone SE1, Fold gập hẹp) */
+/* 1. MÃ n hÃ¬nh Ä‘iá»‡n thoáº¡i siÃªu nhá» (< 360px: iPhone SE1, Fold gáº­p háº¹p) */
 @media (max-width: 359px) {
     .rpg-dock {
         height: 160px;
@@ -1035,7 +1035,7 @@ background: url(data:image/webp;base64,UklGRt4GAABXRUJQVlA4WAoAAAAQAAAAPwAAQgAAQ
     }
 }
 
-/* 2. Màn hình điện thoại tiêu chuẩn (360px -> 480px: Đa số smartphone) */
+/* 2. MÃ n hÃ¬nh Ä‘iá»‡n thoáº¡i tiÃªu chuáº©n (360px -> 480px: Äa sá»‘ smartphone) */
 @media (min-width: 360px) and (max-width: 480px) {
     .rpg-dock {
         height: 175px;
@@ -1055,7 +1055,7 @@ background: url(data:image/webp;base64,UklGRt4GAABXRUJQVlA4WAoAAAAQAAAAPwAAQgAAQ
     }
 }
 
-/* 3. Màn hình trung bình / Xoay ngang (481px -> 768px: Tablet dọc / Mobile Landscape) */
+/* 3. MÃ n hÃ¬nh trung bÃ¬nh / Xoay ngang (481px -> 768px: Tablet dá»c / Mobile Landscape) */
 @media (min-width: 481px) and (max-width: 768px) {
     .rpg-dock {
         height: 185px;
@@ -1076,7 +1076,7 @@ background: url(data:image/webp;base64,UklGRt4GAABXRUJQVlA4WAoAAAAQAAAAPwAAQgAAQ
     }
 }
 
-/* 4. Màn hình máy tính & Tablet ngang (>= 769px: Chuẩn to nhất) */
+/* 4. MÃ n hÃ¬nh mÃ¡y tÃ­nh & Tablet ngang (>= 769px: Chuáº©n to nháº¥t) */
 @media (min-width: 769px) {
     .rpg-dock {
         height: 200px;
@@ -1119,7 +1119,7 @@ background: url(data:image/webp;base64,UklGRt4GAABXRUJQVlA4WAoAAAAQAAAAPwAAQgAAQ
     .dock-btn.sub-right { bottom: 20px; right: 12%; }
 }
 
-/* Guest mode - nút Gacha ở giữa màn hình */
+/* Guest mode - nÃºt Gacha á»Ÿ giá»¯a mÃ n hÃ¬nh */
 body.guest-mode .dock-btn.center-core {
     pointer-events: auto;
     bottom: 45vh !important;
@@ -1141,7 +1141,7 @@ body.guest-mode #gachaOrbCanvas {
 }
 
 /* ======================================================
-   OVERLAY PANELS & NÚT TRỞ VỀ 🎐
+   OVERLAY PANELS & NÃšT TRá»ž Vá»€ ðŸŽ
 ====================================================== */
 .overlay-panel {
     position: absolute;
@@ -1175,7 +1175,7 @@ body.guest-mode #gachaOrbCanvas {
     transform: scale(1.1) rotate(90deg);
 }
 
-/* NÚT TRỞ VỀ ĐÁY 🎐 */
+/* NÃšT TRá»ž Vá»€ ÄÃY ðŸŽ */
 .panel-bottom-dock {
     margin-top: 24px;
     display: flex;
@@ -1249,7 +1249,7 @@ i.ico-back-wind {width: 64px; height: 64px;}
 .inv-tab-btn{width: 100%;    margin: 0 auto;    padding: 1%;}
 .inv-content.hidden { display: none; }
 
-/* Lưới 5x5 */
+/* LÆ°á»›i 5x5 */
 .grid-5x5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
 .item-slot {
     aspect-ratio: 1;
@@ -1289,7 +1289,7 @@ i.ico-back-wind {width: 64px; height: 64px;}
     border-radius: 4px;
 }
 
-/* Tủ 990 Đá */
+/* Tá»§ 990 ÄÃ¡ */
 .progress-box { margin-bottom: 12px; }
 .progress-label { font-size: 10px; color: #c9c3ff; margin-bottom: 4px; }
 .progress-bar-container {
@@ -1356,7 +1356,7 @@ i.ico-back-wind {width: 64px; height: 64px;}
 .gem-slot-name { font-size: 8px; color: #a8a4c2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* ======================================================
-   PANEL HƯỚNG DẪN NHIỆM VỤ
+   PANEL HÆ¯á»šNG DáºªN NHIá»†M Vá»¤
 ====================================================== */
 .quest-guide-panel {
     background: linear-gradient(135deg, rgba(25, 18, 40, 0.85) 0%, rgba(15, 10, 30, 0.95) 100%);
@@ -1468,7 +1468,7 @@ i.ico-back-wind {width: 64px; height: 64px;}
 }
 
 /* ======================================================
-   BẢNG NHIỆM VỤ DẠNG PIN-BOARD
+   Báº¢NG NHIá»†M Vá»¤ Dáº NG PIN-BOARD
 ====================================================== */
 .pin-board-grid {
     display: grid;
@@ -1538,7 +1538,7 @@ i.ico-back-wind {width: 64px; height: 64px;}
     box-shadow: 0 0 5px rgba(138, 75, 0, 0.3);
 }
 
-/* INPUT TỔNG QUÁT */
+/* INPUT Tá»”NG QUÃT */
 .rpg-input {
     width: 100%;
     padding: 8px 12px;
@@ -1559,7 +1559,7 @@ i.ico-back-wind {width: 64px; height: 64px;}
 }
 
 /* ======================================================
-   SHOP 2 CỘT GỌN GÀNG
+   SHOP 2 Cá»˜T Gá»ŒN GÃ€NG
 ====================================================== */
 .shop-subtitle {    text-align: center; font-family: 'Handjet';padding: 1%; font-size: larger; color: beige;white-space: pre-line; }
 .shop-2col-grid {
@@ -1641,7 +1641,7 @@ i.ico-back-wind {width: 64px; height: 64px;}
 }
 
 /* ======================================================
-   CĂN CƯỚC: AVATAR VUÔNG LỚN TRUNG TÂM
+   CÄ‚N CÆ¯á»šC: AVATAR VUÃ”NG Lá»šN TRUNG TÃ‚M
 ====================================================== */
 .passport-card-centered {
     background: url(https://iili.io/n7MkgIf.png) center / 100% 100%;
@@ -1691,7 +1691,7 @@ i.ico-back-wind {width: 64px; height: 64px;}
 .stat-pill b { display: block; font-size: 10px; margin-top: 2px; color: #fff; }
 
 /* ======================================================
-   MODAL RPG GLASS & TINH LINH BAN CHÚC PHÚC
+   MODAL RPG GLASS & TINH LINH BAN CHÃšC PHÃšC
 ====================================================== */
 .modal-overlay {
     position: fixed;
@@ -1719,7 +1719,7 @@ i.ico-back-wind {width: 64px; height: 64px;}
 .close-modal { position: absolute; top: 8px; right: 12px; font-size: 22px; cursor: pointer; color: #a8a4c2; 
 background: url(data:image/webp;base64,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) no-repeat center / 100% 100%;width: 35px;}
 
-/* Card Chúc Phúc Hào Quang */
+/* Card ChÃºc PhÃºc HÃ o Quang */
 .rpg-blessing-box {
     border: 2px solid #ffd166;
     box-shadow: 0 0 30px rgba(255, 209, 102, 0.6);
@@ -1740,7 +1740,7 @@ background: url(data:image/webp;base64,UklGRsYGAABXRUJQVlA4WAoAAAAQAAAAPwAAPgAAQ
 .blessing-title { font-size: 14px; color: #ffe66d; }
 .blessing-desc { font-size: 11px; color: #e2dcff; margin-top: 4px; line-height: 1.35; }
 
-/* Button Xác Nhận Thu Vào Túi trong Modal Chúc Phúc */
+/* Button XÃ¡c Nháº­n Thu VÃ o TÃºi trong Modal ChÃºc PhÃºc */
 #btnCloseBlessingModal {
     padding: 14px 20px;
     font-size: 14px;
@@ -1786,7 +1786,7 @@ background: url(data:image/webp;base64,UklGRsYGAABXRUJQVlA4WAoAAAAQAAAAPwAAPgAAQ
     }
 }
 
-/* Modal Shop Chi Tiết */
+/* Modal Shop Chi Tiáº¿t */
 .shop-modal-ico-box { font-size: 40px; margin-bottom: 4px; }
 .shop-modal-desc { font-size: 12px; color: #a7cef1;; text-align: center; line-height: 1.4; white-space:pre-line; }
 
@@ -1814,7 +1814,7 @@ background: url(data:image/webp;base64,UklGRsYGAABXRUJQVlA4WAoAAAAQAAAAPwAAPgAAQ
 }
 
 /* ======================================================
-   BUTTON ACTIONS TỔNG QUÁT
+   BUTTON ACTIONS Tá»”NG QUÃT
 ====================================================== */
 .btn-action {
     font-family: "Handjet", sans-serif;
@@ -1842,7 +1842,7 @@ background: url(data:image/webp;base64,UklGRsYGAABXRUJQVlA4WAoAAAAQAAAAPwAAPgAAQ
     display: none !important;
 }
 
-/* NÚT SUMMON / CLAIM */
+/* NÃšT SUMMON / CLAIM */
 .btn-summon {
     font-family: "Handjet", sans-serif;
     background: linear-gradient(135deg, #4cc9f0, #3a0ca3);
@@ -1870,10 +1870,10 @@ background: url(data:image/webp;base64,UklGRsYGAABXRUJQVlA4WAoAAAAQAAAAPwAAPgAAQ
 }
 
 /* ======================================================
-   BUTTON STYLES 01-05 (TỪ RPG OPTION BUTTONS SHOWCASE)
+   BUTTON STYLES 01-05 (Tá»ª RPG OPTION BUTTONS SHOWCASE)
 ====================================================== */
 
-/* --- STYLE 01: CELTIC FANTASY (Đăng ký, Đăng nhập, Tab Inventory) --- */
+/* --- STYLE 01: CELTIC FANTASY (ÄÄƒng kÃ½, ÄÄƒng nháº­p, Tab Inventory) --- */
 .btn-celtic {
     font-family: "Handjet", sans-serif;
     font-size: large;
@@ -2032,7 +2032,7 @@ background: url(data:image/webp;base64,UklGRsYGAABXRUJQVlA4WAoAAAAQAAAAPwAAPgAAQ
 }
 .btn-admin-act.btn-reset { background: rgba(90,10,25,0.8); border-color: #ff3366; color: #ff99aa; }
 /* ======================================================
-   MODAL PREVIEW 3D TINH QUANG THẠCH
+   MODAL PREVIEW 3D TINH QUANG THáº CH
 ====================================================== */
 .rpg-gem-preview-box {
     background: rgba(14, 10, 32, 0.96) !important;
@@ -2139,7 +2139,7 @@ background: url(data:image/webp;base64,UklGRsYGAABXRUJQVlA4WAoAAAAQAAAAPwAAPgAAQ
     border-radius: 6px;
 }
 
-/* Hiệu ứng chạm vào ô đá */
+/* Hiá»‡u á»©ng cháº¡m vÃ o Ã´ Ä‘Ã¡ */
 .gem-slot {
     cursor: pointer;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -2149,7 +2149,7 @@ background: url(data:image/webp;base64,UklGRsYGAABXRUJQVlA4WAoAAAAQAAAAPwAAPgAAQ
 }
 
 /* ======================================================
-   CHỨC NGHIỆP NHẬP VAI ONBOARDING
+   CHá»¨C NGHIá»†P NHáº¬P VAI ONBOARDING
 ====================================================== */
 .class-options-grid {
     display: grid;
@@ -2178,7 +2178,7 @@ background: url(data:image/webp;base64,UklGRsYGAABXRUJQVlA4WAoAAAAQAAAAPwAAPgAAQ
     box-shadow: 0 0 10px rgba(255, 209, 102, 0.3);
 }
 
-/* Nút icon máy ảnh đổi avatar */
+/* NÃºt icon mÃ¡y áº£nh Ä‘á»•i avatar */
 .avatar-upload-badge {
     position: absolute;
     top: 4px;
@@ -2205,7 +2205,7 @@ background: url(data:image/webp;base64,UklGRsYGAABXRUJQVlA4WAoAAAAQAAAAPwAAPgAAQ
 input.hidden {display: none;}
 
 /* ======================================================
-   NÚT GOOGLE SIGN-IN CHUẨN GIAO DIỆN RPG
+   NÃšT GOOGLE SIGN-IN CHUáº¨N GIAO DIá»†N RPG
 ====================================================== */
 .google-auth-wrapper {
     margin-bottom: 12px;
@@ -2244,7 +2244,7 @@ input.hidden {display: none;}
 }
 
 /* ======================================================
-   ONBOARDING FORM CHI TIẾT
+   ONBOARDING FORM CHI TIáº¾T
 ====================================================== */
 .onboard-form-group {
     margin-bottom: 8px;
@@ -2314,7 +2314,7 @@ input.hidden {display: none;}
 }
 
 /* ======================================================
-   ĐỊNH DẠNG BẢNG THÔNG TIN CHI TIẾT CĂN CƯỚC (PROFILE)
+   Äá»ŠNH Dáº NG Báº¢NG THÃ”NG TIN CHI TIáº¾T CÄ‚N CÆ¯á»šC (PROFILE)
 ====================================================== */
 .passport-email-txt {
     font-size: 10px;
@@ -2362,7 +2362,7 @@ span#profRankNeed {
     right: 15px;}
 
     /* ======================================================
-   PHASE 3: THẺ VÉ & QR CODE OFFLINE THỰC ĐỊA
+   PHASE 3: THáºº VÃ‰ & QR CODE OFFLINE THá»°C Äá»ŠA
 ====================================================== */
 .qr-status-badge {
     display: inline-block;
@@ -2417,7 +2417,7 @@ span#profRankNeed {
     50% { opacity: 1; transform: scale(1.2); }
 }
 
-/* Nút Đăng Nhập trên Topbar */
+/* NÃºt ÄÄƒng Nháº­p trÃªn Topbar */
 .user-top-actions {
     display: flex;
     align-items: center;
@@ -2443,10 +2443,10 @@ span#profRankNeed {
 }
 
 /* ======================================================
-   UX ONBOARDING DÀNH CHO USER MỚI (GUEST-MODE)
+   UX ONBOARDING DÃ€NH CHO USER Má»šI (GUEST-MODE)
 ====================================================== */
 
-/* 1. Ẩn Pill tiền tệ và Avatar trên Topbar, chỉ giữ nút Đăng Nhập */
+/* 1. áº¨n Pill tiá»n tá»‡ vÃ  Avatar trÃªn Topbar, chá»‰ giá»¯ nÃºt ÄÄƒng Nháº­p */
 body.guest-mode .currency-group,
 body.guest-mode #btnProfileQuick {
     display: none !important;
@@ -2455,7 +2455,7 @@ body.guest-mode #btnTopLogin {
     display: block !important;
     width: 150px; padding: 5%; font-size: medium;}
 
-/* 2. Ẩn 4 nút menu ở Dock đáy, tắt nền Dock để không che màn hình */
+/* 2. áº¨n 4 nÃºt menu á»Ÿ Dock Ä‘Ã¡y, táº¯t ná»n Dock Ä‘á»ƒ khÃ´ng che mÃ n hÃ¬nh */
 body.guest-mode .rpg-dock {
     background: transparent !important;
     pointer-events: none;
@@ -2467,7 +2467,7 @@ body.guest-mode .dock-btn:not(.center-core) {
     display: none !important;
 }
 
-/* 4. Banner Cuộn Giấy Cổ */
+/* 4. Banner Cuá»™n Giáº¥y Cá»• */
 .welcome-scroll-overlay {
     position: fixed;
     inset: 0;
@@ -2482,7 +2482,7 @@ body.guest-mode .dock-btn:not(.center-core) {
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
 }
 
-/* Hiệu ứng trượt xuống dưới và biến mất khi click */
+/* Hiá»‡u á»©ng trÆ°á»£t xuá»‘ng dÆ°á»›i vÃ  biáº¿n máº¥t khi click */
 .welcome-scroll-overlay.slide-down-exit {
     transform: translateY(120vh);
     opacity: 0;
@@ -2514,7 +2514,7 @@ body.guest-mode .dock-btn:not(.center-core) {
     align-items: center;
     justify-content: center;
     text-align: center;
-    color: #3d260f; /* Màu mực cổ điển trên nền giấy */
+    color: #3d260f; /* MÃ u má»±c cá»• Ä‘iá»ƒn trÃªn ná»n giáº¥y */
     font-family: "Handjet", sans-serif;
     pointer-events: none;
 }
@@ -2553,7 +2553,7 @@ body.guest-mode .dock-btn:not(.center-core) {
 }
 
 /* ======================================================
-   GUEST HELPER FAIRY (Tinh Linh Hướng Dẫn)
+   GUEST HELPER FAIRY (Tinh Linh HÆ°á»›ng Dáº«n)
    ====================================================== */
 .guest-helper {
     position: fixed;
@@ -2563,12 +2563,12 @@ body.guest-mode .dock-btn:not(.center-core) {
     transform-origin: center center;
 }
 
-/* Ẩn hoàn toàn khi không hoạt động */
+/* áº¨n hoÃ n toÃ n khi khÃ´ng hoáº¡t Ä‘á»™ng */
 .guest-helper.hidden {
     display: none !important;
 }
 
-/* Trạng thái khởi tạo: ẩn ở top-right viewport */
+/* Tráº¡ng thÃ¡i khá»Ÿi táº¡o: áº©n á»Ÿ top-right viewport */
 .guest-helper.enter-from-top-right {
     top: 5vh;
     right: 5vw;
@@ -2576,14 +2576,14 @@ body.guest-mode .dock-btn:not(.center-core) {
     transform: scale(0.5) rotate(-15deg);
 }
 
-/* Trạng thái active: bay đến góc top-right của Gacha Orb */
+/* Tráº¡ng thÃ¡i active: bay Ä‘áº¿n gÃ³c top-right cá»§a Gacha Orb */
 .guest-helper.active {
     opacity: 1;
     transform: scale(1) rotate(0deg);
-    /* Vị trí được set bằng JS dựa trên vị trí #dockGachaTrigger */
+    /* Vá»‹ trÃ­ Ä‘Æ°á»£c set báº±ng JS dá»±a trÃªn vá»‹ trÃ­ #dockGachaTrigger */
 }
 
-/* Trạng thái exit: bay sang phải ra khỏi màn hình */
+/* Tráº¡ng thÃ¡i exit: bay sang pháº£i ra khá»i mÃ n hÃ¬nh */
 .guest-helper.exit-to-right {
     opacity: 0;
     transform: translateX(120vw) scale(0.5) rotate(20deg);
@@ -2598,7 +2598,7 @@ body.guest-mode .dock-btn:not(.center-core) {
     animation: fairyFloat 2.5s ease-in-out infinite alternate;
 }
 
-/* Tooltip trên đầu */
+/* Tooltip trÃªn Ä‘áº§u */
 .helper-tooltip {
     position: absolute;
     top: -42px;
@@ -2643,7 +2643,7 @@ body.guest-mode .dock-btn:not(.center-core) {
 
 /* Sparkle effect quanh fairy */
 .guest-helper::before {
-    content: '✦';
+    content: 'âœ¦';
     position: absolute;
     top: -10px;
     right: -10px;
@@ -2661,7 +2661,7 @@ body.guest-mode .dock-btn:not(.center-core) {
 }
 
 /* ======================================================
-   GACHA READY TOOLTIP (Hiện khi valTinhQuang > 0)
+   GACHA READY TOOLTIP (Hiá»‡n khi valTinhQuang > 0)
    ====================================================== */
 .gacha-ready-tooltip {
     position: absolute;
@@ -2733,7 +2733,7 @@ body.guest-mode .dock-btn:not(.center-core) {
 }
 
 /* ======================================================
-   GUIDE HELPER FAIRY (Cho user đã login - non guest mode)
+   GUIDE HELPER FAIRY (Cho user Ä‘Ã£ login - non guest mode)
    ====================================================== */
 .guide-helper {
     position: fixed;
@@ -2744,12 +2744,12 @@ body.guest-mode .dock-btn:not(.center-core) {
     transform-origin: center center;
 }
 
-/* Ẩn hoàn toàn khi không hoạt động */
+/* áº¨n hoÃ n toÃ n khi khÃ´ng hoáº¡t Ä‘á»™ng */
 .guide-helper.hidden {
     display: none !important;
 }
 
-/* Trạng thái khởi tạo: ẩn ở bottom-left viewport */
+/* Tráº¡ng thÃ¡i khá»Ÿi táº¡o: áº©n á»Ÿ bottom-left viewport */
 .guide-helper.enter-from-bottom-left {
     bottom: 5vh;
     left: 5vw;
@@ -2757,28 +2757,28 @@ body.guest-mode .dock-btn:not(.center-core) {
     transform: scale(0.5) rotate(15deg);
 }
 
-/* Trạng thái active: bay đến góc top-left của Gacha Orb */
+/* Tráº¡ng thÃ¡i active: bay Ä‘áº¿n gÃ³c top-left cá»§a Gacha Orb */
 .guide-helper.active {
     opacity: 1;
     transform: scale(1) rotate(0deg);
-    /* Vị trí được set bằng JS dựa trên vị trí #dockGachaTrigger */
+    /* Vá»‹ trÃ­ Ä‘Æ°á»£c set báº±ng JS dá»±a trÃªn vá»‹ trÃ­ #dockGachaTrigger */
 }
 
-/* Trạng thái exit: bay sang phải ra khỏi màn hình */
+/* Tráº¡ng thÃ¡i exit: bay sang pháº£i ra khá»i mÃ n hÃ¬nh */
 .guide-helper.exit-to-right {
     opacity: 0;
     transform: translateX(120vw) scale(0.5) rotate(-20deg);
     pointer-events: none;
 }
 
-/* Trạng thái exit: bay sang trái ra khỏi màn hình (khi Gacha triggered) */
+/* Tráº¡ng thÃ¡i exit: bay sang trÃ¡i ra khá»i mÃ n hÃ¬nh (khi Gacha triggered) */
 .guide-helper.exit-to-left {
     opacity: 0;
     transform: translateX(-120vw) scale(0.5) rotate(20deg);
     pointer-events: none;
 }
 
-/* Fairy image - dùng chung class helper-fairy-img */
+/* Fairy image - dÃ¹ng chung class helper-fairy-img */
 .guide-helper .helper-fairy-img {
     width: 90px;
     height: 90px;
@@ -2786,7 +2786,7 @@ body.guest-mode .dock-btn:not(.center-core) {
     animation: fairyFloat 2.5s ease-in-out infinite alternate;
 }
 
-/* Tooltip trên đầu */
+/* Tooltip trÃªn Ä‘áº§u */
 .guide-helper .helper-tooltip {
     position: absolute;
     top: -42px;
@@ -2818,9 +2818,9 @@ body.guest-mode .dock-btn:not(.center-core) {
     border-top-color: #4cc9f0;
 }
 
-/* Sparkle effect quanh guide fairy (màu xanh cyan) */
+/* Sparkle effect quanh guide fairy (mÃ u xanh cyan) */
 .guide-helper::before {
-    content: '✦';
+    content: 'âœ¦';
     position: absolute;
     top: -10px;
     left: -10px;
@@ -2832,7 +2832,7 @@ body.guest-mode .dock-btn:not(.center-core) {
 }
 
 /* ======================================================
-   GUIDE HELPER IMAGE BANNER (Hiện khi click guideHelper)
+   GUIDE HELPER IMAGE BANNER (Hiá»‡n khi click guideHelper)
    ====================================================== */
 .guide-helper-banner {
     position: fixed;
@@ -2877,7 +2877,7 @@ body.guest-mode .dock-btn:not(.center-core) {
 }
 
 /* ======================================================
-   LORE HELPER FAIRY (Cổ thư - Cách top-right Gacha Orb 150px bên phải)
+   LORE HELPER FAIRY (Cá»• thÆ° - CÃ¡ch top-right Gacha Orb 150px bÃªn pháº£i)
    ====================================================== */
 .lore-helper {
     position: fixed;
@@ -2892,7 +2892,7 @@ body.guest-mode .dock-btn:not(.center-core) {
     display: none !important;
 }
 
-/* Trạng thái khởi tạo: ẩn ở top-right viewport (xa hơn guide helper) */
+/* Tráº¡ng thÃ¡i khá»Ÿi táº¡o: áº©n á»Ÿ top-right viewport (xa hÆ¡n guide helper) */
 .lore-helper.enter-from-top-right-far {
     top: 5vh;
     right: 5vw;
@@ -2900,13 +2900,13 @@ body.guest-mode .dock-btn:not(.center-core) {
     transform: scale(0.5) rotate(-15deg);
 }
 
-/* Trạng thái active: bay đến vị trí cách top-right Gacha Orb 150px bên phải */
+/* Tráº¡ng thÃ¡i active: bay Ä‘áº¿n vá»‹ trÃ­ cÃ¡ch top-right Gacha Orb 150px bÃªn pháº£i */
 .lore-helper.active {
     opacity: 1;
     transform: scale(1) rotate(0deg);
 }
 
-/* Trạng thái exit */
+/* Tráº¡ng thÃ¡i exit */
 .lore-helper.exit-to-right {
     opacity: 0;
     transform: translateX(120vw) scale(0.5) rotate(20deg);
@@ -2951,9 +2951,9 @@ body.guest-mode .dock-btn:not(.center-core) {
     border-top-color: #d4af37;
 }
 
-/* Sparkle effect vàng kim */
+/* Sparkle effect vÃ ng kim */
 .lore-helper::before {
-    content: '✦';
+    content: 'âœ¦';
     position: absolute;
     top: -10px;
     right: -10px;
@@ -2965,7 +2965,7 @@ body.guest-mode .dock-btn:not(.center-core) {
 }
 
 /* ======================================================
-   LORE READER MODAL (Cổ thư lật trang 3D)
+   LORE READER MODAL (Cá»• thÆ° láº­t trang 3D)
    ====================================================== */
 .lore-reader-modal {
     position: fixed;
@@ -3078,121 +3078,65 @@ body.guest-mode .dock-btn:not(.center-core) {
     min-height: 0; /* Allow shrinking below 300px */
 }
 
-.lore-book-stage {
+/* Swiper Flip Effect Styles for Lore Reader */
+.lore-reader-viewport .swiper {
     width: 100%;
     height: 100%;
-    position: relative;
-    transform-style: preserve-3d;
-    perspective: 1600px;
 }
 
-.lore-comic-page {
-    position: absolute;
-    width: 100%;
+.lore-reader-viewport .swiper-wrapper {
     height: 100%;
-    top: 0;
-    left: 0;
-    transform-origin: left center;
-    transform-style: preserve-3d;
-    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.6s ease;
-    user-select: none;
-    cursor: grab;
-    background-color: #111;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
 }
 
-.lore-comic-page:active { cursor: grabbing; }
-
-.lore-page-face {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    top: 0;
-    left: 0;
+.lore-reader-viewport .swiper-slide {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #0f0a07;
-    padding: 8px; /* Padding to ensure image doesn't touch edges */
-    box-sizing: border-box;
+    background-color: #1e130c;
+    overflow: hidden;
+    border-radius: 8px;
 }
 
-.lore-page-back {
-    transform: rotateY(180deg);
-    background: #18100b;
-}
-
-.lore-comic-img {
+.lore-reader-viewport .swiper-slide img {
     width: 100%;
     height: 100%;
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    pointer-events: none;
-    border-radius: 4px;
+    object-fit: contain; /* Show full image without cropping */
+    pointer-events: none; /* Prevent image drag conflicts on mobile */
 }
 
-.lore-page-shadow {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    pointer-events: none;
-    background: linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.4) 100%);
-    z-index: 10;
-}
-
-.lore-spine-shadow {
-    position: absolute;
-    top: 0; left: 0; bottom: 0;
-    width: 30px;
-    background: linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0));
-    z-index: 11;
-    pointer-events: none;
-}
-
-.lore-reader-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 20px;
-    background: linear-gradient(180deg, #2a1b12 0%, #150d08 100%);
-    border-top: 2px solid #d4af37;
-    position: relative;
-}
-
-
-.lore-reader-footer::before { bottom: 6px; left: 6px; border-bottom: 2px solid; border-left: 2px solid; }
-.lore-reader-footer::after { bottom: 6px; right: 6px; border-bottom: 2px solid; border-right: 2px solid; }
-
-.lore-reader-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+/* Custom Swiper Navigation Buttons for Lore Reader */
+.lore-reader-viewport .lore-swiper-btn {
+    color: #d4af37 !important;
+    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.8));
+    width: 44px;
+    height: 44px;
     background: linear-gradient(180deg, #3d2719 0%, #1c110a 100%);
     border: 2px solid #d4af37;
-    color: #d4af37;
-    padding: 10px 18px;
     border-radius: 10px;
-    font-family: "Cinzel", serif;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s ease;
     box-shadow: 0 4px 10px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.2);
-    text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+    transition: all 0.2s ease;
 }
 
-.lore-reader-btn:hover:not(:disabled) {
+.lore-reader-viewport .lore-swiper-btn:hover {
     border-color: #fff2a8;
-    color: #ffffff;
+    color: #ffffff !important;
     box-shadow: 0 0 15px rgba(212, 175, 55, 0.5), inset 0 0 5px rgba(212, 175, 55, 0.3);
     transform: translateY(-2px);
 }
 
-.lore-reader-btn:active:not(:disabled) { transform: translateY(1px); }
-.lore-reader-btn:disabled { opacity: 0.4; filter: grayscale(0.8); cursor: not-allowed; border-color: #554333; }
+.lore-reader-viewport .lore-swiper-btn::after {
+    font-size: 20px !important;
+    font-weight: 700;
+}
+
+.lore-reader-viewport .lore-swiper-btn.swiper-button-disabled {
+    opacity: 0.4;
+    filter: grayscale(0.8);
+    cursor: not-allowed;
+    border-color: #554333;
+    color: #554333 !important;
+}
+
 /* Responsive */
 @media (max-width: 480px) {
     .lore-helper .helper-fairy-img { width: 70px; height: 70px; }
@@ -3202,19 +3146,22 @@ body.guest-mode .dock-btn:not(.center-core) {
     .lore-reader-title { font-size: 15px; }
     .lore-reader-btn { padding: 8px 12px; font-size: 11px; }
     
-    /* GIẢM 3D COMPLEXITY CHO MOBILE: Chỉ bật preserve-3d cho trang đang animation */
-    .lore-book-stage { perspective: 1000px; }
-    .lore-comic-page { transform-style: flat; } /* Mặc định flat để tiết kiệm GPU layer */
-    .lore-comic-page.animating { transform-style: preserve-3d; } /* Chỉ bật 3D khi đang lật */
-    .lore-page-face { backface-visibility: hidden; }
+    .lore-reader-viewport .lore-swiper-btn {
+        width: 36px;
+        height: 36px;
+    }
+    .lore-reader-viewport .lore-swiper-btn::after {
+        font-size: 16px !important;
+    }
 }
 
-/* Tablet cũng giảm perspective */
+/* Tablet */
 @media (min-width: 481px) and (max-width: 1024px) {
-    .lore-book-stage { perspective: 1200px; }
+    .lore-reader-viewport .swiper {
+        perspective: 1200px;
+    }
 }
-
-/* BANNER LỊCH PHIÊU LƯU */
+/* BANNER Lá»ŠCH PHIÃŠU LÆ¯U */
 .adventure-schedule-banner {
     background: linear-gradient(135deg, rgba(20, 35, 60, 0.85), rgba(10, 15, 30, 0.95));
     border: 1.5px solid #4cc9f0;
@@ -3251,7 +3198,7 @@ body.guest-mode .dock-btn:not(.center-core) {
     margin-bottom: 0;
 }
 
-/* BANNER BROCHURE CHƯƠNG TRÌNH */
+/* BANNER BROCHURE CHÆ¯Æ NG TRÃŒNH */
 .adventure-brochure-banner {
     background: linear-gradient(135deg, rgba(60, 20, 60, 0.85), rgba(30, 10, 30, 0.95));
     border: 1.5px solid #c77dff;
@@ -3272,7 +3219,7 @@ body.guest-mode .dock-btn:not(.center-core) {
 }
 .brochure-cta { font-size: 10px; font-weight: bold; color: #c77dff; display: inline-block; margin-top: 6px; }
 
-/* Responsive: stack trên mobile nhỏ */
+/* Responsive: stack trÃªn mobile nhá» */
 @media (max-width: 380px) {
     .shop-banner-row {
         flex-direction: column;
@@ -3280,7 +3227,7 @@ body.guest-mode .dock-btn:not(.center-core) {
     }
 }
 
-/* DANH SÁCH LỊCH TRÌNH */
+/* DANH SÃCH Lá»ŠCH TRÃŒNH */
 .schedule-list-box { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
 .schedule-item {
     background: rgba(255, 255, 255, 0.05);
@@ -3317,7 +3264,7 @@ body.guest-mode .dock-btn:not(.center-core) {
 .banner-txt-box p { font-size: 9px; color: #4d231d; margin-top: 2px; }
 
 /* ======================================================
-   TOAST NOTIFICATION SYSTEM (THAY THẾ ALERT)
+   TOAST NOTIFICATION SYSTEM (THAY THáº¾ ALERT)
 ====================================================== */
 .toast-container {
     position: fixed;
@@ -3476,7 +3423,7 @@ body.guest-mode .dock-btn:not(.center-core) {
 }
 
 /* ======================================================
-   GUIDE READER MODAL (Hướng dẫn Tinh Thủ - 2 trang lật)
+   GUIDE READER MODAL (HÆ°á»›ng dáº«n Tinh Thá»§ - 2 trang láº­t)
    ====================================================== */
 .guide-reader-modal {
     position: fixed;
@@ -3603,136 +3550,88 @@ body.guest-mode .dock-btn:not(.center-core) {
     min-height: 0; /* Allow shrinking below 300px */
 }
 
-.guide-book-stage {
+/* Swiper Flip Effect Styles for Guide Reader */
+.guide-reader-viewport .swiper {
     width: 100%;
     height: 100%;
-    position: relative;
-    transform-style: preserve-3d;
-    perspective: 1600px;
 }
 
-.guide-comic-page {
-    position: absolute;
-    width: 100%;
+.guide-reader-viewport .swiper-wrapper {
     height: 100%;
-    top: 0;
-    left: 0;
-    transform-origin: left center;
-    transform-style: preserve-3d;
-    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.6s ease;
-    user-select: none;
-    cursor: grab;
-    background-color: #0a1522;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
 }
 
-.guide-comic-page:active { cursor: grabbing; }
-
-.guide-page-face {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    top: 0;
-    left: 0;
+.guide-reader-viewport .swiper-slide {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #0a1522;
-    padding: 8px; /* Padding to ensure image doesn't touch edges */
-    box-sizing: border-box;
+    background-color: #0a1522;
+    overflow: hidden;
+    border-radius: 8px;
 }
 
-.guide-page-back {
-    transform: rotateY(180deg);
-    background: #0d1f33;
-}
-
-.guide-comic-img {
+.guide-reader-viewport .swiper-slide img {
     width: 100%;
     height: 100%;
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    pointer-events: none;
-    border-radius: 4px;
+    object-fit: contain; /* Show full image without cropping */
+    pointer-events: none; /* Prevent image drag conflicts on mobile */
 }
 
-.guide-page-shadow {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    pointer-events: none;
-    background: linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.4) 100%);
-    z-index: 10;
-}
-
-.guide-spine-shadow {
-    position: absolute;
-    top: 0; left: 0; bottom: 0;
-    width: 30px;
-    background: linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0));
-    z-index: 11;
-    pointer-events: none;
-}
-
-.guide-reader-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 20px;
-    background: linear-gradient(180deg, #122035 0%, #08101a 100%);
-    border-top: 2px solid #4cc9f0;
-    position: relative;
-}
-
-.guide-reader-footer::before { 
-    content: '';
-    position: absolute;
-    bottom: 6px; left: 6px; 
-    width: 20px; height: 20px;
-    border-bottom: 2px solid #4cc9f0; 
-    border-left: 2px solid #4cc9f0; 
-}
-.guide-reader-footer::after { 
-    content: '';
-    position: absolute;
-    bottom: 6px; right: 6px; 
-    width: 20px; height: 20px;
-    border-bottom: 2px solid #4cc9f0; 
-    border-right: 2px solid #4cc9f0; 
-}
-
-.guide-reader-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+/* Custom Swiper Navigation Buttons for Guide Reader */
+.guide-reader-viewport .guide-swiper-btn {
+    color: #4cc9f0 !important;
+    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.8));
+    width: 44px;
+    height: 44px;
     background: linear-gradient(180deg, #192e3f 0%, #0a151e 100%);
     border: 2px solid #4cc9f0;
-    color: #4cc9f0;
-    padding: 10px 18px;
     border-radius: 10px;
-    font-family: "Cinzel", serif;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s ease;
     box-shadow: 0 4px 10px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.2);
-    text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+    transition: all 0.2s ease;
 }
 
-.guide-reader-btn:hover:not(:disabled) {
+.guide-reader-viewport .guide-swiper-btn:hover {
     border-color: #a8e6ff;
-    color: #ffffff;
+    color: #ffffff !important;
     box-shadow: 0 0 15px rgba(76, 201, 240, 0.5), inset 0 0 5px rgba(76, 201, 240, 0.3);
     transform: translateY(-2px);
 }
 
-.guide-reader-btn:active:not(:disabled) { transform: translateY(1px); }
-.guide-reader-btn:disabled { opacity: 0.4; filter: grayscale(0.8); cursor: not-allowed; border-color: #335566; }
+.guide-reader-viewport .guide-swiper-btn::after {
+    font-size: 20px !important;
+    font-weight: 700;
+}
 
-.guide-reader-emblem {
+.guide-reader-viewport .guide-swiper-btn.swiper-button-disabled {
+    opacity: 0.4;
+    filter: grayscale(0.8);
+    cursor: not-allowed;
+    border-color: #335566;
+    color: #335566 !important;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .guide-reader-container { max-width: 95vw; height: 85vh; max-height: 90vh; }
+    .guide-reader-title { font-size: 15px; }
+    .guide-reader-btn { padding: 8px 12px; font-size: 11px; }
+    
+    .guide-reader-viewport .guide-swiper-btn {
+        width: 36px;
+        height: 36px;
+    }
+    .guide-reader-viewport .guide-swiper-btn::after {
+        font-size: 16px !important;
+    }
+}
+
+/* Tablet */
+@media (min-width: 481px) and (max-width: 1024px) {
+    .guide-reader-viewport .swiper {
+        perspective: 1200px;
+    }
+}
+
+.guide-reader-emblem {.guide-reader-emblem {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3757,14 +3656,14 @@ body.guest-mode .dock-btn:not(.center-core) {
     .guide-reader-title { font-size: 15px; }
     .guide-reader-btn { padding: 8px 12px; font-size: 11px; }
     
-    /* GIẢM 3D COMPLEXITY CHO MOBILE: Chỉ bật preserve-3d cho trang đang animation */
+    /* GIáº¢M 3D COMPLEXITY CHO MOBILE: Chá»‰ báº­t preserve-3d cho trang Ä‘ang animation */
     .guide-book-stage { perspective: 1000px; }
     .guide-reader-viewport .lore-comic-page { transform-style: flat; }
     .guide-reader-viewport .lore-comic-page.animating { transform-style: preserve-3d; }
     .guide-reader-viewport .lore-page-face { backface-visibility: hidden; }
 }
 
-/* Tablet cũng giảm perspective */
+/* Tablet cÅ©ng giáº£m perspective */
 @media (min-width: 481px) and (max-width: 1024px) {
     .guide-book-stage { perspective: 1200px; }
 }
@@ -3774,3 +3673,4 @@ body.guest-mode .dock-btn:not(.center-core) {
     font-weight: 600;
 }
 #googleBtnContainer span {font-family: 'F08'!important;}
+
