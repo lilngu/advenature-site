@@ -99,7 +99,7 @@ const TEXTS = {
     inventory: {
         panelTitle: "✦ TÚI VẬT PHẨM ✦",
         tabs: {
-            gems: "✦ Tinh Quang Thạch ({count}/990)",
+            gems: "✦ Quang Thạch ({count}/990)",
             items: "✦ Vật Phẩm & Thẻ",
         },
         progressLabel: "Tiến trình sưu tầm: {percent}%",
