@@ -1806,7 +1806,7 @@ background: url(https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v
     color: #fff;
     padding: 8px;
     border-radius: 6px;
-    font-size: 11px;
+    font-size: small;
     cursor: pointer;
     text-align: left;
     transition: all 0.2s ease;
@@ -2680,7 +2680,7 @@ body.guest-mode .dock-btn:not(.center-core) {
     border-radius: 6px;
     padding: 4px 10px;
     font-family: "retro2k";
-    font-size: 11px;
+    font-size: small;
     font-weight: 700;
     color: #c9ffff;
     text-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
@@ -3150,7 +3150,7 @@ body.guest-mode .dock-btn:not(.center-core) {
     
     .lore-reader-container { max-width: 95vw; height: 85vh; max-height: 90vh;}
     .lore-reader-title { font-size: 15px; }
-    .lore-reader-btn { padding: 8px 12px; font-size: 11px; }
+    .lore-reader-btn { padding: 8px 12px; font-size: small; }
     
     .lore-reader-viewport .lore-swiper-btn {
         width: 36px;
@@ -3682,3 +3682,203 @@ body.guest-mode .dock-btn:not(.center-core) {
 
 .guide-reader-footer, .lore-reader-footer {display: grid; grid-template-columns: 1fr 1fr; justify-items: center;}
 .guide-reader-btn,.lore-reader-btn  {padding: 5px 20px;}
+/* ======================================================
+   QUEST "NHẬP VAI VUI VẺ" - MODULE RPG ROLL D20
+   (Port từ rpg-quest.html, tiền tố rq- để không xung đột CSS site)
+   ====================================================== */
+.rq-overlay {
+    --rq-font-pixel: 'Pixelify Sans', monospace;
+    --rq-font-display: 'Jersey 25', monospace;
+    --rq-bg-deep: #120d1c;
+    --rq-panel-bg: #241a33;
+    --rq-gold: #e8a33d;
+    --rq-gold-lite: #ffd98a;
+    --rq-gold-dark: #6b3d0d;
+    --rq-parchment: #f6e7c1;
+    --rq-ink: #000000;
+    --rq-success: #6ede8a;
+    --rq-fail: #e04a4a;
+
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    overflow: hidden;
+    background-color: var(--rq-bg-deep);
+    font-family: var(--rq-font-pixel);
+    color: var(--rq-parchment);
+    user-select: none;
+    -webkit-user-select: none;
+}
+.rq-overlay.hidden { display: none; }
+
+/* CANVAS 3D */
+.rq-overlay #rqCanvasContainer { position: absolute; inset: 0; cursor: pointer; z-index: 0; }
+.rq-overlay #rqCanvasContainer canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+
+/* LƯỚI CRT HOÀI CỔ */
+.rq-crt-lines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background: repeating-linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.15) 0px,
+            rgba(0, 0, 0, 0.15) 2px,
+            rgba(0, 0, 0, 0) 2px,
+            rgba(0, 0, 0, 0) 4px);
+}
+
+/* NÚT THOÁT */
+.rq-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 30;
+    width: 36px;
+    height: 36px;
+    font-family: var(--rq-font-pixel);
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--rq-gold-lite);
+    background: rgba(18, 13, 28, 0.85);
+    border: 3px solid var(--rq-gold-dark);
+    cursor: pointer;
+}
+.rq-close-btn:hover { color: #fff; border-color: var(--rq-gold); }
+
+/* NÚT BẤM PIXEL */
+.rq-btn-pixel {
+    padding: 12px 24px;
+    font-family: var(--rq-font-pixel);
+    font-size: 17px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #241404;
+    background-color: var(--rq-gold);
+    border: 3px solid #ffe4a8;
+    box-shadow: 0 5px 0 var(--rq-gold-dark), 5px 5px 0 rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+.rq-btn-pixel:hover { background-color: var(--rq-gold-lite); }
+.rq-btn-pixel:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--rq-gold-dark), 2px 2px 0 rgba(0, 0, 0, 0.5); }
+.rq-btn-pixel:disabled { opacity: .55; cursor: not-allowed; }
+
+/* MODAL BACKDROP */
+.rq-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(8, 5, 14, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 16px;
+}
+.rq-modal-box {
+    background-color: var(--rq-panel-bg);
+    border: 4px solid var(--rq-gold);
+    padding: 30px 24px;
+    max-width: 440px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 8px 8px 0 var(--rq-ink);
+    clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px);
+}
+.rq-modal-title {
+    font-size: 26px;
+    color: var(--rq-gold-lite);
+    margin: 0 0 12px;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 0 var(--rq-ink);
+}
+.rq-modal-desc { font-size: 15px; line-height: 1.5; color: var(--rq-parchment); margin-bottom: 24px; }
+.rq-modal-dialogue {
+    font-size: 14px;
+    line-height: 1.5;
+    font-style: italic;
+    color: #ffe4a0;
+    background: #150f22;
+    border: 2px dashed var(--rq-gold-dark);
+    padding: 10px 12px;
+    margin: -8px 0 22px;
+}
+
+/* KHUNG QUEST */
+.rq-quest-card {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 32px);
+    max-width: 480px;
+    background: rgba(36, 26, 51, 0.95);
+    border: 3px solid var(--rq-gold);
+    padding: 12px;
+    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.6);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    clip-path: polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px);
+}
+.rq-quest-image { width: 100%; height: 110px; object-fit: cover; border: 2px solid var(--rq-gold-dark); image-rendering: pixelated; }
+.rq-quest-header-row { display: flex; justify-content: space-between; align-items: baseline; }
+.rq-quest-name { font-size: 18px; font-weight: 700; color: var(--rq-gold-lite); margin: 0; text-shadow: 1px 1px 0 var(--rq-ink); }
+.rq-quest-condition { font-size: 13px; color: #ffe4a0; background: #110b1a; border: 1px solid var(--rq-gold-dark); padding: 3px 6px; white-space: nowrap; }
+.rq-quest-desc { margin: 0; font-size: 13px; line-height: 1.4; color: #e6daf5; }
+.rq-quest-tracker { display: flex; align-items: center; justify-content: space-between; background: #150f22; padding: 6px 10px; border: 1px dashed var(--rq-gold-dark); }
+.rq-tracker-label { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
+.rq-tracker-pips { display: flex; gap: 6px; }
+.rq-pip {
+    width: 22px; height: 22px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    background: #332449; border: 2px solid #583c7d; color: #7d5aa8;
+}
+.rq-pip.active { background: var(--rq-success); border-color: #fff; color: #0d3819; font-weight: bold; box-shadow: 0 0 8px rgba(110, 222, 138, 0.8); }
+.rq-pip.failed { background: var(--rq-fail); border-color: #fff; color: #fff; font-weight: bold; box-shadow: 0 0 8px rgba(224, 74, 74, 0.8); }
+
+/* NÚT TUNG DƯỚI CHÂN */
+.rq-ui-footer { position: absolute; bottom: 24px; left: 0; right: 0; display: flex; justify-content: center; z-index: 10; }
+
+/* BẢNG KẾT QUẢ */
+.rq-overlay #rqResultOverlay {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none; opacity: 0; transform: scale(0.6); z-index: 20;
+}
+.rq-result-panel {
+    background: var(--rq-panel-bg);
+    border: 4px solid var(--rq-gold);
+    padding: 20px 24px;
+    text-align: center;
+    box-shadow: 6px 6px 0 var(--rq-ink);
+    width: 380px; max-width: calc(100vw - 32px);
+}
+.rq-result-panel.v-success { border-color: var(--rq-success); }
+.rq-result-panel.v-fail { border-color: var(--rq-fail); }
+.rq-result-title { font-size: 20px; font-weight: 700; margin: 0; text-transform: uppercase; }
+.rq-result-title.v-success { color: var(--rq-success); }
+.rq-result-title.v-fail { color: var(--rq-fail); }
+.rq-result-number { font-family: var(--rq-font-display); font-size: 76px; line-height: 1; margin: 8px 0; color: #fff; text-shadow: 3px 3px 0 var(--rq-ink); }
+.rq-result-badge { display: inline-block; padding: 5px 12px; font-size: 13px; font-weight: bold; color: #1a1206; background: var(--rq-gold); }
+.rq-result-badge.v-success { background: var(--rq-success); color: #072e12; }
+.rq-result-badge.v-fail { background: var(--rq-fail); color: #fff; }
+.rq-result-dialogue { margin-top: 14px; background: #150f22; border: 2px solid #583c7d; padding: 8px 10px; text-align: left; }
+.rq-result-speaker { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--rq-gold-lite); margin-bottom: 5px; }
+.rq-result-speaker::before { content: '\00AB  '; color: var(--rq-gold); }
+.rq-result-line { margin: 0; font-size: 13px; line-height: 1.45; color: #efe6ff; min-height: 38px; }
+.rq-result-line::after { content: '_'; color: var(--rq-gold); }
+
+/* MÀN HÌNH NHỎ: thu nhỏ khung quest cho vừa màn hình */
+@media (max-width: 480px) {
+    .rq-quest-card { padding: 9px; gap: 7px; }
+    .rq-quest-image { height: 84px; }
+    .rq-quest-name { font-size: 15px; }
+    .rq-quest-desc { font-size: 12px; }
+    .rq-modal-box { padding: 22px 16px; }
+    .rq-modal-title { font-size: 21px; }
+    .rq-result-number { font-size: 60px; }
+    .rq-ui-footer { bottom: 16px; }
+}

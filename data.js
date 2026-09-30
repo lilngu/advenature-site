@@ -97,17 +97,17 @@ export const BLESSINGS_DATA = [
 
 // 4. DANH MỤC 12 SẢN PHẨM SHOP LỮ HÀNH
 export const SHOP_ITEMS = [
-    { id: "PKG_1", name: "📜 Tân Thủ Cày Chay", tt: 30, vnd: 750000, iconClass: "ico-pkg1", desc: " Đêm Lưu Trú Lều/ Dorm.\n 03 Bữa ăn tiêu chuẩn \n Áp dụng Chúc Phúc Tinh Linh \n 1 Nhiệm Vụ Quest tuỳ chọn \n\n ⚠️ Lưu ý: Việc chỉ hoàn thành 1 Nhiệm Vụ Nguyên Tố sẽ khiến 80% bí mật còn lại tại Rừng Tinh Linh bị phong ấn. \n Nâng cấp Góp Phiêu Lưu Trọn Vẹn để mở khoá 100% cốt truyện hoặc để dành cho những kỳ phiêu lưu sau. " },
-    { id: "PKG_2", name: "🍃 Phiêu Lưu Trọn Vẹn", tt: 60, vnd: 1500000, iconClass: "ico-pkg2", desc: "01 Mystery Loot Box  (Trang bị cơ bản) \n 1 Đêm Lưu Trú Lều/ Dorm. \n 03 Bữa ăn Tối, Sáng, Trưa. \n Áp dụng Chúc Phúc Tinh Linh \n Tất cả 5 Nhiệm Vụ Quest Chính." },
-    { id: "PKG_3", name: "👑 Tân Thủ Nạp Thẻ ", tt: 80, vnd: 2000000, iconClass: "ico-pkg3", desc: "📦 01 Mystery Loot Box  (Trang bị cơ bản) \n ⛺ 1 Đêm Lưu Trú Lều /  Dorm. \n 🥩 03 Bữa ăn Tối, Sáng, Trưa. \n 🎁 Áp dụng Chúc Phúc Tinh Linh \n Tất cả 5 Nhiệm Vụ Quest Chính. \n +1 Huy Hiệu NHÀ PHIÊU LƯU XANH \n +1 Thẻ bài Tinh Linh ngẫu nhiên.\n +Túi 4 Tinh Thạch  \n +1 Lần GACHA Tại Phiên Chợ Tinh Linh." },
-    { id: "PKG_4", name: "⛺ Lưu Trú 1 Đêm", tt: 16, vnd: 400000, iconClass: "ico-pkg4", desc: "⛺ 01 Đêm Lưu Trú Lều Trại hoặc Dorm \n 🏚️ Sử dụng tự do Tavern Emerald Guild \n 🌿 Đã bao gồm bộ đệm ấm & túi ngủ." },
-    { id: "Q_1", name: "🌬️ Quest Phong Tinh", tt: 8, vnd: 200000, iconClass: "ico-quest2", desc: "📜 Nhiệm Vụ Lá Thư Rừng Tập Sự \n 🍵 Thưởng thức Trà Thảo Mộc trên đồi" },
-    { id: "Q_2", name: "✨ Quest Quang Tinh", tt: 8, vnd: 200000, iconClass: "ico-quest1", desc: "📜 Nhiệm Vụ Quang Tinh Linh tại Phiên Chợ Tinh Linh.\n 🔮 Nhận thưởng +1 Tinh Thạch " },
+    { id: "PKG_1", name: "📜 Tân Thủ Cày Chay", tt: 30, vnd: 750000, iconClass: "ico-pkg1", desc: " 🚙 Buff dịch chuyển toàn hành trình \n Tinh Linh ⇄ +1 Đêm Lưu Trú Lều/ Dorm.\n 03 Bữa ăn tiêu chuẩn \n Áp dụng Chúc Phúc Tinh Linh \n 1 Nhiệm Vụ Quest tuỳ chọn \n\n ⚠️ Lưu ý: Việc chỉ hoàn thành 1 Nhiệm Vụ Nguyên Tố sẽ khiến 80% bí mật còn lại tại Rừng Tinh Linh bị phong ấn. \n Nâng cấp Góp Phiêu Lưu Trọn Vẹn để mở khoá 100% cốt truyện hoặc để dành cho những kỳ phiêu lưu sau. " },
+    { id: "PKG_2", name: "🍃 Phiêu Lưu Trọn Vẹn", tt: 60, vnd: 1500000, iconClass: "ico-pkg2", desc: " 🚙 Buff dịch chuyển toàn hành trình \n 01 Mystery Loot Box  (Trang bị cơ bản) \n 1 Đêm Lưu Trú Lều/ Dorm. \n 03 Bữa ăn Tối, Sáng, Trưa. \n Áp dụng Chúc Phúc Tinh Linh \n Tất cả 5 Nhiệm Vụ Quest Chính." },
+    { id: "PKG_3", name: "👑 Tân Thủ Nạp Thẻ ", tt: 80, vnd: 2000000, iconClass: "ico-pkg3", desc: " 🚙 Buff dịch chuyển toàn hành trình \n 📦 01 Mystery Loot Box  (Trang bị cơ bản) \n ⛺ 1 Đêm Lưu Trú Lều /  Dorm. \n 🥩 03 Bữa ăn Tối, Sáng, Trưa. \n 🎁 Áp dụng Chúc Phúc Tinh Linh \n Tất cả 5 Nhiệm Vụ Quest Chính. \n +1 Huy Hiệu NHÀ PHIÊU LƯU XANH \n +1 Thẻ bài Tinh Linh ngẫu nhiên.\n +Túi 4 Tinh Thạch  \n +1 Lần GACHA Tại Phiên Chợ Tinh Linh." },
+    { id: "PKG_4", name: "⛺ Lưu Trú 1 Đêm", tt: 16, vnd: 400000, iconClass: "ico-pkg4", desc: " 🚙 Buff dịch chuyển từ Điểm Tập Kết\n⛺ 01 Đêm Lưu Trú Lều Trại hoặc Dorm \n 🏚️ Sử dụng tự do Tavern Emerald Guild \n 🌿 Đã bao gồm bộ đệm ấm & túi ngủ." },
+    { id: "Q_1", name: "🌬️ Quest Phong Tinh", tt: 8, vnd: 200000, iconClass: "ico-quest2", desc: "🚙 Buff dịch chuyển nhiệm vụ\n 📜 Nhiệm Vụ Lá Thư Rừng Tập Sự \n 🍵 Thưởng thức Trà Thảo Mộc trên đồi" },
+    { id: "Q_2", name: "✨ Quest Quang Tinh", tt: 8, vnd: 200000, iconClass: "ico-quest1", desc: "🚙 Buff dịch chuyển từ nhiệm vụ\n📜 Nhiệm Vụ Quang Tinh Linh tại Phiên Chợ Tinh Linh.\n 🔮 Nhận thưởng +1 Tinh Thạch " },
     { id: "Q_3", name: "🔥 Quest Hỏa Tinh", tt: 8, vnd: 200000, iconClass: "ico-quest3", desc: "📜 Nhiệm Vụ Truyền Đuốc Lửa Đêm \n🔥 Kích hoạt Ngọn Lửa Trại Nguyên Tố \nNhận thưởng +1 Tinh Thạch " },
-    { id: "Q_4", name: "💧 Quest Thủy Tinh", tt: 8, vnd: 200000, iconClass: "ico-quest4", desc: "​Nhiệm Vụ Thuỷ Tinh Linh tại Suối Tinh Linh.\n Nhận thưởng +1 Tinh Thạch" },
+    { id: "Q_4", name: "💧 Quest Thủy Tinh", tt: 8, vnd: 200000, iconClass: "ico-quest4", desc: "🚙 Buff dịch chuyển từ nhiệm vụ\n ​Nhiệm Vụ Thuỷ Tinh Linh tại Suối Tinh Linh.\n Nhận thưởng +1 Tinh Thạch" },
     { id: "Q_5", name: "🗿 Quest Thổ Tinh", tt: 8, vnd: 200000, iconClass: "ico-quest5", desc: "🪨 Nhiệm Vụ Thổ Tinh Linh \n Nhận thưởng +1 Tinh Thạch" },
     { id: "F_1", name: "🍢  Bữa Tối BBQ", tt: 6, vnd: 150000, iconClass: "ico-food1", desc: "Bữa thịt nướng thơm lừng bên ánh lửa trại ấm cúng." },
-    { id: "F_2", name: "🥪Bữa Sáng Bên Suối", tt: 6, vnd: 150000, iconClass: "ico-food2", desc: "​🥪 01 Suất Bữa Sáng bên Bờ Suối Tinh Linh.\n 🌿 Có thể ngâm mình trong suối lạnh giữa rừng" },
+    { id: "F_2", name: "🥪Bữa Sáng Bên Suối", tt: 6, vnd: 150000, iconClass: "ico-food2", desc: "​🥪 Buff dịch chuyển đến Suối Thì Thầm. \n 01 Suất Bữa Sáng bên Bờ Suối.\n 🌿 Có thể ngâm mình trong suối lạnh giữa rừng" },
     { id: "F_3", name: "🍱 Bữa Trưa Tại Phiên Chợ ", tt: 2, vnd: 50000, iconClass: "ico-food3", desc: "​🍱 01 Suất Bữa Trưa tại Phiên Chợ Tinh Linh nhập vai vui vẻ." }
 ];
 

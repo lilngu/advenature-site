@@ -18,6 +18,8 @@ import {
 } from './data.js';
 // TOAST NOTIFICATION SYSTEM
 import { toast } from './toast.js';
+// QUEST "NHẬP VAI VUI VẺ" - MODULE RPG ROLL D20
+import { initRollQuest, openRollQuest, refreshRollQuestBadge } from './rollquest.js';
 // BUTTON VFX PARTICLE SYSTEM
 import { initButtonVFX } from './vfx.js';
 // I18N SYSTEM
@@ -1820,9 +1822,12 @@ navButtons.forEach(btn => {
         if (targetId === "inventory-view") {
             syncUserDataFromBackend(); // Kéo dữ liệu D1 mới nhất về túi đồ
         }
+        if (targetId === "quest-view") {
+            refreshRollQuestBadge(); // Cập nhật số lượt NHẬP VAI còn lại trên pin card
+        }
         if (targetId === "gacha-view") {
             controls.enabled = true;
-            document.getElementById("tabIndicator").textContent = "✧LINH CẢNH✦ \n CỔNG KẾT NỐI TINH LINH RỪNG";
+            document.getElementById("tabIndicator").textContent = "✧LINH CẢNH✦ \n CỔNG KẾT NỐI TINH LINH";
             viewPanels.forEach(p => {
                 if (p.id !== "gacha-view") p.classList.add("hidden");
             });
@@ -1858,7 +1863,7 @@ function returnToGachaHome() {
     dockGachaTrigger.classList.add("active");
     document.getElementById("gacha-view").classList.remove("hidden");
     document.getElementById("gacha-view").classList.add("active");
-    document.getElementById("tabIndicator").textContent = "✧LINH CẢNH✦ \n CỔNG KẾT NỐI TINH LINH RỪNG";
+    document.getElementById("tabIndicator").textContent = "✧LINH CẢNH✦ \n CỔNG KẾT NỐI TINH LINH";
     if (state !== STATE.LOOT && claimContainer) {
         claimContainer.classList.add("hidden");
     }
@@ -2505,7 +2510,26 @@ document.getElementById("btnSubmitRef")?.addEventListener("click", async () => {
     }
 });
 
+// ======================================================
+// QUEST MỚI: NHẬP VAI VUI VẺ (MODULE RPG ROLL D20)
+// - Mỗi ngày tối đa 2 lượt, mỗi lượt 1 tình huống khác nhau
+// - Bắt đầu chơi = mất 1 lượt, hoàn thành 2/3 lượt = +1 🔮 Tinh Quang
+// ======================================================
+initRollQuest({
+    apiUrl: API_URL,
+    getUserId: () => currentUser?.id,
+    isGuest: () => isFirstTimeGuest,
+    onReward: (tinhQuang) => {
+        currentUser.tinh_quang_points = tinhQuang;
+        saveUserData();
+        updateTopBarUI();
+    }
+});
+
+document.getElementById("btnOpenRollQuest")?.addEventListener("click", openRollQuest);
+
 // CỤM XỬ LÝ QUIZ
+const quizModal = document.getElementById("quizModal");
 let quizPool = [];
 let quizCorrectCount = 0;
 let currentQuizIdx = 0;

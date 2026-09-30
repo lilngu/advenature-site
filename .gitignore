@@ -1,0 +1,4 @@
+.worker/worker.js
+.worker/.env
+.worker/rollquest_scenarios.json
+.module/rpg-quest.html

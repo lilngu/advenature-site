@@ -20,7 +20,7 @@ const TEXTS = {
     // ======================================================
     welcome: {
         title: "✦ ĐANG KHỞI TẠO CỔNG DỊCH CHUYỂN ... ✦",
-        body: "Chào mừng đến LINH CẢNH KHỞI NGUYÊN! <br> Cổng kết nối giữa Tinh Linh Rừng🍀 <br> cùng những tâm hồn yêu thiên nhiên. <br> Hãy chạm vào TINH CẦU nhận CHÚC PHÚC<br> trước khi vào RỪNG TINH LINH thực cảnh. </br> ⋆｡‧˚ʚ🔮ɞ˚‧｡⋆",
+        body: "Chào mừng đến LINH CẢNH KHỞI NGUYÊN! <br> Cổng kết nối giữa Tinh Linh🍀 <br> dành cho các Nhà Phiêu Lưu Xanh. <br> Chạm TINH CẦU nhận CHÚC PHÚC<br> Sẵn sàng cho hành trình nhập vai vui vẻ tại RỪNG TINH LINH. </br> ⋆｡‧˚ʚ🔮ɞ˚‧｡⋆",
         tapHint: "✦ Chạm cổ thư để tiếp tục ✦",
     },
 
@@ -72,7 +72,7 @@ const TEXTS = {
     // GACHA VIEW
     // ======================================================
     gacha: {
-        tabIndicator: "✧LINH CẢNH✦ \n CỔNG KẾT NỐI TINH LINH RỪNG",
+        tabIndicator: "✧LINH CẢNH✦ \n CỔNG KẾT NỐI TINH LINH",
         crystalTitleDefault: "Bệ Đá Tinh Quang",
         claimButton: "✦ THU THẬP VÀO TÚI ✦",
         collectBanner: "ĐÃ THU THẬP QUANG THẠCH VÀO TÚI",
@@ -167,6 +167,18 @@ const TEXTS = {
             cardDesc: "Giải mã tri thức từ RỪNG TINH LINH \n +1 ✨ .",
             badge: "Hoàn thành 10 câu hỏi",
             btn: "Giải Mã",
+        },
+        rollQuest: {
+            cardTitle: "NHẬP VAI VUI VẺ",
+            cardDesc: "Tung D20 để nhập vai tình huống ngẫu nhiên.\n Hoàn thành +1 ✨ Tinh Quang.",
+            badge: "Tối đa 2 lượt mỗi ngày",
+            btn: "NHẬP VAI THÔI",
+            btnLoading: "Đang xem thẻ bài...",
+            quotaUsed: "Còn {remaining}/{max} lượt nhập vai hôm nay",
+            exhausted: "Hôm nay bạn đã nhập vai đủ 2 lần rồi! Quay lại vào ngày mai nhé.",
+            networkError: "Lỗi kết nối máy chủ nhiệm vụ!",
+            rewardFail: "Chưa nhận được thưởng: {error}",
+            noScenario: "Chưa có kịch bản nhập vai nào được nạp!",
         },
         backBtnAria: "Trở về",
     },
@@ -310,6 +322,25 @@ const TEXTS = {
     quiz: {
         title: "✦ MẬT MÃ RỪNG TINH LINH",
         questionLabel: "Câu hỏi: {question}",
+    },
+
+    // ======================================================
+    // QUEST NHẬP VAI VUI VẺ (MODULE RPG ROLL D20)
+    // ======================================================
+    rollQuest: {
+        introTitle: "NHẬP VAI VUI VẺ",
+        introDesc: "Bạn sẽ nhập vai một tình huống ngẫu nhiên và tung D20 tối đa 3 lần.\nĐạt đủ 2 lần thành công để hoàn thành nhiệm vụ và nhận +1 ✨ Tinh Quang!",
+        startBtn: "NHẬP VAI THÔI!",
+        rollBtn: "🎲 TUNG XÚC XẮC",
+        thresholdLabel: "Thử thách: Roll ≥ {threshold}",
+        trackerLabel: "Lượt: {attempts}/{max} (Đạt: {success}/{required})",
+        winTitle: "NHIỆM VỤ HOÀN THÀNH!",
+        winMessage: "Tuyệt vời! Bạn đạt <b>{success}/{max}</b> lần thành công và đã hoàn thành <b>{title}</b>!",
+        failTitle: "NHIỆM VỤ THẤT BẠI!",
+        failMessage: "Bạn chỉ đạt <b>{success}/{max}</b> lần thành công (yêu cầu tối thiểu {required}). Lần sau sẽ may hơn!",
+        btnAgain: "NHẬP VAI LẦN NỮA",
+        btnClose: "RỜI ĐI",
+        waitReward: "Đang nhận thưởng...",
     },
 
     // ======================================================

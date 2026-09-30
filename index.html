@@ -14,6 +14,12 @@
     
     <!-- FontAwesome for Celtic/Fantasy Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Font PIXEL cho module Quest "NHẬP VAI VUI VẺ" (hỗ trợ tiếng Việt) -->
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;700&family=Jersey+25&display=swap" rel="stylesheet">
+
+    <!-- GSAP: điều khiển chuyển động xúc xắc D20 của module NHẬP VAI VUI VẺ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <!-- QRCode JS (Xác thực Offline) -->
@@ -364,8 +370,15 @@
                     <div class="pin-badge" id="streakDisplay"></div>
                     <button class="btn-medieval pin-btn" id="btnDoCheckin" data-i18n="quest.checkin.btn"></button>
                 </div>
-
-                <!-- Nhiệm vụ 2: Mật mã Rừng Tinh Linh -->
+            <!-- Nhiệm vụ 2 MỚI: NHẬP VAI VUI VẺ (ROLL D20) -->
+                <div class="pin-card">
+                    <span class="pin-tack">￣</span>
+                    <h4 class="pin-title" data-i18n="quest.rollQuest.cardTitle"></h4>
+                    <p class="pin-desc" data-i18n="quest.rollQuest.cardDesc"></p>
+                    <div class="pin-badge" id="rollQuestBadgeDisplay" data-i18n="quest.rollQuest.badge"></div>
+                    <button class="btn-medieval pin-btn" id="btnOpenRollQuest" data-i18n="quest.rollQuest.btn"></button>
+                </div>
+                <!-- Nhiệm vụ 3: Mật mã Rừng Tinh Linh -->
                 <div class="pin-card">
                     <span class="pin-tack">￣</span>
                     <h4 class="pin-title" data-i18n="quest.quiz.cardTitle"></h4>
@@ -374,7 +387,7 @@
                     <button class="btn-medieval pin-btn" id="btnOpenQuiz" data-i18n="quest.quiz.btn"></button>
                 </div>
 
-                <!-- Nhiệm vụ 3: Truyền tin Group FB -->
+                <!-- Nhiệm vụ 4: Truyền tin Group FB -->
                 <div class="pin-card">
                     <span class="pin-tack">￣</span>
                     <h4 class="pin-title" data-i18n="quest.fbShare.cardTitle"></h4>
@@ -383,20 +396,31 @@
                     <button class="btn-medieval pin-btn" id="btnSubmitFb" data-i18n="quest.fbShare.btn"></button>
                 </div>
 
-                <!-- Nhiệm vụ 4: Kết nối bạn bè -->
-                <!-- Sửa pin-card Kết Nối Bạn Bè -->
-<div class="pin-card">
-    <span class="pin-tack">￣</span>
-    <h4 class="pin-title" data-i18n="quest.referral.cardTitle"></h4>
-    <p class="pin-desc">Mã: <b id="myRefCodeDisplay" style="color:#651799;">AW----</b> (Chia sẻ bạn bè </br> +1 ✨ cả 2).</p>
-    <div style="display: flex; gap: 4px; margin-bottom: 4px;">
-        <input type="text" id="inputFriendCode" class="rpg-input pin-input" data-i18n-placeholder="quest.referral.codePlaceholder" style="margin-bottom:0;">
-        <button class="btn-action pin-btn" id="btnScanFriendQr" style="padding: 0 8px;" data-i18n-title="quest.referral.scanBtnAria">📷</button>
-    </div>
-    <button class="btn-medieval pin-btn" id="btnSubmitRef" data-i18n="quest.referral.btn"></button>
-</div>
+                <!-- Nhiệm vụ 5: Kết nối bạn bè -->
+            <div class="pin-card">
+                <span class="pin-tack">￣</span>
+                <h4 class="pin-title" data-i18n="quest.referral.cardTitle"></h4>
+                <p class="pin-desc">Mã: <b id="myRefCodeDisplay" style="color:#651799;">AW----</b> (Chia sẻ bạn bè </br> +1 ✨ cả 2).
+                </p>
+                <div style="display: flex; gap: 4px; margin-bottom: 4px;">
+                    <input type="text" id="inputFriendCode" class="rpg-input pin-input"
+                        data-i18n-placeholder="quest.referral.codePlaceholder" style="margin-bottom:0;">
+                    <button class="btn-action pin-btn" id="btnScanFriendQr" style="padding: 0 8px;"
+                        data-i18n-title="quest.referral.scanBtnAria">📷</button>
+                </div>
+                <button class="btn-medieval pin-btn" id="btnSubmitRef" data-i18n="quest.referral.btn"></button>
             </div>
+            <!-- Nhiệm vụ 6: CHƯA MỞ -->
+                <div class="pin-card">
+                    <span class="pin-tack">￣</span>
+                    <h4 class="pin-title" data-i18n="quest.fbShare.cardTitle"></h4>
+                    <p class="pin-desc" data-i18n="quest.fbShare.cardDesc"></p>
+                    <input type="text" id="inputFbLink" class="rpg-input pin-input" data-i18n-placeholder="quest.fbShare.inputPlaceholder">
+                    <button class="btn-medieval pin-btn" id="btnSubmitFb" data-i18n="quest.fbShare.btn"></button>
+                </div>
 
+                <!-- Dock kết thúc quest panel -->
+            </div>
             <div class="panel-bottom-dock">
                 <button class="btn-back-dock" data-i18n-title="quest.backBtnAria">
                     <span class="back-ico"><i class="rpg-ico ico-back-wind" ></i></span>
@@ -648,6 +672,76 @@
             <h3 style="color: #ffe66d; font-size: 14px;" data-i18n="quiz.title"></h3>
             <p id="quizQuestionText" style="font-size: 12px; margin: 12px 0; color: #fff;" data-i18n="quiz.questionLabel"></p>
             <div id="quizAnswersBox" class="quiz-answers-box"></div>
+        </div>
+    </div>
+
+    <!-- ====================================================== -->
+    <!-- QUEST MỚI: NHẬP VAI VUI VẺ (MODULE RPG ROLL D20)       -->
+    <!-- Cấu trúc module lấy từ rpg-quest.html                   -->
+    <!-- ====================================================== -->
+    <div id="rollQuestModal" class="rq-overlay hidden">
+        <!-- Canvas 3D xúc xắc D20 -->
+        <div id="rqCanvasContainer"></div>
+        <!-- Lưới CRT hoài cổ -->
+        <div class="rq-crt-lines"></div>
+
+        <!-- 1. POPUP KHỞI ĐỘNG -->
+        <div id="rqIntroModal" class="rq-modal-backdrop">
+            <div class="rq-modal-box">
+                <h2 class="rq-modal-title" data-i18n="rollQuest.introTitle"></h2>
+                <p class="rq-modal-desc" data-i18n="rollQuest.introDesc"></p>
+                <p class="rq-modal-dialogue" id="rqIntroQuota"></p>
+                <button id="rqStartBtn" class="rq-btn-pixel" data-i18n="rollQuest.startBtn"></button>
+            </div>
+        </div>
+
+        <!-- 2. KHUNG QUEST (ẢNH + MÔ TẢ + TIẾN ĐỘ) -->
+        <div id="rqQuestCard" class="rq-quest-card" style="display: none;">
+            <img id="rqImg" class="rq-quest-image" src="" alt="">
+            <div class="rq-quest-header-row">
+                <h3 id="rqTitle" class="rq-quest-name"></h3>
+                <span id="rqCondition" class="rq-quest-condition"></span>
+            </div>
+            <p id="rqDesc" class="rq-quest-desc"></p>
+            <div class="rq-quest-tracker">
+                <span class="rq-tracker-label" id="rqTrackerLabel"></span>
+                <div class="rq-tracker-pips">
+                    <span class="rq-pip" id="rq-pip-1">-</span>
+                    <span class="rq-pip" id="rq-pip-2">-</span>
+                    <span class="rq-pip" id="rq-pip-3">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. BẢNG KẾT QUẢ TỪNG LẦN TUNG -->
+        <div id="rqResultOverlay">
+            <div class="rq-result-panel" id="rqResultPanel">
+                <div id="rqResTitle" class="rq-result-title">THÀNH CÔNG</div>
+                <div id="rqResNumber" class="rq-result-number">20</div>
+                <div id="rqResBadge" class="rq-result-badge">+1 TIẾN ĐỘ</div>
+                <div class="rq-result-dialogue">
+                    <div id="rqResSpeaker" class="rq-result-speaker"></div>
+                    <p id="rqResLine" class="rq-result-line"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. NÚT TUNG DƯỚI CHÂN MÀN HÌNH -->
+        <footer class="rq-ui-footer">
+            <button id="rqRollBtn" class="rq-btn-pixel" style="display: none;" data-i18n="rollQuest.rollBtn"></button>
+        </footer>
+
+        <!-- 5. NÚT THOÁT MODULE -->
+        <button id="rqCloseBtn" class="rq-close-btn" data-i18n-title="common.close">✕</button>
+
+        <!-- 6. POPUP KẾT LUẬN NHIỆM VỤ -->
+        <div id="rqWinModal" class="rq-modal-backdrop" style="display: none;">
+            <div class="rq-modal-box" id="rqWinBox">
+                <h2 class="rq-modal-title" id="rqWinTitle"></h2>
+                <p class="rq-modal-desc" id="rqWinMessage"></p>
+                <p class="rq-modal-dialogue" id="rqWinDialogue"></p>
+                <button id="rqNextBtn" class="rq-btn-pixel"></button>
+            </div>
         </div>
     </div>    <!-- ====================================================== -->
     <!-- MODAL RPG: CHI TIET & PREVIEW 3D TINH QUANG THACH      -->
