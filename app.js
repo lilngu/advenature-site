@@ -2518,7 +2518,9 @@ document.getElementById("btnSubmitRef")?.addEventListener("click", async () => {
 initRollQuest({
     apiUrl: API_URL,
     getUserId: () => currentUser?.id,
-    isGuest: () => isFirstTimeGuest,
+    // Kiểm tra REALTIME currentUser, không dùng isFirstTimeGuest vì đó là const
+    // chỉ tính 1 lần lúc load trang -> user đã đăng ký trước đó sẽ bị chặn nhầm
+    isGuest: () => !currentUser || !currentUser.adventurer_code || currentUser.adventurer_code === "AW----",
     onReward: (tinhQuang) => {
         currentUser.tinh_quang_points = tinhQuang;
         saveUserData();

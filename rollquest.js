@@ -578,7 +578,7 @@ let isRolling = false;
 let rafId = null;
 let threeReady = null;
 
-const DICE_COLOR = "#fff2c4";
+const DICE_COLOR = "#fffbecff";
 const OUTLINE_COLOR = "#0a170b";
 const NUMBER_COLOR = "#232915";
 const FACE_BG = "#fffede";
@@ -612,8 +612,8 @@ function init3D() {
     scene.background = new THREE.Color(BG_COLOR);
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-    camera.position.set(0, 2.5, 9.5);
-    camera.lookAt(0, 0, 0);
+    camera.position.set(0, 4.5, 9.5);
+    camera.lookAt(0, 1.5, 0);
 
     renderer = new THREE.WebGLRenderer({ antialias: false });
     renderer.setPixelRatio(1);

@@ -1806,7 +1806,7 @@ background: url(https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v
     color: #fff;
     padding: 8px;
     border-radius: 6px;
-    font-size: small;
+    font-size: large;
     cursor: pointer;
     text-align: left;
     transition: all 0.2s ease;
@@ -3687,7 +3687,7 @@ body.guest-mode .dock-btn:not(.center-core) {
    (Port từ rpg-quest.html, tiền tố rq- để không xung đột CSS site)
    ====================================================== */
 .rq-overlay {
-    --rq-font-pixel: 'Pixelify Sans', monospace;
+    --rq-font-pixel: 'Retro2k';
     --rq-font-display: 'Jersey 25', monospace;
     --rq-bg-deep: #120d1c;
     --rq-panel-bg: #241a33;
@@ -3822,13 +3822,13 @@ body.guest-mode .dock-btn:not(.center-core) {
     gap: 10px;
     clip-path: polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px);
 }
-.rq-quest-image { width: 100%; height: 110px; object-fit: cover; border: 2px solid var(--rq-gold-dark); image-rendering: pixelated; }
+.rq-quest-image { width: 100%; height:30vh; object-fit: cover; border: 2px solid var(--rq-gold-dark); image-rendering: pixelated; }
 .rq-quest-header-row { display: flex; justify-content: space-between; align-items: baseline; }
 .rq-quest-name { font-size: 18px; font-weight: 700; color: var(--rq-gold-lite); margin: 0; text-shadow: 1px 1px 0 var(--rq-ink); }
 .rq-quest-condition { font-size: 13px; color: #ffe4a0; background: #110b1a; border: 1px solid var(--rq-gold-dark); padding: 3px 6px; white-space: nowrap; }
-.rq-quest-desc { margin: 0; font-size: 13px; line-height: 1.4; color: #e6daf5; }
+.rq-quest-desc { margin: 0; font-size: 15px; line-height: 1.4; color: #e6daf5; }
 .rq-quest-tracker { display: flex; align-items: center; justify-content: space-between; background: #150f22; padding: 6px 10px; border: 1px dashed var(--rq-gold-dark); }
-.rq-tracker-label { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
+.rq-tracker-label { font-size: 13px; letter-spacing: 1px; text-transform: uppercase; }
 .rq-tracker-pips { display: flex; gap: 6px; }
 .rq-pip {
     width: 22px; height: 22px;
@@ -3868,7 +3868,7 @@ body.guest-mode .dock-btn:not(.center-core) {
 .rq-result-dialogue { margin-top: 14px; background: #150f22; border: 2px solid #583c7d; padding: 8px 10px; text-align: left; }
 .rq-result-speaker { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--rq-gold-lite); margin-bottom: 5px; }
 .rq-result-speaker::before { content: '\00AB  '; color: var(--rq-gold); }
-.rq-result-line { margin: 0; font-size: 13px; line-height: 1.45; color: #efe6ff; min-height: 38px; }
+.rq-result-line { margin: 0; font-size: 14px; line-height: 1.45; color: #efe6ff; min-height: 38px; }
 .rq-result-line::after { content: '_'; color: var(--rq-gold); }
 
 /* MÀN HÌNH NHỎ: thu nhỏ khung quest cho vừa màn hình */
@@ -3876,7 +3876,7 @@ body.guest-mode .dock-btn:not(.center-core) {
     .rq-quest-card { padding: 9px; gap: 7px; }
     .rq-quest-image { height: 84px; }
     .rq-quest-name { font-size: 15px; }
-    .rq-quest-desc { font-size: 12px; }
+    .rq-quest-desc { font-size: 13px; }
     .rq-modal-box { padding: 22px 16px; }
     .rq-modal-title { font-size: 21px; }
     .rq-result-number { font-size: 60px; }

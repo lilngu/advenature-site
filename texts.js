@@ -170,7 +170,7 @@ const TEXTS = {
         },
         rollQuest: {
             cardTitle: "NHẬP VAI VUI VẺ",
-            cardDesc: "Tung D20 để nhập vai tình huống ngẫu nhiên.\n Hoàn thành +1 ✨ Tinh Quang.",
+            cardDesc: "Tung Xí Ngầu để nhập vai tình huống ngẫu nhiên.\n Hoàn thành +1 ✨ Tinh Quang.",
             badge: "Tối đa 2 lượt mỗi ngày",
             btn: "NHẬP VAI THÔI",
             btnLoading: "Đang xem thẻ bài...",
@@ -329,9 +329,9 @@ const TEXTS = {
     // ======================================================
     rollQuest: {
         introTitle: "NHẬP VAI VUI VẺ",
-        introDesc: "Bạn sẽ nhập vai một tình huống ngẫu nhiên và tung D20 tối đa 3 lần.\nĐạt đủ 2 lần thành công để hoàn thành nhiệm vụ và nhận +1 ✨ Tinh Quang!",
+        introDesc: "Bạn sẽ nhập vai một tình huống ngẫu nhiên và tung Xí Ngầu tối đa 3 lần.\nĐạt đủ 2 lần thành công để hoàn thành nhiệm vụ và nhận +1 ✨ Tinh Quang!",
         startBtn: "NHẬP VAI THÔI!",
-        rollBtn: "🎲 TUNG XÚC XẮC",
+        rollBtn: "🎲 TUNG XÍ NGẦU",
         thresholdLabel: "Thử thách: Roll ≥ {threshold}",
         trackerLabel: "Lượt: {attempts}/{max} (Đạt: {success}/{required})",
         winTitle: "NHIỆM VỤ HOÀN THÀNH!",
