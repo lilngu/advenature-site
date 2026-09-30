@@ -2473,7 +2473,7 @@ document.getElementById("btnSubmitFb")?.addEventListener("click", async () => {
 
 // app.js: Nhiệm vụ Cốt Truyện (placeholder - chưa mở)
 document.getElementById("btnOpenLoreQuest")?.addEventListener("click", () => {
-    toast.info('NHIỆM VỤ CỐT TRUYỆN', 'Nhiệm vụ này tạm thời chưa mở');
+    toast.info('NHIỆM VỤ CỐT TRUYỆN', 'CHƯA MỞ KHOÁ');
 });
 
 // app.js: Xử lý kết nối bạn bè 2 chiều

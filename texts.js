@@ -182,9 +182,9 @@ const TEXTS = {
         },
         loreQuest: {
             cardTitle: "📜 NHIỆM VỤ CỐT TRUYỆN",
-            cardDesc: "----",
+            cardDesc: "‼️",
             btn: "KHÁM PHÁ CỐT TRUYỆN",
-            lockedToast: "Nhiệm vụ này tạm thời chưa mở",
+            lockedToast: "CHƯA MỞ KHOÁ!",
         },
         backBtnAria: "Trở về",
     },
