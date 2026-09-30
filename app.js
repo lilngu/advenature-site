@@ -130,6 +130,84 @@ if (isFirstTimeGuest) {
 applyI18n();
 
 // ======================================================
+// BACKGROUND MUSIC (BGM) - phát sau tương tác thật của người dùng
+// ======================================================
+// Autoplay policy chặn play() khi chưa có user activation. Nguyên tắc:
+//   1. Chỉ đánh dấu "đang phát" SAU khi promise play() resolve thành công.
+//   2. play() bị reject thì GIỮ listener để thử lại ở lượt tương tác kế tiếp.
+//   3. Bỏ qua event tổng hợp (element.click(), dispatchEvent) vì chúng không
+//      cấp user activation.
+const BGM_DEFAULT_VOLUME = 0.3;
+const BGM_VOLUME_KEY = 'advenature_bgm_volume';
+
+const bgmAudio = document.getElementById('bgmAudio');
+let bgmPlaying = false;   // chỉ true khi play() đã resolve
+let bgmPending = false;   // đang chờ play() settle, chống gọi chồng
+
+function getBGMVolume() {
+    const saved = parseFloat(localStorage.getItem(BGM_VOLUME_KEY));
+    return Number.isFinite(saved) ? Math.min(1, Math.max(0, saved)) : BGM_DEFAULT_VOLUME;
+}
+
+function attachBgmListeners() {
+    // Capture phase: bắt được gesture trước khi handler khác stopPropagation
+    document.addEventListener('pointerdown', tryPlayBGM, true);
+    document.addEventListener('touchend', tryPlayBGM, true);
+    document.addEventListener('keydown', tryPlayBGM, true);
+}
+
+function detachBgmListeners() {
+    document.removeEventListener('pointerdown', tryPlayBGM, true);
+    document.removeEventListener('touchend', tryPlayBGM, true);
+    document.removeEventListener('keydown', tryPlayBGM, true);
+}
+
+async function tryPlayBGM(event) {
+    if (!bgmAudio || bgmPlaying || bgmPending) return;
+    // event === undefined nghĩa là gọi thủ công (không qua gesture)
+    if (event && event.isTrusted === false) return;
+
+    bgmPending = true;
+    bgmAudio.volume = getBGMVolume();
+
+    try {
+        await bgmAudio.play();
+        bgmPlaying = true;
+        detachBgmListeners();   // chỉ gỡ khi thực sự phát được
+    } catch (err) {
+        // Không gỡ listener - lần tương tác thật kế tiếp sẽ thử lại
+        console.warn(`BGM chưa phát được (${err?.name}), sẽ thử lại khi bạn tương tác.`);
+    } finally {
+        bgmPending = false;
+    }
+}
+
+// Thử phát ngay khi tải trang (một số cấu hình browser cho phép)
+attachBgmListeners();
+tryPlayBGM();
+
+// Tự phục hồi nếu OS/trình duyệt suspend nhạc giữa chừng
+bgmAudio?.addEventListener('pause', () => {
+    bgmPlaying = false;
+    attachBgmListeners();
+});
+
+// Điều khiển thủ công (console hoặc UI sau này)
+window.setBGMVolume = (vol) => {
+    const v = Math.min(1, Math.max(0, Number(vol) || 0));
+    localStorage.setItem(BGM_VOLUME_KEY, String(v));
+    if (bgmAudio) bgmAudio.volume = v;
+};
+window.toggleBGM = async () => {
+    if (!bgmAudio) return;
+    if (bgmAudio.paused) {
+        await tryPlayBGM();
+    } else {
+        bgmAudio.pause();
+    }
+};
+
+// ======================================================
 // PHASE 3: ĐỒNG BỘ DỮ LIỆU TỪ D1 KHI MỞ TRANG HOẶC VÀO TÚI ĐỒ
 // ======================================================
 // app.js: Cập nhật hàm syncUserDataFromBackend để phát hiện điểm mới từ bạn bè

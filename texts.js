@@ -222,7 +222,7 @@ const TEXTS = {
     // PROFILE PANEL
     // ======================================================
     profile: {
-        panelTitle: "✦THẺ NHÀ PHIÊU LƯU",
+        panelTitle: "✦THẺ NHÀ PHIÊU LƯU XANH",
         uploadBadgeTitle: "Đổi ảnh đại diện",
         defaultCode: "AW----",
         defaultName: "NHÀ PHIÊU LƯU",
