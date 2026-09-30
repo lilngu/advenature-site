@@ -121,13 +121,13 @@ body, html {
 }
 
 /* Data URI SVG cho Sản Phẩm G?�i T?�n Thủ */
-.ico-pkg1 {
+.ico-pkg1 {    box-shadow: #00ff7396 1px 1px 20px 8px;
     background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790706988/ftweibquhszlg0jnauor.png");
 }
-.ico-pkg2 {
+.ico-pkg2 { box-shadow: #00bbff96 1px 1px 20px 8px;
     background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790706987/vj9l9almegl5bnl1qcsl.png");
 }
-.ico-pkg3 {
+.ico-pkg3 { box-shadow: #d997ffbb 1px 1px 20px 8px;
     background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790706997/j8sylv0hxh5wsqrwqbry.png");
 }
 .ico-pkg4 {
@@ -136,19 +136,19 @@ body, html {
 
 /* Data URI SVG cho Quest D?� Ngoại */
 .ico-quest1 {
-    background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790706993/uavlbezrjfvhxmozkczr.png");
+    background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790706994/mocfpzclhuzw7puss7do.png");
 }
 .ico-quest2 {
-    background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790706994/mocfpzclhuzw7puss7do.png");
+    background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790706993/uavlbezrjfvhxmozkczr.png");
 }
 .ico-quest3 {
     background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790706993/rl2eys9ygbj6kcqrycys.png");
 }
-.ico-quest4 {
-    background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790706992/iopoqduj7d5dwalkd1uq.png");
+.ico-pkg5 {
+    background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790712825/u1fyks0jzb0lihkx3dry.png");
 }
-.ico-quest5 {
-    background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790706991/j0yfbeobc7i5m1dpyk36.png");
+.ico-pkg6 {
+    background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790710607/sv7bveztno4k8sefuheq.png");
 }
 /* Data URI SVG cho Ẩm Thực Rừng */
 .ico-food1 {
@@ -377,8 +377,8 @@ body, html {
 
 .user-avatar-frame { position: relative; cursor: pointer; }
 .avatar-img {
-    width: 36px;
-    height: 36px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     border: 1.5px solid var(--border-gold);
     display: block;
@@ -1163,7 +1163,7 @@ body.guest-mode #gachaOrbCanvas {
 
 .panel-container { max-width: 600px; margin: 0 auto; position: relative; }
 .panel-header { display: flex; justify-content: space-between; align-items: center; padding:0 10px; margin-bottom: 12px;background: url(https://iili.io/n7lLwwg.png) no-repeat left / 90% 100%; }
-.section-title { font-size: 14px; font-weight: bold; color: var(--border-gold); }
+.section-title { font-size: 14px; font-weight: bold; color: var(--border-gold); font-family: F08;    padding: 5px 10px; }
 .close-panel-btn { 
     font-size: 24px; 
     color: #a8a4c2; 
@@ -1795,7 +1795,7 @@ background: url(https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v
 
 /* Modal Shop Chi Tiết */
 .shop-modal-ico-box { font-size: 40px; margin-bottom: 4px; }
-.shop-modal-desc { font-size: 12px; color: #a7cef1;; text-align: center; line-height: 1.4; white-space:pre-line; }
+.shop-modal-desc { font-size: 12px; color: #fcffc2; text-align: center; line-height: 1.4; white-space:pre-line; }
 
 /* Quiz Answers */
 .quiz-answers-box { display: flex; flex-direction: column; gap: 6px; }
@@ -2189,7 +2189,7 @@ background: url(https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v
     position: absolute;
     top: 4px;
     right: 4px;
-    background: rgba(10, 8, 25, 0.85);
+    background: rgb(240 229 255 / 85%);
     border: 1px solid var(--border-gold);
     border-radius: 50%;
     width: 26px;

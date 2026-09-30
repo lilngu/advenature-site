@@ -180,6 +180,12 @@ const TEXTS = {
             rewardFail: "Chưa nhận được thưởng: {error}",
             noScenario: "Chưa có kịch bản nhập vai nào được nạp!",
         },
+        loreQuest: {
+            cardTitle: "📜 NHIỆM VỤ CỐT TRUYỆN",
+            cardDesc: "----",
+            btn: "KHÁM PHÁ CỐT TRUYỆN",
+            lockedToast: "Nhiệm vụ này tạm thời chưa mở",
+        },
         backBtnAria: "Trở về",
     },
 
@@ -188,22 +194,22 @@ const TEXTS = {
     // ======================================================
     shop: {
         panelTitle: "🛒 THƯƠNG QUÁN EMERALD",
-        subtitle: "Chọn gói Nạp Tinh Thạch, mở khoá camp Tân Thủ 2N1Đ. \n 1 Tinh Thạch💎 ~ 25🐟.",
+        subtitle: "Chọn gói Nạp Tinh Thạch, mở khoá Advenature Camp 2N1Đ. \n 1 Tinh Thạch💎 ~ 25🐟.",
         priceTemplate: "💎 {tt} Tinh Thạch (~{vnd} đ)",
         checkout: {
             count: "Đã chọn: {count} mục",
             total: "Tổng: {tt} 💎 (~{vnd} đ)",
-            btn: "✦ ĐẶT MUA ✦",
+            btn: "✦ GỬI THÔNG TIN & LIÊN HỆ HỘI ✦",
         },
         scheduleBtn: {
             badge: "SỰ KIỆN LARP CAMP",
-            title: "📅 LỊCH TRÌNH ADVENATURE CAMP",
+            title: "📅 LỊCH PHIÊU LƯU",
             desc: "Xem lịch mở Cổng Dịch Chuyển & số lượng Nhà Phiêu Lưu gia nhập.",
             cta: "✦ Tối thiểu 5 Nhà Phiêu Lưu tham gia ✦",
         },
         brochureBtn: {
             badge: "📖 BROCHURE",
-            title: "SỰ KIỆN ADVENATURE CAMP ",
+            title: "📋CẨM NANG PHIÊU LƯU",
             desc: "Khám phá cốt truyện diễn biến 5 Nhiệm Vụ Nguyên Tố.",
             cta: "Xem ngay →",
         },

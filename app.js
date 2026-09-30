@@ -2471,6 +2471,11 @@ document.getElementById("btnSubmitFb")?.addEventListener("click", async () => {
     }
 });
 
+// app.js: Nhiệm vụ Cốt Truyện (placeholder - chưa mở)
+document.getElementById("btnOpenLoreQuest")?.addEventListener("click", () => {
+    toast.info('NHIỆM VỤ CỐT TRUYỆN', 'Nhiệm vụ này tạm thời chưa mở');
+});
+
 // app.js: Xử lý kết nối bạn bè 2 chiều
 document.getElementById("btnSubmitRef")?.addEventListener("click", async () => {
     const input = document.getElementById("inputFriendCode");
