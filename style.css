@@ -3155,6 +3155,66 @@ body.guest-mode .dock-btn:not(.center-core) {
 }
 
 /* ======================================================
+   CORNER 3D PORTAL - CỔNG MA THUẬT GÓC MÀN HÌNH
+   (Cách cạnh phải 10px, cách top 10%)
+   ====================================================== */
+.corner-portal3d {
+    position: fixed;
+    top: 10%;
+    right: 10px;
+    width: 132px;
+    height: 178px;
+    z-index: 39;
+    pointer-events: none;   /* Chỉ nhận chuột khi module bật .p3d-interactive */
+    cursor: pointer;
+    /* Cổng mờ dần từ phải vào giống lore helper */
+    opacity: 0;
+    transform: translateX(28px);
+    transition: opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
+                transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    will-change: opacity, transform;
+    /* Không có bloom nên glow ngoài do CSS đảm nhiệm.
+       2 lớp drop-shadow: lớp rộng cho hào quang, lớp hẹp cho viền sáng.
+       Filter tuân theo alpha của canvas -> bo tròn theo hình cổng, không tạo khung vuông. */
+    filter: drop-shadow(0 0 6px rgba(255, 0, 127, 0.55))
+            drop-shadow(0 0 18px rgba(0, 240, 255, 0.28));
+}
+
+.corner-portal3d.hidden {
+    display: none !important;
+}
+
+/* Trạng thái active: hiện ra tại góc phải */
+.corner-portal3d.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Trạng thái thoát: bay tới và mất đi */
+.corner-portal3d.exit-to-right {
+    opacity: 0;
+    transform: translateX(46px) scale(0.72);
+    pointer-events: none;
+}
+
+/* Khung con do portal-3d.js tự tạo: bỏ viền, chỉ giữ nền trong suốt.
+   overflow:hidden + bo tròn để mép vùng đệm của WebGL không lộ thành đường thẳng. */
+.corner-portal3d > .p3d-root {
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+/* Mobile: thu nhỏ lại để không đè lên topbar */
+@media (max-width: 480px) {
+    .corner-portal3d {
+        width: 104px;
+        height: 142px;
+        top: 11%;
+        right: 6px;
+    }
+}
+
+/* ======================================================
    LORE READER MODAL (Cổ thư lật trang 3D)
    ====================================================== */
 .lore-reader-modal {

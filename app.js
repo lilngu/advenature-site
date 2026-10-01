@@ -25,6 +25,8 @@ import { initRollQuest, openRollQuest, refreshRollQuestBadge } from '@rollquest'
 import { initButtonVFX } from '@vfx';
 // I18N SYSTEM — dùng importmap @i18n
 import { applyI18n, applyI18nToElement } from '@i18n';
+// MODULE 3D "CỔNG MA THUẬT" — dùng importmap @portal (dùng chung scene/camera của app.js)
+import { createPortalScene } from '@portal';
 
 // Hằng số toán học dùng chung (Golden Angle cho phân bố đều trên cầu)
 const GOLDEN_ANGLE = Math.PI * (Math.sqrt(5) - 1);
@@ -75,6 +77,11 @@ const guideHelper = document.getElementById("guideHelper");
 const guideReaderModal = document.getElementById("guideReaderModal");
 const loreHelper = document.getElementById("loreHelper");
 const loreReaderModal = document.getElementById("loreReaderModal");
+// Cổng 3D góc màn hình (góc phải 10px, cách top 10%) — điều kiện hiện/ẩn giống loreHelper
+const cornerPortal3D = document.getElementById("cornerPortal3D");
+const CORNER_PORTAL_LINK = "https://rungtinhlinh.pages.dev/";
+// Khai báo ở đầu file vì initLoreHelper() được gọi ngay khi load trang (tránh temporal dead zone)
+let cornerPortal = null;
 const dockGachaTrigger = document.getElementById("dockGachaTrigger");
 const gachaReadyTooltip = document.getElementById("gachaReadyTooltip");
 let guestHelperShown = false;
@@ -489,6 +496,7 @@ function hideGuideHelper() {
 }
 
 function hideLoreHelper() {
+    hideCornerPortal();  // Cổng 3D đi kèm lore helper
     if (!loreHelperShown || !loreHelper) return;
     loreHelperShown = false;  // Reset flag để có thể show lại sau
     loreHelper.classList.remove('active', 'enter-from-top-right-far');
@@ -497,6 +505,86 @@ function hideLoreHelper() {
     setTimeout(() => {
         loreHelper.classList.add('hidden');
         loreHelper.classList.remove('exit-to-right');
+    }, 800);
+}
+
+// ======================================================
+// CORNER PORTAL 3D (Cổng ma thuật góc màn hình)
+// Dùng chung điều kiện hiển thị với loreHelper:
+//   - Chỉ cho user đã đăng nhập (không guest-mode)
+//   - Chỉ ở gacha-view và state IDLE
+// Click vào cổng -> mở https://rungtinhlinh.pages.dev/
+// ======================================================
+function initCornerPortal() {
+    if (cornerPortal || !cornerPortal3D) return;
+
+    // CÁCH 1 của portal-3d.js: dựng scene riêng trong khung #cornerPortal3D.
+    // Khung nhỏ (132x178) nên camera phải gần hơn portal.html rất nhiều,
+    // đồng thời bỏ hạt nền/scanline cho nhẹ máy.
+    cornerPortal = createPortalScene({
+        container: '#cornerPortal3D',
+        autoStart: true,
+        labels: false,
+        interactive: true,          // Overlay nhận chuột riêng: raycast + cursor chỉ trong khung này
+        transparent: true,           // Nền trong suốt -> hòa vào phông cảnh rừng phía sau
+        particles: false,
+        scanlines: false,
+        exposure: 1.45,            // Không có bloom -> nâng exposure để cổng vẫn rõ
+        pixelRatio: 1.5,            // Khung nhỏ -> không cần DPR 2
+        bloom: false,               // Tắt bloom: ở khung 132px, bloom bị cắt cứng ở mép
+                                    // render target, tạo khung viền vuông thấy rõ.
+                                    // Glow lấy từ rimEnergy + additive strokes của shader.
+        fitOptions: {
+            distance: 4.9,
+            mobileDistance: 5.2,
+            mobileAspectFactor: 3.2,
+            mobileLift: 0.15
+        },
+        portals: [{
+            id: 'corner-rtl',
+            position: [0, 0, 0],
+            size: { width: 3.0, height: 3.8 },
+            strokeCount: 14,
+            colors: { primary: 0xff007f, secondary: 0x00f0ff, core: 0x18001a },
+            link: CORNER_PORTAL_LINK,
+            onSelect: () => window.open(CORNER_PORTAL_LINK, '_blank', 'noopener')
+        }]
+    });
+
+    // Tạo xong thì chưa render cho tới khi được hiện (tiết kiệm GPU)
+    cornerPortal?.setActive(false);
+}
+
+function showCornerPortal() {
+    // Điều kiện hiển thị y hệt loreHelper
+    if (document.body.classList.contains('guest-mode') || !cornerPortal3D) return;
+    if (state !== STATE.IDLE) return;
+
+    const gachaView = document.getElementById("gacha-view");
+    if (!gachaView || !gachaView.classList.contains("active") || gachaView.classList.contains("hidden")) return;
+
+    // Bỏ 'hidden' TRƯỚC khi dựng scene để renderer đo đúng kích thước khung ngay lập tức
+    cornerPortal3D.classList.remove('hidden', 'exit-to-right');
+    initCornerPortal();
+    if (!cornerPortal) return;
+
+    // Force reflow để transition chạy từ vị trí ẩn
+    cornerPortal3D.offsetHeight;
+    cornerPortal3D.classList.add('active');
+    cornerPortal.setActive(true);
+    cornerPortal.resize();  // Khung vừa từ display:none -> tràn ra, đo lại cho chắc
+}
+
+function hideCornerPortal() {
+    if (!cornerPortal || !cornerPortal3D) return;
+    cornerPortal.setActive(false);
+    cornerPortal3D.classList.remove('active');
+    cornerPortal3D.classList.add('exit-to-right');
+
+    setTimeout(() => {
+        if (cornerPortal3D.classList.contains('active')) return;  // Đã show lại trong lúc chờ
+        cornerPortal3D.classList.add('hidden');
+        cornerPortal3D.classList.remove('exit-to-right');
     }, 800);
 }
 
@@ -627,6 +715,8 @@ function initLoreHelper() {
         return null;
     };
     
+    // Cổng 3D được dựng lazily trong showCornerPortal() để không tốn WebGL context khi chưa cần
+
     // Kiểm tra ngay lập tức
     loreHelperInitTimeout = checkAndShowLoreHelper();
     
@@ -665,7 +755,10 @@ function initLoreHelper() {
 function showLoreHelper() {
     // Không show nếu Gacha đang chạy
     if (state !== STATE.IDLE) return;
-    if (loreHelperShown || document.body.classList.contains('guest-mode') || !loreHelper) return;
+    if (document.body.classList.contains('guest-mode')) return;
+    // Cổng 3D đi kèm: show trước để không bị bỏ sót khi lore helper đã hiện từ lần trước
+    showCornerPortal();
+    if (loreHelperShown || !loreHelper) return;
     loreHelperShown = true;
     
     const pos = getLoreHelperTargetPosition();
@@ -2094,6 +2187,9 @@ window.addEventListener("resize", () => {
         loreHelper.style.top = pos.top;
         loreHelper.style.right = pos.right;
     }
+
+    // Cổng 3D góc màn hình tự co giãn theo khung (ResizeObserver lo phần còn lại)
+    cornerPortal?.resize();
 });
 
 // ======================================================
@@ -2125,6 +2221,8 @@ navButtons.forEach(btn => {
             document.getElementById("gacha-view").classList.add("active");
             // Update Gacha Ready Tooltip when entering gacha-view
             updateGachaReadyTooltip();
+            // Cổng 3D góc màn hình quay lại cùng điều kiện với lore helper
+            if (!document.body.classList.contains('guest-mode')) showCornerPortal();
             return;
         }
 
@@ -2135,6 +2233,8 @@ navButtons.forEach(btn => {
         
         // Hide Gacha Ready Tooltip when leaving gacha-view
         hideGachaReadyTooltip();
+        // Cổng 3D góc màn hình chỉ sống trong gacha-view
+        hideCornerPortal();
 
         const activePanel = document.getElementById(targetId);
         if (activePanel) {
@@ -2159,6 +2259,8 @@ function returnToGachaHome() {
     }
     // Update Gacha Ready Tooltip when returning to gacha-view
     updateGachaReadyTooltip();
+    // Cổng 3D góc màn hình hiện lại (điều kiện y hệt lore helper)
+    if (!document.body.classList.contains('guest-mode')) showCornerPortal();
 }
 
 document.querySelectorAll(".btn-back-dock").forEach(btn => btn.addEventListener("click", returnToGachaHome));
@@ -2554,7 +2656,7 @@ function openItemModal(item, itemIndex) {
     else {
         qrWrapper.classList.remove("hidden");
         btnUseBuff.classList.add("hidden");
-        noteText.textContent = "Đưa mã QR này cho Quản lý / NPC Ranger Hội Ngọc Lục quét tại khu dã ngoại.";
+        noteText.textContent = "Đưa mã QR này cho Hội Ngọc Lục quét tại Rừng Tinh Linh. \n Hiệu lực 50 ngày kể từ ngày nhận.";
 
         // 1. Đảm bảo vật phẩm luôn có token hợp lệ (nếu thiếu tự sinh ngay)
         if (!item.qr_token) {

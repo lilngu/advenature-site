@@ -586,6 +586,65 @@ export function createPortalVortex(options = {}) {
 // ===========================================================================
 
 /**
+ * Sửa bloom để KHÔNG phá kênh alpha khi nền cần trong suốt.
+ *
+ * Vì sao cần: UnrealBloomPass của three.js r160 ghi cứng `alpha = 1.0` ở tầng
+ * blur separable (`gl_FragColor = vec4(diffuseSum/weightSum, 1.0);`) và ở tầng
+ * composite (`vec4(bloomTintColors[i], 1.0) * texture(...)`). Hệ quả là toàn bộ
+ * vùng KHÔNG có ánh sáng cũng nhận alpha ≈ 1. Sau đó `blendMaterial` (Additive)
+ * cộng alpha đó vào framebuffer -> toàn bộ canvas thành đục, dù đã truyền
+ * `transparent: true` và `scene.background = null`. Đây chính là lý do nền cổng
+ * bị đen đặc thay vì trong suốt.
+ *
+ * Cách sửa: thay shader blur bằng bản lấy cả alpha (vector 4 thay vì vec3) để
+ * alpha được quét mờ đúng theo ánh sáng. Ở vùng tối alpha bằng 0 nên composite
+ * và additive-blend không cộng thêm gì -> nền trong suốt, còn vùng glow thì vẫn
+ * cộng alpha như trước nên cổng hiện rõ.
+ *
+ * Chỉ gọi khi `transparent: true`; chế độ nền đặc (portal.html) giữ nguyên
+ * hành vi gốc.
+ *
+ * @param {UnrealBloomPass} pass
+ */
+function makeBloomAlphaSafe(pass) {
+    const mats = pass?.separableBlurMaterials;
+    if (!mats?.length) {
+        console.warn('[portal3d] Không tìm thấy separableBlurMaterials, bỏ qua bản vá alpha.');
+        return false;
+    }
+
+    mats.forEach((mat) => {
+        mat.fragmentShader = /* glsl */`
+            #include <common>
+            varying vec2 vUv;
+            uniform sampler2D colorTexture;
+            uniform vec2 invSize;
+            uniform vec2 direction;
+            uniform float gaussianCoefficients[KERNEL_RADIUS];
+
+            void main() {
+                float weightSum = gaussianCoefficients[0];
+                // vec4 (không phải vec3) để alpha cùng được quét mờ.
+                vec4 diffuseSum = texture2D( colorTexture, vUv ) * weightSum;
+                for( int i = 1; i < KERNEL_RADIUS; i ++ ) {
+                    float x = float(i);
+                    float w = gaussianCoefficients[i];
+                    vec2 uvOffset = direction * invSize * x;
+                    vec4 sample1 = texture2D( colorTexture, vUv + uvOffset );
+                    vec4 sample2 = texture2D( colorTexture, vUv - uvOffset );
+                    diffuseSum += (sample1 + sample2) * w;
+                    weightSum += 2.0 * w;
+                }
+                gl_FragColor = diffuseSum / weightSum;
+            }
+        `;
+        mat.needsUpdate = true;
+    });
+
+    return true;
+}
+
+/**
  * @param {Object} options
  * @param {string|HTMLElement} [options.container='#portal3d']  Khung chứa (module tự tạo .p3d-root bên trong)
  * @param {Array} [options.portals=DEFAULT_PORTALS]             Danh sách định nghĩa cổng
@@ -596,6 +655,13 @@ export function createPortalVortex(options = {}) {
  * @param {THREE.PerspectiveCamera} [options.camera]
  * @param {boolean} [options.autoStart]                         Module tự chạy vòng lặp rAF
  * @param {boolean} [options.pauseWhenHidden=true]              Tạm dừng khi container bị ẩn
+ * @param {boolean} [options.transparent=false]                  Nền trong suốt (không dựng
+ *                                                               scene.background, renderer
+ *                                                               alpha:true, vá alpha cho bloom)
+ * @param {boolean|Object} [options.bloom]                      `false` = tắt UnrealBloomPass
+ *                                                               (khung nhỏ bị cắt cứng ở mép
+ *                                                               render target). Object = chỉnh
+ *                                                               strength/radius/threshold.
  * @param {(portal:Object)=>void} [options.onSelect]            Xử lý khi click cổng
  * @returns {Object|null} controller (null nếu không khởi tạo được)
  */
@@ -614,6 +680,15 @@ export function createPortalScene(options = {}) {
     const wantLabels = options.labels ?? true;
     let interactiveMode = options.interactive ?? (sharedScene ? 'passive' : true);
     const labelCfg = { ...PORTAL_DEFAULTS.labels, ...(options.labelOptions || {}) };
+    // Khoảng cách camera responsive — ghi đè được cho các khung nhỏ (widget, góc màn hình)
+    const fitCfg = {
+        distance: options.distance ?? PORTAL_DEFAULTS.distance,
+        mobileDistance: options.mobileDistance ?? PORTAL_DEFAULTS.mobileDistance,
+        mobileAspect: options.mobileAspect ?? PORTAL_DEFAULTS.mobileAspect,
+        mobileAspectFactor: options.mobileAspectFactor ?? PORTAL_DEFAULTS.mobileAspectFactor,
+        mobileLift: options.mobileLift ?? PORTAL_DEFAULTS.mobileLift,
+        ...(options.fitOptions || {})
+    };
 
     // ---- Khung DOM -------------------------------------------------------
     const root = document.createElement('div');
@@ -666,11 +741,21 @@ export function createPortalScene(options = {}) {
         renderer.domElement.style.willChange = 'transform, opacity';
         root.appendChild(renderer.domElement);
 
+        // `bloom: false` -> bỏ UnrealBloomPass, chỉ giữ RenderPass + OutputPass.
+        // OutputPass vẫn BẮT BUỘC phải giữ: shader của module là ShaderMaterial tự viết,
+        // không có #include <tonemapping_fragment> / <colorspace_fragment>, nên three.js
+        // không tự chèn tone mapping + chuyển sRGB cho nó. Bỏ OutputPass thì màu sẽ
+        // sai (ảnh tuyến tính bị đọc như sRGB -> nhợt, mờ).
+        const useBloom = options.bloom !== false;
         const bloom = { ...PORTAL_DEFAULTS.bloom, ...(options.bloom || {}) };
         composer = new EffectComposer(renderer);
         composer.addPass(new RenderPass(scene, camera));
-        bloomPass = new UnrealBloomPass(new THREE.Vector2(1, 1), bloom.strength, bloom.radius, bloom.threshold);
-        composer.addPass(bloomPass);
+        if (useBloom) {
+            bloomPass = new UnrealBloomPass(new THREE.Vector2(1, 1), bloom.strength, bloom.radius, bloom.threshold);
+            // Nền trong suốt: phải vá alpha của bloom, nếu không canvas sẽ đục.
+            if (options.transparent) makeBloomAlphaSafe(bloomPass);
+            composer.addPass(bloomPass);
+        }
         composer.addPass(new OutputPass());
     }
 
@@ -863,14 +948,14 @@ export function createPortalScene(options = {}) {
         const height = root.clientHeight || 1;
         const aspect = width / height;
 
-        if (aspect < PORTAL_DEFAULTS.mobileAspect) {
+        if (aspect < fitCfg.mobileAspect) {
             camera.position.set(
                 0,
-                PORTAL_DEFAULTS.mobileLift,
-                Math.max(PORTAL_DEFAULTS.mobileDistance, PORTAL_DEFAULTS.mobileAspectFactor / aspect)
+                fitCfg.mobileLift,
+                Math.max(fitCfg.mobileDistance, fitCfg.mobileAspectFactor / aspect)
             );
         } else {
-            camera.position.set(0, 0, PORTAL_DEFAULTS.distance);
+            camera.position.set(0, 0, fitCfg.distance);
         }
 
         camera.aspect = aspect;
