@@ -17,6 +17,9 @@
 // ======================================================
 import * as THREE from "three";
 import { toast } from './toast.js';
+// SFX: nhạc nền riêng cho nhiệm vụ NHẬP VAI VUI VẺ (tự tắt khi thoát module)
+// Dùng importmap @sfx để chia sẻ đúng một module instance với app.js
+import { playQuestBGM, stopQuestBGM } from '@sfx';
 
 let CFG = {
     apiUrl: "",
@@ -166,6 +169,8 @@ export async function openRollQuest() {
 
         // Mở màn hình + hiện popup giới thiệu kèm số lượt còn lại
         els.modal.classList.remove("hidden");
+        // BGM nhiệm vụ: bật khi vào module
+        playQuestBGM();
         startLoop();
         resetToIntro();
     } catch (err) {
@@ -231,6 +236,8 @@ function resetToIntro() {
 function closeRollQuest() {
     if (!els || els.modal.classList.contains("hidden")) return;
     els.modal.classList.add("hidden");
+    // BGM nhiệm vụ: tắt khi thoát module
+    stopQuestBGM();
     stopLoop();
     if (gsapLib) {
         gsapLib.killTweensOf(typeWriterProxy);

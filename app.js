@@ -27,6 +27,8 @@ import { initButtonVFX } from '@vfx';
 import { applyI18n, applyI18nToElement } from '@i18n';
 // MODULE 3D "CỔNG MA THUẬT" — dùng importmap @portal (dùng chung scene/camera của app.js)
 import { createPortalScene } from '@portal';
+// SFX MODULE — hệ thống hiệu ứng âm thanh — dùng importmap @sfx
+import { initSfx, setMainBgm, isSfxDucking, sfxGacha, sfxTeleport, sfxBlanket, sfxBlink, sfxGuild, sfxBlessing } from '@sfx';
 
 // Hằng số toán học dùng chung (Golden Angle cho phân bố đều trên cầu)
 const GOLDEN_ANGLE = Math.PI * (Math.sqrt(5) - 1);
@@ -210,7 +212,8 @@ async function tryPlayBGM(event) {
     if (event && event.isTrusted === false) return;
 
     bgmPending = true;
-    bgmAudio.volume = getBGMVolume();
+    // Không ghi đè volume khi SFX đang duck BGM
+    if (!isSfxDucking()) bgmAudio.volume = getBGMVolume();
 
     try {
         await bgmAudio.play();
@@ -293,9 +296,17 @@ syncBGMToggleUI();
 window.setBGMVolume = (vol) => {
     const v = Math.min(1, Math.max(0, Number(vol) || 0));
     localStorage.setItem(BGM_VOLUME_KEY, String(v));
-    if (bgmAudio) bgmAudio.volume = v;
+    if (bgmAudio) {
+        bgmAudio.volume = v;
+        setMainBgm(bgmAudio); // cập nhật mốc để SFX duck về đúng volume
+    }
 };
 window.toggleBGM = () => setBGMEnabled(!bgmUserEnabled);
+
+// ======================================================
+// SFX: khởi tạo sau khi BGM sẵn sàng để lấy volume làm mốc duck
+// ======================================================
+initSfx(bgmAudio);
 
 // ======================================================
 // PHASE 3: ĐỒNG BỘ DỮ LIỆU TỪ D1 KHI MỞ TRANG HOẶC VÀO TÚI ĐỒ
@@ -361,6 +372,9 @@ function getGuestHelperTargetPosition() {
 function showGuestHelper() {
     if (guestHelperShown || !document.body.classList.contains('guest-mode') || !guestHelper) return;
     guestHelperShown = true;
+    
+    // SFX: tiếng teleport khi Guest Helper xuất hiện
+    sfxTeleport();
     
     const pos = getGuestHelperTargetPosition();
     
@@ -1340,6 +1354,9 @@ function triggerGachaSummon() {
 
     state = STATE.GACHA;
     stateStart = performance.now();
+
+    // SFX: âm thanh gacha chạy
+    sfxGacha();
 }
 
 // Nút Gacha ở đáy
@@ -1374,6 +1391,9 @@ function openBlessingModal(blessing, reasonText) {
     document.getElementById("blessTitle").textContent = blessing.name;
     document.getElementById("blessDesc").textContent = `${reasonText}\n${blessing.desc || ''}`;
     blessingModal.classList.remove("hidden");
+
+    // SFX: âm thanh nhận vật phẩm / chúc phúc
+    sfxBlessing();
 }
 document.getElementById("btnCloseBlessingModal").addEventListener("click", () => {
     blessingModal.classList.add("hidden");
@@ -2207,6 +2227,8 @@ navButtons.forEach(btn => {
         if (targetId === "inventory-view") {
             syncUserDataFromBackend(); // Kéo dữ liệu D1 mới nhất về túi đồ
             checkAndClaimGemMilestones(); // Nhận mốc sưu tầm 33 biến thể nếu còn thiếu
+            // SFX: tiếng mở túi vật phẩm
+            sfxBlanket();
         }
         if (targetId === "quest-view") {
             refreshRollQuestBadge(); // Cập nhật số lượt NHẬP VAI còn lại trên pin card
@@ -2282,6 +2304,8 @@ document.querySelectorAll(".inv-tab-btn").forEach(btn => {
         document.querySelectorAll(".inv-content").forEach(c => c.classList.add("hidden"));
         document.getElementById(subId).classList.remove("hidden");
         if (subId === "sub-gems") {
+            // SFX: tiếng blink khi chuyển sang tab Quang Thạch
+            sfxBlink();
             renderInventoryGems();
         }
     });
@@ -3104,6 +3128,8 @@ document.getElementById("btnOpenBrochureModal")?.addEventListener("click", () =>
 // Mở / Đóng Modal Bang Hội
 document.getElementById("btnOpenGuildModal")?.addEventListener("click", () => {
     document.getElementById("guildModal").classList.remove("hidden");
+    // SFX: âm thanh mở Guild Modal
+    sfxGuild();
 });
 document.getElementById("closeGuildModal")?.addEventListener("click", () => {
     document.getElementById("guildModal").classList.add("hidden");
