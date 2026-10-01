@@ -2,3 +2,4 @@
 .worker/.env
 .worker/rollquest_scenarios.json
 .module/rpg-quest.html
+.module/portal.html

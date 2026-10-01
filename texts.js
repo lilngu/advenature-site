@@ -11,7 +11,7 @@ const TEXTS = {
     // META & DOCUMENT
     // ======================================================
     meta: {
-        title: "Advenature - Loot Box Tinh Quang",
+        title: "RỪNG TINH LINH ADVENATURE",
         scrollBgAlt: "Cuộn Thư Tinh Linh",
     },
 
