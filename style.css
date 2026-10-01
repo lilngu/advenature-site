@@ -4118,7 +4118,7 @@ body.guest-mode .dock-btn:not(.center-core) {
 /* MÀN HÌNH NHỎ: thu nhỏ khung quest cho vừa màn hình */
 @media (max-width: 480px) {
     .rq-quest-card { padding: 9px; gap: 7px; }
-    .rq-quest-image { height: 84px; }
+    .rq-quest-image { height: 30vh; }
     .rq-quest-name { font-size: 15px; }
     .rq-quest-desc { font-size: 13px; }
     .rq-modal-box { padding: 22px 16px; }
