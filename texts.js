@@ -375,14 +375,14 @@ const TEXTS = {
     // ADMIN MODAL
     // ======================================================
     admin: {
-        title: "⚡ ADMIN GOD-MODE TEST",
+        title: "⚡ MASTER MODE",
         actions: {
             addTQ: "+99 🔮 Tinh Quang",
             addCH: "+100 🛡️ Cống Hiến",
             unlockAllGems: "🔓 Mở Khóa Đủ 990 Đá",
             addAllItems: "🎒 Thêm Đủ 30 Chúc Phúc Vào Túi",
             toggleFastGacha: "⚡ Fast Gacha: TẮT",
-            resetData: "⚠️ Xóa Dữ Liệu Test",
+            resetData: "⚠️ Thoát Tài Khoản",
         },
         fastGachaOn: "BẬT (0.1s)",
         fastGachaOff: "TẮT",

@@ -4207,3 +4207,4 @@ body.guest-mode .dock-btn:not(.center-core) {
     .bgm-toggle { border-radius: 0 16px 16px 0; }
 }
 
+.btn-admin-act.hidden {display: none;}
