@@ -123,7 +123,7 @@ export const LORE_PAGES_DATA = [
     {
         id: 1,
         title: "Trang 1",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677727/qez3zw9rlkzbfejsmsde.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_mediumWebP/v1790861860/f6he3xmoq34ccewipjwi.png"
     },
     {
         id: 2,
