@@ -78,8 +78,8 @@ export const BLESSINGS_DATA = [
     { id: "BLESS_15", name: "Thẻ X2 Tinh Thạch Quest", tier: "uncommon", iconClass: "ico-item-15", isBuff: false, desc: "Nhân đôi phần thưởng Tinh Thạch từ Main Quest." },
     { id: "BLESS_16", name: "Thẻ Thuê Áo Choàng Free", tier: "uncommon", iconClass: "ico-item-16", isBuff: false, desc: "Mượn áo choàng pháp sư check-in miễn phí trong ngày." },
     { id: "BLESS_17", name: "Thẻ Trợ Thủ NPC", tier: "uncommon", iconClass: "ico-item-17", isBuff: false, desc: "Hỏi NPC Ranger 1 câu gợi ý giải mật mã Quest." },
-    { id: "BLESS_18", name: "+1 Tinh Thạch", tier: "uncommon", iconClass: "ico-item-18", isBuff: true, buff: { tt: 1 }, desc: "Cộng 1 Tinh Thạch mua dịch vụ hoặc tiện ích." },
-    { id: "BLESS_19", name: "+2 Tinh Thạch", tier: "uncommon", iconClass: "ico-item-19", isBuff: true, buff: { tt: 2 }, desc: "Cộng 2 Tinh Thạch vào tài khoản tiêu dùng." },
+    { id: "BLESS_18", name: "+1 Tinh Thạch", tier: "uncommon", iconClass: "ico-item-18", isBuff: false, desc: "Phiếu Tinh Thạch hiến có của Hội Ngọc Lục. Đưa mã QR cho Quản lý / NPC Ranger quét tại khu dã ngoại để đổi dịch vụ hoặc tiện ích." },
+    { id: "BLESS_19", name: "+2 Tinh Thạch", tier: "uncommon", iconClass: "ico-item-19", isBuff: false, desc: "Phiếu Tinh Thạch định giá cao. Đưa mã QR cho Quản lý / NPC Ranger quét tại khu dã ngoại để đổi dịch vụ hoặc tiện ích." },
     { id: "BLESS_20", name: "Thẻ mượn Đạo cụ Quest", tier: "uncommon", iconClass: "ico-item-20", isBuff: false, desc: "Mượn la bàn hoặc ống nhòm khám phá rừng." },
     { id: "BLESS_21", name: "Thẻ Mượn Đèn Bão Đêm", tier: "uncommon", iconClass: "ico-item-21", isBuff: false, desc: "Trang bị đèn bão lung linh cho buổi dạo đêm." },
     // Rare (22-27)

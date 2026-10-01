@@ -246,7 +246,7 @@ const TEXTS = {
         },
         stats: {
             tinhQuang: "Tinh Quang",
-            tinhThach: "Quang Thạch",
+            quangThach: "Quang Thạch",
             congHien: "Cống Hiến",
         },
         rank: {
@@ -329,7 +329,7 @@ const TEXTS = {
         tag: "MỐC {milestone}/990",
         title: "ĐẠT MỐC SƯU TẦM QUANG THẠCH!",
         desc: "Bạn đã sưu tầm đủ {milestone} biến thể Quang Thạch!\nHội Ngọc Lục tặng bạn {reward} đã được cộng vào Túi Đồ.",
-        note: "*Tiến trình sưu tầm: {current}/990\n Mỗi mốc 33 biến thể nhận 1 phần thưởng Tinh Thạch!",
+        note: "*Tiến trình sưu tầm: {current}/990\n Mỗi mốc 33 biến thể nhận 1 phiếu quà tặng!",
         closeBtn: "✧ NHẬN VÀO TÚI ĐỒ ✧",
     },
 
@@ -378,7 +378,6 @@ const TEXTS = {
         title: "⚡ ADMIN GOD-MODE TEST",
         actions: {
             addTQ: "+99 🔮 Tinh Quang",
-            addTT: "+99 💎 Tinh Thạch",
             addCH: "+100 🛡️ Cống Hiến",
             unlockAllGems: "🔓 Mở Khóa Đủ 990 Đá",
             addAllItems: "🎒 Thêm Đủ 30 Chúc Phúc Vào Túi",

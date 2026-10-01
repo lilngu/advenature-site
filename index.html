@@ -38,16 +38,16 @@
         "imports": {
             "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
             "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
-            "@data": "./data.js?v=20261001",
-            "@toast": "./toast.js?v=20261001",
-            "@rollquest": "./rollquest.js?v=20261001",
-            "@vfx": "./vfx.js?v=20261001",
-            "@i18n": "./i18n.js?v=20261001"
+            "@data": "./data.js?v=20261002",
+            "@toast": "./toast.js?v=20261002",
+            "@rollquest": "./rollquest.js?v=20261002",
+            "@vfx": "./vfx.js?v=20261002",
+            "@i18n": "./i18n.js?v=20261002"
         }
     }
     </script>
     <!-- Text Strings Repository (load trước app.js để window.TEXTS sẵn sàng) -->
-    <script src="texts.js?v=20261001"></script>
+    <script src="texts.js?v=20261002"></script>
 </head>
 <body>
 
@@ -526,8 +526,8 @@
                         <b id="profStatTQ"><i class="rpg-ico ico-tq"></i> 1</b>
                     </div>
                     <div class="stat-pill">
-                        <span class="stat-lbl" data-i18n="profile.stats.tinhThach"></span>
-                        <b id="profStatTT"><i class="rpg-ico ico-tt"></i> 0</b>
+                        <span class="stat-lbl" data-i18n="profile.stats.quangThach"></span>
+                        <b><i class="rpg-ico ico-tt"></i> <span id="profStatGemCount">0</span></b>
                     </div>
                     <div class="stat-pill">
                         <span class="stat-lbl" data-i18n="profile.stats.congHien"></span>
@@ -670,14 +670,14 @@
         </div>
     </div>
 
-    <!-- 7b. MODAL RPG: MỐC SƯU TẦM QUANG THẠCH (MỖI 33 BIẾN THỂ → +1 TINH THẠCH) -->
+    <!-- 7b. MODAL RPG: MỐC SƯU TẦM QUANG THẠCH (MỖI 33 BIẾN THỂ → 1 PHIẾU QUÀ TẶNG) -->
     <div id="gemMilestoneModal" class="modal-overlay hidden">
         <div class="modal-box rpg-milestone-box">
             <div class="milestone-halo"></div>
             <div class="milestone-tier-tag" id="gemMilestoneTag" data-i18n="gemMilestone.tag" data-i18n-args='{"milestone":33}'>MỐC 33/990</div>
             <div class="milestone-icon-large"><i class="item-ico ico-item-18" style="width:80px;height:80px;"></i></div>
             <h3 class="milestone-title" data-i18n="gemMilestone.title">ĐẠT MỐC SƯU TẦM QUANG THẠCH!</h3>
-            <p class="milestone-desc" id="gemMilestoneDesc" data-i18n="gemMilestone.desc" data-i18n-args='{"milestone":33,"reward":"+1 Tinh Thạch"}'></p>
+            <p class="milestone-desc" id="gemMilestoneDesc" data-i18n="gemMilestone.desc" data-i18n-args='{"milestone":33,"reward":"Phiếu Tinh Thạch"}'></p>
             <div class="blessing-cta-box" style="margin-top: 14px;">
                 <p class="milestone-note" data-i18n="gemMilestone.note" data-i18n-args='{"current":0}'></p>
                 <button id="btnCloseGemMilestoneModal" class="btn-magical btn-claim" style="width: 100%;" data-i18n="gemMilestone.closeBtn">NHẬN VÀO TÚI ĐỒ</button>
@@ -818,12 +818,12 @@
                 <div id="qrcodeContainer" class="qr-box" style="margin: 6px auto;"></div>
                 <div class="qr-token-txt" id="modalQrTokenTxt"></div>
                 <div class="qr-live-status" id="qrLiveStatus">
-                    <span class="status-dot-pulse"></span> <span>Sẵn sàng xác thực thực địa</span>
+                    <span class="status-dot-pulse"></span> <span id="qrLiveStatusTxt">Sẵn sàng xác thực thực địa</span>
                 </div>
             </div>
 
             <!-- NUT SU DUNG DANH CHO ITEM BUFF DIEM TRUC TIEP -->
-            <button id="btnUseBuffItem" class="btn-celtic btn-celtic-wood btn-claim hidden" style="width: 100%; margin-top: 10px; font-size: 12px; padding: 10px;"></button>
+            <button id="btnUseBuffItem" class="btn-celtic btn-buff-use hidden"></button>
 
             <p class="qr-note" id="modalQrNote" style="margin-top: 8px;"></p>
         </div>
@@ -834,7 +834,6 @@
             <h3 style="color: #ff3366; font-size: 14px; margin-bottom: 10px;" data-i18n="admin.title"></h3>
             <div class="admin-grid-actions">
                 <button class="btn-admin-act" id="admAddTQ" data-i18n="admin.actions.addTQ"></button>
-                <button class="btn-admin-act" id="admAddTT" data-i18n="admin.actions.addTT"></button>
                 <button class="btn-admin-act" id="admAddCH" data-i18n="admin.actions.addCH"></button>
                 <button class="btn-admin-act" id="admUnlockAllGems" style="grid-column: span 2; border-color: #ffd166;" data-i18n="admin.actions.unlockAllGems"></button>
                 <button class="btn-admin-act" id="admAddAllItems" style="grid-column: span 2; border-color: #c77dff;" data-i18n="admin.actions.addAllItems"></button>
@@ -916,6 +915,6 @@
 <!-- VFX CANVAS FOR BUTTON PARTICLE EFFECTS -->
 <canvas id="vfxCanvas" class="vfx-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9998;"></canvas>
 
-    <script type="module" src="app.js?v=20261001"></script>
+    <script type="module" src="app.js?v=20261002"></script>
 </body>
 </html>

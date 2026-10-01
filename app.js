@@ -43,6 +43,14 @@ window.isFastGachaEnabled = false;
 
 let currentUser = JSON.parse(localStorage.getItem("advenature_user")) || null;
 
+// MIGRATION: Hệ thống Tinh Thạch đã bị gỡ khỏi dữ liệu người chơi.
+// Người chơi chỉ còn 3 nguồn tích lũy: Tinh Quang, bộ sưu tầm Quang Thạch, Cống Hiến.
+// Dọn sạch trường cũ trong localStorage để không còn dữ liệu rác.
+if (currentUser && "tinh_thach_points" in currentUser) {
+    delete currentUser.tinh_thach_points;
+    saveUserData();
+}
+
 if (!currentUser) {
     currentUser = {
         id: "AW_USER_" + Math.random().toString(36).substring(2, 8).toUpperCase(),
@@ -50,7 +58,6 @@ if (!currentUser) {
         adventurer_code: "AW----",
         role: "Tân Thủ Rừng Già",
         tinh_quang_points: 1, // Lần đầu Free
-        tinh_thach_points: 0,
         cong_hien_points: 0,
         gacha_counter: 0,
         unlocked_gems: [],
@@ -305,7 +312,6 @@ async function syncUserDataFromBackend() {
             }
 
             currentUser.tinh_quang_points = newTQ;
-            currentUser.tinh_thach_points = data.user.tinh_thach_points;
             currentUser.cong_hien_points = data.user.cong_hien_points;
             currentUser.gacha_counter = data.user.gacha_counter;
             currentUser.role = data.user.role || currentUser.role;
@@ -931,7 +937,6 @@ function updateTopBarUI() {
 
     // 1. Top Status Bar
     setSafeText("valTinhQuang", (currentUser.tinh_quang_points || 0).toLocaleString());
-    setSafeText("valTinhThach", (currentUser.tinh_thach_points || 0).toLocaleString());
     setSafeText("valCongHien", (currentUser.cong_hien_points || 0).toLocaleString());
     setSafeText("userAdvenCode", currentUser.adventurer_code || "AW----");
 
@@ -950,7 +955,6 @@ function updateTopBarUI() {
 
     // 5. Tài nguyên
     setSafeHtml("profStatTQ", `<i class="rpg-ico ico-tq"></i> ${currentUser.tinh_quang_points || 0}`);
-    setSafeHtml("profStatTT", `<i class="rpg-ico ico-tt"></i> ${currentUser.tinh_thach_points || 0}`);
     setSafeHtml("profStatCH", `<i class="rpg-ico ico-ch"></i> ${currentUser.cong_hien_points || 0} CP`);
     setSafeText("myRefCodeDisplay", currentUser.adventurer_code || "AW----");
 
@@ -1283,10 +1287,11 @@ document.getElementById("btnCloseBlessingModal").addEventListener("click", () =>
 });
 
 // ======================================================
-// MỐC SƯU TẦM QUANG THẠCH: MỖI 33 BIẾN THỂ → +1 TINH THẠCH
+// MỐC SƯU TẦM QUANG THẠCH: MỖI 33 BIẾN THỂ → TẶNG PHIẾU TINH THẠCH
 // Worker là nguồn sự thật và xử lý idempotent: /api/gacha đã trả sẵn danh sách mốc,
 // còn checkAndClaimGemMilestones() chỉ quét bù cho các luồng không đi qua gacha
 // (đăng nhập lại, mở Túi Đồ, admin mở full 990 đá).
+// Lưu ý: BLESS_18 là thẻ QR thực địa, KHÔNG cộng điểm trực tiếp vào tài khoản.
 // ======================================================
 const GEM_MILESTONE_STEP = 33;
 const GEM_TOTAL_COLLECTION = 990;
@@ -1301,7 +1306,7 @@ const gemMilestoneModal = document.getElementById("gemMilestoneModal");
 function openGemMilestoneModal(milestone, currentCount, rewardItem) {
     if (!gemMilestoneModal) return;
 
-    const rewardName = rewardItem?.name || "+1 Tinh Thạch";
+    const rewardName = rewardItem?.name || "Phiếu Tinh Thạch";
     const tag = gemMilestoneModal.querySelector("#gemMilestoneTag");
     const desc = gemMilestoneModal.querySelector("#gemMilestoneDesc");
     const note = gemMilestoneModal.querySelector(".milestone-note");
@@ -1315,7 +1320,7 @@ function openGemMilestoneModal(milestone, currentCount, rewardItem) {
     if (note) {
         note.textContent =
             `*Tiến trình sưu tầm: ${currentCount}/${GEM_TOTAL_COLLECTION}\n` +
-            ` Mỗi mốc 33 biến thể nhận 1 phần thưởng Tinh Thạch!`;
+            ` Mỗi mốc 33 biến thể nhận 1 phiếu quà tặng!`;
     }
 
     gemMilestoneModal.classList.remove("hidden");
@@ -2343,9 +2348,12 @@ function renderInventoryGems() {
     const unlockedSet = new Set(currentUser.unlocked_gems);
     const count = unlockedSet.size;
 
-    // Cập nhật chuẩn xác cho cả Topbar và Nút bấm Tab
+    // Cập nhật chuẩn xác cho cả Topbar, Hồ Sơ và Nút bấm Tab
     const topbarCountEl = document.getElementById("topbarGemCount");
-    if (topbarCountEl) topbarCountEl.textContent = count; // Hiển thị số đá đã có trên Topbar
+    if (topbarCountEl) topbarCountEl.textContent = count; // Số đá đã có trên Topbar
+
+    const profileCountEl = document.getElementById("profStatGemCount");
+    if (profileCountEl) profileCountEl.textContent = `${count}/990`; // Tiến trình sưu tầm trong Hồ Sơ
 
     const tabCountEl = document.getElementById("tabGemProgressCount");
     if (tabCountEl) tabCountEl.textContent = `${count}/990`; // Hiển thị tỉ lệ trên nút Tab
@@ -2359,7 +2367,7 @@ function renderInventoryGems() {
     const barEl = document.getElementById("gemProgressBar");
     if (barEl) barEl.style.width = `${pct}%`;
 
-    // Nhắc mốc thưởng kế tiếp (mỗi 33 biến thể nhận 1 Tinh Thạch)
+    // Nhắc mốc thưởng kế tiếp (mỗi 33 biến thể nhận 1 phiếu quà tặng)
     const milestoneHintEl = document.getElementById("gemMilestoneHint");
     if (milestoneHintEl) {
         if (count >= GEM_TOTAL_COLLECTION) {
@@ -2367,7 +2375,7 @@ function renderInventoryGems() {
         } else {
             const next = (Math.floor(count / GEM_MILESTONE_STEP) + 1) * GEM_MILESTONE_STEP;
             const remain = next - count;
-            milestoneHintEl.textContent = `✧ Mốc thưởng tiếp theo: ${next}/990 (còn ${remain} biến thể → +1 💎 Tinh Thạch)`;
+            milestoneHintEl.textContent = `✧ Mốc thưởng tiếp theo: ${next}/990 (còn ${remain} biến thể → 1 phiếu quà tặng)`;
         }
     }
 
@@ -2464,6 +2472,7 @@ const qrcodeContainer = document.getElementById("qrcodeContainer");
 // PHASE 3: XỬ LÝ SỬ DỤNG ITEM BUFF & MÃ QR ĐỘNG THỰC ĐỊA
 // ======================================================
 let qrCheckPollTimer = null;
+const BUFF_USE_BTN_LABEL = "✧ SỬ DỤNG BUFF NGAY ✧";
 
 function openItemModal(item, itemIndex) {
     if (qrCheckPollTimer) clearInterval(qrCheckPollTimer);
@@ -2478,12 +2487,25 @@ function openItemModal(item, itemIndex) {
     const btnUseBuff = document.getElementById("btnUseBuffItem");
     const noteText = document.getElementById("modalQrNote");
     const tokenTxt = document.getElementById("modalQrTokenTxt");
+    const statusTxt = document.getElementById("qrLiveStatusTxt");
 
     qrcodeContainer.innerHTML = "";
 
+    // Reset trạng thái về mặc định (trường hợp QR thực địa) trước khi áp dụng theo loại item
+    qrWrapper.classList.remove("hidden", "is-buff");
+    qrcodeContainer.classList.remove("hidden");
+    tokenTxt.classList.remove("hidden");
+    statusTxt.textContent = "Sẵn sàng xác thực thực địa";
+    btnUseBuff.textContent = BUFF_USE_BTN_LABEL;
+    btnUseBuff.disabled = false;
+
     // TRƯỜNG HỢP 1: VẬT PHẨM BUFF ĐIỂM TRỰC TIẾP
     if (item.isBuff) {
-        qrWrapper.classList.add("hidden");
+        // Buff không cần mã QR thực địa -> ẩn QR + token, chỉ giữ dòng trạng thái
+        qrcodeContainer.classList.add("hidden");
+        tokenTxt.classList.add("hidden");
+        qrWrapper.classList.add("is-buff");
+        statusTxt.textContent = "Sử dụng được ngay để nhận Buff";
         btnUseBuff.classList.remove("hidden");
         noteText.textContent = "Nhấn nút dưới để tiêu thụ vật phẩm và cộng chỉ số vào tài khoản của bạn.";
 
@@ -2502,7 +2524,6 @@ function openItemModal(item, itemIndex) {
 
                 if (data.success) {
                     currentUser.tinh_quang_points = data.points.tinh_quang_points;
-                    currentUser.tinh_thach_points = data.points.tinh_thach_points;
                     currentUser.cong_hien_points = data.points.cong_hien_points;
 
                     // Cập nhật số lượng ở client
@@ -2516,7 +2537,6 @@ function openItemModal(item, itemIndex) {
 
                     const buffMsg = [];
                     if (data.buffApplied.tq) buffMsg.push(`+${data.buffApplied.tq} 🔮 Tinh Quang`);
-                    if (data.buffApplied.tt) buffMsg.push(`+${data.buffApplied.tt} 💎 Tinh Thạch`);
                     if (data.buffApplied.ch) buffMsg.push(`+${data.buffApplied.ch} 🛡️ Cống Hiến`);
                     toast.success('SỬ DỤNG THÀNH CÔNG', `Bạn nhận được: ${buffMsg.join(", ")}`);
                 } else {
@@ -2525,7 +2545,7 @@ function openItemModal(item, itemIndex) {
             } catch (err) {
                 toast.error('LỖI KẾT NỐI', 'Lỗi kết nối máy chủ!');
             } finally {
-                btnUseBuff.textContent = "✧ SỬ DỤNG BUFF NGAY ✧";
+                btnUseBuff.textContent = BUFF_USE_BTN_LABEL;
                 btnUseBuff.disabled = false;
             }
         };
@@ -3017,10 +3037,10 @@ document.getElementById("closeAdminModal")?.addEventListener("click", () => admi
 
 // ======================================================
 // 1. HÀM ĐỒNG BỘ ĐIỂM: VỪA CẬP NHẬT GIAO DIỆN VỪA GHI VÀO D1
+// Chỉ còn 2 quyền tích lũy: Tinh Quang (dùng để Gacha) và Cống Hiến (thăng Căn Cước).
 // ======================================================
-async function syncPointsToBackend(tq = 0, tt = 0, ch = 0) {
+async function syncPointsToBackend(tq = 0, ch = 0) {
     currentUser.tinh_quang_points += tq;
-    currentUser.tinh_thach_points += tt;
     currentUser.cong_hien_points += ch;
     saveUserData();
     updateTopBarUI();
@@ -3032,7 +3052,6 @@ async function syncPointsToBackend(tq = 0, tt = 0, ch = 0) {
             body: JSON.stringify({
                 userId: currentUser.id,
                 tinhQuang: tq,
-                tinhThach: tt,
                 congHien: ch
             })
         });
@@ -3043,17 +3062,12 @@ async function syncPointsToBackend(tq = 0, tt = 0, ch = 0) {
 
 // 2. CÁC NÚT BƠM ĐIỂM ADMIN (GỌI ĐỒNG BỘ VÀO D1)
 document.getElementById("admAddTQ")?.addEventListener("click", async () => {
-    await syncPointsToBackend(99, 0, 0);
+    await syncPointsToBackend(99, 0);
     toast.info('ADMIN TEST', '⚡ Admin: +99 🔮 (Đã ghi nhận vào Database D1)');
 });
 
-document.getElementById("admAddTT")?.addEventListener("click", async () => {
-    await syncPointsToBackend(0, 99, 0);
-    toast.info('ADMIN TEST', '⚡ Admin: +99 💎 (Đã ghi nhận vào Database D1)');
-});
-
 document.getElementById("admAddCH")?.addEventListener("click", async () => {
-    await syncPointsToBackend(0, 0, 100);
+    await syncPointsToBackend(0, 100);
     toast.info('ADMIN TEST', '⚡ Admin: +100 🛡️ (Đã ghi nhận vào Database D1)');
 });
 
