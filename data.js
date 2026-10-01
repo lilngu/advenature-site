@@ -207,3 +207,20 @@ export const MODAL_IMAGES = {
     guild: "https://res.cloudinary.com/aurorawoods/image/upload/t_mediumWebP/v1790827628/w5dozhrgqqckohqmkcyl.png",
     ranger: "https://res.cloudinary.com/aurorawoods/image/upload/t_mediumWebP/v1790827630/zggrd1qbokfgyar2gt8x.png"
 };
+
+// 9. MODAL "CHỜ MỞ KHOÁ" - DANH SÁCH KHU VỰC ĐANG PHÁT TRIỂN
+// Thêm / sửa / bỏ mục ngay tại đây, giao diện tự động cập nhật theo.
+// - icon: emoji hiển thị bên trái (bỏ trống nếu không muốn dùng)
+// - name: tên khu vực (IN HOA)
+// - desc: mô tả ngắn
+export const UPCOMING_FEATURES_DATA = {
+    title: "CHỜ MỞ KHOÁ",
+    subtitle: "Các khu vực mới đang được Rừng Tinh Linh gia cố, sắp xuất hiện!",
+    note: "✧ Nội dung được đồng bộ tự động từ data.js ✧",
+    items: [
+        { icon: "🏰", name: "GUILD HALL", desc: "nơi Nhà phiêu lưu họp hội giao lưu." },
+        { icon: "🏆", name: "LEADERBOARD", desc: "Bảng danh sách top những Nhà phiêu lưu TOP Cống Hiến." },
+        { icon: "💎", name: "QUANG THẠCH RANK", desc: "Bảng danh sách top Nhà Phiêu Lưu sưu tầm Quang Thạch." },
+        { icon: "🌿", name: "KHU VƯỜN TINH LINH", desc: "nơi nhà phiêu lưu chill chăm sóc Tinh Linh và trồng Linh Thảo." }
+    ]
+};

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<meta name="referrer" content="no-referrer">
     <title data-i18n="meta.title">RỪNG TINH LINH ADVENATURE</title>
-    <link rel="stylesheet" href="style.css?v=20261001">
+    <link rel="stylesheet" href="style.css?v=20261002">
     <!-- Set FAV icon -->
     <link rel="icon" type="image/png" sizes="16x16"  href="/favicon-16x16.png">
 <meta name="msapplication-TileColor" content="#ffffff">
@@ -42,7 +42,7 @@
         "imports": {
             "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
             "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
-            "@data": "./data.js?v=20261002",
+            "@data": "./data.js?v=20261003",
             "@toast": "./toast.js?v=20261002",
             "@rollquest": "./rollquest.js?v=20261003",
             "@vfx": "./vfx.js?v=20261002",
@@ -951,9 +951,26 @@
     <span class="bgm-toggle-ico" id="bgmToggleIco">♫</span>
 </button>
 
+<!-- NÚT "?" NHỎ Ở GÓC DƯỚI BÊN PHẢI — MỞ MODAL "CHỜ MỞ KHOÁ" -->
+<button id="btnUpcomingFeatures" class="upcoming-fab" type="button"
+        aria-label="Xem các tính năng chờ mở khoá" title="Chờ mở khoá" aria-haspopup="dialog">
+    <span class="upcoming-fab-ico" aria-hidden="true">?</span>
+</button>
+
 <!-- VFX CANVAS FOR BUTTON PARTICLE EFFECTS -->
 <canvas id="vfxCanvas" class="vfx-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9998;"></canvas>
 
-    <script type="module" src="app.js?v=20261003"></script>
+<!-- MODAL: CHỜ MỞ KHOÁ (nội dung lấy từ data.js -> UPCOMING_FEATURES_DATA) -->
+<div id="upcomingModal" class="modal-overlay hidden">
+    <div class="modal-box upcoming-modal-box">
+        <span class="close-modal" id="closeUpcomingModal" data-i18n-title="common.close">&nbsp;</span>
+        <h3 class="upcoming-modal-title" id="upcomingModalTitle">CHỜ MỞ KHOÁ</h3>
+        <p class="upcoming-modal-sub" id="upcomingModalSub"></p>
+        <div class="upcoming-list" id="upcomingFeatureList"></div>
+        <p class="upcoming-modal-note" id="upcomingModalNote"></p>
+    </div>
+</div>
+
+    <script type="module" src="app.js?v=20261004"></script>
 </body>
 </html>

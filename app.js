@@ -15,7 +15,8 @@ import {
     QUIZ_LIST,
     LORE_PAGES_DATA,
     GUIDE_PAGES_DATA,
-    MODAL_IMAGES
+    MODAL_IMAGES,
+    UPCOMING_FEATURES_DATA
 } from '@data';
 // TOAST NOTIFICATION SYSTEM — dùng importmap @toast
 import { toast } from '@toast';
@@ -3141,6 +3142,64 @@ document.getElementById("btnOpenRangerModal")?.addEventListener("click", () => {
 });
 document.getElementById("closeRangerModal")?.addEventListener("click", () => {
     document.getElementById("rangerModal").classList.add("hidden");
+});
+
+// ======================================================
+// NÚT "?" + MODAL "CHỜ MỞ KHOÁ"
+// Toàn bộ nội dung đọc từ UPCOMING_FEATURES_DATA (data.js) để dễ cập nhật.
+// Thêm/bớt mục trong data.js là giao diện tự động theo, không cần sửa file này.
+// ======================================================
+const upcomingModal = document.getElementById("upcomingModal");
+const upcomingList = document.getElementById("upcomingFeatureList");
+
+function renderUpcomingFeatures() {
+    if (!upcomingList) return;
+
+    const { title, subtitle, note, items = [] } = UPCOMING_FEATURES_DATA || {};
+
+    const setTxt = (id, value) => {
+        const el = document.getElementById(id);
+        if (el && value) el.textContent = value;
+    };
+    setTxt("upcomingModalTitle", title);
+    setTxt("upcomingModalSub", subtitle);
+    setTxt("upcomingModalNote", note);
+
+    upcomingList.innerHTML = items.map((item, index) => `
+        <div class="upcoming-item">
+            <span class="upcoming-item-idx">${index + 1}.</span>
+            <span class="upcoming-item-ico">${item.icon || "✦"}</span>
+            <div class="upcoming-item-body">
+                <b class="upcoming-item-name">${item.name}</b>
+                <span class="upcoming-item-desc">${item.desc}</span>
+            </div>
+            <span class="upcoming-item-lock">🔒</span>
+        </div>
+    `).join("");
+}
+
+function openUpcomingModal() {
+    if (!upcomingModal) return;
+    renderUpcomingFeatures();
+    upcomingModal.classList.remove("hidden");
+    sfxBlink();
+}
+
+function closeUpcomingModal() {
+    upcomingModal?.classList.add("hidden");
+}
+
+document.getElementById("btnUpcomingFeatures")?.addEventListener("click", openUpcomingModal);
+document.getElementById("closeUpcomingModal")?.addEventListener("click", closeUpcomingModal);
+// Bấm ra ngoài vùng modal cũng đóng được
+upcomingModal?.addEventListener("click", (e) => {
+    if (e.target === upcomingModal) closeUpcomingModal();
+});
+// Nhấn ESC để đóng
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && upcomingModal && !upcomingModal.classList.contains("hidden")) {
+        closeUpcomingModal();
+    }
 });
 
 // ======================================================
