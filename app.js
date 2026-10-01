@@ -571,7 +571,8 @@ function initCornerPortal() {
             strokeCount: 14,
             colors: { primary: 0xff007f, secondary: 0x00f0ff, core: 0x18001a },
             link: CORNER_PORTAL_LINK,
-            onSelect: () => window.open(CORNER_PORTAL_LINK, '_blank', 'noopener')
+            // Chuyển trang trực tiếp (không mở tab mới như bản portal.html)
+            onSelect: () => { window.location.href = CORNER_PORTAL_LINK; }
         }]
     });
 
