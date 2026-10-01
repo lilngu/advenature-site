@@ -29,7 +29,7 @@ import { applyI18n, applyI18nToElement } from '@i18n';
 // MODULE 3D "CỔNG MA THUẬT" — dùng importmap @portal (dùng chung scene/camera của app.js)
 import { createPortalScene } from '@portal';
 // SFX MODULE — hệ thống hiệu ứng âm thanh — dùng importmap @sfx
-import { initSfx, setMainBgm, isSfxDucking, sfxGacha, sfxTeleport, sfxBlanket, sfxBlink, sfxGuild, sfxBlessing } from '@sfx';
+import { initSfx, setMainBgm, setMainBgmResumeHandler, isSfxDucking, isQuestBgmActive, sfxGacha, sfxTeleport, sfxBlanket, sfxBlink, sfxGuild, sfxBlessing } from '@sfx';
 
 // Hằng số toán học dùng chung (Golden Angle cho phân bố đều trên cầu)
 const GOLDEN_ANGLE = Math.PI * (Math.sqrt(5) - 1);
@@ -209,6 +209,8 @@ function detachBgmListeners() {
 
 async function tryPlayBGM(event) {
     if (!bgmAudio || bgmPlaying || bgmPending || !bgmUserEnabled) return;
+    // Quest BGM đang chiếm sân khấu -> giữ nguyên BGM nền ở trạng thái tạm dừng
+    if (isQuestBgmActive()) return;
     // event === undefined nghĩa là gọi thủ công (không qua gesture)
     if (event && event.isTrusted === false) return;
 
@@ -277,7 +279,8 @@ async function setBGMEnabled(enabled) {
     syncBGMToggleUI();
 
     if (bgmUserEnabled) {
-        // Nút bấm là user activation thật nên play() chắc chắn được
+        // Nút bấm là user activation thật nên play() chắc chắn được.
+        // Nếu quest đang mở thì chỉ ghi nhớ ý chí, BGM nền sẽ phát lại khi thoát quest.
         bgmPausedByVisibility = false;
         await tryPlayBGM();
     } else {
@@ -308,6 +311,12 @@ window.toggleBGM = () => setBGMEnabled(!bgmUserEnabled);
 // SFX: khởi tạo sau khi BGM sẵn sàng để lấy volume làm mốc duck
 // ======================================================
 initSfx(bgmAudio);
+// Quest BGM cần nhường chỗ cho BGM nền của trang. app.js giữ quyền quyết định
+// phát lại (vì còn phụ thuộc bgmUserEnabled + autoplay policy), nên đăng ký callback.
+setMainBgmResumeHandler(() => {
+    bgmPausedByVisibility = false;
+    tryPlayBGM();
+});
 
 // ======================================================
 // PHASE 3: ĐỒNG BỘ DỮ LIỆU TỪ D1 KHI MỞ TRANG HOẶC VÀO TÚI ĐỒ

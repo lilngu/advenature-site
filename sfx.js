@@ -52,6 +52,10 @@ let duckTimeout = null;
 // Tham chiếu BGM chính (gán từ ngoài để tránh phụ thuộc vòng import)
 let mainBgmAudio = null;
 let mainBgmBaseVolume = null;
+// BGM chính có đang phát trước khi quest BGM bật hay không -> quyết định có phát lại
+let mainBgmWasPlayingBeforeQuest = false;
+// Callback phát lại BGM chính (app.js tự quyết định dựa trên ý chí user)
+let resumeMainBgmHandler = null;
 
 // ======================================================
 // INIT: nạp audio element từ DOM, đăng ký listener unlock
@@ -95,6 +99,33 @@ function setMainBgm(mainBgm) {
     // Không nạp lại mốc volume khi đang duck, tránh nhảy volume đột ngột
     if (activeSfx === 0) mainBgmBaseVolume = mainBgm.volume;
     mainBgmAudio = mainBgm;
+}
+
+/**
+ * Đăng ký callback phát lại BGM chính.
+ * app.js sở hữu quyền quyết định (user đã tắt nhạc chưa, autoplay policy...),
+ * nên sfx.js không tự gọi play() mà gọi lại handler này.
+ */
+function setMainBgmResumeHandler(fn) {
+    resumeMainBgmHandler = typeof fn === 'function' ? fn : null;
+}
+
+/** Tạm dừng BGM chính để nhường chỗ cho quest BGM. */
+function pauseMainBgmForQuest() {
+    if (!mainBgmAudio) return;
+    // Chỉ ghi nhớ nếu BGM đang thật sự phát -> tránh phát lại khi user đã tắt nhạc
+    mainBgmWasPlayingBeforeQuest = !mainBgmAudio.paused;
+    if (mainBgmWasPlayingBeforeQuest) mainBgmAudio.pause();
+}
+
+/** Phát lại BGM chính sau khi quest BGM kết thúc. */
+function resumeMainBgmAfterQuest() {
+    if (!mainBgmWasPlayingBeforeQuest) {
+        mainBgmWasPlayingBeforeQuest = false;
+        return;
+    }
+    mainBgmWasPlayingBeforeQuest = false;
+    if (resumeMainBgmHandler) resumeMainBgmHandler();
 }
 
 function unlockAudio() {
@@ -197,6 +228,9 @@ function playQuestBGM() {
 
     if (!unlocked) unlockAudio();
 
+    // Nhường chỗ cho quest BGM: tạm dừng BGM nền của trang
+    pauseMainBgmForQuest();
+
     questBgmShouldResume = true;
     el.volume = QUEST_BGM_VOLUME;
     const p = el.play();
@@ -236,6 +270,8 @@ function stopQuestBGM() {
     } catch {
         // Bỏ qua lỗi khi chưa load
     }
+    // Trả lại BGM nền của trang nếu trước đó nó đang phát
+    resumeMainBgmAfterQuest();
 }
 
 // Tự dừng BGM quest khi rời tab, phát lại khi quay về (nếu modal chưa đóng)
@@ -264,6 +300,7 @@ function setSfxEnabled(enabled) {
                 try { el.currentTime = 0; } catch { /* ignore */ }
             }
         });
+        // stopQuestBGM cũng trả BGM nền của trang về trạng thái trước đó
         stopQuestBGM();
     }
 }
@@ -279,6 +316,15 @@ function isSfxEnabled() {
 /** BGM chính đang bị duck hay không (app.js dùng để không ghi đè volume) */
 function isSfxDucking() {
     return activeSfx > 0;
+}
+
+/**
+ * Quest BGM có đang phát không.
+ * app.js dùng để chặn tryPlayBGM tự phát lại BGM nền giữa lúc quest đang mở
+ * (listener pointerdown sẽ re-arm sau mỗi lần pause).
+ */
+function isQuestBgmActive() {
+    return questBgmShouldResume;
 }
 
 // ======================================================
@@ -297,6 +343,7 @@ const sfxBlessing = () => playSfx('blessing');
 export {
     initSfx,
     setMainBgm,
+    setMainBgmResumeHandler,
     playSfx,
     playQuestBGM,
     stopQuestBGM,
@@ -304,6 +351,7 @@ export {
     toggleSfx,
     isSfxEnabled,
     isSfxDucking,
+    isQuestBgmActive,
     sfxGacha,
     sfxTeleport,
     sfxBlanket,
