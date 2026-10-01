@@ -7,8 +7,9 @@
  *   POST /api/quest/rollquest-start    -> mở 1 lượt (mất 1 lượt/ngày) + nhận tình huống random
  *   POST /api/quest/rollquest-reward   -> hoàn thành nhiệm vụ, thưởng +1 🔮 Tinh Quang
  *
- * Quy tắc: mỗi ngày tối đa 2 lượt, mỗi lượt 1 tình huống KHÁC NHAU,
- *          chỉ khi đạt 2/3 lượt thành công mới nhận được 1 điểm Tinh Quang.
+ * Quy tắc: mỗi ngày tối đa 3 lượt, mỗi lượt 1 tình huống KHÁC NHAU,
+ *          đạt 2/3 lượt thành công để thắng lượt đó và nhận 1 điểm Tinh Quang
+ *          (mỗi lượt thắng được thưởng 1 lần -> tối đa 3 điểm/ngày).
  */
 
 // ======================================================
@@ -43,7 +44,8 @@ const state = {
     attempts: 0,         // Số lượt đã tung
     successCount: 0,     // Số lần thành công
     rollHistory: [],     // true/false theo từng lượt
-    lastSpokenLine: ""   // Lời thoại vừa hiển thị (tránh lặp)
+    lastSpokenLine: "",  // Lời thoại vừa hiển thị (tránh lặp)
+    attemptSlot: 0      // Slot lượt hôm nay (1-based, Worker trả về) - dùng chống thưởng trùng
 };
 
 // ======================================================
@@ -185,7 +187,7 @@ async function fetchStatus(silent = false) {
             if (!silent) toast.error("NHẬP VAI THẤT BẠI", data.error || t("quest.rollQuest.networkError"));
             return null;
         }
-        return { remaining: data.remaining || 0, max: typeof data.max === "number" ? data.max : 2 };
+        return { remaining: data.remaining || 0, max: typeof data.max === "number" ? data.max : 3 };
     } catch (err) {
         if (!silent) toast.error("LỖI KẾT NỐI", t("quest.rollQuest.networkError"));
         return null;
@@ -268,7 +270,7 @@ async function beginAttempt() {
 
         state.remaining = typeof data.remaining === "number" ? data.remaining : state.remaining;
         els.introModal.style.display = "none";
-        loadScenario(data.scenario);
+        loadScenario(data.scenario, typeof data.attemptSlot === "number" ? data.attemptSlot : 0);
     } catch (err) {
         toast.error("LỖI KẾT NỐI", t("quest.rollQuest.networkError"));
     } finally {
@@ -278,13 +280,14 @@ async function beginAttempt() {
 }
 
 /** Nạp tình huống vào khung quest và reset bộ đếm lượt tung */
-function loadScenario(scenario) {
+function loadScenario(scenario, attemptSlot = 0) {
     state.scenario = scenario;
     state.attempts = 0;
     state.successCount = 0;
     state.rollHistory = [];
     state.lastSpokenLine = "";
     state.rewarded = false;
+    state.attemptSlot = attemptSlot;
 
     els.img.src = scenario.image || "";
     els.title.textContent = scenario.title || "";
@@ -413,10 +416,14 @@ async function finalizeQuest() {
     els.nextBtn.textContent = t("rollQuest.waitReward");
 
     const result = await claimReward();
-    showWinModal(true, result.ok ? "  (+1 ✨ Tinh Quang)" : "");
+    showWinModal(true, result.ok ? result.note : "");
 }
 
-/** Gọi Worker nhận thưởng +1 Tinh Quang */
+/**
+ * Gọi Worker nhận thưởng +1 Tinh Quang cho lượt vừa thắng.
+ * Trả về { ok, note }: ok = người chơi có thắng (dù lượt này đã nhận thưởng hay chưa),
+ * note = ghi chú hiển thị trong popup kết luận.
+ */
 async function claimReward() {
     try {
         const res = await fetch(`${CFG.apiUrl}/api/quest/rollquest-reward`, {
@@ -424,7 +431,8 @@ async function claimReward() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 userId: CFG.getUserId(),
-                scenarioId: state.scenario ? state.scenario.id : undefined
+                scenarioId: state.scenario ? state.scenario.id : undefined,
+                attemptSlot: state.attemptSlot || undefined
             })
         });
         const data = await res.json();
@@ -433,15 +441,24 @@ async function claimReward() {
             state.rewarded = true;
             state.remaining = typeof data.remaining === "number" ? data.remaining : state.remaining;
             CFG.onReward(data.tinh_quang_points);
-            toast.magic("HOÀN THÀNH NHẬP VAI", `🎭 Bạn đã hoàn thành tình huống và nhận +1 ✨ Tinh Quang! (Còn ${state.remaining}/${state.max} lượt hôm nay)`);
-            return { ok: true };
+
+            // Lượt này đã được thưởng trước đó (Worker trả reward: 0): vẫn là THẮNG,
+            // chỉ không cộng thêm điểm -> báo thành công chứ không báo lỗi.
+            if (data.reward > 0) {
+                const earned = typeof data.rewardedCount === "number" ? data.rewardedCount : 1;
+                toast.magic("HOÀN THÀNH NHẬP VAI", `🎭 Bạn đã hoàn thành tình huống và nhận +1 ✨ Tinh Quang! (Hôm nay đã nhận ${earned}/${state.max} điểm)`);
+                return { ok: true, note: t("quest.rollQuest.rewardNote") };
+            }
+
+            toast.magic("HOÀN THÀNH NHẬP VAI", `🎭 Bạn đã hoàn thành tình huống! ${t("quest.rollQuest.rewardedAlready")}`);
+            return { ok: true, note: t("quest.rollQuest.rewardNoteAlready") };
         }
 
         toast.error("NHẬN THƯỞNG THẤT BẠI", t("quest.rollQuest.rewardFail", { error: data.error || "" }));
-        return { ok: false };
+        return { ok: false, note: "" };
     } catch (err) {
         toast.error("LỖI KẾT NỐI", t("quest.rollQuest.networkError"));
-        return { ok: false };
+        return { ok: false, note: "" };
     }
 }
 

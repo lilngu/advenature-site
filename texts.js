@@ -170,7 +170,7 @@ const TEXTS = {
         },
         rollQuest: {
             cardTitle: "NHẬP VAI VUI VẺ",
-            cardDesc: "Tung Xí Ngầu để nhập vai phiêu lưu.\n Hoàn thành +1 ✨ Tinh Quang.",
+            cardDesc: "Tung Xí Ngầu để nhập vai phiêu lưu.\n Mỗi lượt hoàn thành +1 ✨ Tinh Quang.",
             badge: "Tối đa 3 lượt mỗi ngày",
             btn: "NHẬP VAI THÔI",
             btnLoading: "Đang xem thẻ bài...",
@@ -178,12 +178,15 @@ const TEXTS = {
             exhausted: "Hôm nay bạn đã nhập vai đủ 3 lần rồi! Quay lại vào ngày mai nhé.",
             networkError: "Lỗi kết nối máy chủ nhiệm vụ!",
             rewardFail: "Chưa nhận được thưởng: {error}",
+            rewardedAlready: "Lượt này bạn đã nhận thưởng rồi! Thử nhập vai tình huống khác nhé.",
+            rewardNote: "  (+1 ✨ Tinh Quang)",
+            rewardNoteAlready: "  (Lượt này đã nhận thưởng)",
             noScenario: "Chưa có kịch bản nhập vai nào được nạp!",
         },
         loreQuest: {
-            cardTitle: "📜 NHIỆM VỤ CỐT TRUYỆN",
-            cardDesc: "‼️",
-            btn: "KHÁM PHÁ CỐT TRUYỆN",
+            cardTitle: "𓍢ִ໋🧚🏻KHU VƯỜN TINH LINH🐞",
+            cardDesc: "NƠI NHÀ PHIÊU LƯU CHĂM SÓC TINH LINH VÀ KHU VƯỜN CỦA MÌNH",
+            btn: "KHÁM PHÁ",
             lockedToast: "CHƯA MỞ KHOÁ!",
         },
         backBtnAria: "Trở về",
@@ -346,7 +349,7 @@ const TEXTS = {
     // ======================================================
     rollQuest: {
         introTitle: "NHẬP VAI VUI VẺ",
-        introDesc: "Bạn sẽ nhập vai một tình huống ngẫu nhiên và tung Xí Ngầu tối đa 3 lần.\nĐạt đủ 2 lần thành công để hoàn thành nhiệm vụ và nhận +1 ✨ Tinh Quang!",
+        introDesc: "Bạn sẽ nhập vai một tình huống ngẫu nhiên và tung Xí Ngầu tối đa 3 lần.\nĐạt đủ 2 lần thành công để hoàn thành nhiệm vụ và nhận +1 ✨ Tinh Quang!\nMỗi ngày có tối đa 3 lượt - thắng lượt nào được thưởng lượt đó!",
         startBtn: "NHẬP VAI THÔI!",
         rollBtn: "🎲 TUNG XÍ NGẦU",
         thresholdLabel: "Thử thách: Roll ≥ {threshold}",

@@ -2936,8 +2936,8 @@ document.getElementById("btnSubmitRef")?.addEventListener("click", async () => {
 
 // ======================================================
 // QUEST MỚI: NHẬP VAI VUI VẺ (MODULE RPG ROLL D20)
-// - Mỗi ngày tối đa 2 lượt, mỗi lượt 1 tình huống khác nhau
-// - Bắt đầu chơi = mất 1 lượt, hoàn thành 2/3 lượt = +1 🔮 Tinh Quang
+// - Mỗi ngày tối đa 3 lượt, mỗi lượt 1 tình huống khác nhau
+// - Bắt đầu chơi = mất 1 lượt, thắng 2/3 lượt = +1 🔮 Tinh Quang (tối đa 3 điểm/ngày)
 // ======================================================
 initRollQuest({
     apiUrl: API_URL,
