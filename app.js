@@ -2927,7 +2927,7 @@ document.getElementById("btnSubmitFb")?.addEventListener("click", async () => {
 
 // app.js: Nhiệm vụ Cốt Truyện (placeholder - chưa mở)
 document.getElementById("btnOpenLoreQuest")?.addEventListener("click", () => {
-    toast.info('NHIỆM VỤ CỐT TRUYỆN', 'CHƯA MỞ KHOÁ');
+    toast.info('VƯỜN TINH LINH', 'CHƯA MỞ KHOÁ');
 });
 
 // app.js: Xử lý kết nối bạn bè 2 chiều
