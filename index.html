@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<meta name="referrer" content="no-referrer">
     <title data-i18n="meta.title">RỪNG TINH LINH ADVENATURE</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=20261001">
     
     <!-- Google Fonts for Celtic/Fantasy Theme (Lore Reader Modal) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,17 +32,22 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js" defer></script>
 
-    <!-- Importmap Three.js Engine -->
+    <!-- Importmap Three.js Engine + Internal Modules (cache-busting version 20261001) -->
     <script type="importmap">
     {
         "imports": {
             "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+            "@data": "./data.js?v=20261001",
+            "@toast": "./toast.js?v=20261001",
+            "@rollquest": "./rollquest.js?v=20261001",
+            "@vfx": "./vfx.js?v=20261001",
+            "@i18n": "./i18n.js?v=20261001"
         }
     }
     </script>
     <!-- Text Strings Repository (load trước app.js để window.TEXTS sẵn sàng) -->
-    <script src="texts.js"></script>
+    <script src="texts.js?v=20261001"></script>
 </head>
 <body>
 
@@ -857,7 +862,7 @@
     <div class="modal-box rpg-glass-box" style="max-width: 340px; text-align: left;">
         <span class="close-modal" id="closeGuildModal" data-i18n-title="common.close">&nbsp;</span>
         <h3 style="color: #ffd166; font-size: 14px; text-align: center; margin-bottom: 8px;" data-i18n="guild.title"></h3>
-        <img src="https://iili.io/n5ZDa6P.png" width="100%">
+        <img data-modal-img="guild" width="100%" alt="Bang Hoi Advenature">
         <button class="btn-action btn-celtic btn-celtic-wood" style="width: 100%; font-size: 11px;" onclick="window.open('https://forms.gle/', '_blank')" data-i18n="guild.registerBtn"></button>
     </div>
 </div><!-- MODAL: CHIEU MO NPC RANGER -->
@@ -865,7 +870,7 @@
     <div class="modal-box rpg-glass-box" style="max-width: 340px; text-align: left;">
         <span class="close-modal" id="closeRangerModal" data-i18n-title="common.close">&nbsp;</span>
         <h3 style="color: #4cc9f0; font-size: 14px; text-align: center; margin-bottom: 8px;" data-i18n="ranger.title"></h3>
-        <img src="https://iili.io/n5Z4a6J.png" width="100%">
+        <img data-modal-img="ranger" width="100%" alt="Ranger Advenature">
         <button class="btn-action btn-dark" style="width: 100%; font-size: 11px;" onclick="window.open('https://forms.gle/', '_blank')" data-i18n="ranger.applyBtn"></button>
     </div>
 </div><!-- MODAL: CAMERA QUET QR BAN BE -->
@@ -893,6 +898,6 @@
 <!-- VFX CANVAS FOR BUTTON PARTICLE EFFECTS -->
 <canvas id="vfxCanvas" class="vfx-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9998;"></canvas>
 
-    <script type="module" src="app.js"></script>
+    <script type="module" src="app.js?v=20261001"></script>
 </body>
 </html>

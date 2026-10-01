@@ -1487,7 +1487,7 @@ i.ico-back-wind {width: 64px; height: 64px;}
     font-family: 'Handjet';
 }
 .pin-card {
-    background: url(https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790708870/kmljyhgxr5rerv0g52sc.png) no-repeat top / 100%;
+    background: url(https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790708870/kmljyhgxr5rerv0g52sc.png) no-repeat top / 100% 100%;
     color: #2b1f0c;
     border-radius: 4px;
     padding: 20px;

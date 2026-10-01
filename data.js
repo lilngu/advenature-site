@@ -128,7 +128,7 @@ export const LORE_PAGES_DATA = [
     {
         id: 2,
         title: "Trang 2",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677728/r58ikjqkwlichgxoxndy.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_mediumWebP/v1790826217/i4ovm7frbbuw1itainfl.png"
     },
     {
         id: 3,
@@ -138,7 +138,7 @@ export const LORE_PAGES_DATA = [
     {
         id: 4,
         title: "Trang 4",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677729/yhd2z6xt70dvqetc4wbr.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_mediumWebP/v1790826219/xaxbx3z4ybjtgg9jqrq5.png"
     },
     {
         id: 5,
@@ -153,7 +153,7 @@ export const LORE_PAGES_DATA = [
     {
         id: 7,
         title: "Trang 7",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677733/rryxx0gyv3xuxsz8oi4w.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_mediumWebP/v1790826500/fwlltjxu4ti6icegdwqy.png"
     },
     {
         id: 8,
@@ -191,7 +191,7 @@ export const LORE_PAGES_DATA = [
 export const GUIDE_PAGES_DATA = [
     {
         id: 1,
-        title: "Trang 1: Chào Mừng Tinh Thủ",
+        title: "Trang 1: Chào Mừng NHÀ PHIÊU LƯU",
         url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790719275/u0nu9m4xfcnee1s8xrc0.png"
     },
     {
@@ -200,3 +200,10 @@ export const GUIDE_PAGES_DATA = [
         url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790669761/mfrd4ibq5xardaop7z8e.png"
     }
 ];
+
+// 8. ẢNH MINH HOẠ TRONG MODAL (dễ thay thế link ảnh, không cần sửa index.html)
+// Key khớp với thuộc tính data-modal-img của thẻ <img> trong index.html
+export const MODAL_IMAGES = {
+    guild: "https://res.cloudinary.com/aurorawoods/image/upload/t_mediumWebP/v1790827628/w5dozhrgqqckohqmkcyl.png",
+    ranger: "https://res.cloudinary.com/aurorawoods/image/upload/t_mediumWebP/v1790827630/zggrd1qbokfgyar2gt8x.png"
+};

@@ -36,7 +36,7 @@ let gsapPromise = null;
 // Trạng thái gameplay
 const state = {
     scenario: null,      // Tình huống hiện tại (lấy từ Worker)
-    max: 2,              // Tổng lượt tối đa mỗi ngày (Worker trả về)
+    max: 3,              // Tổng lượt tối đa mỗi ngày (Worker trả về)
     remaining: 0,        // Số lượt còn lại hôm nay
     rewarded: false,     // Đã nhận thưởng lượt này chưa
     busy: false,         // Đang gọi API

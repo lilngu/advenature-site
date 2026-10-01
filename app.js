@@ -5,7 +5,7 @@ import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { ConvexGeometry } from "three/addons/geometries/ConvexGeometry.js";
-// IMPORT TOÀN BỘ DATA TĨNH TỪ DATA.JS (RÚT GỌN APP.JS)
+// IMPORT TOÀN BỘ DATA TĨNH TỪ DATA.JS (RÚT GỌN APP.JS) — dùng importmap @data (cache-busting v=20261001)
 import { 
     CRYSTAL_PALETTES, 
     FACE_TIERS, 
@@ -14,16 +14,17 @@ import {
     SHOP_ITEMS, 
     QUIZ_LIST,
     LORE_PAGES_DATA,
-    GUIDE_PAGES_DATA 
-} from './data.js';
-// TOAST NOTIFICATION SYSTEM
-import { toast } from './toast.js';
-// QUEST "NHẬP VAI VUI VẺ" - MODULE RPG ROLL D20
-import { initRollQuest, openRollQuest, refreshRollQuestBadge } from './rollquest.js';
-// BUTTON VFX PARTICLE SYSTEM
-import { initButtonVFX } from './vfx.js';
-// I18N SYSTEM
-import { applyI18n, applyI18nToElement } from './i18n.js';
+    GUIDE_PAGES_DATA,
+    MODAL_IMAGES
+} from '@data';
+// TOAST NOTIFICATION SYSTEM — dùng importmap @toast
+import { toast } from '@toast';
+// QUEST "NHẬP VAI VUI VẺ" - MODULE RPG ROLL D20 — dùng importmap @rollquest
+import { initRollQuest, openRollQuest, refreshRollQuestBadge } from '@rollquest';
+// BUTTON VFX PARTICLE SYSTEM — dùng importmap @vfx
+import { initButtonVFX } from '@vfx';
+// I18N SYSTEM — dùng importmap @i18n
+import { applyI18n, applyI18nToElement } from '@i18n';
 
 // Hằng số toán học dùng chung (Golden Angle cho phân bố đều trên cầu)
 const GOLDEN_ANGLE = Math.PI * (Math.sqrt(5) - 1);
@@ -128,6 +129,14 @@ if (isFirstTimeGuest) {
 // I18N: Apply translations ngay sau khi DOM elements đã có
 // ======================================================
 applyI18n();
+
+// ======================================================
+// MODAL IMAGES: nạp link ảnh từ data.js vào các thẻ <img data-modal-img>
+// ======================================================
+document.querySelectorAll("[data-modal-img]").forEach((img) => {
+    const url = MODAL_IMAGES?.[img.dataset.modalImg];
+    if (url) img.src = url;
+});
 
 // ======================================================
 // BACKGROUND MUSIC (BGM) - phát sau tương tác thật của người dùng
@@ -2740,11 +2749,11 @@ function showQuizQuestion() {
                         });
                         const completeData = await completeRes.json();
                         if (completeData.success) {
-                            currentUser.tinh_thach_points = completeData.tinh_thach_points;
+                            currentUser.tinh_quang_points = completeData.tinh_quang_points;
                             saveUserData();
                             updateTopBarUI();
                             quizModal.classList.add("hidden");
-                            toast.magic('HOÀN THÀNH TRI THỨC', `🎉 HOÀN THÀNH TRI THỨC TINH LINH!\nBạn đã trả lời đúng 10 câu và nhận được +1 💎 Tinh Thạch! (Hôm nay: ${completeData.countToday}/2 lượt)`);
+                            toast.magic('HOÀN THÀNH TRI THỨC', `🎉 HOÀN THÀNH TRI THỨC TINH LINH!\nBạn đã trả lời đúng 10 câu và nhận được +1 🔮 Tinh Quang! (Hôm nay: ${completeData.countToday}/1 lượt)`);
                         } else {
                             toast.error('NHẬN THƯỞNG THẤT BẠI', completeData.error);
                             quizModal.classList.add("hidden");
