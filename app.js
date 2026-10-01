@@ -137,16 +137,35 @@ applyI18n();
 //   2. play() bị reject thì GIỮ listener để thử lại ở lượt tương tác kế tiếp.
 //   3. Bỏ qua event tổng hợp (element.click(), dispatchEvent) vì chúng không
 //      cấp user activation.
+//   4. bgmUserEnabled = ý chí của user. Tự pause khi đổi tab KHÔNG được coi
+//      là user tắt nhạc, nên quay lại tab sẽ phát tiếp.
 const BGM_DEFAULT_VOLUME = 0.3;
 const BGM_VOLUME_KEY = 'advenature_bgm_volume';
+const BGM_ENABLED_KEY = 'advenature_bgm_enabled';
 
 const bgmAudio = document.getElementById('bgmAudio');
-let bgmPlaying = false;   // chỉ true khi play() đã resolve
-let bgmPending = false;   // đang chờ play() settle, chống gọi chồng
+const bgmToggleBtn = document.getElementById('btnToggleBGM');
+const bgmToggleIco = document.getElementById('bgmToggleIco');
+
+let bgmPlaying = false;             // chỉ true khi play() đã resolve
+let bgmPending = false;             // đang chờ play() settle, chống gọi chồng
+let bgmUserEnabled = localStorage.getItem(BGM_ENABLED_KEY) !== 'false';
+let bgmPausedByVisibility = false;  // đang tạm dừng do đổi tab
 
 function getBGMVolume() {
     const saved = parseFloat(localStorage.getItem(BGM_VOLUME_KEY));
     return Number.isFinite(saved) ? Math.min(1, Math.max(0, saved)) : BGM_DEFAULT_VOLUME;
+}
+
+// Đồng bộ icon + tooltip của nút theo trạng thái
+function syncBGMToggleUI() {
+    if (!bgmToggleBtn) return;
+    const label = bgmUserEnabled ? 'Tắt nhạc nền' : 'Bật nhạc nền';
+    bgmToggleBtn.classList.toggle('is-off', !bgmUserEnabled);
+    bgmToggleBtn.setAttribute('aria-pressed', String(bgmUserEnabled));
+    bgmToggleBtn.setAttribute('aria-label', label);
+    bgmToggleBtn.title = label;
+    if (bgmToggleIco) bgmToggleIco.textContent = bgmUserEnabled ? '♫♪' : '❚❚';
 }
 
 function attachBgmListeners() {
@@ -163,7 +182,7 @@ function detachBgmListeners() {
 }
 
 async function tryPlayBGM(event) {
-    if (!bgmAudio || bgmPlaying || bgmPending) return;
+    if (!bgmAudio || bgmPlaying || bgmPending || !bgmUserEnabled) return;
     // event === undefined nghĩa là gọi thủ công (không qua gesture)
     if (event && event.isTrusted === false) return;
 
@@ -173,24 +192,79 @@ async function tryPlayBGM(event) {
     try {
         await bgmAudio.play();
         bgmPlaying = true;
+        bgmPausedByVisibility = false;
         detachBgmListeners();   // chỉ gỡ khi thực sự phát được
     } catch (err) {
-        // Không gỡ listener - lần tương tác thật kế tiếp sẽ thử lại
+        // Giữ/re-arm listener để lần tương tác thật kế tiếp thử lại
+        attachBgmListeners();
         console.warn(`BGM chưa phát được (${err?.name}), sẽ thử lại khi bạn tương tác.`);
     } finally {
         bgmPending = false;
     }
 }
 
+// === TỰ PAUSE KHI RỜI TAB / THOÁT BROWSER ===
+
+// Đổi tab hoặc minimize cửa sổ -> dừng nhạc cho đỡ tốn tài nguyên
+document.addEventListener('visibilitychange', () => {
+    if (!bgmAudio) return;
+
+    if (document.hidden) {
+        if (!bgmAudio.paused) {
+            bgmPausedByVisibility = true;
+            bgmAudio.pause();
+        }
+    } else if (bgmPausedByVisibility && bgmUserEnabled) {
+        // Quay lại tab -> phát tiếp (user chưa chủ động tắt nhạc)
+        bgmPausedByVisibility = false;
+        tryPlayBGM();
+    }
+});
+
+// Đóng tab / chuyển trang -> pagehide đáng tin hơn beforeunload trên mobile
+window.addEventListener('pagehide', () => {
+    bgmAudio?.pause();
+});
+// Bfcache: quay lại qua nút Back cần resume
+window.addEventListener('pageshow', (e) => {
+    if (e.persisted && bgmUserEnabled) tryPlayBGM();
+});
+
 // Thử phát ngay khi tải trang (một số cấu hình browser cho phép)
 attachBgmListeners();
-tryPlayBGM();
+if (bgmUserEnabled) tryPlayBGM();
 
 // Tự phục hồi nếu OS/trình duyệt suspend nhạc giữa chừng
 bgmAudio?.addEventListener('pause', () => {
+    // Bỏ qua nếu do đổi tab, tránh re-arm listener thừa
+    if (bgmPausedByVisibility) return;
     bgmPlaying = false;
     attachBgmListeners();
 });
+
+// Bật/tắt nhạc (dùng chung cho nút UI và console)
+async function setBGMEnabled(enabled) {
+    if (!bgmAudio) return;
+    bgmUserEnabled = !!enabled;
+    localStorage.setItem(BGM_ENABLED_KEY, String(bgmUserEnabled));
+    syncBGMToggleUI();
+
+    if (bgmUserEnabled) {
+        // Nút bấm là user activation thật nên play() chắc chắn được
+        bgmPausedByVisibility = false;
+        await tryPlayBGM();
+    } else {
+        bgmPausedByVisibility = false;
+        bgmAudio.pause();
+    }
+}
+
+// Nút toggle: user chủ động bật/tắt
+bgmToggleBtn?.addEventListener('click', () => {
+    setBGMEnabled(!bgmUserEnabled);
+});
+
+syncBGMToggleUI();
 
 // Điều khiển thủ công (console hoặc UI sau này)
 window.setBGMVolume = (vol) => {
@@ -198,14 +272,7 @@ window.setBGMVolume = (vol) => {
     localStorage.setItem(BGM_VOLUME_KEY, String(v));
     if (bgmAudio) bgmAudio.volume = v;
 };
-window.toggleBGM = async () => {
-    if (!bgmAudio) return;
-    if (bgmAudio.paused) {
-        await tryPlayBGM();
-    } else {
-        bgmAudio.pause();
-    }
-};
+window.toggleBGM = () => setBGMEnabled(!bgmUserEnabled);
 
 // ======================================================
 // PHASE 3: ĐỒNG BỘ DỮ LIỆU TỪ D1 KHI MỞ TRANG HOẶC VÀO TÚI ĐỒ
