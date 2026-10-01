@@ -216,7 +216,7 @@ export const MODAL_IMAGES = {
 export const UPCOMING_FEATURES_DATA = {
     title: "CHỜ MỞ KHOÁ",
     subtitle: "Các khu vực mới đang được Rừng Tinh Linh gia cố, sắp xuất hiện!",
-    note: "✧ Nội dung được đồng bộ tự động từ data.js ✧",
+    note: "✧ Hãy cùng chờ nhé! ✧",
     items: [
         { icon: "🏰", name: "GUILD HALL", desc: "nơi Nhà phiêu lưu họp hội giao lưu." },
         { icon: "🏆", name: "LEADERBOARD", desc: "Bảng danh sách top những Nhà phiêu lưu TOP Cống Hiến." },
