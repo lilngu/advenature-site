@@ -312,20 +312,7 @@ async function syncUserDataFromBackend() {
             currentUser.unlocked_gems = data.user.unlocked_gems || [];
 
             if (data.user.inventory) {
-                currentUser.inventory = data.user.inventory.map(invItem => {
-                    const masterItem = BLESSINGS_DATA.find(b => b.id === invItem.item_code);
-                    return {
-                        id: invItem.item_code,
-                        name: invItem.item_name,
-                        iconClass: masterItem ? masterItem.iconClass : "ico-item-01",
-                        tier: masterItem ? masterItem.tier : "common",
-                        desc: masterItem ? masterItem.desc : "Vật phẩm lưu trữ thực địa.",
-                        isBuff: masterItem ? masterItem.isBuff : false,
-                        buff: masterItem ? masterItem.buff : null,
-                        quantity: invItem.quantity || 1,
-                        qr_token: invItem.qr_token
-                    };
-                });
+                currentUser.inventory = mapInventoryFromBackend(data.user.inventory);
             }
 
             saveUserData();
@@ -1296,6 +1283,137 @@ document.getElementById("btnCloseBlessingModal").addEventListener("click", () =>
 });
 
 // ======================================================
+// MỐC SƯU TẦM QUANG THẠCH: MỖI 33 BIẾN THỂ → +1 TINH THẠCH
+// Worker là nguồn sự thật và xử lý idempotent: /api/gacha đã trả sẵn danh sách mốc,
+// còn checkAndClaimGemMilestones() chỉ quét bù cho các luồng không đi qua gacha
+// (đăng nhập lại, mở Túi Đồ, admin mở full 990 đá).
+// ======================================================
+const GEM_MILESTONE_STEP = 33;
+const GEM_TOTAL_COLLECTION = 990;
+const gemMilestoneModal = document.getElementById("gemMilestoneModal");
+
+/**
+ * Mở modal thông báo đạt mốc sưu tầm.
+ * @param {number} milestone - Mốc vừa đạt (33, 66, 99...)
+ * @param {number} currentCount - Tổng số biến thể hiện có
+ * @param {object} rewardItem - Vật phẩm thưởng (từ BLESSINGS_DATA)
+ */
+function openGemMilestoneModal(milestone, currentCount, rewardItem) {
+    if (!gemMilestoneModal) return;
+
+    const rewardName = rewardItem?.name || "+1 Tinh Thạch";
+    const tag = gemMilestoneModal.querySelector("#gemMilestoneTag");
+    const desc = gemMilestoneModal.querySelector("#gemMilestoneDesc");
+    const note = gemMilestoneModal.querySelector(".milestone-note");
+
+    if (tag) tag.textContent = `MỐC ${milestone}/${GEM_TOTAL_COLLECTION}`;
+    if (desc) {
+        desc.textContent =
+            `Bạn đã sưu tầm đủ ${milestone} biến thể Quang Thạch!\n` +
+            `Hội Ngọc Lục tặng bạn ${rewardName} đã được cộng vào Túi Đồ.`;
+    }
+    if (note) {
+        note.textContent =
+            `*Tiến trình sưu tầm: ${currentCount}/${GEM_TOTAL_COLLECTION}\n` +
+            ` Mỗi mốc 33 biến thể nhận 1 phần thưởng Tinh Thạch!`;
+    }
+
+    gemMilestoneModal.classList.remove("hidden");
+}
+
+// Hành động sẽ chạy sau khi user đóng modal mốc (dùng để hoãn chúc phúc bị che)
+// Gán trực tiếp thay vì xếp hàng để luôn giữ đúng ưu tiên mới nhất.
+let milestoneNextAction = null;
+
+function queueMilestoneNextAction(fn) {
+    milestoneNextAction = typeof fn === "function" ? fn : null;
+}
+
+document.getElementById("btnCloseGemMilestoneModal")?.addEventListener("click", () => {
+    gemMilestoneModal?.classList.add("hidden");
+
+    const next = milestoneNextAction;
+    milestoneNextAction = null;
+    if (next) next();
+});
+
+/**
+ * Chuẩn hoá dữ liệu inventory từ Worker về đúng shape mà renderInventory5x5 cần.
+ * Dùng chung cho cả mốc sưu tầm và syncUserDataFromBackend.
+ */
+function mapInventoryFromBackend(rawItems) {
+    if (!Array.isArray(rawItems)) return [];
+    return rawItems.map(invItem => {
+        const masterItem = BLESSINGS_DATA.find(b => b.id === invItem.item_code);
+        return {
+            id: invItem.item_code,
+            name: invItem.item_name,
+            iconClass: masterItem ? masterItem.iconClass : "ico-item-01",
+            tier: masterItem ? masterItem.tier : "common",
+            desc: masterItem ? masterItem.desc : "Vật phẩm lưu trữ thực địa.",
+            isBuff: masterItem ? masterItem.isBuff : false,
+            buff: masterItem ? masterItem.buff : null,
+            quantity: invItem.quantity || 1,
+            qr_token: invItem.qr_token
+        };
+    });
+}
+
+/**
+ * Kiểm tra & nhận thưởng các mốc sưu tầm còn thiếu.
+ * - Nếu Worker trả về mốc mới: cập nhật túi đồ, render lại và mở modal.
+ * - Nếu không có: im lặng, không tốn DOM.
+ * @param {object|null} source - Nguồn dữ liệu (response của /api/gacha hoặc /api/gem-milestone)
+ * @returns {Promise<boolean>} true nếu vừa nhận được phần thưởng
+ */
+async function handleGemMilestones(source) {
+    if (!source) return false;
+
+    const milestones = Array.isArray(source.newMilestones) ? source.newMilestones : [];
+    if (milestones.length === 0) return false;
+
+    // Đồng bộ túi đồ ngay để vật phẩm thưởng xuất hiện trong lưới 5x5
+    if (Array.isArray(source.inventory) && source.inventory.length > 0) {
+        currentUser.inventory = mapInventoryFromBackend(source.inventory);
+    }
+    saveUserData();
+    renderInventory5x5();
+
+    // Nhiều mốc cùng lúc (admin mở full 990 đá) -> hiện mốc cao nhất
+    const highest = Math.max(...milestones);
+    const gemCount = source.gemCount || new Set(currentUser.unlocked_gems).size;
+
+    openGemMilestoneModal(highest, gemCount, source.rewardItem);
+    return true;
+}
+
+/**
+ * Gọi Worker để quét & nhận mốc sưu tầm bị bỏ lỡ.
+ * Dùng khi mở Túi Đồ, sau đăng nhập và khi quay lại tab — im lặng khi lỗi mạng.
+ * @returns {Promise<boolean>} true nếu vừa nhận được phần thưởng
+ */
+async function checkAndClaimGemMilestones() {
+    if (!currentUser || !currentUser.id || currentUser.id.startsWith("AW_USER_")) return false;
+
+    try {
+        const res = await fetch(`${API_URL}/api/gem-milestone`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: currentUser.id })
+        });
+        if (!res.ok) return false;
+
+        const data = await res.json();
+        if (!data.success) return false;
+
+        return await handleGemMilestones(data);
+    } catch (e) {
+        // Im lặng: polling nền không được làm phiền người chơi
+        return false;
+    }
+}
+
+// ======================================================
 // 5. LUỒNG THU THẬP: FIRST GACHA & GACHA THƯỜNG
 // ======================================================
 // ======================================================
@@ -1503,6 +1621,8 @@ async function handleGoogleSuccess(response) {
 
             toast.magic('CHÀO MỪNG QUAY LẠI', `🎉 CHÀO MỪNG QUAY TRỞ LẠI, ${currentUser.full_name}!\nĐã khôi phục Danh tính [${currentUser.adventurer_code}] và kho đồ của bạn.`);
             state = STATE.IDLE;
+            // Nhận mốc sưu tầm bị bỏ lỡ ở phiên trước (offline hoặc tab bị đóng)
+            checkAndClaimGemMilestones();
             // Trigger helpers sau 3s khi đã login xong
             triggerHelpersAfterLogin();
             return;
@@ -1702,9 +1822,17 @@ async function processClaimAfterLoot() {
                     collectBanner.classList.remove("slide-down-exit");
                     
                     // Bây giờ mới xử lý blessing, fade canvas, reset state
-                    if (data.blessing) {
-                        openBlessingModal(data.blessing, `Lượt quay thứ ${data.counter}! Nhận Tinh Linh chúc phúc:`);
-                    }
+                    // Mốc sưu tầm (33 biến thể) hiếm hơn nhiều nên được ưu tiên:
+                    // nếu trúng mốc, chúc phúc bị hoãn lại mở sau khi đóng modal mốc.
+                    handleGemMilestones(data).then(milestoneHit => {
+                        if (data.blessing) {
+                            const openBlessing = () => openBlessingModal(
+                                data.blessing,
+                                `Lượt quay thứ ${data.counter}! Nhận Tinh Linh chúc phúc:`
+                            );
+                            milestoneHit ? queueMilestoneNextAction(openBlessing) : openBlessing();
+                        }
+                    });
                     
                     // Fade canvas mượt
                     app3dCanvas.style.transition = 'opacity 0.4s ease';
@@ -1754,6 +1882,8 @@ async function processClaimAfterLoot() {
         renderInventoryGems();
         renderInventory5x5();
         state = STATE.IDLE;
+        // Offline không thể xác thực mốc sưu tầm trên D1 — để lần sync tới sẽ tự nhận.
+        checkAndClaimGemMilestones();
         // Show helpers again on offline fallback
         if (!document.body.classList.contains('guest-mode')) {
             guideHelperShown = false;
@@ -1975,6 +2105,7 @@ navButtons.forEach(btn => {
         btn.classList.add("active");
         if (targetId === "inventory-view") {
             syncUserDataFromBackend(); // Kéo dữ liệu D1 mới nhất về túi đồ
+            checkAndClaimGemMilestones(); // Nhận mốc sưu tầm 33 biến thể nếu còn thiếu
         }
         if (targetId === "quest-view") {
             refreshRollQuestBadge(); // Cập nhật số lượt NHẬP VAI còn lại trên pin card
@@ -2114,7 +2245,7 @@ function openGemPreviewModal(gemData) {
     initMiniGem3D();
 
     document.getElementById("previewGemCodeTag").textContent = gemData.isUnlocked ? gemData.code : "???";
-    document.getElementById("previewGemTitle").textContent = gemData.isUnlocked ? gemData.name : "Tinh Quang Thạch Ẩn Danh";
+    document.getElementById("previewGemTitle").textContent = gemData.isUnlocked ? gemData.name : "Quang Thạch Ẩn Danh";
     document.getElementById("previewGemShape").textContent = gemData.isUnlocked ? gemData.shapeName : "Chưa khám phá";
     document.getElementById("previewGemFaces").textContent = gemData.isUnlocked ? `${gemData.face} Diện Thể` : "?? Mặt";
     document.getElementById("previewGemSysTag").innerHTML = `
@@ -2227,6 +2358,18 @@ function renderInventoryGems() {
     if (pctEl) pctEl.textContent = `${pct}%`;
     const barEl = document.getElementById("gemProgressBar");
     if (barEl) barEl.style.width = `${pct}%`;
+
+    // Nhắc mốc thưởng kế tiếp (mỗi 33 biến thể nhận 1 Tinh Thạch)
+    const milestoneHintEl = document.getElementById("gemMilestoneHint");
+    if (milestoneHintEl) {
+        if (count >= GEM_TOTAL_COLLECTION) {
+            milestoneHintEl.textContent = "🏆 Đã sưu tầm trọn bộ 990 biến thể!";
+        } else {
+            const next = (Math.floor(count / GEM_MILESTONE_STEP) + 1) * GEM_MILESTONE_STEP;
+            const remain = next - count;
+            milestoneHintEl.textContent = `✧ Mốc thưởng tiếp theo: ${next}/990 (còn ${remain} biến thể → +1 💎 Tinh Thạch)`;
+        }
+    }
 
     const filteredPalettes = currentFilterSys === "ALL" 
         ? CRYSTAL_PALETTES 
@@ -2925,6 +3068,8 @@ document.getElementById("admUnlockAllGems")?.addEventListener("click", () => {
     saveUserData();
     renderInventoryGems();
     toast.info('ADMIN TEST', '⚡ Admin: Đã mở full 990 đá!');
+    // Mốc sưu tầm chỉ được Worker xác nhận trên D1, nên admin cũng phải gọi để nhận thưởng
+    checkAndClaimGemMilestones();
 });
 document.getElementById("admAddAllItems")?.addEventListener("click", () => {
     BLESSINGS_DATA.forEach(b => addItemToInventory(b));

@@ -324,6 +324,7 @@
                     <div class="progress-bar-container">
                         <div id="gemProgressBar" class="progress-fill" style="width: 0%;"></div>
                     </div>
+                    <div class="progress-milestone-hint" id="gemMilestoneHint">✧ Mốc thưởng tiếp theo: 33/990</div>
                 </div>
 
                 <div class="filter-bar" id="gemFilterBar">
@@ -667,7 +668,24 @@
                 <button id="btnCloseBlessingModal" class="btn-celtic" style="width: 100%;  border: 1px solid rgba(255,255,255,0.2);" data-i18n="blessing.closeBtn"></button>
             </div>
         </div>
-    </div>    <!-- 8. MODAL RPG: MAT MA TINH LINH QUIZ -->
+    </div>
+
+    <!-- 7b. MODAL RPG: MỐC SƯU TẦM QUANG THẠCH (MỖI 33 BIẾN THỂ → +1 TINH THẠCH) -->
+    <div id="gemMilestoneModal" class="modal-overlay hidden">
+        <div class="modal-box rpg-milestone-box">
+            <div class="milestone-halo"></div>
+            <div class="milestone-tier-tag" id="gemMilestoneTag" data-i18n="gemMilestone.tag" data-i18n-args='{"milestone":33}'>MỐC 33/990</div>
+            <div class="milestone-icon-large"><i class="item-ico ico-item-18" style="width:80px;height:80px;"></i></div>
+            <h3 class="milestone-title" data-i18n="gemMilestone.title">ĐẠT MỐC SƯU TẦM QUANG THẠCH!</h3>
+            <p class="milestone-desc" id="gemMilestoneDesc" data-i18n="gemMilestone.desc" data-i18n-args='{"milestone":33,"reward":"+1 Tinh Thạch"}'></p>
+            <div class="blessing-cta-box" style="margin-top: 14px;">
+                <p class="milestone-note" data-i18n="gemMilestone.note" data-i18n-args='{"current":0}'></p>
+                <button id="btnCloseGemMilestoneModal" class="btn-magical btn-claim" style="width: 100%;" data-i18n="gemMilestone.closeBtn">NHẬN VÀO TÚI ĐỒ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. MODAL RPG: MAT MA TINH LINH QUIZ -->
     <div id="quizModal" class="modal-overlay hidden">
         <div class="modal-box rpg-glass-box">
             <span class="close-modal" id="closeQuizModal" data-i18n-title="common.close">&nbsp;</span>

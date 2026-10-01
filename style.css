@@ -1308,6 +1308,16 @@ i.ico-back-wind {width: 64px; height: 64px;}
     border: 1px solid rgba(255,255,255,0.1);
 }
 .progress-fill { height: 100%; background: linear-gradient(90deg, #7c6cff, #ffd166); transition: width 0.3s; }
+
+/* Nhắc mốc thưởng 33 biến thể trong tab Quang Thạch */
+.progress-milestone-hint {
+    margin-top: 6px;
+    font-size: 9.5px;
+    letter-spacing: 0.4px;
+    color: #7ee8fa;
+    text-align: center;
+    text-shadow: 0 0 8px rgba(126, 232, 250, 0.5);
+}
 .filter-bar { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 10px; }
 .filter-btn {
     background: rgba(255,255,255,0.05);
@@ -1789,6 +1799,126 @@ background: url(https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v
         box-shadow: 
             0 0 30px rgba(76, 201, 240, 0.8),
             0 0 60px rgba(255, 209, 102, 0.6),
+            inset 0 0 20px rgba(255, 255, 255, 0.2);
+    }
+}
+
+/* ======================================================
+   MODAL MỐC SƯU TẦM QUANG THẠCH (MỖI 33 BIẾN THỂ)
+====================================================== */
+.rpg-milestone-box {
+    border: 2px solid #7ee8fa;
+    box-shadow: 0 0 30px rgba(126, 232, 250, 0.6), 0 0 70px rgba(124, 108, 255, 0.35);
+    animation: milestoneBoxPulse 2.4s infinite ease-in-out;
+    overflow: hidden;
+}
+
+/* Vòng hào quang xoay quanh icon Tinh Thạch */
+.milestone-halo {
+    position: absolute;
+    top: 46px;
+    left: 50%;
+    width: 150px;
+    height: 150px;
+    margin-left: -75px;
+    border-radius: 50%;
+    border: 2px dashed rgba(126, 232, 250, 0.55);
+    pointer-events: none;
+    animation: milestoneHaloSpin 9s linear infinite;
+}
+
+.milestone-icon-large {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin: 10px 0 4px;
+    filter: drop-shadow(0 0 14px rgba(126, 232, 250, 0.9));
+}
+
+.milestone-tier-tag {
+    position: relative;
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: #000;
+    color: #7ee8fa;
+    border: 1px solid #7ee8fa;
+    margin-bottom: 8px;
+}
+
+.milestone-title {
+    position: relative;
+    font-size: 15px;
+    color: #7ee8fa;
+    text-shadow: 0 0 12px rgba(126, 232, 250, 0.8);
+    animation: milestoneTitleGlow 1.8s infinite ease-in-out;
+}
+
+.milestone-desc {
+    position: relative;
+    font-size: 11px;
+    color: #e2dcff;
+    margin-top: 6px;
+    line-height: 1.4;
+    white-space: pre-line;
+}
+
+.milestone-note {
+    font-size: 10px;
+    color: #ffd166;
+    margin-bottom: 8px;
+    font-style: italic;
+    white-space: pre-line;
+}
+
+#btnCloseGemMilestoneModal {
+    padding: 13px 20px;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    white-space: nowrap;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    box-shadow:
+        0 0 20px rgba(126, 232, 250, 0.5),
+        0 0 40px rgba(124, 108, 255, 0.3),
+        inset 0 0 15px rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    animation: milestoneButtonGlow 2s infinite ease-in-out;
+}
+
+#btnCloseGemMilestoneModal:hover { transform: scale(1.05); }
+#btnCloseGemMilestoneModal:active { transform: scale(0.98); }
+
+@keyframes milestoneHaloSpin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+@keyframes milestoneBoxPulse {
+    0%, 100% { box-shadow: 0 0 26px rgba(126, 232, 250, 0.5), 0 0 60px rgba(124, 108, 255, 0.3); }
+    50%      { box-shadow: 0 0 40px rgba(126, 232, 250, 0.85), 0 0 95px rgba(124, 108, 255, 0.55); }
+}
+
+@keyframes milestoneTitleGlow {
+    0%, 100% { text-shadow: 0 0 10px rgba(126, 232, 250, 0.7); }
+    50%      { text-shadow: 0 0 20px rgba(126, 232, 250, 1), 0 0 36px rgba(124, 108, 255, 0.7); }
+}
+
+@keyframes milestoneButtonGlow {
+    0%, 100% {
+        box-shadow:
+            0 0 20px rgba(126, 232, 250, 0.5),
+            0 0 40px rgba(124, 108, 255, 0.3),
+            inset 0 0 15px rgba(255, 255, 255, 0.1);
+    }
+    50% {
+        box-shadow:
+            0 0 32px rgba(126, 232, 250, 0.9),
+            0 0 66px rgba(124, 108, 255, 0.6),
             inset 0 0 20px rgba(255, 255, 255, 0.2);
     }
 }

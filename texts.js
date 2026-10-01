@@ -323,6 +323,17 @@ const TEXTS = {
     },
 
     // ======================================================
+    // GEM MILESTONE MODAL (MỐC SƯU TẦM MỖI 33 BIẾN THỂ)
+    // ======================================================
+    gemMilestone: {
+        tag: "MỐC {milestone}/990",
+        title: "ĐẠT MỐC SƯU TẦM QUANG THẠCH!",
+        desc: "Bạn đã sưu tầm đủ {milestone} biến thể Quang Thạch!\nHội Ngọc Lục tặng bạn {reward} đã được cộng vào Túi Đồ.",
+        note: "*Tiến trình sưu tầm: {current}/990\n Mỗi mốc 33 biến thể nhận 1 phần thưởng Tinh Thạch!",
+        closeBtn: "✧ NHẬN VÀO TÚI ĐỒ ✧",
+    },
+
+    // ======================================================
     // QUIZ MODAL
     // ======================================================
     quiz: {
