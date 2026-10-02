@@ -30,7 +30,7 @@ import { applyI18n, applyI18nToElement } from '@i18n';
 import { createPortalScene } from '@portal';
 // SFX MODULE — hệ thống hiệu ứng âm thanh — dùng importmap @sfx
 // mountAudioElements dựng toàn bộ <audio> từ manifest AUDIO_SOURCES trong data.js
-import { mountAudioElements, initSfx, setMainBgm, setMainBgmResumeHandler, isSfxDucking, isQuestBgmActive, sfxGacha, sfxTeleport, sfxBlanket, sfxBlink, sfxGuild, sfxBlessing } from '@sfx';
+import { mountAudioElements, initSfx, setMainBgm, setMainBgmResumeHandler, isSfxDucking, isQuestBgmActive, sfxGacha, sfxTeleport, sfxBlanket, sfxBlink, sfxGuild, sfxBlessing, sfxWoodbox, sfxPaper, sfxBell, sfxCoin } from '@sfx';
 
 // Hằng số toán học dùng chung (Golden Angle cho phân bố đều trên cầu)
 const GOLDEN_ANGLE = Math.PI * (Math.sqrt(5) - 1);
@@ -93,6 +93,19 @@ let guideHelperShown = false;
 let guideReaderOpen = false;
 let loreHelperShown = false;
 let gachaReadyTooltipShown = false;
+
+// Click Tinh Linh hướng dẫn / Cổ thư -> SFX lật giấy + mở modal.
+// Bind 1 lần ở top-level (openGuideReaderModal/openLoreReaderModal là function
+// declaration nên đã hoisted) vì initGuideHelper()/initLoreHelper() có thể chạy
+// lại nhiều lần trong 1 phiên (đăng nhập / đăng ký) — bind bên trong sẽ nhân bản listener.
+guideHelper?.addEventListener("click", () => {
+    sfxPaper();
+    openGuideReaderModal();
+});
+loreHelper?.addEventListener("click", () => {
+    sfxPaper();
+    openLoreReaderModal();
+});
 
 // Timeout IDs để cancel khi Gacha bắt đầu
 let guideHelperInitTimeout = null;
@@ -476,10 +489,7 @@ function initGuideHelper() {
         });
     });
     
-    // Click guide helper -> mở guide reader modal
-    guideHelper.addEventListener("click", () => {
-        openGuideReaderModal();
-    });
+    // Click guide helper -> mở guide reader modal (đã bind + SFX ở top-level)
     
     // Close guide reader modal
     const closeGuideReader = document.getElementById("closeGuideReader");
@@ -773,10 +783,7 @@ function initLoreHelper() {
         });
     });
     
-    // Click lore helper -> mở lore reader modal
-    loreHelper.addEventListener("click", () => {
-        openLoreReaderModal();
-    });
+    // Click lore helper -> mở lore reader modal (đã bind + SFX ở top-level)
     
     // Close lore reader modal
     const closeLoreReader = document.getElementById("closeLoreReader");
@@ -2258,6 +2265,16 @@ navButtons.forEach(btn => {
         }
         if (targetId === "quest-view") {
             refreshRollQuestBadge(); // Cập nhật số lượt NHẬP VAI còn lại trên pin card
+            // SFX: tiếng lật giấy khi mở Bảng Nhiệm Vụ
+            sfxPaper();
+        }
+        if (targetId === "profile-view") {
+            // SFX: tiếng lật giấy khi mở Hồ Sơ
+            sfxPaper();
+        }
+        if (targetId === "shop-view") {
+            // SFX: tiếng chuông khi mở Cửa Hàng Phiên Chợ
+            sfxBell();
         }
         if (targetId === "gacha-view") {
             controls.enabled = true;
@@ -2333,6 +2350,9 @@ document.querySelectorAll(".inv-tab-btn").forEach(btn => {
             // SFX: tiếng blink khi chuyển sang tab Quang Thạch
             sfxBlink();
             renderInventoryGems();
+        } else if (subId === "sub-items") {
+            // SFX: tiếng mở hòm gỗ khi chuyển sang tab Vật Phẩm
+            sfxWoodbox();
         }
     });
 });
@@ -2804,6 +2824,8 @@ function openShopDetail(item) {
     btn.style.background = isSelected ? "#c9184a" : "linear-gradient(180deg, #7c6cff, #4a34b8)";
 
     btn.onclick = () => {
+        // SFX: tiếng mở túi vật phẩm khi chọn / bỏ chọn mục trong giỏ
+        sfxBlanket();
         if (selectedShopIds.has(item.id)) selectedShopIds.delete(item.id);
         else selectedShopIds.add(item.id);
 
@@ -2839,6 +2861,10 @@ document.getElementById("btnCheckoutShop")?.addEventListener("click", async () =
     }
     const phone = prompt("Nhập SĐT hoặc Zalo để Hội Ngọc Lục liên hệ xác nhận đơn:");
     if (!phone) return;
+
+    // SFX: tiếng xu khi đơn hàng thực sự được gửi đi
+    // (đặt sau 2 lần check ở trên để không phát nhầm khi giỏ rỗng hoặc user bỏ prompt)
+    sfxCoin();
 
     try {
         await fetch(`${API_URL}/api/shop-order`, {
@@ -3180,6 +3206,8 @@ document.getElementById("closeGuildModal")?.addEventListener("click", () => {
 // Mở / Đóng Modal Ranger
 document.getElementById("btnOpenRangerModal")?.addEventListener("click", () => {
     document.getElementById("rangerModal").classList.remove("hidden");
+    // SFX: tiếng chuông khi mở modal Ranger
+    sfxBell();
 });
 document.getElementById("closeRangerModal")?.addEventListener("click", () => {
     document.getElementById("rangerModal").classList.add("hidden");

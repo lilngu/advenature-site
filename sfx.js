@@ -5,7 +5,7 @@
 //   1. SFX là one-shot, không loop -> reset currentTime về 0 trước khi phát
 //      để có thể phát lại liên tiếp mà không bị cắt.
 //   2. BGM nền phải duck (giảm volume) khi SFX phát, tránh lấn át.
-//   3. Chỉ preload nhóm SFX hay dùng (gacha, blessing, teleport), nhóm còn lại
+//   3. Chỉ preload nhóm SFX hay dùng (gacha, blessing, teleport, paper), nhóm còn lại
 //      nạp lazy ở lần phát đầu tiên để tiết kiệm băng thông mobile.
 //   4. Unlock AudioContext từ gesture đầu tiên (Safari/iOS chặn autoplay).
 //   5. Tất cả hàm đều no-op an toàn nếu phần tử audio chưa có (tránh crash).
@@ -24,6 +24,10 @@ const SFX_VOLUMES = {
     blink: 0.4,
     guild: 0.5,
     blessing: 0.55,
+    woodbox: 0.42,
+    paper: 0.32,
+    bell: 0.4,
+    coin: 0.45,
 };
 
 // Nhạc nền Roll Quest (loop riêng, không dùng chung BGM chính)
@@ -120,7 +124,7 @@ function initSfx(mainBgm = null) {
     if (mainBgmAudio) mainBgmBaseVolume = mainBgmAudio.volume;
 
     // Nạp trước nhóm SFX hay dùng, nhóm còn lại nạp lazy ở lần phát đầu
-    ['gacha', 'blessing', 'teleport'].forEach(getAudio);
+    ['gacha', 'blessing', 'teleport', 'paper'].forEach(getAudio);
 
     // AudioContext để "unlock" âm thanh trên Safari/iOS
     // Nếu không có AudioContext thì các lần play() sau vẫn bị chặn
@@ -217,7 +221,8 @@ function unduckBGM() {
 // ======================================================
 /**
  * Phát một SFX one-shot
- * @param {string} key - tên audio element (gacha, teleport, blanket, blink, guild, blessing)
+ * @param {string} key - tên audio element (gacha, teleport, blanket, blink, guild,
+//                        blessing, woodbox, paper, bell, coin)
  * @param {object} opts
  * @param {number} opts.volume - override volume 0..1
  * @param {number} opts.duckMs - thời gian giữ BGM ở mức thấp
@@ -375,6 +380,10 @@ const sfxBlanket = () => playSfx('blanket');
 const sfxBlink = () => playSfx('blink');
 const sfxGuild = () => playSfx('guild');
 const sfxBlessing = () => playSfx('blessing');
+const sfxWoodbox = () => playSfx('woodbox');
+const sfxPaper = () => playSfx('paper');
+const sfxBell = () => playSfx('bell');
+const sfxCoin = () => playSfx('coin');
 
 // ======================================================
 // EXPORTS
@@ -398,4 +407,8 @@ export {
     sfxBlink,
     sfxGuild,
     sfxBlessing,
+    sfxWoodbox,
+    sfxPaper,
+    sfxBell,
+    sfxCoin,
 };

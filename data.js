@@ -100,12 +100,12 @@ export const SHOP_ITEMS = [
     { id: "PKG_1", name: "📜 PHIÊU LƯU TẬP SỰ", tt: 35, vnd: 850000, iconClass: "ico-pkg1", desc: " Bao gồm Lưu trú + Lương Thực 3 Bữa \n +1 Quest Quang Tinh \n + 🚙Buff dịch chuyển \n Áp dụng Chúc Phúc Tinh Linh 🍀 \n\n ⚠️ Lưu ý: Việc chỉ hoàn thành 1 Nhiệm Vụ Nguyên Tố sẽ khiến 60% bí mật còn lại tại Rừng Tinh Linh bị phong ấn. \n Nâng cấp Góp Phiêu Lưu Trọn Vẹn để mở khoá 100% cốt truyện hoặc để dành cho những kỳ phiêu lưu sau. " },
     { id: "PKG_2", name: "🍃 PHIÊU LƯU TRỌN VẸN", tt: 60, vnd: 1500000, iconClass: "ico-pkg2", desc: " Bao gồm Lưu trú + Lương Thực 3 Bữa \n + Tất cả 3 Quest Nguyên Tố \n +🚙 Buff dịch chuyển toàn hành trình \n + 1 Mystery Box Trang bị Cơ bản \n Áp dụng Chúc Phúc Tinh Linh🍀" },
     { id: "PKG_3", name: "👑 PHIÊU LƯU NÂNG CẤP", tt: 80, vnd: 2000000, iconClass: "ico-pkg3", desc: " Bao gồm Lưu trú + Lương Thực 3 Bữa \n + Tất cả 3 Quest Nguyên Tố \n +🚙 Buff dịch chuyển toàn hành trình \n + 1 Mystery Box Trang bị Cơ bản \n +1 Món quà từ Tinh Linh Rừng \n +1 Thẻ bài Tinh Linh ngẫu nhiên.\n +Túi 10 Tinh Thạch  \n Áp dụng Chúc Phúc Tinh Linh🍀" },
-    { id: "PKG_4", name: "⛺ Lưu Trú 1 Đêm", tt: 16, vnd: 400000, iconClass: "ico-pkg4", desc: " 🚙 Buff dịch chuyển từ Điểm Tập Kết\n⛺ 01 Đêm Lưu Trú Lều Trại hoặc Dorm \n 🏚️ Sử dụng tự do Tavern Emerald Guild \n 🌿 Đã bao gồm bộ đệm ấm & túi ngủ." },
+    { id: "PKG_4", name: "⛺ Lưu Trú 1 Đêm", tt: 12, vnd: 300000, iconClass: "ico-pkg4", desc: " 🚙 Buff dịch chuyển từ Điểm Tập Kết\n⛺ 01 Đêm Lưu Trú Lều Trại hoặc Dorm \n 🏚️ Sử dụng tự do Tavern Emerald Guild \n 🌿 Đã bao gồm bộ đệm ấm & túi ngủ." },
     { id: "Q_1", name: "🌬️ Quest 1: Phong Tinh", tt: 10, vnd: 250000, iconClass: "ico-quest2", desc: "🚙 Buff dịch chuyển đến Đồi Cỏ Lang Thang\n 📜 Nhiệm Vụ Lá Thư Rừng Tập Sự \n 🍵 Thưởng thức Trà Thảo Mộc trên đồi" },
     { id: "Q_2", name: "✨ Quest 2: Quang Tinh", tt: 10, vnd: 250000, iconClass: "ico-quest1", desc: "📜 Nhiệm Vụ Thạch Yêu Lúc Lắc.\n 🔮 Nhận thưởng +1 Tinh Thạch " },
     { id: "Q_3", name: "🔥 Quest 3: Hỏa Tinh", tt: 10, vnd: 250000, iconClass: "ico-quest3", desc: "📜 Nhiệm Vụ Truyền Đuốc Lửa Đêm \n🔥 Kích hoạt Ngọn Lửa Trại Nguyên Tố \nNhận thưởng +1 Tinh Thạch " },
     { id: "PKG_5", name: "🕋 Mystery Box", tt: 10, vnd: 250000, iconClass: "ico-pkg5", desc: "Hộp Vật Phẩm\n Trang bị cơ bản cho Nhà Phiêu Lưu" },
-    { id: "PKG_6", name: "💎Túi 10 Tinh Thạch ", tt: 8, vnd: 200000, iconClass: "ico-pkg6", desc: "1 túi chứa sẵn 10 tinh thạch \n Giao dịch tại Phiên Chợ Tinh Linh." },
+    { id: "PKG_6", name: "🔁 Buff Di Chuyển ", tt: 12, vnd: 300000, iconClass: "ico-pkg6", desc: "Buff Di chuyển Quảng Trường ⇄ Rừng Tinh Linh bằng xe chuyên dụng." },
     { id: "F_1", name: "🍢  Bữa Tối BBQ", tt: 6, vnd: 150000, iconClass: "ico-food1", desc: "Bữa thịt nướng thơm lừng bên ánh lửa trại ấm cúng." },
     { id: "F_2", name: "🥪Bữa Sáng Bên Suối", tt: 6, vnd: 150000, iconClass: "ico-food2", desc: "​🥪 Buff dịch chuyển đến Suối Thì Thầm. \n 01 Suất Bữa Sáng bên Bờ Suối.\n 🌿 Có thể ngâm mình trong suối lạnh giữa rừng" },
     { id: "F_3", name: "🍱 Bữa Trưa Tại Phiên Chợ ", tt: 2, vnd: 50000, iconClass: "ico-food3", desc: "​🍱 01 Suất Bữa Trưa tại Phiên Chợ Tinh Linh nhập vai vui vẻ." }
@@ -221,7 +221,7 @@ export const AUDIO_SOURCES = [
     // 1. Gacha chạy
     { key: "gacha", id: "sfxGacha", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1790856083/audio/gacha-c_awgxcd.mp3", type: "audio/mpeg", loop: false, preload: "auto" },
     // 2. Guest helper xuất hiện
-    { key: "teleport", id: "sfxTeleport", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1790854823/audio/teleport_elk81d.mp3", type: "audio/mpeg", loop: false, preload: "auto" },
+    { key: "teleport", id: "sfxTeleport", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1790949228/audio/teleport_y4pthd.mp3", type: "audio/mpeg", loop: false, preload: "auto" },
     // 3. Mở túi vật phẩm
     { key: "blanket", id: "sfxBlanket", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1790854823/audio/blanket_uew73u.mp3", type: "audio/mpeg", loop: false, preload: "auto" },
     // 4. Click tab Quang Thạch trong Túi vật phẩm
@@ -231,7 +231,15 @@ export const AUDIO_SOURCES = [
     // 6. Nhạc nền nhiệm vụ Roll Quest (loop riêng, tắt khi thoát quest)
     { key: "questBgm", id: "sfxQuestBGM", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1790855653/audio/game-bgm-c_re26za.mp3", type: "audio/mpeg", loop: true, preload: "auto" },
     // 7. Nhận được vật phẩm / chúc phúc
-    { key: "blessing", id: "sfxBlessing", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1790854824/audio/blessing_ftf5h6.webm", type: "audio/webm", loop: false, preload: "auto" }
+    { key: "blessing", id: "sfxBlessing", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1790949230/audio/blessing_mctoas.mp3", type: "audio/webm", loop: false, preload: "auto" },
+    // 8. Click tab "Vật Phẩm" trong Túi vật phẩm (tiếng mở hòm gỗ)
+    { key: "woodbox", id: "sfxWoodbox", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1790949232/audio/woodbox_vtde46.mp3", type: "audio/mpeg", loop: false, preload: "auto" },
+    // 9. Click Tinh Linh hướng dẫn / Cổ thư / nút Nhiệm vụ / Hồ Sơ (tiếng lật giấy)
+    { key: "paper", id: "sfxPaper", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1790949228/audio/paper-turn_cxfu5m.mp3", type: "audio/mpeg", loop: false, preload: "auto" },
+    // 10. Click Ranger / nút Cửa hàng Phiên Chợ (tiếng chuông)
+    { key: "bell", id: "sfxBell", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1790949230/audio/bell_nqzh7k.mp3", type: "audio/mpeg", loop: false, preload: "auto" },
+    // 11. Click nút Thanh Toán trong giỏ hàng Phiên Chợ (tiếng xu)
+    { key: "coin", id: "sfxCoin", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1790949231/audio/coin_bt2mid.mp3", type: "audio/mpeg", loop: false, preload: "auto" }
 ];
 
 // Tra cứu nhanh: key -> cấu hình audio (dựng 1 lần lúc load module)
