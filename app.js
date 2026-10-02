@@ -29,7 +29,8 @@ import { applyI18n, applyI18nToElement } from '@i18n';
 // MODULE 3D "CỔNG MA THUẬT" — dùng importmap @portal (dùng chung scene/camera của app.js)
 import { createPortalScene } from '@portal';
 // SFX MODULE — hệ thống hiệu ứng âm thanh — dùng importmap @sfx
-import { initSfx, setMainBgm, setMainBgmResumeHandler, isSfxDucking, isQuestBgmActive, sfxGacha, sfxTeleport, sfxBlanket, sfxBlink, sfxGuild, sfxBlessing } from '@sfx';
+// mountAudioElements dựng toàn bộ <audio> từ manifest AUDIO_SOURCES trong data.js
+import { mountAudioElements, initSfx, setMainBgm, setMainBgmResumeHandler, isSfxDucking, isQuestBgmActive, sfxGacha, sfxTeleport, sfxBlanket, sfxBlink, sfxGuild, sfxBlessing } from '@sfx';
 
 // Hằng số toán học dùng chung (Golden Angle cho phân bố đều trên cầu)
 const GOLDEN_ANGLE = Math.PI * (Math.sqrt(5) - 1);
@@ -169,11 +170,15 @@ const BGM_DEFAULT_VOLUME = 0.3;
 const BGM_VOLUME_KEY = 'advenature_bgm_volume';
 const BGM_ENABLED_KEY = 'advenature_bgm_enabled';
 
-const bgmAudio = document.getElementById('bgmAudio');
+// BGM nền lấy từ manifest audio (data.js -> AUDIO_SOURCES), không khai báo thẻ <audio> trong HTML
+const bgmAudio = mountAudioElements().bgm;
 const bgmToggleBtn = document.getElementById('btnToggleBGM');
 const bgmToggleIco = document.getElementById('bgmToggleIco');
 
-let bgmPlaying = false;             // chỉ true khi play() đã resolve
+// Nguồn sự thật xem BGM có đang phát là bgmAudio.paused của chính phần tử <audio>.
+// KHÔNG dùng cờ bool phụ (bgmPlaying): sau khi pause() theo trạng thái tab, listener
+// 'pause' cố tình bỏ qua nên cờ đó giữ giá trị cũ -> quay lại tab bị chặn ở guard,
+// khiến BGM không phát lại được.
 let bgmPending = false;             // đang chờ play() settle, chống gọi chồng
 let bgmUserEnabled = localStorage.getItem(BGM_ENABLED_KEY) !== 'false';
 let bgmPausedByVisibility = false;  // đang tạm dừng do đổi tab
@@ -208,7 +213,10 @@ function detachBgmListeners() {
 }
 
 async function tryPlayBGM(event) {
-    if (!bgmAudio || bgmPlaying || bgmPending || !bgmUserEnabled) return;
+    if (!bgmAudio || bgmPending || !bgmUserEnabled) return;
+    // Đã phát rồi -> không cần làm gì. Dùng paused của <audio> làm chuẩn để luôn khớp
+    // thực tế, kể cả sau khi bị chính trình duyệt/OS tạm dừng (resource saver).
+    if (!bgmAudio.paused) return;
     // Quest BGM đang chiếm sân khấu -> giữ nguyên BGM nền ở trạng thái tạm dừng
     if (isQuestBgmActive()) return;
     // event === undefined nghĩa là gọi thủ công (không qua gesture)
@@ -220,7 +228,6 @@ async function tryPlayBGM(event) {
 
     try {
         await bgmAudio.play();
-        bgmPlaying = true;
         bgmPausedByVisibility = false;
         detachBgmListeners();   // chỉ gỡ khi thực sự phát được
     } catch (err) {
@@ -234,7 +241,8 @@ async function tryPlayBGM(event) {
 
 // === TỰ PAUSE KHI RỜI TAB / THOÁT BROWSER ===
 
-// Đổi tab hoặc minimize cửa sổ -> dừng nhạc cho đỡ tốn tài nguyên
+// Đổi tab hoặc minimize cửa sổ -> dừng nhạc cho đỡ tốn tài nguyên.
+// Quay lại tab -> phát lại (user chưa chủ động tắt nhạc).
 document.addEventListener('visibilitychange', () => {
     if (!bgmAudio) return;
 
@@ -243,20 +251,27 @@ document.addEventListener('visibilitychange', () => {
             bgmPausedByVisibility = true;
             bgmAudio.pause();
         }
-    } else if (bgmPausedByVisibility && bgmUserEnabled) {
-        // Quay lại tab -> phát tiếp (user chưa chủ động tắt nhạc)
-        bgmPausedByVisibility = false;
-        tryPlayBGM();
+        return;
     }
+
+    // Quay lại tab: luôn thử phát lại nếu user chưa tắt nhạc.
+    // tryPlayBGM tự no-op nếu đang phát rồi, đang chờ play() settle,
+    // hoặc quest BGM đang chiếm sân khấu.
+    bgmPausedByVisibility = false;
+    if (bgmUserEnabled) tryPlayBGM();
 });
 
 // Đóng tab / chuyển trang -> pagehide đáng tin hơn beforeunload trên mobile
 window.addEventListener('pagehide', () => {
-    bgmAudio?.pause();
+    if (!bgmAudio || bgmAudio.paused) return;
+    bgmPausedByVisibility = true;
+    bgmAudio.pause();
 });
 // Bfcache: quay lại qua nút Back cần resume
 window.addEventListener('pageshow', (e) => {
-    if (e.persisted && bgmUserEnabled) tryPlayBGM();
+    if (!e.persisted || !bgmUserEnabled) return;
+    bgmPausedByVisibility = false;
+    tryPlayBGM();
 });
 
 // Thử phát ngay khi tải trang (một số cấu hình browser cho phép)
@@ -265,9 +280,9 @@ if (bgmUserEnabled) tryPlayBGM();
 
 // Tự phục hồi nếu OS/trình duyệt suspend nhạc giữa chừng
 bgmAudio?.addEventListener('pause', () => {
-    // Bỏ qua nếu do đổi tab, tránh re-arm listener thừa
+    // Bỏ qua nếu do đổi tab: visibilitychange/pageshow sẽ tự phát lại,
+    // không cần re-arm listener thừa ở đây.
     if (bgmPausedByVisibility) return;
-    bgmPlaying = false;
     attachBgmListeners();
 });
 
@@ -2995,6 +3010,22 @@ let quizPool = [];
 let quizCorrectCount = 0;
 let currentQuizIdx = 0;
 
+// Xáo trộn các đáp án của 1 câu và tính lại index đáp án đúng (q.c)
+function shuffleAnswers(q) {
+    if (!q || !Array.isArray(q.a) || q.a.length < 2) return q;
+    const correctIdx = q.c;
+    const answers = q.a.map((text, i) => ({ text, i }));
+    for (let i = answers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [answers[i], answers[j]] = [answers[j], answers[i]];
+    }
+    return {
+        ...q,
+        a: answers.map(o => o.text),
+        c: answers.findIndex(o => o.i === correctIdx)
+    };
+}
+
 document.getElementById("btnOpenQuiz")?.addEventListener("click", async () => {
     const btn = document.getElementById("btnOpenQuiz");
     btn.textContent = "Đang tải câu đố...";
@@ -3003,8 +3034,8 @@ document.getElementById("btnOpenQuiz")?.addEventListener("click", async () => {
         const res = await fetch(`${API_URL}/api/quest/quiz-questions`);
         const data = await res.json();
         if (data.success && Array.isArray(data.questions)) {
-            // Xáo trộn ngẫu nhiên (shuffle) từ kho 50 câu
-            quizPool = data.questions.sort(() => 0.5 - Math.random());
+            // Xáo trộn ngẫu nhiên (shuffle) từ kho 50 câu, kèm xáo trộn đáp án từng câu
+            quizPool = data.questions.map(shuffleAnswers).sort(() => 0.5 - Math.random());
             quizCorrectCount = 0;
             currentQuizIdx = 0;
             showQuizQuestion();

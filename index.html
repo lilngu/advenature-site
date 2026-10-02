@@ -42,13 +42,13 @@
         "imports": {
             "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
             "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
-            "@data": "./data.js?v=20261003",
+            "@data": "./data.js?v=20261006",
             "@toast": "./toast.js?v=20261002",
             "@rollquest": "./rollquest.js?v=20261003",
             "@vfx": "./vfx.js?v=20261002",
             "@i18n": "./i18n.js?v=20261002",
             "@portal": "./portal-3d.js?v=20261003",
-            "@sfx": "./sfx.js?v=20261005"
+            "@sfx": "./sfx.js?v=20261007"
         }
     }
     </script>
@@ -910,40 +910,9 @@
 </div><!-- TOAST NOTIFICATION CONTAINER -->
 <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 
-<!-- BACKGROUND MUSIC -->
-<audio id="bgmAudio" loop preload="auto">
-    <source src="https://res.cloudinary.com/aurorawoods/video/upload/v1790791766/audio/bgm1_fxdgnd.mp3" type="audio/mpeg">
-</audio>
-
-<!-- SOUND EFFECTS (SFX) -->
-<!-- 1. Gacha chạy -->
-<audio id="sfxGacha" preload="auto">
-    <source src="https://res.cloudinary.com/aurorawoods/video/upload/v1790856083/audio/gacha-c_awgxcd.mp3" type="audio/mpeg">
-</audio>
-<!-- 2. Guest helper xuất hiện -->
-<audio id="sfxTeleport" preload="auto">
-    <source src="https://res.cloudinary.com/aurorawoods/video/upload/v1790854823/audio/teleport_elk81d.mp3" type="audio/mpeg">
-</audio>
-<!-- 3. Mở túi vật phẩm -->
-<audio id="sfxBlanket" preload="auto">
-    <source src="https://res.cloudinary.com/aurorawoods/video/upload/v1790854823/audio/blanket_uew73u.mp3" type="audio/mpeg">
-</audio>
-<!-- 4. Click tab Quang Thạch trong Túi vật phẩm -->
-<audio id="sfxBlink" preload="auto">
-    <source src="https://res.cloudinary.com/aurorawoods/video/upload/v1790854823/audio/blink_avuroa.mp3" type="audio/mpeg">
-</audio>
-<!-- 5. Mở Guild Modal -->
-<audio id="sfxGuild" preload="auto">
-    <source src="https://res.cloudinary.com/aurorawoods/video/upload/v1790856555/audio/guild-c_r9rgy1.mp3" type="audio/mpeg">
-</audio>
-<!-- 6. Nhạc nền nhiệm vụ Roll Quest (tắt khi thoát quest) -->
-<audio id="sfxQuestBGM" loop preload="auto">
-    <source src="https://res.cloudinary.com/aurorawoods/video/upload/v1790855653/audio/game-bgm-c_re26za.mp3" type="audio/mpeg">
-</audio>
-<!-- 7. Nhận được vật phẩm / chúc phúc -->
-<audio id="sfxBlessing" preload="auto">
-    <source src="https://res.cloudinary.com/aurorawoods/video/upload/v1790854824/audio/blessing_ftf5h6.webm" type="audio/webm">
-</audio>
+<!-- BACKGROUND MUSIC + SOUND EFFECTS (SFX)
+     Toàn bộ thẻ <audio> được dựng động từ data.js -> AUDIO_SOURCES
+     (xem sfx.js -> mountAudioElements). Muốn đổi/thêm file nhạc thì sửa data.js. -->
 
 <!-- NÚT BẬT/TẮT NHẠC NỀN (sát cạnh trái, top 10%) -->
 <button id="btnToggleBGM" class="bgm-toggle" type="button"
@@ -971,6 +940,6 @@
     </div>
 </div>
 
-    <script type="module" src="app.js?v=20261005"></script>
+    <script type="module" src="app.js?v=20261007"></script>
 </body>
 </html>

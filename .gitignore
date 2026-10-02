@@ -3,3 +3,4 @@
 .worker/rollquest_scenarios.json
 .module/rpg-quest.html
 .module/portal.html
+.worker/schema.sql

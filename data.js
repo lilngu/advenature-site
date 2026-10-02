@@ -208,7 +208,36 @@ export const MODAL_IMAGES = {
     ranger: "https://res.cloudinary.com/aurorawoods/image/upload/t_mediumWebP/v1790827630/zggrd1qbokfgyar2gt8x.png"
 };
 
-// 9. MODAL "CHỜ MỞ KHOÁ" - DANH SÁCH KHU VỰC ĐANG PHÁT TRIỂN
+// 9. MANIFEST AUDIO (BGM NỀN + SFX) - NGUỒN KHAI BÁO DUY NHẤT
+// Toàn bộ thẻ <audio> đã được dựng động từ manifest này (xem sfx.js -> mountAudioElements),
+// nên index.html không còn thẻ <audio> nào. Đổi/thêm file âm thanh chỉ sửa tại đây.
+// - key: tên dùng trong sfx.js (playSfx('gacha'), playQuestBGM()...)
+// - id : DOM id của <audio>, giữ nguyên tên cũ để không phá code đang truy vấn theo id
+// - src: link file trên Cloudinary
+// - type / loop / preload: thuộc tính phát của phần tử audio
+export const AUDIO_SOURCES = [
+    // Nhạc nền chính của trang (loop) - app.js điều khiển qua #bgmAudio
+    { key: "bgm", id: "bgmAudio", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1790791766/audio/bgm1_fxdgnd.mp3", type: "audio/mpeg", loop: true, preload: "auto" },
+    // 1. Gacha chạy
+    { key: "gacha", id: "sfxGacha", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1790856083/audio/gacha-c_awgxcd.mp3", type: "audio/mpeg", loop: false, preload: "auto" },
+    // 2. Guest helper xuất hiện
+    { key: "teleport", id: "sfxTeleport", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1790854823/audio/teleport_elk81d.mp3", type: "audio/mpeg", loop: false, preload: "auto" },
+    // 3. Mở túi vật phẩm
+    { key: "blanket", id: "sfxBlanket", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1790854823/audio/blanket_uew73u.mp3", type: "audio/mpeg", loop: false, preload: "auto" },
+    // 4. Click tab Quang Thạch trong Túi vật phẩm
+    { key: "blink", id: "sfxBlink", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1790854823/audio/blink_avuroa.mp3", type: "audio/mpeg", loop: false, preload: "auto" },
+    // 5. Mở Guild Modal
+    { key: "guild", id: "sfxGuild", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1790856555/audio/guild-c_r9rgy1.mp3", type: "audio/mpeg", loop: false, preload: "auto" },
+    // 6. Nhạc nền nhiệm vụ Roll Quest (loop riêng, tắt khi thoát quest)
+    { key: "questBgm", id: "sfxQuestBGM", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1790855653/audio/game-bgm-c_re26za.mp3", type: "audio/mpeg", loop: true, preload: "auto" },
+    // 7. Nhận được vật phẩm / chúc phúc
+    { key: "blessing", id: "sfxBlessing", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1790854824/audio/blessing_ftf5h6.webm", type: "audio/webm", loop: false, preload: "auto" }
+];
+
+// Tra cứu nhanh: key -> cấu hình audio (dựng 1 lần lúc load module)
+export const AUDIO_MAP = Object.fromEntries(AUDIO_SOURCES.map((a) => [a.key, a]));
+
+// 10. MODAL "CHỜ MỞ KHOÁ" - DANH SÁCH KHU VỰC ĐANG PHÁT TRIỂN
 // Thêm / sửa / bỏ mục ngay tại đây, giao diện tự động cập nhật theo.
 // - icon: emoji hiển thị bên trái (bỏ trống nếu không muốn dùng)
 // - name: tên khu vực (IN HOA)

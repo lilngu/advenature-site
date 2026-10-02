@@ -9,7 +9,12 @@
 //      nạp lazy ở lần phát đầu tiên để tiết kiệm băng thông mobile.
 //   4. Unlock AudioContext từ gesture đầu tiên (Safari/iOS chặn autoplay).
 //   5. Tất cả hàm đều no-op an toàn nếu phần tử audio chưa có (tránh crash).
+//   6. Khai báo file âm thanh nằm trong data.js (AUDIO_SOURCES); thẻ <audio>
+//      được dựng động từ đó, index.html không còn khai báo audio thủ công.
 // ======================================================
+
+// Danh sách file âm thanh (BGM nền + SFX) — nguồn duy nhất trong data.js
+import { AUDIO_SOURCES, AUDIO_MAP } from '@data';
 
 // Định nghĩa âm lượng cho từng SFX
 const SFX_VOLUMES = {
@@ -27,17 +32,6 @@ const QUEST_BGM_VOLUME = 0.28;
 // Ngưỡng duck BGM chính khi SFX phát
 const DUCK_VOLUME = 0.12;
 const DUCK_DURATION = 700; // ms
-
-// Map key -> id phần tử <audio> trong index.html
-const AUDIO_IDS = {
-    gacha: 'sfxGacha',
-    teleport: 'sfxTeleport',
-    blanket: 'sfxBlanket',
-    blink: 'sfxBlink',
-    guild: 'sfxGuild',
-    questBgm: 'sfxQuestBGM',
-    blessing: 'sfxBlessing',
-};
 
 // Bảng cache các <audio> theo key
 const audioCache = new Map();
@@ -58,16 +52,61 @@ let mainBgmWasPlayingBeforeQuest = false;
 let resumeMainBgmHandler = null;
 
 // ======================================================
-// INIT: nạp audio element từ DOM, đăng ký listener unlock
+// INIT: dựng audio element từ manifest trong data.js, đăng ký listener unlock
 // ======================================================
-function getAudio(key) {
-    if (audioCache.has(key)) return audioCache.get(key);
-    const el = document.getElementById(AUDIO_IDS[key] || '');
-    if (!el) {
-        console.warn(`[SFX] Không tìm thấy audio element: ${AUDIO_IDS[key] || key}`);
+
+/** Dựng một thẻ <audio> theo cấu hình trong AUDIO_SOURCES rồi gắn vào DOM. */
+function createAudioElement(cfg) {
+    const el = document.createElement('audio');
+    el.id = cfg.id;
+    el.loop = !!cfg.loop;
+    el.preload = cfg.preload || 'auto';
+    el.setAttribute('aria-hidden', 'true');   // âm thanh nền, không cho trình đọc màn hình đọc
+
+    const source = document.createElement('source');
+    source.src = cfg.src;
+    source.type = cfg.type || 'audio/mpeg';
+    el.appendChild(source);
+
+    document.body.appendChild(el);
+    return el;
+}
+
+/**
+ * Lấy phần tử <audio> theo key, tự dựng nếu DOM chưa có.
+ * Không đụng tới volume (BGM chính tự quản lý volume của nó).
+ */
+function ensureAudioElement(key) {
+    const cfg = AUDIO_MAP[key];
+    if (!cfg) {
+        console.warn(`[SFX] Không tìm thấy cấu hình audio: ${key}`);
         return null;
     }
-    el.preload = 'auto';
+    // Ưu tiên phần tử đã có trong DOM (id giữ nguyên như bản HTML cũ)
+    const existing = document.getElementById(cfg.id);
+    return existing || createAudioElement(cfg);
+}
+
+/**
+ * Dựng toàn bộ thẻ <audio> từ AUDIO_SOURCES (BGM nền + SFX).
+ * Idempotent nên gọi lại nhiều lần vẫn an toàn.
+ * @returns {Object} key -> HTMLAudioElement
+ */
+function mountAudioElements() {
+    const elements = {};
+    AUDIO_SOURCES.forEach((cfg) => {
+        const el = ensureAudioElement(cfg.key);
+        if (el) elements[cfg.key] = el;
+    });
+    return elements;
+}
+
+/** Lấy audio + set volume mặc định, cache lại để dùng nhiều lần. */
+function getAudio(key) {
+    if (audioCache.has(key)) return audioCache.get(key);
+    const el = ensureAudioElement(key);
+    if (!el) return null;
+    el.preload = AUDIO_MAP[key].preload || 'auto';
     el.volume = SFX_VOLUMES[key] ?? (key === 'questBgm' ? QUEST_BGM_VOLUME : 0.5);
     audioCache.set(key, el);
     return el;
@@ -120,11 +159,11 @@ function pauseMainBgmForQuest() {
 
 /** Phát lại BGM chính sau khi quest BGM kết thúc. */
 function resumeMainBgmAfterQuest() {
-    if (!mainBgmWasPlayingBeforeQuest) {
-        mainBgmWasPlayingBeforeQuest = false;
-        return;
-    }
     mainBgmWasPlayingBeforeQuest = false;
+    // Luôn gọi handler và để app.js tự quyết định (user đã tắt nhạc chưa, đang phát rồi,
+    // quest BGM còn đang chiếm sân khấu...). Nhờ vậy main BGM cũng phát lại được khi
+    // trước đó nó chỉ bị tạm dừng vì đổi tab — lúc đó mainBgmWasPlayingBeforeQuest = false
+    // dù user vẫn muốn nghe nhạc nền.
     if (resumeMainBgmHandler) resumeMainBgmHandler();
 }
 
@@ -341,6 +380,7 @@ const sfxBlessing = () => playSfx('blessing');
 // EXPORTS
 // ======================================================
 export {
+    mountAudioElements,
     initSfx,
     setMainBgm,
     setMainBgmResumeHandler,
