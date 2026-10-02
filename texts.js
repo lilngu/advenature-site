@@ -130,7 +130,7 @@ const TEXTS = {
         },
         checkin: {
             cardTitle: "KẾT NỐI LINH CẢNH",
-            cardDesc: "Đăng nhập mỗi ngày để duy trì kết nối với Linh Cảnh.\n +1 ✨ Tinh Quang",
+            cardDesc: "Đăng nhập mỗi ngày để duy trì kết nối với\n Linh Cảnh.\n +1 ✨ Tinh Quang",
             btn: "KÍCH HOẠT ĐIỂM DANH",
             btnLoading: "Đang kiểm tra...",
             btnDone: "Đã Điểm Danh",
@@ -140,10 +140,10 @@ const TEXTS = {
             networkError: "Lỗi kết nối máy chủ điểm danh!",
         },
         fbShare: {
-            cardTitle: "💬 TRUYỀN TIN TINH LINH ",
-            cardDesc: "Đăng bài FB Group Advenature,\n dán link nhận +1 ✨.",
+            cardTitle: "💬 NHÀ SƯU TẦM QUANG THẠCH",
+            cardDesc: "Gửi hình ảnh Quang Thạch mà bạn Gacha được lên FB Group Advenature,\n dán link nhận +1 ✨.",
             inputPlaceholder: "Link bài viết...",
-            btn: "CHIA SẺ TIN",
+            btn: "CHIA SẺ",
             btnLoading: "Đang gửi...",
             success: "✦ Đã gửi link bài viết cho Trưởng Hội! Vui lòng chờ duyệt (+1 🔮).",
             error: "Thử lại sau!",
@@ -152,7 +152,7 @@ const TEXTS = {
         },
         referral: {
             cardTitle: "KẾT NỐI NHÀ PHIÊU LƯU",
-            codeLabel: "Mã: {code} ( chia sẻ bạn bè \n +1 ✨ Tinh Quang cho cả 2).",
+            codeLabel: "Mã: {code}\n ( chia sẻ bạn bè \n +1 ✨ Tinh Quang cho cả 2).",
             codePlaceholder: "Nhập Mã của bạn bè AWxxxx...",
             scanBtnAria: "Quét mã QR",
             btn: "XÁC NHẬN",
@@ -164,13 +164,13 @@ const TEXTS = {
         },
         quiz: {
             cardTitle: "Mật Mã Tinh Linh",
-            cardDesc: "Giải mã tri thức từ RỪNG TINH LINH \n +1 ✨ .",
+            cardDesc: "Giải mã tri thức từ \n RỪNG TINH LINH \n +1 ✨ .",
             badge: "Hoàn thành 10 câu hỏi",
             btn: "Giải Mã",
         },
         rollQuest: {
             cardTitle: "NHẬP VAI VUI VẺ",
-            cardDesc: "Tung Xí Ngầu để nhập vai phiêu lưu.\n Mỗi lượt hoàn thành +1 ✨ Tinh Quang.",
+            cardDesc: "Tung Dice để Nhập Vibe.\n Mỗi lượt hoàn thành\n +1 ✨ Tinh Quang.",
             badge: "Tối đa 3 lượt mỗi ngày",
             btn: "NHẬP VAI THÔI",
             btnLoading: "Đang xem thẻ bài...",

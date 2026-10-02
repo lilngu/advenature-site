@@ -3183,6 +3183,8 @@ document.getElementById("closeFriendQrScanModal")?.addEventListener("click", () 
 // Mở / Đóng Modal Lịch Trình Shop
 document.getElementById("btnOpenScheduleModal")?.addEventListener("click", () => {
     document.getElementById("scheduleModal").classList.remove("hidden");
+    // SFX: tiếng lật giấy khi mở Lịch Trình
+    sfxPaper();
 });
 document.getElementById("closeScheduleModal")?.addEventListener("click", () => {
     document.getElementById("scheduleModal").classList.add("hidden");
@@ -3190,6 +3192,8 @@ document.getElementById("closeScheduleModal")?.addEventListener("click", () => {
 
 // Mở / Đóng Modal Brochure -> mở Lore Reader Modal
 document.getElementById("btnOpenBrochureModal")?.addEventListener("click", () => {
+    // SFX: tiếng lật giấy khi mở Cốt Tuyển Tinh Linh
+    sfxPaper();
     openLoreReaderModal();
 });
 
