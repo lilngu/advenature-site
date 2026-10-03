@@ -116,6 +116,7 @@ export function initRollQuest(config) {
         winMessage: document.getElementById("rqWinMessage"),
         winDialogue: document.getElementById("rqWinDialogue"),
         nextBtn: document.getElementById("rqNextBtn"),
+        winExitBtn: document.getElementById("rqWinExitBtn"),
     };
 
     if (!els.modal) return;
@@ -127,6 +128,7 @@ export function initRollQuest(config) {
     });
     els.closeBtn?.addEventListener("click", () => closeRollQuest());
     els.nextBtn?.addEventListener("click", () => handleNextBtn());
+    els.winExitBtn?.addEventListener("click", () => handleWinExitBtn());
     els.canvasContainer?.addEventListener("click", () => {
         if (state.scenario && !isRolling) rollDice();
     });
@@ -420,6 +422,8 @@ async function finalizeQuest() {
     // Hiện popup kết luận ngay, nút bấm ở trạng thái chờ Worker trả thưởng
     showWinModal(true, "");
     els.nextBtn.disabled = true;
+    // Khoá luôn nút THOÁT để không đóng module giữa chừng lúc đang nhận thưởng
+    if (els.winExitBtn) els.winExitBtn.disabled = true;
     els.nextBtn.textContent = t("rollQuest.waitReward");
 
     const result = await claimReward();
@@ -491,6 +495,7 @@ function showWinModal(won, rewardNote) {
     els.nextBtn.disabled = false;
     els.nextBtn.textContent = canRetry ? t("rollQuest.btnAgain") : t("rollQuest.btnClose");
     els.nextBtn.dataset.retry = canRetry ? "1" : "0";
+    if (els.winExitBtn) els.winExitBtn.disabled = false;
 
     els.winModal.style.display = "flex";
 }
@@ -507,6 +512,16 @@ function handleNextBtn() {
     } else {
         closeRollQuest();
     }
+}
+
+/**
+ * Nút "THOÁT" trong popup kết luận: đóng popup và tắt hẳn module,
+ * không mở lượt nhập vai mới (lượt đã tiêu ở lượt vừa rồi vẫn giữ nguyên).
+ */
+function handleWinExitBtn() {
+    els.winModal.style.display = "none";
+    hideResultBanner();
+    closeRollQuest();
 }
 
 // ======================================================
@@ -611,6 +626,11 @@ const FLOOR_CIRCLE_COLOR = 0x241a33;
 const DICE_RADIUS = 1.1;
 const PIXEL_SCALE = 3;
 
+// --- Chất lượng số trên mặt D20 ---
+const FACE_TEX_SIZE = 512;     // Độ phân giải texture của mỗi mặt
+const NUMBER_FONT_SIZE = 230;  // Cỡ chữ số (phải khớp với document.fonts.load)
+const NUMBER_CENTER_Y = 265;   // Trục Y tâm số trên canvas mặt
+
 /** Khởi tạo 3D một lần duy nhất (mở lại module không tạo lại renderer) */
 function ensure3D() {
     if (threeReady) return threeReady;
@@ -619,7 +639,7 @@ function ensure3D() {
             // Chờ font số trên canvas đã sẵn sàng trước khi vẽ texture mặt xúc xắc
             if (document.fonts && document.fonts.load) {
                 try {
-                    await document.fonts.load('400 190px "Jersey 25"');
+                    await document.fonts.load(`400 ${NUMBER_FONT_SIZE}px "Jersey 25"`);
                     await document.fonts.ready;
                 } catch (e) { /* bỏ qua, dùng font dự phòng */ }
             }
@@ -681,12 +701,12 @@ function init3D() {
 /** Vẽ số lên từng mặt bằng CanvasTexture (phong cách pixel) */
 function createFaceTexture(number) {
     const canvas = document.createElement("canvas");
-    canvas.width = 512;
-    canvas.height = 512;
+    canvas.width = FACE_TEX_SIZE;
+    canvas.height = FACE_TEX_SIZE;
     const ctx = canvas.getContext("2d");
 
     ctx.fillStyle = FACE_BG;
-    ctx.fillRect(0, 0, 512, 512);
+    ctx.fillRect(0, 0, FACE_TEX_SIZE, FACE_TEX_SIZE);
 
     ctx.strokeStyle = "#e8a33d";
     ctx.lineWidth = 14;
@@ -698,18 +718,35 @@ function createFaceTexture(number) {
     ctx.stroke();
 
     ctx.fillStyle = NUMBER_COLOR;
-    ctx.font = '400 190px "Jersey 25", monospace';
+    ctx.font = `400 ${NUMBER_FONT_SIZE}px "Jersey 25", monospace`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(number.toString(), 256, 285);
+    ctx.fillText(number.toString(), 256, NUMBER_CENTER_Y);
 
     // Gạch chân cho số 6 và 9 để dễ đọc giống bản gốc
     if (number === 6 || number === 9) {
-        ctx.fillRect(216, 375, 80, 14);
+        ctx.fillRect(206, 370, 100, 14);
     }
 
+    // Nhị phân hoá alpha: ép cạnh chữ về 0/255 để loại bỏ viền khử răng cưa,
+    // giữ số sắc cạnh đúng chất pixel-art thay vì bị quầng xám mờ khi phóng to.
+    const img = ctx.getImageData(0, 0, FACE_TEX_SIZE, FACE_TEX_SIZE);
+    const px = img.data;
+    for (let i = 0; i < px.length; i += 4) {
+        px[i + 3] = px[i + 3] > 128 ? 255 : 0;
+    }
+    ctx.putImageData(img, 0, 0);
+
     const texture = new THREE.CanvasTexture(canvas);
+
+    // KHÔNG sinh mipmap + lọc NearestFilter ở cả phóng to lẫn thu nhỏ.
+    // Mặt D20 luôn nằm trong trạng thái minify khi nhìn, nên mipmap mặc định
+    // (LinearMipmapLinear) sẽ cộng dồn ~3 texel và làm số vỡ mờ.
+    texture.generateMipmaps = false;
+    texture.minFilter = THREE.NearestFilter;
     texture.magFilter = THREE.NearestFilter;
+    texture.needsUpdate = true;
+
     return texture;
 }
 

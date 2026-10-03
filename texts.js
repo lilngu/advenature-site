@@ -360,6 +360,7 @@ const TEXTS = {
         failMessage: "Bạn chỉ đạt <b>{success}/{max}</b> lần thành công (yêu cầu tối thiểu {required}). Lần sau sẽ may hơn!",
         btnAgain: "NHẬP VAI LẦN NỮA",
         btnClose: "RỜI ĐI",
+        btnExit: "THOÁT",
         waitReward: "Đang nhận thưởng...",
     },
 

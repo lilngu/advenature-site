@@ -452,7 +452,7 @@ body, html {
 
 #claimContainer {
     position: absolute;
-    bottom: 40vh; /* �?ặt chuẩn x?�c 30% từ bottom l?�n */
+    bottom: 33vh; /* �?ặt chuẩn x?�c 30% từ bottom l?�n */
     left: 50%;
     transform: translateX(-50%);
     z-index: 35;
@@ -3176,8 +3176,8 @@ body.guest-mode .dock-btn:not(.center-core) {
     /* Không có bloom nên glow ngoài do CSS đảm nhiệm.
        2 lớp drop-shadow: lớp rộng cho hào quang, lớp hẹp cho viền sáng.
        Filter tuân theo alpha của canvas -> bo tròn theo hình cổng, không tạo khung vuông. */
-    filter: drop-shadow(0 0 6px rgba(255, 0, 127, 0.55))
-            drop-shadow(0 0 18px rgba(0, 240, 255, 0.28));
+    filter: drop-shadow(0 0 16px rgba(255, 0, 127, 0.55))
+            drop-shadow(0 0 25px rgba(0, 240, 255, 0.28));
 }
 
 .corner-portal3d.hidden {
@@ -4008,6 +4008,35 @@ body.guest-mode .dock-btn:not(.center-core) {
 .rq-btn-pixel:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--rq-gold-dark), 2px 2px 0 rgba(0, 0, 0, 0.5); }
 .rq-btn-pixel:disabled { opacity: .55; cursor: not-allowed; }
 
+/* HÀNG NÚT HÀNH ĐỘNG TRONG POPUP (nút chính + nút THOÁT) */
+.rq-modal-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: center;
+}
+.rq-modal-actions .rq-btn-pixel {
+    flex: 1 1 150px;
+    max-width: 200px;
+}
+
+/* BIẾN THỂ NÚT PHỤ: viền mảnh, nền tối (dùng cho nút THOÁT) */
+.rq-btn-alt {
+    color: var(--rq-gold-lite);
+    background-color: rgba(18, 13, 28, 0.85);
+    border-color: var(--rq-gold-dark);
+    box-shadow: 0 5px 0 var(--rq-ink), 5px 5px 0 rgba(0, 0, 0, 0.5);
+}
+.rq-btn-alt:hover {
+    color: #fff;
+    background-color: rgba(58, 42, 78, 0.9);
+    border-color: var(--rq-gold);
+}
+.rq-btn-alt:active {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 var(--rq-ink), 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
 /* MODAL BACKDROP */
 .rq-modal-backdrop {
     position: absolute;
@@ -4122,6 +4151,8 @@ body.guest-mode .dock-btn:not(.center-core) {
     .rq-quest-name { font-size: 15px; }
     .rq-quest-desc { font-size: 13px; }
     .rq-modal-box { padding: 22px 16px; }
+    .rq-modal-actions { flex-direction: column; gap: 10px; }
+    .rq-modal-actions .rq-btn-pixel { max-width: none; }
     .rq-modal-title { font-size: 21px; }
     .rq-result-number { font-size: 60px; }
     .rq-ui-footer { bottom: 16px; }
