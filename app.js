@@ -83,7 +83,7 @@ const loreHelper = document.getElementById("loreHelper");
 const loreReaderModal = document.getElementById("loreReaderModal");
 // Cổng 3D góc màn hình (góc phải 10px, cách top 10%) — điều kiện hiện/ẩn giống loreHelper
 const cornerPortal3D = document.getElementById("cornerPortal3D");
-const CORNER_PORTAL_LINK = "https://rungtinhlinh.pages.dev/";
+const CORNER_PORTAL_LINK = "https://www.facebook.com/groups/nhaphieuluuxanh";
 // Khai báo ở đầu file vì initLoreHelper() được gọi ngay khi load trang (tránh temporal dead zone)
 let cornerPortal = null;
 const dockGachaTrigger = document.getElementById("dockGachaTrigger");
