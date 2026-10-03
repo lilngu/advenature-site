@@ -245,7 +245,40 @@ export const AUDIO_SOURCES = [
 // Tra cứu nhanh: key -> cấu hình audio (dựng 1 lần lúc load module)
 export const AUDIO_MAP = Object.fromEntries(AUDIO_SOURCES.map((a) => [a.key, a]));
 
-// 10. MODAL "CHỜ MỞ KHOÁ" - DANH SÁCH KHU VỰC ĐANG PHÁT TRIỂN
+// 10. BẢNG QUEST TẠI HỘI NGỌC LỤC (mở bằng cách click vào #loreHelper)
+// Modal #guildQuestModal tự bố trí ảnh thành lưới 2 cột rời rạc, mỗi tờ nghiêng
+// ngẫu nhiên (tối đa GUILD_QUEST_META.maxTiltDeg độ) và click vào để xem lightbox.
+//
+// ➜ THÊM / BỎ ẢNH: chỉ cần thêm hoặc xoá một dòng { url, title } bên dưới.
+//   app.js tự layout lại, không cần sửa bất kỳ file nào khác.
+//   Các mục đánh dấu [placeholder] đang dùng lại ảnh sẵn có của dự án để dựng
+//   lưới thử — thay bằng ảnh quest thật của Hội Ngọc Lục khi được bàn giao.
+export const GUILD_QUEST_DATA = [
+    {
+        id: 1,
+        title: "Quest I · Thương Hội",
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791046797/ukoqthjxzapum1snkxwg.png"
+    },
+    {
+        id: 2,
+        title: "Quest II · Hội Ngọc Lục",
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791043557/l2gwcmzyz050izqlfye3.png"
+    }
+    // --- [placeholder] Ảnh dựng lưới, thay bằng quest thật khi có ---
+    
+];
+
+// Cấu hình bảng Quest: tiêu đề, ảnh nền modal và giới hạn độ nghiêng tối đa (độ).
+// maxTiltDeg là con số quyết định độ nghiêng tối đa của mỗi tờ ảnh (hiện 30 độ).
+// Tăng/giảm ở đây là đủ, app.js tự đọc. Trần an toàn cứng ở app.js vẫn là 70 độ.
+export const GUILD_QUEST_META = {
+    title: "Quest tại Hội Ngọc Lục",
+    background: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791043559/rgaguy1x4tqh7atwi663.png",
+    maxTiltDeg: 30,
+    emptyText: "Hội Ngọc Lục đang sắp xếp các tờ Quest…"
+};
+
+// 11. MODAL "CHỜ MỞ KHOÁ" - DANH SÁCH KHU VỰC ĐANG PHÁT TRIỂN
 // Thêm / sửa / bỏ mục ngay tại đây, giao diện tự động cập nhật theo.
 // - icon: emoji hiển thị bên trái (bỏ trống nếu không muốn dùng)
 // - name: tên khu vực (IN HOA)

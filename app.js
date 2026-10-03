@@ -16,7 +16,9 @@ import {
     LORE_PAGES_DATA,
     GUIDE_PAGES_DATA,
     MODAL_IMAGES,
-    UPCOMING_FEATURES_DATA
+    UPCOMING_FEATURES_DATA,
+    GUILD_QUEST_DATA,
+    GUILD_QUEST_META
 } from '@data';
 // TOAST NOTIFICATION SYSTEM — dùng importmap @toast
 import { toast } from '@toast';
@@ -81,6 +83,12 @@ const guideHelper = document.getElementById("guideHelper");
 const guideReaderModal = document.getElementById("guideReaderModal");
 const loreHelper = document.getElementById("loreHelper");
 const loreReaderModal = document.getElementById("loreReaderModal");
+// Bảng Quest tại Hội Ngọc Lục (mở từ #loreHelper). Khai báo ở đây vì khối guest-mode
+// bên dưới cần tới trước khi phần module phía dưới chạy (tránh temporal dead zone).
+const guildQuestModal = document.getElementById("guildQuestModal");
+const guildQuestBox = document.getElementById("guildQuestBox");
+const guildQuestGrid = document.getElementById("guildQuestGrid");
+const guildQuestTitle = document.getElementById("guildQuestTitle");
 // Cổng 3D góc màn hình (góc phải 10px, cách top 10%) — điều kiện hiện/ẩn giống loreHelper
 const cornerPortal3D = document.getElementById("cornerPortal3D");
 const CORNER_PORTAL_LINK = "https://www.facebook.com/groups/nhaphieuluuxanh";
@@ -102,9 +110,11 @@ guideHelper?.addEventListener("click", () => {
     sfxPaper();
     openGuideReaderModal();
 });
+// #loreHelper mở BẢNG QUEST TẠI HỘI NGỌC LỤC (#guildQuestModal).
+// openLoreReaderModal() vẫn được dùng bởi nút Brochure (btnOpenBrochureModal).
 loreHelper?.addEventListener("click", () => {
     sfxPaper();
-    openLoreReaderModal();
+    openGuildQuestModal();
 });
 
 // Timeout IDs để cancel khi Gacha bắt đầu
@@ -132,6 +142,7 @@ if (isFirstTimeGuest) {
     if (guideReaderModal) guideReaderModal.classList.add("hidden");
     if (loreHelper) loreHelper.classList.add("hidden");
     if (loreReaderModal) loreReaderModal.classList.add("hidden");
+    if (guildQuestModal) guildQuestModal.classList.add("hidden");
 
     // Bắt sự kiện click vào Cuộn giấy cổ: trượt xuống dưới rồi biến mất
     if (scrollBanner) {
@@ -814,6 +825,227 @@ function showLoreHelper() {
         loreHelper.style.right = pos.right;
     });
 }
+
+// ======================================================
+// BẢNG QUEST TẠI HỘI NGỌC LỤC (#guildQuestModal)
+// Mở bằng cách click #loreHelper. Ảnh lấy từ data.js -> GUILD_QUEST_DATA.
+// Layout 2 cột rời rạc tự động: thêm/bớt ảnh trong data.js là xong, không cần sửa file này.
+// Click vào tờ ảnh -> xem lightbox toàn màn hình.
+// ======================================================
+// Độ nghiêng tối đa lấy từ GUILD_QUEST_META.maxTiltDeg (đang là 30 độ - con số quyết định).
+// Math.min(70, ...) chỉ là TRẦN AN TOÀN chống cấu hình sai trong data.js, không phải giới hạn thực tế.
+const GUILD_QUEST_MAX_TILT = Math.min(70, Math.abs(Number(GUILD_QUEST_META?.maxTiltDeg) || 30));
+// guildQuestModal / guildQuestBox / guildQuestGrid / guildQuestTitle đã khai báo ở đầu file.
+const guildQuestLightbox = document.getElementById("guildQuestLightbox");
+const guildQuestLbImg = document.getElementById("guildQuestLightboxImg");
+const guildQuestLbCaption = document.getElementById("guildQuestLightboxCaption");
+const guildQuestLbCounter = document.getElementById("guildQuestLightboxCounter");
+const guildQuestLbPrev = document.getElementById("guildQuestLightboxPrev");
+const guildQuestLbNext = document.getElementById("guildQuestLightboxNext");
+
+let guildQuestOpen = false;
+let guildQuestLbOpen = false;
+let guildQuestLbIndex = 0;
+let guildQuestItems = [];
+
+/**
+ * Escape chuỗi trước khi nhét vào innerHTML / thuộc tính.
+ * data.js là file tĩnh nên rủi ro thấp, nhưng tên quest có thể chứa dấu & hoặc ".
+ */
+function escapeHtml(value) {
+    return String(value ?? "").replace(/[&<>"']/g, (ch) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    })[ch]);
+}
+
+/**
+ * Sinh độ nghiêng ngẫu nhiên trong khoảng [-maxDeg, +maxDeg].
+ * Dùng phân phối tam giác (tổng 2 số ngẫu nhiên - 1) nên phần lớn tờ nghiêng nhẹ,
+ * vài tờ nghiêng mạnh — nhìn rời rạc tự nhiên nhưng không loạn. Không bao giờ vượt maxDeg.
+ */
+function randomTiltDeg(maxDeg) {
+    return (Math.random() + Math.random() - 1) * maxDeg;
+}
+
+/**
+ * Dựng lại lưới tờ ảnh từ GUILD_QUEST_DATA.
+ * Mỗi lần gọi sẽ bốc lại góc nghiêng + khoảng lệch để bảng trông rời rạc mới mỗi lượt.
+ */
+function renderGuildQuestGrid() {
+    if (!guildQuestGrid) return;
+
+    guildQuestItems = Array.isArray(GUILD_QUEST_DATA)
+        ? GUILD_QUEST_DATA.filter((item) => item && item.url)
+        : [];
+
+    if (guildQuestItems.length === 0) {
+        guildQuestGrid.innerHTML = `<p class="guild-quest-empty">${escapeHtml(
+            GUILD_QUEST_META?.emptyText || "Chưa có Quest nào."
+        )}</p>`;
+        return;
+    }
+
+    guildQuestGrid.innerHTML = guildQuestItems.map((item, index) => {
+        const tilt = randomTiltDeg(GUILD_QUEST_MAX_TILT).toFixed(2);
+        const dx = (Math.random() * 20 - 10).toFixed(1);   // lệch ngang -> rời rạc
+        const dy = (Math.random() * 14 - 7).toFixed(1);    // lệch dọc
+        const zIndex = 1 + (index % 5);                   // chồng nhẹ cho đỡ đều tăm tắp
+        const title = item.title || `Quest ${index + 1}`;
+        return `
+            <button type="button" class="gq-card" data-idx="${index}"
+                    style="--gq-tilt:${tilt}deg; --gq-dx:${dx}px; --gq-dy:${dy}px; z-index:${zIndex}"
+                    title="${escapeHtml(title)}">
+                <img class="gq-card-img" src="${escapeHtml(item.url)}" alt="${escapeHtml(title)}"
+                     loading="lazy" decoding="async">
+                <span class="gq-card-caption">${escapeHtml(title)}</span>
+            </button>`;
+    }).join("");
+
+    guildQuestGrid.querySelectorAll(".gq-card").forEach((card) => {
+        card.addEventListener("click", () => {
+            openGuildQuestLightbox(parseInt(card.dataset.idx, 10));
+        });
+    });
+}
+
+/** Mở bảng Quest tại Hội Ngọc Lục. */
+function openGuildQuestModal() {
+    if (!guildQuestModal) return;
+
+    // Tiêu đề + ảnh nền lấy từ data.js để đổi nội dung không phải đụng HTML
+    if (guildQuestTitle && GUILD_QUEST_META?.title) {
+        guildQuestTitle.textContent = GUILD_QUEST_META.title;
+    }
+    if (guildQuestBox && GUILD_QUEST_META?.background) {
+        guildQuestBox.style.backgroundImage = `url("${GUILD_QUEST_META.background}")`;
+    }
+
+    renderGuildQuestGrid();
+    if (guildQuestGrid) guildQuestGrid.scrollTop = 0;
+
+    guildQuestModal.classList.remove("hidden");
+    guildQuestOpen = true;
+
+    // Ép reflow để transition chạy từ trạng thái ẩn
+    guildQuestModal.offsetHeight;
+    requestAnimationFrame(() => guildQuestModal.classList.add("show"));
+
+    document.body.style.overflow = "hidden";
+}
+
+/** Đóng bảng Quest (kéo theo đóng lightbox nếu đang mở). */
+function closeGuildQuestModal() {
+    if (!guildQuestModal) return;
+
+    closeGuildQuestLightbox();
+    guildQuestModal.classList.remove("show");
+    guildQuestOpen = false;
+
+    setTimeout(() => {
+        guildQuestModal.classList.add("hidden");
+        // Chỉ mở lại cuộn trang khi modal này thực sự đang là modal trên cùng,
+        // tránh mở sớm khi người chơi đang xem lightbox.
+        if (!guildQuestOpen && !guildQuestLbOpen) document.body.style.overflow = "";
+    }, 380);
+}
+
+/** Nạp ảnh kề (trước/sau) để chuyển ảnh trong lightbox không bị giật. */
+function preloadGuildQuestNeighbors(index) {
+    [-1, 1].forEach((offset) => {
+        const item = guildQuestItems[(index + offset + guildQuestItems.length) % guildQuestItems.length];
+        if (!item) return;
+        const preloader = new Image();
+        preloader.decoding = "async";
+        preloader.src = item.url;
+    });
+}
+
+/** Vẽ nội dung lightbox theo index hiện tại. */
+function paintGuildQuestLightbox() {
+    const item = guildQuestItems[guildQuestLbIndex];
+    if (!item || !guildQuestLbImg) return;
+
+    const title = item.title || `Quest ${guildQuestLbIndex + 1}`;
+    guildQuestLbImg.src = item.url;
+    guildQuestLbImg.alt = title;
+
+    if (guildQuestLbCaption) guildQuestLbCaption.textContent = title;
+    if (guildQuestLbCounter) {
+        guildQuestLbCounter.textContent = `${guildQuestLbIndex + 1} / ${guildQuestItems.length}`;
+    }
+
+    // Chỉ có 1 tờ thì ẩn nút chuyển ảnh
+    const single = guildQuestItems.length < 2;
+    guildQuestLbPrev?.classList.toggle("is-off", single);
+    guildQuestLbNext?.classList.toggle("is-off", single);
+
+    preloadGuildQuestNeighbors(guildQuestLbIndex);
+}
+
+/** Mở lightbox cho tờ ảnh tại index. */
+function openGuildQuestLightbox(index) {
+    if (!guildQuestLightbox || guildQuestItems.length === 0) return;
+
+    const safeIndex = Number.isFinite(index) ? index : 0;
+    guildQuestLbIndex = Math.min(Math.max(safeIndex, 0), guildQuestItems.length - 1);
+    paintGuildQuestLightbox();
+
+    guildQuestLightbox.classList.remove("hidden");
+    guildQuestLbOpen = true;
+    guildQuestLightbox.offsetHeight;
+    requestAnimationFrame(() => guildQuestLightbox.classList.add("show"));
+
+    sfxBlink();
+}
+
+/** Lướt qua bảng quest (có vòng lặp). */
+function stepGuildQuestLightbox(step) {
+    if (!guildQuestLbOpen || guildQuestItems.length === 0) return;
+    const total = guildQuestItems.length;
+    guildQuestLbIndex = (guildQuestLbIndex + step + total) % total;
+    paintGuildQuestLightbox();
+}
+
+/** Đóng lightbox, quay lại bảng Quest. */
+function closeGuildQuestLightbox() {
+    if (!guildQuestLightbox || !guildQuestLbOpen) return;
+
+    guildQuestLightbox.classList.remove("show");
+    guildQuestLbOpen = false;
+
+    setTimeout(() => {
+        // Người chơi có thể đã mở lại lightbox trong lúc chờ -> không được ẩn
+        if (guildQuestLbOpen) return;
+        guildQuestLightbox.classList.add("hidden");
+        if (guildQuestLbImg) guildQuestLbImg.removeAttribute("src");
+        if (!guildQuestOpen) document.body.style.overflow = "";
+    }, 300);
+}
+
+// Nút đóng + bấm ra ngoài khung để đóng
+document.getElementById("closeGuildQuest")?.addEventListener("click", closeGuildQuestModal);
+guildQuestModal?.addEventListener("click", (e) => {
+    if (e.target === guildQuestModal) closeGuildQuestModal();
+});
+document.getElementById("guildQuestLightboxClose")?.addEventListener("click", closeGuildQuestLightbox);
+guildQuestLbPrev?.addEventListener("click", () => stepGuildQuestLightbox(-1));
+guildQuestLbNext?.addEventListener("click", () => stepGuildQuestLightbox(1));
+// Click nền đen của lightbox -> đóng (bấm trực tiếp lên ảnh thì không)
+guildQuestLightbox?.addEventListener("click", (e) => {
+    if (e.target === guildQuestLightbox) closeGuildQuestLightbox();
+});
+
+// Bàn phím cho bảng Quest + lightbox. Ưu tiên đóng lightbox trước, rồi mới đóng modal.
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+        if (guildQuestLbOpen) { closeGuildQuestLightbox(); return; }
+        if (guildQuestOpen) closeGuildQuestModal();
+        return;
+    }
+    if (!guildQuestLbOpen) return;
+    if (e.key === "ArrowRight") { stepGuildQuestLightbox(1); e.preventDefault(); }
+    else if (e.key === "ArrowLeft") { stepGuildQuestLightbox(-1); e.preventDefault(); }
+});
 
 // ======================================================
 // LORE READER MODAL LOGIC (Cổ thư lật trang - Swiper Flip Effect)

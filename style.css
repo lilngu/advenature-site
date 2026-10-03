@@ -4416,3 +4416,343 @@ body.guest-mode .dock-btn:not(.center-core) {
 @media (max-width: 480px) {
     .upcoming-modal-box { max-width: 92vw; }
 }
+
+/* ======================================================
+   BẢNG QUEST TẠI HỘI NGỌC LỤC  (#guildQuestModal)
+   Mở bằng cách click #loreHelper. Ảnh nạp từ data.js -> GUILD_QUEST_DATA.
+   - Lưới 2 cột rời rạc, mỗi tờ nghiêng ngẫu nhiên (biến --gq-tilt từ JS)
+   - Khung 80vw x 70vh, luôn nằm giữa màn hình
+   - Nội dung dài hơn khung -> cuộn dọc trong .guild-quest-body
+   ====================================================== */
+.guild-quest-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 210;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(6, 4, 12, 0.86);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+}
+
+.guild-quest-modal.hidden { display: none; }
+.guild-quest-modal.show { opacity: 1; pointer-events: auto; }
+
+/* Khung bảng: nền lấy từ GUILD_QUEST_META.background (gán inline bởi app.js) */
+.guild-quest-box {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 80vw;
+    height: 70vh;
+    max-width: 1280px;
+    border-radius: 14px;
+    border: 2px solid rgba(212, 175, 55, 0.55);
+    box-shadow:
+        0 0 45px rgba(212, 175, 55, 0.32),
+        0 26px 70px rgba(0, 0, 0, 0.85),
+        inset 0 0 26px rgba(0, 0, 0, 0.45);
+    background-color: #1a1208;
+    background-repeat: no-repeat;
+    background-position: center;
+    /* Ảnh nền gốc là DỌC (500x574) còn khung modal là NGANG (80vw x 70vh).
+       Không dùng cover vì sẽ cắt mất khung viền trang trí của tấm bảng.
+       Giãn vừa khung, đồng bộ với .modal-box của hệ thống. */
+    background-size: 100% 100%;
+    overflow: hidden;
+    opacity: 0;
+    transform: scale(0.93) translateY(18px);
+    transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.35s ease;
+}
+
+.guild-quest-modal.show .guild-quest-box {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+
+/* --- Header --- */
+.guild-quest-header {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px 18px;
+    background: linear-gradient(180deg, rgba(28, 18, 9, 0.95) 0%, rgba(12, 8, 5, 0.95) 100%);
+    border-bottom: 2px solid rgba(212, 175, 55, 0.6);
+}
+
+.guild-quest-title {
+    margin: 0;
+    font-family: 'Cinzel', 'Spectral SC', serif;
+    font-size: clamp(13px, 1.5vw, 20px);
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #f3e5ab;
+    text-shadow: 0 0 12px rgba(212, 175, 55, 0.55);
+}
+
+.guild-quest-close {
+    flex: 0 0 auto;
+    position: static;
+    width: 34px;
+    height: 30px;
+    padding: 0;
+    border: 0;
+    background: url(https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790706999/esy0uorbvuidvrvpvu9l.png) no-repeat center / 100% 100%;
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.guild-quest-close:hover { transform: scale(1.12) rotate(8deg); filter: brightness(1.2); }
+.guild-quest-close:active { transform: scale(0.94); }
+
+/* --- Vùng cuộn --- */
+.guild-quest-body {
+    flex: 1 1 auto;
+    min-height: 0;               /* bắt buộc để con được phép co lại trong flex column */
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 18px 16px 8px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(212, 175, 55, 0.55) rgba(0, 0, 0, 0.4);
+    overscroll-behavior: contain;
+}
+
+.guild-quest-body::-webkit-scrollbar { width: 8px; }
+.guild-quest-body::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.4); border-radius: 4px; }
+.guild-quest-body::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #d4af37, #8a6d1f);
+    border-radius: 4px;
+}
+
+.guild-quest-hint {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 7px 12px 10px;
+    font-family: Retro2k, sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.5px;
+    text-align: center;
+    color: rgba(243, 229, 171, 0.72);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+    background: linear-gradient(180deg, rgba(12, 8, 5, 0) 0%, rgba(12, 8, 5, 0.85) 100%);
+}
+
+/* --- Lưới 2 cột rời rạc --- */
+.guild-quest-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 18px;
+    align-items: start;
+    padding-bottom: 8px;
+}
+
+.guild-quest-empty {
+    grid-column: 1 / -1;
+    margin: 24px 0;
+    font-family: Retro2k, sans-serif;
+    font-size: 10px;
+    text-align: center;
+    color: #f3e5ab;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+/* Một tờ ảnh ghim trên bảng. --gq-dx/--gq-dy = lệch vị trí, --gq-tilt = độ nghiêng */
+.gq-card {
+    position: relative;
+    display: block;
+    width: 60%;
+    margin: 0 auto;
+    padding: 8px 8px 24px;
+    border: 1px solid rgba(120, 90, 40, 0.6);
+    border-radius: 3px;
+    background: linear-gradient(180deg, #f7eed6 0%, #ddcda4 100%);
+    box-shadow: 0 9px 20px rgba(0, 0, 0, 0.55);
+    cursor: zoom-in;
+    appearance: none;
+    -webkit-appearance: none;
+    font: inherit;
+    color: inherit;
+    text-align: center;
+    transform: translate(var(--gq-dx, 0px), var(--gq-dy, 0px)) rotate(var(--gq-tilt, 0deg));
+    transform-origin: 50% 22%;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.3s ease,
+                filter 0.3s ease;
+    will-change: transform;
+}
+
+/* Đinh ghim ở đầu tờ */
+.gq-card::before {
+    content: "";
+    position: absolute;
+    top: -7px;
+    left: 50%;
+    width: 15px;
+    height: 15px;
+    margin-left: -7.5px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 34% 30%, #fff6cd 0%, #d4af37 55%, #7a5c14 100%);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.65);
+    z-index: 2;
+}
+
+.gq-card:hover,
+.gq-card:focus-visible {
+    transform: translate(var(--gq-dx, 0px), calc(var(--gq-dy, 0px) - 8px)) rotate(var(--gq-tilt, 0deg)) scale(1.05);
+    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.7);
+    filter: brightness(1.06);
+    z-index: 30;
+    outline: none;
+}
+
+.gq-card-img {
+    display: block;
+    width: 100%;
+    /* KHÔNG đặt aspect-ratio / object-fit: các tờ quest cổ gốc dọc
+       (tỉ lệ 0.67 - 1.0), đặt khung + cover sẽ cắt mất nội dung.
+       Để mỗi ảnh giữ nguyên tỉ lệ thật (đổi với tờ ảnh cổ dọc hay ngang
+       đều không bao giờ bị cắt). */
+    height: auto;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.28);
+    pointer-events: none;       /* click xuyên thẳng lên .gq-card */
+}
+
+.gq-card-caption {
+    position: absolute;
+    left: 6px;
+    right: 6px;
+    bottom: 5px;
+    font-family: Retro2k, sans-serif;
+    font-size: 9px;
+    line-height: 1.2;
+    letter-spacing: 0.4px;
+    color: #4a3a1c;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* ======================================================
+   LIGHTBOX ẢNH QUEST  (#guildQuestLightbox)
+   ====================================================== */
+.guild-quest-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 220;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 26px 16px;
+    background: rgba(3, 2, 8, 0.94);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.guild-quest-lightbox.hidden { display: none; }
+.guild-quest-lightbox.show { opacity: 1; }
+
+.gql-img {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 10px;
+    border: 2px solid rgba(212, 175, 55, 0.5);
+    box-shadow: 0 0 45px rgba(0, 0, 0, 0.9);
+    transform: scale(0.96);
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.guild-quest-lightbox.show .gql-img { transform: scale(1); }
+
+.gql-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #f3e5ab;
+    background: rgba(20, 13, 6, 0.75);
+    border: 1px solid rgba(212, 175, 55, 0.45);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.gql-prev { left: 10px; }
+.gql-next { right: 10px; }
+.gql-nav:hover { background: rgba(212, 175, 55, 0.28); }
+.gql-prev:hover { transform: translateY(-50%) scale(1.06); }
+.gql-next:hover { transform: translateY(-50%) scale(1.06); }
+
+/* Ảnh chỉ có 1 tờ -> ẩn nút chuyển ảnh */
+.gql-nav.is-off { display: none; }
+
+.gql-close {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    width: 40px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    background: url(https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790706999/esy0uorbvuidvrvpvu9l.png) no-repeat center / 100% 100%;
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.gql-close:hover { transform: scale(1.14) rotate(8deg); filter: brightness(1.2); }
+
+.gql-caption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 20px;
+    padding: 0 70px;
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-align: center;
+    color: #f3e5ab;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95);
+}
+
+.gql-counter {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 6px;
+    font-family: Retro2k, sans-serif;
+    font-size: 9px;
+    text-align: center;
+    color: rgba(243, 229, 171, 0.65);
+}
+
+/* Màn hình nhỏ: thu padding, giữ nguyên lưới 2 cột + khung 80vw x 70vh */
+@media (max-width: 768px) {
+    .guild-quest-modal { padding: 10px; }
+    .guild-quest-header { padding: 10px 12px; }
+    .guild-quest-body { padding: 12px 10px 6px; }
+    .guild-quest-grid { gap: 12px 10px; }
+    .gq-card { padding: 6px 6px 20px; }
+    .gq-card-caption { font-size: 8px; }
+    .gql-nav { width: 36px; height: 50px; font-size: 16px; }
+    .gql-prev { left: 4px; }
+    .gql-next { right: 4px; }
+    .gql-caption { font-size: 11px; padding: 0 46px; }
+}
+
