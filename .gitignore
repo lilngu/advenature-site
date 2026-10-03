@@ -4,3 +4,4 @@
 .module/rpg-quest.html
 .module/portal.html
 .worker/schema.sql
+.worker/migrate-rollquest.sql

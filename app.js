@@ -567,22 +567,12 @@ function hideLoreHelper() {
 function initCornerPortal() {
     if (cornerPortal || !cornerPortal3D) return;
 
-    // CÁCH 1 của portal-3d.js: dựng scene riêng trong khung #cornerPortal3D.
-    // Khung nhỏ (132x178) nên camera phải gần hơn portal.html rất nhiều,
-    // đồng thời bỏ hạt nền/scanline cho nhẹ máy.
+    // Module dựng scene riêng trong khung #cornerPortal3D (nền trong suốt, không bloom).
+    // Khung nhỏ (132x178) nên camera phải gần hơn bản portal.html rất nhiều.
     cornerPortal = createPortalScene({
         container: '#cornerPortal3D',
-        autoStart: true,
-        labels: false,
-        interactive: true,          // Overlay nhận chuột riêng: raycast + cursor chỉ trong khung này
-        transparent: true,           // Nền trong suốt -> hòa vào phông cảnh rừng phía sau
-        particles: false,
-        scanlines: false,
         exposure: 1.45,            // Không có bloom -> nâng exposure để cổng vẫn rõ
         pixelRatio: 1.5,            // Khung nhỏ -> không cần DPR 2
-        bloom: false,               // Tắt bloom: ở khung 132px, bloom bị cắt cứng ở mép
-                                    // render target, tạo khung viền vuông thấy rõ.
-                                    // Glow lấy từ rimEnergy + additive strokes của shader.
         fitOptions: {
             distance: 4.9,
             mobileDistance: 5.2,
@@ -594,8 +584,7 @@ function initCornerPortal() {
             position: [0, 0, 0],
             size: { width: 3.0, height: 3.8 },
             strokeCount: 14,
-            colors: { primary: 0xff007f, secondary: 0x00f0ff, core: 0x18001a },
-            link: CORNER_PORTAL_LINK,
+            colors: { primary: 0xff007f, secondary: 0x00f0ff, core: 0x5379b5 },
             // Chuyển trang trực tiếp (không mở tab mới như bản portal.html)
             onSelect: () => { window.location.href = CORNER_PORTAL_LINK; }
         }]
