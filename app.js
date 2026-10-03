@@ -2955,6 +2955,54 @@ document.getElementById("btnSubmitFb")?.addEventListener("click", async () => {
     }
 });
 
+// Yêu cầu đổi tên Nhà Phiêu Lưu
+document.getElementById("btnEditName")?.addEventListener("click", async () => {
+    if (!currentUser) return;
+
+    const currentName = currentUser.full_name || "Nhà Phiêu Lưu";
+    const newName = prompt(`Nhập tên mới cho Nhà Phiêu Lưu:\n(Tên hiện tại: ${currentName})`, currentName);
+
+    if (newName === null || newName.trim() === "") {
+        return;
+    }
+
+    const trimmedName = newName.trim();
+    if (trimmedName.length < 2 || trimmedName.length > 30) {
+        toast.warning('TÊN KHÔNG HỢP LỆ', 'Tên phải từ 2-30 ký tự!');
+        return;
+    }
+
+    if (trimmedName === currentName) {
+        return;
+    }
+
+    const btn = document.getElementById("btnEditName");
+    btn.style.pointerEvents = "none";
+    btn.textContent = "⏳";
+
+    try {
+        const res = await fetch(`${API_URL}/api/user/request-change-name`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                userId: currentUser.id,
+                newName: trimmedName
+            })
+        });
+        const data = await res.json();
+        if (data.success) {
+            toast.info('YÊU CẦU ĐÃ ĐƯỢC GHI NHẬN', 'Hội đã ghi nhận yêu cầu của Nhà Phiêu Lưu, hãy đợi Hội trưởng xác nhận nhé!');
+        } else {
+            toast.error('GỬI YÊU CẦU THẤT BẠI', data.error || 'Thử lại sau!');
+        }
+    } catch (e) {
+        toast.error('LỖI KẾT NỐI', 'Không thể kết nối đến máy chủ!');
+    } finally {
+        btn.style.pointerEvents = "auto";
+        btn.textContent = "✍🏻";
+    }
+});
+
 // app.js: Nhiệm vụ Cốt Truyện (placeholder - chưa mở)
 document.getElementById("btnOpenLoreQuest")?.addEventListener("click", () => {
     toast.info('VƯỜN TINH LINH', 'CHƯA MỞ KHOÁ');

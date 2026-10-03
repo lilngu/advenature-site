@@ -101,9 +101,9 @@ export const SHOP_ITEMS = [
     { id: "PKG_2", name: "🍃 PHIÊU LƯU TRỌN VẸN", tt: 60, vnd: 1500000, iconClass: "ico-pkg2", desc: " Bao gồm Lưu trú + Lương Thực 3 Bữa \n + Tất cả 3 Quest Nguyên Tố \n +🚙 Buff dịch chuyển toàn hành trình \n + 1 Mystery Box Trang bị Cơ bản \n Áp dụng Chúc Phúc Tinh Linh🍀" },
     { id: "PKG_3", name: "👑 PHIÊU LƯU NÂNG CẤP", tt: 80, vnd: 2000000, iconClass: "ico-pkg3", desc: " Bao gồm Lưu trú + Lương Thực 3 Bữa \n + Tất cả 3 Quest Nguyên Tố \n +🚙 Buff dịch chuyển toàn hành trình \n + 1 Mystery Box Trang bị Cơ bản \n +1 Món quà từ Tinh Linh Rừng \n +1 Thẻ bài Tinh Linh ngẫu nhiên.\n +Túi 10 Tinh Thạch  \n Áp dụng Chúc Phúc Tinh Linh🍀" },
     { id: "PKG_4", name: "⛺ Lưu Trú 1 Đêm", tt: 12, vnd: 300000, iconClass: "ico-pkg4", desc: " 🚙 Buff dịch chuyển từ Điểm Tập Kết\n⛺ 01 Đêm Lưu Trú Lều Trại hoặc Dorm \n 🏚️ Sử dụng tự do Tavern Emerald Guild \n 🌿 Đã bao gồm bộ đệm ấm & túi ngủ." },
-    { id: "Q_1", name: "🌬️ Quest 1: Phong Tinh", tt: 10, vnd: 250000, iconClass: "ico-quest2", desc: "🚙 Buff dịch chuyển đến Đồi Cỏ Lang Thang\n 📜 Nhiệm Vụ Lá Thư Rừng Tập Sự \n 🍵 Thưởng thức Trà Thảo Mộc trên đồi" },
-    { id: "Q_2", name: "✨ Quest 2: Quang Tinh", tt: 10, vnd: 250000, iconClass: "ico-quest1", desc: "📜 Nhiệm Vụ Thạch Yêu Lúc Lắc.\n 🔮 Nhận thưởng +1 Tinh Thạch " },
-    { id: "Q_3", name: "🔥 Quest 3: Hỏa Tinh", tt: 10, vnd: 250000, iconClass: "ico-quest3", desc: "📜 Nhiệm Vụ Truyền Đuốc Lửa Đêm \n🔥 Kích hoạt Ngọn Lửa Trại Nguyên Tố \nNhận thưởng +1 Tinh Thạch " },
+    { id: "Q_1", name: "🌬️ Quest 1: Phong Tinh", tt: 10, vnd: 250000, iconClass: "ico-quest2", desc: "🚙 Buff dịch chuyển đến Đồi Cỏ Lang Thang\n 📜 Nhiệm Vụ Lá Thư Rừng Tập Sự \🔮 Nhận thưởng Tinh Thạch" },
+    { id: "Q_2", name: "✨ Quest 2: Quang Tinh", tt: 10, vnd: 250000, iconClass: "ico-quest1", desc: "🚙 Buff dịch chuyển đến Suối Thì Thầm Rì Rầm \n📜 Nhiệm Vụ Thạch Yêu Lúc Lắc.\n 🔮 Nhận thưởng Tinh Thạch " },
+    { id: "Q_3", name: "🔥 Quest 3: Hỏa Tinh", tt: 10, vnd: 250000, iconClass: "ico-quest3", desc: "📜 Nhiệm Vụ Đốm Than Tinh Nghịch \n🔥 Nhận thưởng Tinh Thạch " },
     { id: "PKG_5", name: "🕋 Mystery Box", tt: 10, vnd: 250000, iconClass: "ico-pkg5", desc: "Hộp Vật Phẩm\n Trang bị cơ bản cho Nhà Phiêu Lưu" },
     { id: "PKG_6", name: "🔁 Buff Di Chuyển ", tt: 12, vnd: 300000, iconClass: "ico-pkg6", desc: "Buff Di chuyển Quảng Trường ⇄ Rừng Tinh Linh bằng xe chuyên dụng." },
     { id: "F_1", name: "🍢  Bữa Tối BBQ", tt: 6, vnd: 150000, iconClass: "ico-food1", desc: "Bữa thịt nướng thơm lừng bên ánh lửa trại ấm cúng." },
@@ -123,62 +123,62 @@ export const LORE_PAGES_DATA = [
     {
         id: 1,
         title: "Trang 1",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_mediumWebP/v1790861860/f6he3xmoq34ccewipjwi.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016552/brochure/01_ezxnjr.png"
     },
     {
         id: 2,
         title: "Trang 2",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_mediumWebP/v1790826217/i4ovm7frbbuw1itainfl.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016556/brochure/02_qn5qou.png"
     },
     {
         id: 3,
         title: "Trang 3",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677734/gffshdqnb9udkn7jwgxs.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016551/brochure/03_b8qk0q.png"
     },
     {
         id: 4,
         title: "Trang 4",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_mediumWebP/v1790826219/xaxbx3z4ybjtgg9jqrq5.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016550/brochure/04_jyj6vq.png"
     },
     {
         id: 5,
         title: "Trang 5",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677730/oniwhawez2ao9xxjah9y.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016549/brochure/05_rtnkwl.png"
     },
     {
         id: 6,
         title: "Trang 6",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677732/mx0alds1sd2aw445dslf.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016554/brochure/06_ixpf5w.png"
     },
     {
         id: 7,
         title: "Trang 7",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_mediumWebP/v1790826500/fwlltjxu4ti6icegdwqy.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016553/brochure/07_orperc.png"
     },
     {
         id: 8,
         title: "Trang 8",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677735/p3tkybdatsii76dmekhh.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016551/brochure/08_pmblc3.png"
     },
     {
         id: 9,
         title: "Trang 9",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677736/pfhzump4tax9svv4pqfs.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016550/brochure/09_qrmba1.png"
     },
     {
         id: 10,
         title: "Trang 10",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677737/mr9nggyrjouvnhrxmluz.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016549/brochure/10_t1wq9s.png"
     },
     {
         id: 11,
         title: "Trang 11",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677738/f3fqz5vc3vh1yqkyt1cy.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016549/brochure/11_z2k7j7.png"
     },
     {
         id: 12,
         title: "Trang 12",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790719395/gqg0jitvnn3m1u9gufao.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016555/brochure/12_jhp1b5.png"
     },
     {
         id: 13,
