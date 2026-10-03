@@ -272,7 +272,7 @@ export const GUILD_QUEST_DATA = [
 // maxTiltDeg là con số quyết định độ nghiêng tối đa của mỗi tờ ảnh (hiện 30 độ).
 // Tăng/giảm ở đây là đủ, app.js tự đọc. Trần an toàn cứng ở app.js vẫn là 70 độ.
 export const GUILD_QUEST_META = {
-    title: "Quest tại Hội Ngọc Lục",
+    title: "BẢNG NHIỆM VỤ HỘI NGỌC LỤC",
     background: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791043559/rgaguy1x4tqh7atwi663.png",
     maxTiltDeg: 30,
     emptyText: "Hội Ngọc Lục đang sắp xếp các tờ Quest…"
