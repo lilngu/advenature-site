@@ -4432,7 +4432,6 @@ body.guest-mode .dock-btn:not(.center-core) {
     align-items: center;
     justify-content: center;
     padding: 20px;
-    background: rgba(6, 4, 12, 0.86);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     opacity: 0;
@@ -4621,7 +4620,6 @@ body.guest-mode .dock-btn:not(.center-core) {
        đều không bao giờ bị cắt). */
     height: auto;
     border-radius: 2px;
-    background: rgba(0, 0, 0, 0.28);
     pointer-events: none;       /* click xuyên thẳng lên .gq-card */
 }
 
