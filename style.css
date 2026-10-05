@@ -5089,6 +5089,7 @@ body.guest-mode .dock-btn:not(.center-core) {
     border: 1px solid rgba(255, 230, 109, 0.25);
     box-shadow: 0 6px 18px -10px rgba(124, 108, 255, 0.45) inset;
     transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+    justify-content: center;
 }
 
 .lb-item:hover {
@@ -5121,7 +5122,6 @@ body.guest-mode .dock-btn:not(.center-core) {
 }
 
 .lb-info {
-    flex: 1;
     min-width: 0;
     display: flex;
     flex-direction: column;
