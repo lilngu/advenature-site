@@ -4660,9 +4660,20 @@ body.guest-mode .dock-btn:not(.center-core) {
 .guild-quest-lightbox.hidden { display: none; }
 .guild-quest-lightbox.show { opacity: 1; }
 
+/* Khung chứa ảnh + nút đăng ký, xếp dọc -> nút nằm ngay dưới ảnh */
+.gql-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    max-width: 100%;
+    max-height: 100%;
+}
+
 .gql-img {
     max-width: 100%;
-    max-height: 80vh;
+    /* Cao tối đa 70vh để còn chỗ cho nút đăng ký + caption + bộ đếm bên dưới */
+    max-height: 70vh;
     object-fit: contain;
     border-radius: 10px;
     border: 2px solid rgba(212, 175, 55, 0.5);
@@ -4740,6 +4751,81 @@ body.guest-mode .dock-btn:not(.center-core) {
     color: rgba(243, 229, 171, 0.65);
 }
 
+/* --- Nút "Gửi Thông tin đăng ký Quest" (ngay dưới ảnh) --- */
+.gql-register {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    max-width: 100%;
+    padding: 11px 22px;
+    border: 1px solid rgba(212, 175, 55, 0.75);
+    border-radius: 999px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    font-family: Retro2k, sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    color: #f7fbff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.gql-register i {
+    font-size: 14px;
+    color: #d9f0ff;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7));
+}
+
+.gql-register-text {
+    line-height: 1.3;
+    text-align: center;
+}
+
+.gql-register:hover:not(:disabled),
+.gql-register:focus-visible:not(:disabled) {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.7), 0 0 18px rgba(10, 123, 216, 0.6);
+    filter: brightness(1.12);
+    outline: none;
+}
+
+.gql-register:active:not(:disabled) {
+    transform: translateY(1px) scale(0.99);
+}
+
+/* Đang gửi: xoay icon + mờ nút */
+.gql-register.is-sending i { animation: gql-send-spin 0.9s linear infinite; }
+.gql-register.is-sending { opacity: 0.8; cursor: progress; }
+
+/* Đã gửi xong: chuyển sang xanh lá để người chơi biết đã thành công */
+.gql-register.is-done {
+    background: linear-gradient(180deg, #1e9e5a 0%, #146c3d 55%, #0d4a29 100%);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6), 0 0 16px rgba(30, 158, 90, 0.45);
+}
+
+.gql-register:disabled { cursor: default; }
+
+@keyframes gql-send-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Dòng giải thích nhỏ dưới nút */
+.gql-register-note {
+    margin: 0;
+    max-width: 420px;
+    font-family: Retro2k, sans-serif;
+    font-size: 8px;
+    line-height: 1.5;
+    letter-spacing: 0.4px;
+    text-align: center;
+    color: rgba(243, 229, 171, 0.68);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
+}
+
 /* Màn hình nhỏ: thu padding, giữ nguyên lưới 2 cột + khung 80vw x 70vh */
 @media (max-width: 768px) {
     .guild-quest-modal { padding: 10px; }
@@ -4752,5 +4838,11 @@ body.guest-mode .dock-btn:not(.center-core) {
     .gql-prev { left: 4px; }
     .gql-next { right: 4px; }
     .gql-caption { font-size: 11px; padding: 0 46px; }
+    /* Màn nhỏ: thu ảnh + nút cho vừa màn hình */
+    .gql-stage { gap: 9px; }
+    .gql-img { max-height: 58vh; }
+    .gql-register { padding: 9px 15px; font-size: 9px; gap: 7px; }
+    .gql-register i { font-size: 12px; }
+    .gql-register-note { font-size: 7px; max-width: 300px; }
 }
 

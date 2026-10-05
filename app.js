@@ -18,7 +18,8 @@ import {
     MODAL_IMAGES,
     UPCOMING_FEATURES_DATA,
     GUILD_QUEST_DATA,
-    GUILD_QUEST_META
+    GUILD_QUEST_META,
+    GUILD_QUEST_MESSENGER_DEFAULT
 } from '@data';
 // TOAST NOTIFICATION SYSTEM — dùng importmap @toast
 import { toast } from '@toast';
@@ -838,15 +839,33 @@ const GUILD_QUEST_MAX_TILT = Math.min(70, Math.abs(Number(GUILD_QUEST_META?.maxT
 // guildQuestModal / guildQuestBox / guildQuestGrid / guildQuestTitle đã khai báo ở đầu file.
 const guildQuestLightbox = document.getElementById("guildQuestLightbox");
 const guildQuestLbImg = document.getElementById("guildQuestLightboxImg");
+const guildQuestLbStage = document.getElementById("guildQuestLbStage");
 const guildQuestLbCaption = document.getElementById("guildQuestLightboxCaption");
 const guildQuestLbCounter = document.getElementById("guildQuestLightboxCounter");
 const guildQuestLbPrev = document.getElementById("guildQuestLightboxPrev");
 const guildQuestLbNext = document.getElementById("guildQuestLightboxNext");
+const guildQuestLbRegister = document.getElementById("guildQuestRegisterBtn");
+const guildQuestLbRegisterText = guildQuestLbRegister?.querySelector(".gql-register-text");
 
 let guildQuestOpen = false;
 let guildQuestLbOpen = false;
 let guildQuestLbIndex = 0;
 let guildQuestItems = [];
+// Messenger link của tờ quest đang mở trong lightbox (đọc từ data.js mỗi lần chuyển ảnh)
+let guildQuestLbMessengerUrl = "";
+// Khoá chống spam: sau khi bấm sẽ tạm khoá nút trong GUILD_QUEST_REGISTER_COOLDOWN_MS
+let guildQuestRegisterLocked = false;
+// Đang có request gửi đi -> không đổi nhãn nút giữa chừng
+let guildQuestRegisterPending = false;
+// Tên quest mà nút đang hiển thị trạng thái "đã gửi" (để chuyển ảnh là biết reset nhãn)
+let guildQuestRegisterQuestKey = "";
+// Hẹn giờ mở lại nút sau khi gửi xong (dùng để huỷ nếu người chơi đóng lightbox rất nhanh)
+let guildQuestRegisterTimer = 0;
+// Nhãn nút gốc trong HTML — dùng lại sau mỗi lần đổi trạng thái
+const GUILD_QUEST_REGISTER_LABEL = guildQuestLbRegisterText?.textContent?.trim() || "Gửi Thông tin đăng ký Quest";
+const GUILD_QUEST_REGISTER_SENDING = "Đang gửi...";
+const GUILD_QUEST_REGISTER_DONE = "✦ Đã Gửi — Mở Messenger ✦";
+const GUILD_QUEST_REGISTER_COOLDOWN_MS = 4000;
 
 /**
  * Escape chuỗi trước khi nhét vào innerHTML / thuộc tính.
@@ -856,6 +875,37 @@ function escapeHtml(value) {
     return String(value ?? "").replace(/[&<>"']/g, (ch) => ({
         "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
     })[ch]);
+}
+
+/**
+ * Chuẩn hoá link Messenger do admin khai báo trong data.js.
+ * Cho phép viết ngắn ("m.me/463539600777112") hoặc đầy đủ ("https://m.me/...").
+ * Chỉ nhận http/https — chặn javascript: / data: để không bị chèn link độc hại.
+ * Trả về chuỗi rỗng nếu link không hợp lệ.
+ */
+function normalizeMessengerUrl(rawUrl) {
+    const value = String(rawUrl ?? "").trim();
+    if (!value) return "";
+
+    const withProtocol = /^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(value) ? value : `https://${value}`;
+
+    try {
+        const parsed = new URL(withProtocol);
+        if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return "";
+        return parsed.href;
+    } catch {
+        return "";
+    }
+}
+
+/**
+ * Lấy link Messenger của một tờ quest.
+ * Ưu tiên trường `messenger` của chính tờ đó, không có thì dùng GUILD_QUEST_MESSENGER_DEFAULT
+ * (link mặc định admin chỉnh trong data.js).
+ */
+function getGuildQuestMessengerUrl(item) {
+    return normalizeMessengerUrl(item?.messenger || GUILD_QUEST_MESSENGER_DEFAULT)
+        || normalizeMessengerUrl(GUILD_QUEST_MESSENGER_DEFAULT);
 }
 
 /**
@@ -969,6 +1019,9 @@ function paintGuildQuestLightbox() {
     guildQuestLbImg.src = item.url;
     guildQuestLbImg.alt = title;
 
+    // Link Messenger riêng của tờ đang xem — đổi theo từng quest, admin sửa trong data.js
+    guildQuestLbMessengerUrl = getGuildQuestMessengerUrl(item);
+
     if (guildQuestLbCaption) guildQuestLbCaption.textContent = title;
     if (guildQuestLbCounter) {
         guildQuestLbCounter.textContent = `${guildQuestLbIndex + 1} / ${guildQuestItems.length}`;
@@ -978,6 +1031,13 @@ function paintGuildQuestLightbox() {
     const single = guildQuestItems.length < 2;
     guildQuestLbPrev?.classList.toggle("is-off", single);
     guildQuestLbNext?.classList.toggle("is-off", single);
+
+    // Sang tờ quest khác -> trả nút "Gửi thông tin" về trạng thái ban đầu
+    // (nhãn "đã gửi" chỉ đúng với đúng tờ người chơi vừa bấm).
+    // Đang gửi dở thì giữ nguyên, tránh nhãn nhảy loạn giữa hai tờ.
+    if (!guildQuestRegisterPending && guildQuestRegisterQuestKey && guildQuestRegisterQuestKey !== title) {
+        resetGuildQuestRegister();
+    }
 
     preloadGuildQuestNeighbors(guildQuestLbIndex);
 }
@@ -1006,6 +1066,123 @@ function stepGuildQuestLightbox(step) {
     paintGuildQuestLightbox();
 }
 
+/** Đặt trạng thái + nhãn cho nút "Gửi Thông tin đăng ký Quest". */
+function setGuildQuestRegisterState(state) {
+    if (!guildQuestLbRegister) return;
+
+    const labels = {
+        idle: GUILD_QUEST_REGISTER_LABEL,
+        sending: GUILD_QUEST_REGISTER_SENDING,
+        done: GUILD_QUEST_REGISTER_DONE
+    };
+
+    if (guildQuestLbRegisterText) {
+        guildQuestLbRegisterText.textContent = labels[state] || GUILD_QUEST_REGISTER_LABEL;
+    }
+    // Chỉ khoá nút khi đang gửi — trạng thái "done" vẫn cho bấm lại (khoá riêng bằng timer)
+    guildQuestLbRegister.disabled = state === "sending";
+    guildQuestLbRegister.classList.toggle("is-sending", state === "sending");
+    guildQuestLbRegister.classList.toggle("is-done", state === "done");
+}
+
+/** Đưa nút về trạng thái ban đầu + nhả khoá chống spam. */
+function resetGuildQuestRegister() {
+    clearTimeout(guildQuestRegisterTimer);
+    guildQuestRegisterTimer = 0;
+    guildQuestRegisterLocked = false;
+    guildQuestRegisterPending = false;
+    guildQuestRegisterQuestKey = "";
+    setGuildQuestRegisterState("idle");
+}
+
+/**
+ * Gửi thông tin người chơi + thông tin tờ quest đang chọn tới bot Telegram (qua Worker),
+ * rồi dẫn người chơi tới link Messenger gắn kèm trong data.js.
+ *
+ * Tab Messenger được mở ĐỒNG BỘ ngay khi bấm (không await trước) vì trình duyệt chặn
+ * window.open sau khi đã có await -> tab Messenger sẽ không mở được.
+ */
+async function handleGuildQuestRegister() {
+    if (!guildQuestLbRegister || guildQuestRegisterLocked) return;
+
+    const item = guildQuestItems[guildQuestLbIndex];
+    if (!item) return;
+
+    // Chưa có tài khoản thật -> chặn sớm, khỏi gửi tin rác lên Telegram
+    if (isFirstTimeGuest || !currentUser?.id) {
+        toast.warning('CHƯA THỂ ĐĂNG KÝ QUEST', 'Vui lòng hoàn tất đăng ký Nhà Phiêu Lưu trước khi gửi thông tin nhé!');
+        sfxBlink();
+        return;
+    }
+
+    const questTitle = item.title || `Quest ${guildQuestLbIndex + 1}`;
+    const rawQuestId = Number(item.id);
+    const questId = Number.isFinite(rawQuestId) ? rawQuestId : guildQuestLbIndex + 1;
+    const messengerUrl = guildQuestLbMessengerUrl || getGuildQuestMessengerUrl(item);
+
+    if (!messengerUrl) {
+        toast.error('LINK MESSENGER KHÔNG HỢP LỆ', 'Hội Ngọc Lục đang sửa lại đường dẫn, vui lòng thử lại sau!');
+        return;
+    }
+
+    // Mở Messenger trước khi await để không bị trình duyệt chặn popup.
+    // Không dùng feature "noopener" vì chuẩn quy định khi đó window.open trả về null
+    // (không phân biệt được với popup bị chặn) — ta chặn opener thủ công bên dưới.
+    const messengerTab = window.open(messengerUrl, "_blank");
+    if (messengerTab) {
+        messengerTab.opener = null;
+    } else {
+        toast.warning('HÃY CHO PHÉP MỞ TAB MỚI', 'Trình duyệt đang chặn popup — hãy cho phép để mở Messenger!');
+    }
+    sfxBell();
+
+    guildQuestRegisterLocked = true;
+    guildQuestRegisterPending = true;
+    guildQuestRegisterQuestKey = questTitle;
+    setGuildQuestRegisterState("sending");
+
+    try {
+        const res = await fetch(`${API_URL}/api/quest/register-guild-quest`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                userId: currentUser.id,
+                questId: questId,
+                questTitle: questTitle,
+                messenger: messengerUrl,
+                pageUrl: window.location.href
+            })
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.success) {
+            throw new Error(data?.error || `HTTP ${res.status}`);
+        }
+
+        // Người chơi có thể đã chuyển sang tờ khác lúc chờ -> chỉ đổi nhãn khi vẫn ở đúng tờ
+        if (guildQuestRegisterQuestKey === questTitle) setGuildQuestRegisterState("done");
+        toast.success(
+            'ĐÃ GỬI THÔNG TIN ĐĂNG KÝ QUEST',
+            `✧ Hội Ngọc Lục đã nhận thông tin "${questTitle}". Hãy liên hệ Hội trưởng qua Messenger để hoàn tất đăng ký!`
+        );
+    } catch (err) {
+        console.error("[guild-quest] Gửi thông tin đăng ký Quest thất bại:", err);
+        if (guildQuestRegisterQuestKey === questTitle) setGuildQuestRegisterState("idle");
+        toast.error(
+            'GỬI THÔNG TIN THẤT BẠI',
+            'Không thể gửi tới Hội Ngọc Lục — bạn vẫn có thể liên hệ trực tiếp qua Messenger!'
+        );
+    } finally {
+        guildQuestRegisterPending = false;
+        // Nhả khoá sau cooldown để tránh spam Telegram, nhãn "đã gửi" vẫn giữ lại
+        clearTimeout(guildQuestRegisterTimer);
+        guildQuestRegisterTimer = setTimeout(() => {
+            guildQuestRegisterTimer = 0;
+            guildQuestRegisterLocked = false;
+        }, GUILD_QUEST_REGISTER_COOLDOWN_MS);
+    }
+}
+
 /** Đóng lightbox, quay lại bảng Quest. */
 function closeGuildQuestLightbox() {
     if (!guildQuestLightbox || !guildQuestLbOpen) return;
@@ -1018,6 +1195,8 @@ function closeGuildQuestLightbox() {
         if (guildQuestLbOpen) return;
         guildQuestLightbox.classList.add("hidden");
         if (guildQuestLbImg) guildQuestLbImg.removeAttribute("src");
+        guildQuestLbMessengerUrl = "";
+        resetGuildQuestRegister();
         if (!guildQuestOpen) document.body.style.overflow = "";
     }, 300);
 }
@@ -1030,9 +1209,11 @@ guildQuestModal?.addEventListener("click", (e) => {
 document.getElementById("guildQuestLightboxClose")?.addEventListener("click", closeGuildQuestLightbox);
 guildQuestLbPrev?.addEventListener("click", () => stepGuildQuestLightbox(-1));
 guildQuestLbNext?.addEventListener("click", () => stepGuildQuestLightbox(1));
-// Click nền đen của lightbox -> đóng (bấm trực tiếp lên ảnh thì không)
+// Nút "Gửi Thông tin đăng ký Quest": bắn thông tin lên Telegram + mở Messenger
+guildQuestLbRegister?.addEventListener("click", handleGuildQuestRegister);
+// Click nền đen của lightbox -> đóng (bấm trực tiếp lên ảnh / khung .gql-stage thì không)
 guildQuestLightbox?.addEventListener("click", (e) => {
-    if (e.target === guildQuestLightbox) closeGuildQuestLightbox();
+    if (e.target === guildQuestLightbox || e.target === guildQuestLbStage) closeGuildQuestLightbox();
 });
 
 // Bàn phím cho bảng Quest + lightbox. Ưu tiên đóng lightbox trước, rồi mới đóng modal.

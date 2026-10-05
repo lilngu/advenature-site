@@ -249,26 +249,38 @@ export const AUDIO_MAP = Object.fromEntries(AUDIO_SOURCES.map((a) => [a.key, a])
 // Modal #guildQuestModal tự bố trí ảnh thành lưới 2 cột rời rạc, mỗi tờ nghiêng
 // ngẫu nhiên (tối đa GUILD_QUEST_META.maxTiltDeg độ) và click vào để xem lightbox.
 //
-// ➜ THÊM / BỎ ẢNH: chỉ cần thêm hoặc xoá một dòng { url, title } bên dưới.
+// ➜ THÊM / BỎ ẢNH: chỉ cần thêm hoặc xoá một dòng { url, title, messenger } bên dưới.
 //   app.js tự layout lại, không cần sửa bất kỳ file nào khác.
 //   Các mục đánh dấu [placeholder] đang dùng lại ảnh sẵn có của dự án để dựng
 //   lưới thử — thay bằng ảnh quest thật của Hội Ngọc Lục khi được bàn giao.
+//
+// ➜ LINK MESSENGER MẶC ĐỊNH (nút "Gửi Thông tin đăng ký Quest" trong lightbox):
+//   Admin sửa thủ công ở 2 chỗ, không cần đụng app.js:
+//   1. Sửa hằng số GUILD_QUEST_MESSENGER_DEFAULT bên dưới -> áp dụng cho TẤT CẢ quest.
+//   2. Thêm/sửa dòng `messenger: "..."` trong từng quest -> ghi đè riêng cho tờ đó.
+//   Link được dùng để dẫn người chơi tới Messenger sau khi gửi thông tin cho bot Telegram.
+//   Có thể khai báo cả dạng ngắn "m.me/463539600777112" — app.js tự thêm https://.
+export const GUILD_QUEST_MESSENGER_DEFAULT = "https://m.me/463539600777112";
+
 export const GUILD_QUEST_DATA = [
     {
         id: 1,
         title: "NGÀY HỘI TRIỆU HỒI",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791123365/opcjvaqecr1z1lsxgigc.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791123365/opcjvaqecr1z1lsxgigc.png",
+        messenger: "https://m.me/463539600777112?text=Ch%C3%A0o%20H%E1%BB%99i%20Ng%E1%BB%8Dc%20L%E1%BB%A5c!%20T%C3%B4i%20mu%E1%BB%91n%20Tham%20gia%20ng%C3%A0y%20H%E1%BB%99i%20Tri%E1%BB%87u%20H%E1%BB%93i%2010%2F10."
     },
     {
         id: 2,
         title: "Quest I · Thương Hội",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791046797/ukoqthjxzapum1snkxwg.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791046797/ukoqthjxzapum1snkxwg.png",
+        messenger: "https://m.me/463539600777112"
     },
     // --- [placeholder] Ảnh dựng lưới, thay bằng quest thật khi có ---
      {
         id: 3,
         title: "Quest II · Hội Ngọc Lục",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791043557/l2gwcmzyz050izqlfye3.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791043557/l2gwcmzyz050izqlfye3.png",
+        messenger: "https://m.me/463539600777112"
     }
 ];
 

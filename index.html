@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<meta name="referrer" content="no-referrer">
     <title data-i18n="meta.title">RỪNG TINH LINH ADVENATURE</title>
-    <link rel="stylesheet" href="style.css?v=20261002">
+    <link rel="stylesheet" href="style.css?v=20261013">
     <!-- Set FAV icon -->
     <link rel="icon" type="image/png" sizes="16x16"  href="/favicon-16x16.png">
 <meta name="msapplication-TileColor" content="#ffffff">
@@ -42,7 +42,7 @@
         "imports": {
             "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
             "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
-            "@data": "./data.js?v=20261012",
+            "@data": "./data.js?v=20261013",
             "@toast": "./toast.js?v=20261002",
             "@rollquest": "./rollquest.js?v=20261003",
             "@vfx": "./vfx.js?v=20261002",
@@ -967,7 +967,16 @@
 
 <!-- LIGHTBOX: xem tờ ảnh Quest toàn màn hình -->
 <div id="guildQuestLightbox" class="guild-quest-lightbox hidden" role="dialog" aria-modal="true" aria-label="Xem ảnh Quest">
-    <img id="guildQuestLightboxImg" class="gql-img" alt="" decoding="async">
+    <!-- .gql-stage xếp dọc: ảnh quest + nút đăng ký ngay bên dưới ảnh -->
+    <div class="gql-stage" id="guildQuestLbStage">
+        <img id="guildQuestLightboxImg" class="gql-img" alt="" decoding="async">
+        <!-- Nút gửi thông tin đăng ký Quest tới bot Telegram + mở Messenger (link lấy từ data.js) -->
+        <button type="button" id="guildQuestRegisterBtn" class="gql-register btn-celtic">
+            <i class="fa-brands fa-facebook-messenger" aria-hidden="true"></i>
+            <span class="gql-register-text">Gửi Thông tin đăng ký Quest</span>
+        </button>
+        <p class="gql-register-note" id="guildQuestRegisterNote">Thông tin sẽ được gửi tới Hội Ngọc Lục, bạn sẽ được dẫn tới Messenger để liên hệ.</p>
+    </div>
     <button type="button" id="guildQuestLightboxPrev" class="gql-nav gql-prev" aria-label="Ảnh trước">
         <i class="fa-solid fa-chevron-left"></i>
     </button>
@@ -979,6 +988,6 @@
     <div class="gql-counter" id="guildQuestLightboxCounter"></div>
 </div>
 
-    <script type="module" src="app.js?v=20261012"></script>
+    <script type="module" src="app.js?v=20261013"></script>
 </body>
 </html>
