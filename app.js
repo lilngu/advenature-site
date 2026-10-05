@@ -761,15 +761,10 @@ function getLoreHelperTargetPosition() {
 }
 
 function getGemLbHelperTargetPosition() {
-    const gachaBtn = dockGachaTrigger;
-    if (!gachaBtn) return { top: '20vh', left: '10vw' };
-
-    const orbRect = gachaBtn.querySelector('.gold-ring')?.getBoundingClientRect() || gachaBtn.getBoundingClientRect();
-
-    // Vị trí tương đương cornerPortal3D (góc trái), dịch nhẹ lên trên so với tâm orb để tránh che
+    // Vị trí fixed: 10vh từ trên, 20px từ trái màn hình
     return {
-        top: (orbRect.top - 150) + 'px',
-        left: (orbRect.left - 100) + 'px'
+        top: '10vh',
+        left: '20px'
     };
 }
 
@@ -848,6 +843,27 @@ function showLoreHelper() {
     });
 }
 
+function initGemLbHelper() {
+    if (!gemLbHelper || document.body.classList.contains('guest-mode')) return;
+    const checkAndShowGemLbHelper = () => {
+        const gachaView = document.getElementById('gacha-view');
+        if (gachaView && gachaView.classList.contains('active') && !gachaView.classList.contains('hidden')) {
+            if (!gemLbHelperShown) return setTimeout(showGemLbHelper, 5500);
+        }
+        return null;
+    };
+    checkAndShowGemLbHelper();
+    const navButtons = document.querySelectorAll('.nav-btn');
+    navButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (btn.dataset.target === 'gacha-view') {
+                setTimeout(() => { checkAndShowGemLbHelper(); updateGachaReadyTooltip(); }, 100);
+            }
+        });
+    });
+    gemLbHelper?.addEventListener('click', () => { sfxPaper?.(); openGemLeaderboardModal(); });
+}
+
 function showGemLbHelper() {
     if (state !== STATE.IDLE) return;
     if (document.body.classList.contains('guest-mode')) return;
@@ -879,7 +895,112 @@ function hideGemLbHelper() {
         if (gemLbHelper.classList.contains('active')) return;
         gemLbHelper.classList.add('hidden');
         gemLbHelper.classList.remove('exit-to-left');
+        // Quan trọng: reset styleLeft khi ẩn để lần sau show lại hoạt động đúng
+        gemLbHelper.style.left = '';
     }, 800);
+}
+
+// ======================================================
+// BẢNG XẾP HẠNG QUANG THẠCH SƯU TẦM GIA
+// ======================================================
+
+async function openGemLeaderboardModal() {
+    if (!gemLeaderboardModal || !gemLeaderboardList) return;
+
+    gemLbModalOpen = true;
+    gemLeaderboardModal.classList.remove("hidden");
+    // ép reflow
+    gemLeaderboardModal.offsetHeight;
+    requestAnimationFrame(() => gemLeaderboardModal.classList.add("show"));
+
+    document.body.style.overflow = "hidden";
+    // Ẩn helper khi đã mở modal
+    hideGemLbHelper();
+
+    // Loading state
+    gemLeaderboardList.innerHTML = `
+        <div style="text-align:center; color:#c9c3ff; padding:16px; font-size:12px;">
+            Đang tải bảng xếp hạng...
+        </div>
+    `;
+
+    try {
+        const res = await fetch(`${API_URL}/api/leaderboard/gems`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            cache: "no-store"
+        });
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const data = await res.json();
+        // Hỗ trợ 3 key: data.list, data.leaderboard, data.top (worker trả về "top")
+        const list = Array.isArray(data.list) ? data.list : (Array.isArray(data.leaderboard) ? data.leaderboard : (Array.isArray(data.top) ? data.top : []));
+
+        if (list.length === 0) {
+            gemLeaderboardList.innerHTML = `
+                <div style="text-align:center; color:#c9c3ff; padding:16px; font-size:12px;">
+                    Chưa có dữ liệu xếp hạng.
+                </div>
+            `;
+            return;
+        }
+
+        gemLeaderboardList.innerHTML = list.slice(0, 10).map((user, idx) => {
+            const rank = idx + 1;
+            const gemCount = user.gem_count ?? user.unlocked_count ?? user.gems ?? 0;
+            const name = user.full_name || "Nhà Phiêu Lưu";
+            const code = user.adventurer_code || "AW----";
+            const avatar = user.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${code}`;
+            const rankClass = rank === 1 ? "lb-rank-1" : rank === 2 ? "lb-rank-2" : rank === 3 ? "lb-rank-3" : "";
+
+            return `
+                <div class="lb-item ${rankClass}">
+                    <div class="lb-rank">#${rank}</div>
+                    <div class="lb-avatar">
+                        <img src="${avatar}" alt="${name}" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=advenature'">
+                    </div>
+                    <div class="lb-info">
+                        <div class="lb-name">${escapeHtml(name)}</div>
+                        <div class="lb-code">${escapeHtml(code)}</div>
+                    </div>
+                    <div class="lb-gems">
+                        <span class="lb-gem-count">${gemCount}</span>
+                        <span class="lb-gem-total">/990</span>
+                    </div>
+                </div>
+            `;
+        }).join("");
+    } catch (err) {
+        console.error("[gem-leaderboard] Lỗi tải bảng xếp hạng:", err);
+        gemLeaderboardList.innerHTML = `
+            <div style="text-align:center; color:#ff99aa; padding:16px; font-size:12px; line-height:1.5;">
+                Không thể tải bảng xếp hạng.<br>
+                Vui lòng thử lại sau.
+            </div>
+        `;
+    }
+}
+
+function closeGemLeaderboardModal() {
+    if (!gemLeaderboardModal) return;
+    if (!gemLbModalOpen) return;
+
+    gemLeaderboardModal.classList.remove("show");
+    gemLbModalOpen = false;
+
+    setTimeout(() => {
+        gemLeaderboardModal.classList.add("hidden");
+        // Chỉ mở lại cuộn trang khi không còn modal nào khác mở
+        if (!guildQuestOpen && !guildQuestLbOpen && !gemLbModalOpen) {
+            document.body.style.overflow = "";
+        }
+        // Hiện lại helper nếu đang ở gacha-view và IDLE
+        const gachaView = document.getElementById("gacha-view");
+        if (!document.body.classList.contains("guest-mode") && state === STATE.IDLE && gachaView && gachaView.classList.contains("active") && !gachaView.classList.contains("hidden")) {
+            showGemLbHelper();
+        }
+    }, 380);
 }
 
 // ======================================================
@@ -1269,6 +1390,12 @@ guildQuestLbRegister?.addEventListener("click", handleGuildQuestRegister);
 // Click nền đen của lightbox -> đóng (bấm trực tiếp lên ảnh / khung .gql-stage thì không)
 guildQuestLightbox?.addEventListener("click", (e) => {
     if (e.target === guildQuestLightbox || e.target === guildQuestLbStage) closeGuildQuestLightbox();
+});
+
+// --- GEM LEADERBOARD MODAL EVENT LISTENERS ---
+document.getElementById("closeGemLeaderboard")?.addEventListener("click", closeGemLeaderboardModal);
+gemLeaderboardModal?.addEventListener("click", (e) => {
+    if (e.target === gemLeaderboardModal) closeGemLeaderboardModal();
 });
 
 // Bàn phím cho bảng Quest + lightbox. Ưu tiên đóng lightbox trước, rồi mới đóng modal.

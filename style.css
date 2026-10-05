@@ -4850,7 +4850,7 @@ body.guest-mode .dock-btn:not(.center-core) {
 .gem-lb-helper {
     position: fixed;
     top: 10vh;
-    left: clamp(10px, 4vw, 20px);
+    left: 20px;               /* Sử dụng left thay vì right */
     z-index: 90;
     pointer-events: auto;
     cursor: pointer;
@@ -4905,6 +4905,7 @@ body.guest-mode .dock-btn:not(.center-core) {
     text-align: center;
     padding: 6px 8px;
     line-height: 1.25;
+    display: none;
 }
 
 @keyframes gemLbFloat {
@@ -4971,8 +4972,8 @@ body.guest-mode .dock-btn:not(.center-core) {
 }
 
 .lb-avatar {
-    width: clamp(34px, 7vw, 38px);
-    height: clamp(34px, 7vw, 38px);
+    width: clamp(34px, 7vw, 50px);
+    height: clamp(34px, 7vw, 50x);
     border-radius: 50%;
     border: 1px solid rgba(255, 255, 255, 0.4);
     object-fit: cover;
@@ -5002,16 +5003,17 @@ body.guest-mode .dock-btn:not(.center-core) {
     color: #c9c3ff;
 }
 
-.lb-count {
+.lb-gem-count {
     font-weight: 700;
     color: #7c6cff;
     text-shadow: 0 2px 8px rgba(124, 108, 255, 0.35);
     white-space: nowrap;
 }
 
-.lb-slash {
+.lb-gem-total {
     opacity: 0.6;
     margin-left: 2px;
+    color: #c9c3ff;
 }
 
 .lb-sub,
@@ -5028,3 +5030,8 @@ body.guest-mode .dock-btn:not(.center-core) {
     opacity: 0.8;
 }
 
+.lb-avatar img {width: 100%;     border-radius: 50%;}
+.lb-rank-1,.lb-rank-2,.lb-rank-3 {border-style: dashed;}
+ .lb-rank-1 {background-color: #ffbe002b;box-shadow: yellow 2px 2px 2px;}
+.lb-rank-2 {box-shadow: #00abffa6 2px 2px 2px; background: #00ceff2b;}
+.lb-rank-3 {box-shadow: #00ff68a6 2px 2px 2px;    background: #00ff392b;}
