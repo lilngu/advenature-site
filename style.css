@@ -2332,6 +2332,7 @@ background: url(https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v
     color: #4cc9f0;
     letter-spacing: 1px;
     font-weight: 600;
+    display: none;
 }
 
 .player-info-body {
