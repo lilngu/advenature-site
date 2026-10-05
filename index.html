@@ -989,6 +989,47 @@
   </div>
 </div>
 
+<!-- MODAL: THÔNG TIN NHÀ PHIÊU LƯU (PLAYER INFO) -->
+<div id="playerInfoModal" class="modal-overlay hidden" role="dialog" aria-modal="true"
+     aria-labelledby="playerInfoTitle">
+  <div class="modal-box rpg-player-info-box">
+    <span class="close-modal" id="closePlayerInfoModal" data-i18n-title="common.close">&nbsp;</span>
+    <div class="player-info-header">
+      <div class="player-avatar-large" id="playerInfoAvatar">
+        <img src="" alt="" id="playerInfoAvatarImg">
+      </div>
+      <div class="player-main-info">
+        <h3 id="playerInfoName" class="player-name"></h3>
+        <span id="playerInfoCode" class="player-code"></span>
+      </div>
+    </div>
+    <div class="player-info-body">
+      <div class="player-stats-grid">
+        <div class="player-stat-card">
+          <span class="player-stat-label" data-i18n="playerInfo.class"></span>
+          <span class="player-stat-value" id="playerInfoClass">—</span>
+        </div>
+        <div class="player-stat-card">
+          <span class="player-stat-label" data-i18n="playerInfo.tribe"></span>
+          <span class="player-stat-value" id="playerInfoTribe">—</span>
+        </div>
+        <div class="player-stat-card">
+          <span class="player-stat-label" data-i18n="playerInfo.congHien"></span>
+          <span class="player-stat-value" id="playerInfoCongHien"><i class="rpg-ico ico-ch"></i> 0 CP</span>
+        </div>
+        <div class="player-stat-card">
+          <span class="player-stat-label" data-i18n="playerInfo.gemCount"></span>
+          <span class="player-stat-value" id="playerInfoGemCount"><i class="rpg-ico ico-tt"></i> 0/990</span>
+        </div>
+      </div>
+      <div class="player-badge-section">
+        <span class="player-badge-label" data-i18n="playerInfo.badge"></span>
+        <span class="player-badge-value" id="playerInfoBadge">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- LIGHTBOX: xem tờ ảnh Quest toàn màn hình -->
 <div id="guildQuestLightbox" class="guild-quest-lightbox hidden" role="dialog" aria-modal="true" aria-label="Xem ảnh Quest">
     <!-- .gql-stage xếp dọc: ảnh quest + nút đăng ký ngay bên dưới ảnh -->

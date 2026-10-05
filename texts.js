@@ -120,6 +120,17 @@ const TEXTS = {
     },
 
     // ======================================================
+    // PLAYER INFO MODAL
+    // ======================================================
+    playerInfo: {
+        class: "Chức nghiệp",
+        tribe: "Dòng Máu",
+        congHien: "Cống Hiến",
+        gemCount: "Quang Thạch",
+        badge: "Danh hiệu",
+    },
+
+    // ======================================================
     // QUEST PANEL
     // ======================================================
     quest: {
@@ -451,7 +462,7 @@ const TEXTS = {
         uploading: "⏳",
         fileTooLarge: "Vui lòng chọn ảnh có dung lượng dưới 5MB!",
         success: "✦ Cập nhật ảnh đại diện thành công!",
-        uploadFailed: "Kiểm tra lại ImgBB API Key!",
+        uploadFailed: "Kiểm tra lại API Key!",
         networkError: "Không thể kết nối đến máy chủ ảnh!",
     },
 

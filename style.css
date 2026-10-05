@@ -1715,7 +1715,7 @@ i.ico-back-wind {width: 64px; height: 64px;}
     inset: 0;
     background: rgba(0,0,0,0.82);
     backdrop-filter: blur(8px);
-    z-index: 50;
+    z-index: 250;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2273,6 +2273,144 @@ background: url(https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v
     background: rgba(255, 255, 255, 0.03);
     padding: 6px 10px;
     border-radius: 6px;
+}
+
+/* ======================================================
+   MODAL THÔNG TIN NHÀ PHIÊU LƯU (PLAYER INFO)
+   ====================================================== */
+.rpg-player-info-box {
+    background: rgba(14, 10, 32, 0.96) !important;
+    border: 1.5px solid var(--border-gold) !important;
+    box-shadow: 0 0 35px var(--gold-glow) !important;
+    max-width: 340px;
+    padding: 18px 16px;
+    text-align: center;
+}
+
+.player-info-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.player-avatar-large {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 3px solid var(--border-gold);
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 0 20px var(--gold-glow);
+    position: relative;
+}
+
+.player-avatar-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.player-main-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.player-name {
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffe66d;
+    text-shadow: 0 0 10px rgba(255, 230, 109, 0.5);
+    margin: 0;
+}
+
+.player-code {
+    font-size: 11px;
+    color: #4cc9f0;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.player-info-body {
+    text-align: left;
+}
+
+.player-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.player-stat-card {
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 10px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.player-stat-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 230, 109, 0.4);
+}
+
+.player-stat-label {
+    display: block;
+    font-size: 8px;
+    color: #a8a4c2;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.player-stat-value {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.player-stat-value .rpg-ico {
+    width: 16px;
+    height: 16px;
+}
+
+.player-badge-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px;
+    background: rgba(255, 230, 109, 0.08);
+    border: 1px solid rgba(255, 230, 109, 0.2);
+    border-radius: 8px;
+}
+
+.player-badge-label {
+    font-size: 8px;
+    color: #a8a4c2;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.player-badge-value {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffd166;
+    text-shadow: 0 0 10px rgba(255, 209, 102, 0.5);
+    min-height: 24px;
 }
 
 /* Hiệu ứng chạm v?�o ?� đ?� */
@@ -5001,6 +5139,7 @@ body.guest-mode .dock-btn:not(.center-core) {
     opacity: 0.8;
     letter-spacing: 1px;
     color: #c9c3ff;
+    display: none;
 }
 
 .lb-gem-count {

@@ -952,21 +952,23 @@ async function openGemLeaderboardModal() {
             const name = user.full_name || "Nhà Phiêu Lưu";
             const code = user.adventurer_code || "AW----";
             const avatar = user.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${code}`;
+            const userId = user.id || "";
             const rankClass = rank === 1 ? "lb-rank-1" : rank === 2 ? "lb-rank-2" : rank === 3 ? "lb-rank-3" : "";
+            const isMe = currentUser && userId === currentUser.id ? " lb-me" : "";
 
             return `
-                <div class="lb-item ${rankClass}">
+                <div class="lb-item ${rankClass}${isMe}" data-user-id="${escapeHtml(userId)}">
                     <div class="lb-rank">#${rank}</div>
                     <div class="lb-avatar">
                         <img src="${avatar}" alt="${name}" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=advenature'">
                     </div>
                     <div class="lb-info">
-                        <div class="lb-name">${escapeHtml(name)}</div>
+                        <div class="lb-name" data-user-id="${escapeHtml(userId)}" style="cursor: pointer;">${escapeHtml(name)}</div>
                         <div class="lb-code">${escapeHtml(code)}</div>
                     </div>
                     <div class="lb-gems">
                         <span class="lb-gem-count">${gemCount}</span>
-                        <span class="lb-gem-total">/990</span>
+                        <span class="lb-gem-total">Biến Thể💎</span>
                     </div>
                 </div>
             `;
@@ -1002,6 +1004,96 @@ function closeGemLeaderboardModal() {
         }
     }, 380);
 }
+
+// ======================================================
+// MODAL THÔNG TIN NHÀ PHIÊU LƯU (PLAYER INFO)
+// ======================================================
+let playerInfoModalOpen = false;
+const playerInfoModal = document.getElementById("playerInfoModal");
+
+async function openPlayerInfoModal(userId) {
+    if (!playerInfoModal || !userId) return;
+
+    playerInfoModalOpen = true;
+    playerInfoModal.classList.remove("hidden");
+    playerInfoModal.offsetHeight;
+    requestAnimationFrame(() => playerInfoModal.classList.add("show"));
+    document.body.style.overflow = "hidden";
+
+    // Loading state
+    document.getElementById("playerInfoName").textContent = "Đang tải...";
+    document.getElementById("playerInfoCode").textContent = "";
+    document.getElementById("playerInfoClass").textContent = "—";
+    document.getElementById("playerInfoTribe").textContent = "—";
+    document.getElementById("playerInfoCongHien").innerHTML = '<i class="rpg-ico ico-ch"></i> — CP';
+    document.getElementById("playerInfoGemCount").innerHTML = '<i class="rpg-ico ico-tt"></i> —/990';
+    document.getElementById("playerInfoBadge").textContent = "—";
+    document.getElementById("playerInfoAvatarImg").src = "";
+
+    try {
+        const res = await fetch(API_URL + "/api/user/profile?userId=" + encodeURIComponent(userId), {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            cache: "no-store"
+        });
+
+        if (!res.ok) throw new Error("HTTP " + res.status);
+
+        const data = await res.json();
+        if (!data.success || !data.user) throw new Error(data.error || "Không tìm thấy người chơi");
+
+        const user = data.user;
+        const gemCount = user.gem_count ?? user.unlocked_count ?? user.gems ?? (Array.isArray(user.unlocked_gems) ? user.unlocked_gems.length : 0);
+
+        document.getElementById("playerInfoName").textContent = user.full_name || "Nhà Phiêu Lưu";
+        document.getElementById("playerInfoCode").textContent = user.adventurer_code || "AW----";
+        document.getElementById("playerInfoClass").textContent = user.class_name || "—";
+        document.getElementById("playerInfoTribe").textContent = user.tribe || "—";
+        document.getElementById("playerInfoCongHien").innerHTML = '<i class="rpg-ico ico-ch"></i> ' + (user.cong_hien_points || 0).toLocaleString() + ' CP';
+        document.getElementById("playerInfoGemCount").innerHTML = '<i class="rpg-ico ico-tt"></i> ' + gemCount + '/990';
+        document.getElementById("playerInfoBadge").textContent = user.badge || user.title || "—";
+
+        if (user.avatar_url) {
+            document.getElementById("playerInfoAvatarImg").src = user.avatar_url;
+        } else if (user.adventurer_code) {
+            document.getElementById("playerInfoAvatarImg").src = 'https://api.dicebear.com/7.x/bottts/svg?seed=' + user.adventurer_code;
+        }
+    } catch (err) {
+        console.error("[player-info] Lỗi tải thông tin:", err);
+        document.getElementById("playerInfoName").textContent = "Lỗi tải dữ liệu";
+        toast.error('LỖI', 'Không thể tải thông tin người chơi');
+    }
+}
+
+function closePlayerInfoModal() {
+    if (!playerInfoModal) return;
+    if (!playerInfoModalOpen) return;
+
+    playerInfoModal.classList.remove("show");
+    playerInfoModalOpen = false;
+
+    setTimeout(() => {
+        playerInfoModal.classList.add("hidden");
+        if (!guildQuestOpen && !guildQuestLbOpen && !gemLbModalOpen && !playerInfoModalOpen) {
+            document.body.style.overflow = "";
+        }
+    }, 380);
+}
+
+// Event delegation cho click vào tên user trong leaderboard
+gemLeaderboardList?.addEventListener("click", (e) => {
+    const nameEl = e.target.closest(".lb-name[data-user-id]");
+    if (nameEl) {
+        const userId = nameEl.dataset.userId;
+        if (userId) openPlayerInfoModal(userId);
+    }
+});
+
+// Nút đóng modal player info
+document.getElementById("closePlayerInfoModal")?.addEventListener("click", closePlayerInfoModal);
+playerInfoModal?.addEventListener("click", (e) => {
+    if (e.target === playerInfoModal) closePlayerInfoModal();
+});
 
 // ======================================================
 // BẢNG QUEST TẠI HỘI NGỌC LỤC (#guildQuestModal)
@@ -1404,6 +1496,7 @@ document.addEventListener("keydown", (e) => {
         if (guildQuestLbOpen) { closeGuildQuestLightbox(); return; }
         if (guildQuestOpen) { closeGuildQuestModal(); return; }
         if (gemLbModalOpen) { closeGemLeaderboardModal(); return; }
+        if (playerInfoModalOpen) { closePlayerInfoModal(); return; }
         return;
     }
     if (!guildQuestLbOpen) return;
