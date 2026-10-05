@@ -968,7 +968,7 @@ async function openGemLeaderboardModal() {
                     </div>
                     <div class="lb-gems">
                         <span class="lb-gem-count">${gemCount}</span>
-                        <span class="lb-gem-total">Biến Thể💎</span>
+                        <span class="lb-gem-total">💎</span>
                     </div>
                 </div>
             `;

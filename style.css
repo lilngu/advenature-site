@@ -5067,6 +5067,7 @@ body.guest-mode .dock-btn:not(.center-core) {
     padding-right: 4px;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
+    font-family: 'Handjet';
 }
 
 .lb-list::-webkit-scrollbar {
