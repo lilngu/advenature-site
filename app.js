@@ -95,12 +95,17 @@ const cornerPortal3D = document.getElementById("cornerPortal3D");
 const CORNER_PORTAL_LINK = "https://www.facebook.com/groups/nhaphieuluuxanh";
 // Khai báo ở đầu file vì initLoreHelper() được gọi ngay khi load trang (tránh temporal dead zone)
 let cornerPortal = null;
+const gemLbHelper = document.getElementById("gemLbHelper");
+const gemLeaderboardModal = document.getElementById("gemLeaderboardModal");
+const gemLeaderboardList = document.getElementById("gemLeaderboardList");
 const dockGachaTrigger = document.getElementById("dockGachaTrigger");
 const gachaReadyTooltip = document.getElementById("gachaReadyTooltip");
 let guestHelperShown = false;
 let guideHelperShown = false;
 let guideReaderOpen = false;
 let loreHelperShown = false;
+let gemLbHelperShown = false;
+let gemLbModalOpen = false;
 let gachaReadyTooltipShown = false;
 
 // Click Tinh Linh hướng dẫn / Cổ thư -> SFX lật giấy + mở modal.
@@ -164,6 +169,7 @@ if (isFirstTimeGuest) {
     initGuideHelper();
     // Khởi tạo Lore Helper cho user đã login
     initLoreHelper();
+    initGemLbHelper();
     // Initialize Gacha Ready Tooltip check
     updateGachaReadyTooltip();
 }
@@ -726,10 +732,12 @@ function triggerHelpersAfterLogin() {
         // Reset flags
         guideHelperShown = false;
         loreHelperShown = false;
+        gemLbHelperShown = false;
         
         // Show both after 3 seconds
         guideHelperInitTimeout = setTimeout(showGuideHelper, 3000);
         loreHelperInitTimeout = setTimeout(showLoreHelper, 3000);
+        setTimeout(showGemLbHelper, 3500);
         
         // Update Gacha Ready Tooltip
         updateGachaReadyTooltip();
@@ -749,6 +757,19 @@ function getLoreHelperTargetPosition() {
     return {
         top: (orbRect.top - 150) + 'px',
         right: (window.innerWidth - orbRect.right + -100) + 'px'
+    };
+}
+
+function getGemLbHelperTargetPosition() {
+    const gachaBtn = dockGachaTrigger;
+    if (!gachaBtn) return { top: '20vh', left: '10vw' };
+
+    const orbRect = gachaBtn.querySelector('.gold-ring')?.getBoundingClientRect() || gachaBtn.getBoundingClientRect();
+
+    // Vị trí tương đương cornerPortal3D (góc trái), dịch nhẹ lên trên so với tâm orb để tránh che
+    return {
+        top: (orbRect.top - 150) + 'px',
+        left: (orbRect.left - 100) + 'px'
     };
 }
 
@@ -825,6 +846,40 @@ function showLoreHelper() {
         loreHelper.style.top = pos.top;
         loreHelper.style.right = pos.right;
     });
+}
+
+function showGemLbHelper() {
+    if (state !== STATE.IDLE) return;
+    if (document.body.classList.contains('guest-mode')) return;
+    if (gemLbHelperShown || !gemLbHelper) return;
+    gemLbHelperShown = true;
+
+    const pos = getGemLbHelperTargetPosition();
+
+    gemLbHelper.classList.remove('hidden', 'exit-to-left');
+    gemLbHelper.classList.add('enter-from-top-left-far');
+
+    gemLbHelper.offsetHeight;
+
+    requestAnimationFrame(() => {
+        gemLbHelper.classList.remove('enter-from-top-left-far');
+        gemLbHelper.classList.add('active');
+        gemLbHelper.style.top = pos.top;
+        gemLbHelper.style.left = pos.left;
+    });
+}
+
+function hideGemLbHelper() {
+    if (!gemLbHelperShown || !gemLbHelper) return;
+    gemLbHelperShown = false;
+    gemLbHelper.classList.remove('active', 'enter-from-top-left-far');
+    gemLbHelper.classList.add('exit-to-left');
+
+    setTimeout(() => {
+        if (gemLbHelper.classList.contains('active')) return;
+        gemLbHelper.classList.add('hidden');
+        gemLbHelper.classList.remove('exit-to-left');
+    }, 800);
 }
 
 // ======================================================
@@ -1220,7 +1275,8 @@ guildQuestLightbox?.addEventListener("click", (e) => {
 document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
         if (guildQuestLbOpen) { closeGuildQuestLightbox(); return; }
-        if (guildQuestOpen) closeGuildQuestModal();
+        if (guildQuestOpen) { closeGuildQuestModal(); return; }
+        if (gemLbModalOpen) { closeGemLeaderboardModal(); return; }
         return;
     }
     if (!guildQuestLbOpen) return;
@@ -1809,6 +1865,7 @@ dockGachaTrigger.addEventListener("click", () => {
         // Hide Guide & Lore Helpers khi Gacha triggered
         hideGuideHelper();
         hideLoreHelper();
+        hideGemLbHelper();
         // Hide Gacha Ready Tooltip khi Gacha triggered
         hideGachaReadyTooltip();
         
@@ -2166,6 +2223,7 @@ async function handleGoogleSuccess(response) {
             // Khởi tạo Guide & Lore Helpers (attach click handlers) sau khi thoát guest-mode
             initGuideHelper();
             initLoreHelper();
+            initGemLbHelper();
 
             // Đóng Modal ngay lập tức, KHÔNG bắt điền lại thông tin!
             onboardingModal.classList.add("hidden");
@@ -2288,6 +2346,7 @@ btnCompleteRegister.addEventListener("click", async () => {
             // Khởi tạo Guide & Lore Helpers (attach click handlers) sau khi thoát guest-mode
             initGuideHelper();
             initLoreHelper();
+            initGemLbHelper();
 
             onboardingModal.classList.add("hidden");
             claimContainer.classList.add("hidden");
@@ -2400,8 +2459,10 @@ async function processClaimAfterLoot() {
                         if (!document.body.classList.contains('guest-mode')) {
                             guideHelperShown = false;
                             loreHelperShown = false;
+                            gemLbHelperShown = false;
                             setTimeout(showGuideHelper, 3000);
                             setTimeout(showLoreHelper, 3500);
+                            setTimeout(showGemLbHelper, 3800);
                         }
                         // Update Gacha Ready Tooltip
                         updateGachaReadyTooltip();
@@ -2417,8 +2478,10 @@ async function processClaimAfterLoot() {
             if (!document.body.classList.contains('guest-mode')) {
                 guideHelperShown = false;
                 loreHelperShown = false;
+                gemLbHelperShown = false;
                 setTimeout(showGuideHelper, 3000);
                 setTimeout(showLoreHelper, 3500);
+                setTimeout(showGemLbHelper, 3800);
             }
             // Update Gacha Ready Tooltip
             updateGachaReadyTooltip();
@@ -2441,8 +2504,10 @@ async function processClaimAfterLoot() {
         if (!document.body.classList.contains('guest-mode')) {
             guideHelperShown = false;
             loreHelperShown = false;
+            gemLbHelperShown = false;
             setTimeout(showGuideHelper, 500);
             setTimeout(showLoreHelper, 1000);
+            setTimeout(showGemLbHelper, 1300);
         }
         // Update Gacha Ready Tooltip
         updateGachaReadyTooltip();
@@ -2643,6 +2708,13 @@ window.addEventListener("resize", () => {
         loreHelper.style.right = pos.right;
     }
 
+    // Cập nhật vị trí gem leaderboard helper nếu đang active
+    if (gemLbHelperShown && gemLbHelper && !gemLbHelper.classList.contains('hidden') && gemLbHelper.classList.contains('active')) {
+        const pos = getGemLbHelperTargetPosition();
+        gemLbHelper.style.top = pos.top;
+        gemLbHelper.style.left = pos.left;
+    }
+
     // Cổng 3D góc màn hình tự co giãn theo khung (ResizeObserver lo phần còn lại)
     cornerPortal?.resize();
 });
@@ -2689,7 +2761,10 @@ navButtons.forEach(btn => {
             // Update Gacha Ready Tooltip when entering gacha-view
             updateGachaReadyTooltip();
             // Cổng 3D góc màn hình quay lại cùng điều kiện với lore helper
-            if (!document.body.classList.contains('guest-mode')) showCornerPortal();
+            if (!document.body.classList.contains('guest-mode')) {
+                showCornerPortal();
+                showGemLbHelper();
+            }
             return;
         }
 
@@ -2702,6 +2777,7 @@ navButtons.forEach(btn => {
         hideGachaReadyTooltip();
         // Cổng 3D góc màn hình chỉ sống trong gacha-view
         hideCornerPortal();
+        hideGemLbHelper();
 
         const activePanel = document.getElementById(targetId);
         if (activePanel) {
@@ -2727,7 +2803,10 @@ function returnToGachaHome() {
     // Update Gacha Ready Tooltip when returning to gacha-view
     updateGachaReadyTooltip();
     // Cổng 3D góc màn hình hiện lại (điều kiện y hệt lore helper)
-    if (!document.body.classList.contains('guest-mode')) showCornerPortal();
+    if (!document.body.classList.contains('guest-mode')) {
+        showCornerPortal();
+        showGemLbHelper();
+    }
 }
 
 document.querySelectorAll(".btn-back-dock").forEach(btn => btn.addEventListener("click", returnToGachaHome));

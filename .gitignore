@@ -1,3 +1,4 @@
+.worker/
 .worker/worker.js
 .worker/.env
 .worker/rollquest_scenarios.json

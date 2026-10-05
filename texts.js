@@ -408,9 +408,9 @@ const TEXTS = {
         events: [
             {
                 date: "10-11 Tháng 10",
-                title: "CHƯƠNG 1: TÂN THỦ",
+                title: "HỘI TRIỆU HỒI - DÀNH CHO THƯƠNG NHÂN VÀ NPC",
                 location: "Địa điểm: Rừng Tinh Linh",
-                slots: "0/15 chỗ",
+                slots: "5/15 chỗ",
             },
             {
                 date: "24-25 Tháng 10",

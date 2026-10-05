@@ -203,6 +203,14 @@
             <!-- CORNER 3D PORTAL - Vị trí góc phải màn hình: cách phải 10px, cách top 10% -->
             <div id="cornerPortal3D" class="corner-portal3d hidden"></div>
 
+            <!-- GEM LEADERBOARD HELPER (Ảnh nút) - Góc trái màn hình, quy tắc ẩn/hiện giống loreHelper -->
+            <div id="gemLbHelper" class="gem-lb-helper hidden">
+                <img src="https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1791180669/pji2oyt0swkbje3g7dkl.png"
+                     alt="Bảng xếp hạng Quang Thạch Sưu Tầm Gia"
+                     class="helper-fairy-img gem-lb-img">
+                <div class="helper-tooltip gem-lb-tooltip" data-i18n="gemLeaderboard.tooltip">Bảng xếp hạng Quang Thạch Sưu Tầm Gia</div>
+            </div>
+
             <!-- LORE READER MODAL (Cổ thư lật trang - Swiper Flip Effect) -->
             <div id="loreReaderModal" class="lore-reader-modal hidden">
                 <div class="lore-reader-container">
@@ -963,6 +971,22 @@
 
         <p class="guild-quest-hint">Nhấn vào tờ ảnh để xem phóng to</p>
     </div>
+</div>
+
+<!-- MODAL: BẢNG XẾP HẠNG QUANG THẠCH SƯU TẦM GIA -->
+<div id="gemLeaderboardModal" class="guild-quest-modal hidden" role="dialog" aria-modal="true"
+     aria-labelledby="gemLeaderboardTitle">
+  <div class="guild-quest-box" id="gemLeaderboardBox">
+    <div class="guild-quest-header">
+      <h3 class="guild-quest-title" id="gemLeaderboardTitle">✧ Bảng xếp hạng Quang Thạch Sưu Tầm Gia ✧</h3>
+      <button class="guild-quest-close" id="closeGemLeaderboard" aria-label="Đóng">✕</button>
+    </div>
+    <div class="guild-quest-body">
+      <p class="lb-sub">Top 10 Nhà Phiêu Lưu có nhiều biến thể Quang Thạch nhất (không tính Trưởng Quán)</p>
+      <div id="gemLeaderboardList" class="lb-list"></div>
+      <div class="lb-note">Dựa trên số biến thể duy nhất trong Tủ Sưu Tầm • Cập nhật theo thời gian thực</div>
+    </div>
+  </div>
 </div>
 
 <!-- LIGHTBOX: xem tờ ảnh Quest toàn màn hình -->
