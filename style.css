@@ -2296,8 +2296,8 @@ background: url(https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v
 }
 
 .player-avatar-large {
-    width: 90px;
-    height: 90px;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
     border: 3px solid var(--border-gold);
     overflow: hidden;
