@@ -16,11 +16,12 @@ import {
     LORE_PAGES_DATA,
     GUIDE_PAGES_DATA,
     MODAL_IMAGES,
-    UPCOMING_FEATURES_DATA,
     GUILD_QUEST_DATA,
     GUILD_QUEST_META,
     GUILD_QUEST_MESSENGER_DEFAULT
 } from '@data';
+// IMPORT TEXT STRINGS TỪ TEXTS.JS
+import { TEXTS } from '@texts';
 // TOAST NOTIFICATION SYSTEM — dùng importmap @toast
 import { toast } from '@toast';
 // QUEST "NHẬP VAI VUI VẺ" - MODULE RPG ROLL D20 — dùng importmap @rollquest
@@ -3968,8 +3969,8 @@ document.getElementById("closeRangerModal")?.addEventListener("click", () => {
 
 // ======================================================
 // NÚT "?" + MODAL "CHỜ MỞ KHOÁ"
-// Toàn bộ nội dung đọc từ UPCOMING_FEATURES_DATA (data.js) để dễ cập nhật.
-// Thêm/bớt mục trong data.js là giao diện tự động theo, không cần sửa file này.
+// Toàn bộ nội dung đọc từ TEXTS.upcomingFeatures (texts.js) để dễ cập nhật.
+// Thêm/bớt mục trong texts.js là giao diện tự động theo, không cần sửa file này.
 // ======================================================
 const upcomingModal = document.getElementById("upcomingModal");
 const upcomingList = document.getElementById("upcomingFeatureList");
@@ -3977,7 +3978,7 @@ const upcomingList = document.getElementById("upcomingFeatureList");
 function renderUpcomingFeatures() {
     if (!upcomingList) return;
 
-    const { title, subtitle, note, items = [] } = UPCOMING_FEATURES_DATA || {};
+    const { title, subtitle, note, items = [] } = TEXTS?.upcomingFeatures || {};
 
     const setTxt = (id, value) => {
         const el = document.getElementById(id);

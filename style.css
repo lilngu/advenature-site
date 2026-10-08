@@ -4381,7 +4381,7 @@ body.guest-mode .dock-btn:not(.center-core) {
 
 /* ======================================================
    NÚT "?" GÓC DƯỚI BÊN PHẢI + MODAL "CHỜ MỞ KHOÁ"
-   Nội dung danh sách render từ data.js (UPCOMING_FEATURES_DATA)
+   Nội dung danh sách render từ texts.js (TEXTS.upcomingFeatures)
    ====================================================== */
 .upcoming-fab {
     position: fixed;

@@ -263,21 +263,15 @@ export const AUDIO_MAP = Object.fromEntries(AUDIO_SOURCES.map((a) => [a.key, a])
 export const GUILD_QUEST_MESSENGER_DEFAULT = "https://m.me/463539600777112";
 
 export const GUILD_QUEST_DATA = [
-    {
+      {
         id: 1,
-        title: "NGÀY HỘI TRIỆU HỒI",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791123365/opcjvaqecr1z1lsxgigc.png",
-        messenger: "https://m.me/463539600777112?text=Ch%C3%A0o%20H%E1%BB%99i%20Ng%E1%BB%8Dc%20L%E1%BB%A5c!%20T%C3%B4i%20mu%E1%BB%91n%20Tham%20gia%20ng%C3%A0y%20H%E1%BB%99i%20Tri%E1%BB%87u%20H%E1%BB%93i%2010%2F10."
-    },
-    {
-        id: 2,
         title: "Quest I · Thương Hội",
         url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791046797/ukoqthjxzapum1snkxwg.png",
         messenger: "https://m.me/463539600777112"
     },
     // --- [placeholder] Ảnh dựng lưới, thay bằng quest thật khi có ---
      {
-        id: 3,
+        id: 2,
         title: "Quest II · Hội Ngọc Lục",
         url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791043557/l2gwcmzyz050izqlfye3.png",
         messenger: "https://m.me/463539600777112"
@@ -294,19 +288,3 @@ export const GUILD_QUEST_META = {
     emptyText: "Hội Ngọc Lục đang sắp xếp các tờ Quest…"
 };
 
-// 11. MODAL "CHỜ MỞ KHOÁ" - DANH SÁCH KHU VỰC ĐANG PHÁT TRIỂN
-// Thêm / sửa / bỏ mục ngay tại đây, giao diện tự động cập nhật theo.
-// - icon: emoji hiển thị bên trái (bỏ trống nếu không muốn dùng)
-// - name: tên khu vực (IN HOA)
-// - desc: mô tả ngắn
-export const UPCOMING_FEATURES_DATA = {
-    title: "CHỜ MỞ KHOÁ",
-    subtitle: "Các khu vực mới đang được Rừng Tinh Linh gia cố, sắp xuất hiện!",
-    note: "✧ Hãy cùng chờ nhé! ✧",
-    items: [
-        { icon: "🏰", name: "GUILD HALL", desc: "nơi Nhà phiêu lưu họp hội giao lưu." },
-        { icon: "🏆", name: "LEADERBOARD", desc: "Bảng danh sách top những Nhà phiêu lưu TOP Cống Hiến." },
-        { icon: "💎", name: "QUANG THẠCH RANK", desc: "Bảng danh sách top Nhà Phiêu Lưu sưu tầm Quang Thạch." },
-        { icon: "🌿", name: "KHU VƯỜN TINH LINH", desc: "nơi nhà phiêu lưu chill chăm sóc Tinh Linh và trồng Linh Thảo." }
-    ]
-};

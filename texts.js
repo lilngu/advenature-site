@@ -421,7 +421,7 @@ const TEXTS = {
                 date: "10-11 Tháng 10",
                 title: "HỘI TRIỆU HỒI - DÀNH CHO THƯƠNG NHÂN VÀ NPC",
                 location: "Địa điểm: Rừng Tinh Linh",
-                slots: "5/15 chỗ",
+                slots: "Đã đóng",
             },
             {
                 date: "24-25 Tháng 10",
@@ -472,6 +472,21 @@ const TEXTS = {
     friendQrScan: {
         title: "📷 QUÉT MÃ CĂN CƯỚC BẠN BÈ",
         hint: "Hướng camera vào mã QR Căn Cước của bạn bè để tự động nhập mã.",
+    },
+
+    // ======================================================
+    // UPCOMING FEATURES MODAL (CHỜ MỞ KHOÁ)
+    // ======================================================
+    upcomingFeatures: {
+        title: "CHỜ MỞ KHOÁ",
+        subtitle: "Các khu vực mới đang được Rừng Tinh Linh gia cố, sắp xuất hiện!",
+        note: "✧ Hãy cùng chờ nhé! ✧",
+        items: [
+            { icon: "🏰", name: "GUILD HALL", desc: "nơi Nhà phiêu lưu họp hội giao lưu." },
+            { icon: "🏆", name: "LEADERBOARD", desc: "Bảng danh sách top những Nhà phiêu lưu TOP Cống Hiến." },
+            { icon: "💎", name: "QUANG THẠCH RANK", desc: "Bảng danh sách top Nhà Phiêu Lưu sưu tầm Quang Thạch." },
+            { icon: "🌿", name: "KHU VƯỜN TINH LINH", desc: "nơi nhà phiêu lưu chill chăm sóc Tinh Linh và trồng Linh Thảo." }
+        ]
     },
 
     // ======================================================
