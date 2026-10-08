@@ -20,8 +20,8 @@ import {
     GUILD_QUEST_META,
     GUILD_QUEST_MESSENGER_DEFAULT
 } from '@data';
-// IMPORT TEXT STRINGS TỪ TEXTS.JS
-import { TEXTS } from '@texts';
+// TEXTS từ texts.js (load qua script tag, доступ через window.TEXTS)
+const TEXTS = window.TEXTS;
 // TOAST NOTIFICATION SYSTEM — dùng importmap @toast
 import { toast } from '@toast';
 // QUEST "NHẬP VAI VUI VẺ" - MODULE RPG ROLL D20 — dùng importmap @rollquest
@@ -1102,9 +1102,9 @@ playerInfoModal?.addEventListener("click", (e) => {
 // Layout 2 cột rời rạc tự động: thêm/bớt ảnh trong data.js là xong, không cần sửa file này.
 // Click vào tờ ảnh -> xem lightbox toàn màn hình.
 // ======================================================
-// Độ nghiêng tối đa lấy từ GUILD_QUEST_META.maxTiltDeg (đang là 30 độ - con số quyết định).
+// Độ nghiêng tối đa lấy từ GUILD_QUEST_META.maxTiltDeg (mặc định 10 độ).
 // Math.min(70, ...) chỉ là TRẦN AN TOÀN chống cấu hình sai trong data.js, không phải giới hạn thực tế.
-const GUILD_QUEST_MAX_TILT = Math.min(70, Math.abs(Number(GUILD_QUEST_META?.maxTiltDeg) || 30));
+const GUILD_QUEST_MAX_TILT = Math.min(70, Math.abs(Number(GUILD_QUEST_META?.maxTiltDeg) || 10));
 // guildQuestModal / guildQuestBox / guildQuestGrid / guildQuestTitle đã khai báo ở đầu file.
 const guildQuestLightbox = document.getElementById("guildQuestLightbox");
 const guildQuestLbImg = document.getElementById("guildQuestLightboxImg");
