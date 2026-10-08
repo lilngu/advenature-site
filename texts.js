@@ -499,6 +499,9 @@ const TEXTS = {
     },
 };
 
+// Export for ES modules
+export { TEXTS };
+
 // Global exposure for non-module scripts
 if (typeof window !== 'undefined') {
     window.TEXTS = TEXTS;
