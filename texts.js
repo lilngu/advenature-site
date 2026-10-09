@@ -208,7 +208,7 @@ const TEXTS = {
     // ======================================================
     shop: {
         panelTitle: "🛒 THƯƠNG QUÁN EMERALD",
-        subtitle: "Đổi Tinh Thạch💎, Kích Hoạt Phiên Chợ Tinh Linh! \n 🎏Phiên chợ LARP nhập vai diễn ra 2N1Đ cuối tuần \n tại Rừng Tinh Linh, ngoại ô thành phố Bảo Lộc.",
+        subtitle: "Đổi Tinh Thạch (1💎 ~ 25 🐟) ⬩➤ Kích Hoạt Phiên Chợ Tinh Linh! \n 🎏Phiên chợ LARP nhập vai diễn ra 2N1Đ cuối tuần \n ▶ tại Rừng Tinh Linh ▸ ngoại ô thành phố Bảo Lộc ◀",
         priceTemplate: "💎 {tt} Tinh Thạch (~{vnd} đ)",
         checkout: {
             count: "Đã chọn: {count} mục",
