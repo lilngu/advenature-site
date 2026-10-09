@@ -191,7 +191,11 @@ export const AUDIO_SOURCES = [
     // 10. Click Ranger / nút Cửa hàng Phiên Chợ (tiếng chuông)
     { key: "bell", id: "sfxBell", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1790949230/audio/bell_nqzh7k.mp3", type: "audio/mpeg", loop: false, preload: "auto" },
     // 11. Click nút Thanh Toán trong giỏ hàng Phiên Chợ (tiếng xu)
-    { key: "coin", id: "sfxCoin", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1790949231/audio/coin_bt2mid.mp3", type: "audio/mpeg", loop: false, preload: "auto" }
+    { key: "coin", id: "sfxCoin", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1790949231/audio/coin_bt2mid.mp3", type: "audio/mpeg", loop: false, preload: "auto" },
+    // 12. Voice chào mừng khi banner Cuộn giấy cổ xuất hiện (guest mode)
+    { key: "welcome", id: "sfxWelcome", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1791557945/audio/welcome-p_1_jjy5xk.mp3", type: "audio/mpeg", loop: false, preload: "auto" },
+    // 13. Voice giới thiệu khi Tinh Linh Guest Helper xuất hiện (guest mode)
+    { key: "guestHelper", id: "sfxGuestHelper", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1791557945/audio/guesthelper-p_1_lk6ogz.mp3", type: "audio/mpeg", loop: false, preload: "auto" }
 ];
 
 // Tra cứu nhanh: key -> cấu hình audio (dựng 1 lần lúc load module)

@@ -34,7 +34,7 @@ import { applyI18n, applyI18nToElement } from '@i18n';
 import { createPortalScene } from '@portal';
 // SFX MODULE — hệ thống hiệu ứng âm thanh — dùng importmap @sfx
 // mountAudioElements dựng toàn bộ <audio> từ manifest AUDIO_SOURCES trong data.js
-import { mountAudioElements, initSfx, setMainBgm, setMainBgmResumeHandler, isSfxDucking, isQuestBgmActive, sfxGacha, sfxTeleport, sfxBlanket, sfxBlink, sfxGuild, sfxBlessing, sfxWoodbox, sfxPaper, sfxBell, sfxCoin } from '@sfx';
+import { mountAudioElements, initSfx, setMainBgm, setMainBgmResumeHandler, isSfxDucking, isQuestBgmActive, sfxGacha, sfxBlanket, sfxBlink, sfxGuild, sfxBlessing, sfxWoodbox, sfxPaper, sfxBell, sfxCoin, sfxWelcome, sfxGuestHelper, stopSfx } from '@sfx';
 
 // Hằng số toán học dùng chung (Golden Angle cho phân bố đều trên cầu)
 const GOLDEN_ANGLE = Math.PI * (Math.sqrt(5) - 1);
@@ -154,6 +154,8 @@ if (isFirstTimeGuest) {
     // Bắt sự kiện click vào Cuộn giấy cổ: trượt xuống dưới rồi biến mất
     if (scrollBanner) {
         scrollBanner.addEventListener("click", () => {
+            // Dừng voice chào mừng để nhường chỗ cho voice guestHelper (tránh 2 voice chồng nhau)
+            stopSfx('welcome');
             scrollBanner.classList.add("slide-down-exit");
             setTimeout(() => {
                 scrollBanner.style.display = "none";
@@ -366,6 +368,60 @@ setMainBgmResumeHandler(() => {
 });
 
 // ======================================================
+// GUEST MODE VOICE: welcomeScrollBanner + guestHelper
+// Autoplay policy chặn play() khi chưa có user activation:
+//   - Thử phát ngay sau khi audio system sẵn sàng (một số browser cho phép).
+//   - Nếu bị chặn, phát lại ở gesture thật đầu tiên (pointerdown/touchend/keydown).
+//   - Click dismiss banner sẽ stopSfx('welcome') (xem handler scrollBanner ở trên)
+//     để tránh 2 voice chồng nhau khi guestHelper xuất hiện.
+// ======================================================
+let welcomeVoiceSettled = false; // đã phát thành công -> không thử lại nữa
+
+function disarmWelcomeRetry() {
+    document.removeEventListener('pointerdown', welcomeRetryHandler, true);
+    document.removeEventListener('touchend', welcomeRetryHandler, true);
+    document.removeEventListener('keydown', welcomeRetryHandler, true);
+}
+
+function playWelcomeVoice() {
+    if (!isFirstTimeGuest || !scrollBanner) return;
+    if (welcomeVoiceSettled) return;
+    if (scrollBanner.style.display === 'none') return;
+    // Banner đã bị dismiss thì không phát nữa (nhường chỗ cho voice guestHelper)
+    if (scrollBanner.classList.contains('slide-down-exit')) return;
+    const p = sfxWelcome();
+    if (p && typeof p.then === 'function') {
+        p.then(() => {
+            welcomeVoiceSettled = true;
+            disarmWelcomeRetry();
+        }).catch(() => {
+            // Bị chặn autoplay -> giữ armed để thử lại ở gesture kế tiếp
+        });
+    } else {
+        // Trình duyệt cũ không trả promise -> coi như đã thử xong
+        welcomeVoiceSettled = true;
+        disarmWelcomeRetry();
+    }
+}
+
+function welcomeRetryHandler(e) {
+    if (e && e.isTrusted === false) return;
+    if (welcomeVoiceSettled) {
+        disarmWelcomeRetry();
+        return;
+    }
+    playWelcomeVoice();
+}
+
+if (isFirstTimeGuest && scrollBanner) {
+    document.addEventListener('pointerdown', welcomeRetryHandler, true);
+    document.addEventListener('touchend', welcomeRetryHandler, true);
+    document.addEventListener('keydown', welcomeRetryHandler, true);
+    // Thử phát sau khi audio system sẵn sàng (đợi preload voice kịp về)
+    setTimeout(playWelcomeVoice, 800);
+}
+
+// ======================================================
 // PHASE 3: ĐỒNG BỘ DỮ LIỆU TỪ D1 KHI MỞ TRANG HOẶC VÀO TÚI ĐỒ
 // ======================================================
 // app.js: Cập nhật hàm syncUserDataFromBackend để phát hiện điểm mới từ bạn bè
@@ -430,8 +486,8 @@ function showGuestHelper() {
     if (guestHelperShown || !document.body.classList.contains('guest-mode') || !guestHelper) return;
     guestHelperShown = true;
     
-    // SFX: tiếng teleport khi Guest Helper xuất hiện
-    sfxTeleport();
+    // VOICE: lời giới thiệu khi Guest Helper xuất hiện (thay thế tiếng teleport cũ để tránh chồng âm)
+    sfxGuestHelper();
     
     const pos = getGuestHelperTargetPosition();
     
