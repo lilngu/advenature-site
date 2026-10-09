@@ -4789,7 +4789,7 @@ body.guest-mode .dock-btn:not(.center-core) {
     align-items: center;
     justify-content: center;
     padding: 26px 16px;
-    background: rgba(3, 2, 8, 0.94);
+    background: rgb(3 2 8 / 52%);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
     opacity: 0;
