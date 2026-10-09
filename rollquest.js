@@ -406,7 +406,7 @@ function handleRollOutcome(num) {
     // Hết 3 lượt -> kết luận nhiệm vụ
     if (state.attempts >= MAX_ATTEMPTS) {
         els.rollBtn.style.display = "none";
-        setTimeout(finalizeQuest, 1300);
+        setTimeout(finalizeQuest, 3500);
     }
 }
 

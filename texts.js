@@ -208,23 +208,23 @@ const TEXTS = {
     // ======================================================
     shop: {
         panelTitle: "🛒 THƯƠNG QUÁN EMERALD",
-        subtitle: "Chọn gói Nạp Tinh Thạch, mở khoá Advenature Camp 2N1Đ. \n 1 Tinh Thạch💎 ~ 25🐟.",
+        subtitle: "🔮Đổi Tinh Thạch lấp lánh, Kích Hoạt Phiên Chợ Tinh Linh! \n 🎏Phiên chợ LARP nhập vai diễn ra 2N1Đ vào cuối tuần \n tại Rừng Tinh Linh, ngoại ô thành phố Bảo Lộc.",
         priceTemplate: "💎 {tt} Tinh Thạch (~{vnd} đ)",
         checkout: {
             count: "Đã chọn: {count} mục",
             total: "Tổng: {tt} 💎 (~{vnd} đ)",
-            btn: "✦ GỬI THÔNG TIN & LIÊN HỆ HỘI ✦",
+            btn: "✦ TA MUỐN THAM GIA, GỬI TIN CHO HỘI! ✦",
         },
         scheduleBtn: {
             badge: "SỰ KIỆN LARP CAMP",
-            title: "📅 LỊCH PHIÊU LƯU",
-            desc: "Xem lịch mở Cổng Dịch Chuyển & số lượng Nhà Phiêu Lưu gia nhập.",
+            title: "📅LỊCH PHIÊN CHỢ LARP",
+            desc: "Xem lịch mở Cổng Dịch Chuyển & số lượng Nhà Phiêu Lưu gia nhập. \n Chốt lịch đăng ký mạo hiểm giả trước 3 ngày tổ chức.",
             cta: "✦ Tối thiểu 5 Nhà Phiêu Lưu tham gia ✦",
         },
         brochureBtn: {
             badge: "📖 ",
-            title: "📋CẨM NANG PHIÊU LƯU",
-            desc: "Khám phá cốt truyện diễn biến 5 Nhiệm Vụ Nguyên Tố.",
+            title: "📜Sự kiện ADVENATURE LARP ",
+            desc: "Khám phá cốt truyện chính tại Rừng Tinh Linh.\n Chỉ diễn ra khi các tinh linh rừng gửi thông điệp. ",
             cta: "Xem ngay →",
         },
         scheduleNote: "*Sở hữu ít nhất 1 Gói trong túi để đăng ký giữ chỗ chính thức.",
@@ -425,7 +425,7 @@ const TEXTS = {
             },
             {
                 date: "24-25 Tháng 10",
-                title: "CHƯƠNG 1: TÂN THỦ",
+                title: "PHIÊN CHỢ NHẬP VAI L.A.R.P",
                 location: "Địa điểm: Rừng Tinh Linh",
                 slots: "0/15 chỗ",
             },

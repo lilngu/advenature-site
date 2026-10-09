@@ -122,16 +122,16 @@ body, html {
 
 /* Data URI SVG cho Sản Phẩm G?�i T?�n Thủ */
 .ico-pkg1 {    box-shadow: #00ff7396 1px 1px 20px 8px;
-    background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790706988/ftweibquhszlg0jnauor.png");
+    background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790706996/yrkpmpqng4i7oeuys77t.png");
 }
 .ico-pkg2 { box-shadow: #00bbff96 1px 1px 20px 8px;
-    background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790706987/vj9l9almegl5bnl1qcsl.png");
+    background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1791549415/lur2d7ajwhtoav20ynxt.png");
 }
 .ico-pkg3 { box-shadow: #d997ffbb 1px 1px 20px 8px;
-    background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790706997/j8sylv0hxh5wsqrwqbry.png");
+    background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1791549416/zvcyud7jyv8azyp6ukjw.png");
 }
 .ico-pkg4 {
-    background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790706996/yrkpmpqng4i7oeuys77t.png");
+    background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1791549417/qud4kywpnzdbt2nleisc.png");
 }
 
 /* Data URI SVG cho Quest D?� Ngoại */
@@ -3378,7 +3378,7 @@ body.guest-mode .dock-btn:not(.center-core) {
 
 .lore-reader-container {
     width: 100%;
-    max-width: 500px;
+    max-width: 95vw;
     height: 95vh;
     max-height: 95vh;
     background: linear-gradient(180deg, #1e130c 0%, #0d0806 100%);
@@ -3571,7 +3571,7 @@ body.guest-mode .dock-btn:not(.center-core) {
     border-radius: 8px;
 }
 .schedule-title , .brochure-title { font-family:'Handjet';font-size: medium; color: #ffe66d; margin: 6px 0 4px; }
-.schedule-desc,.brochure-desc { font-size: 10px; color: #c9c3ff; line-height: 1.3; }
+.schedule-desc,.brochure-desc { font-size: 10px; color: #c9c3ff; line-height: 1.3; white-space: pre-line; }
 .schedule-cta { font-size: 10px; font-weight: bold; color: #4cc9f0; display: inline-block; margin-top: 6px; }
 
 /* WRAPPER 2 BANNER SONG SONG */

@@ -97,18 +97,15 @@ export const BLESSINGS_DATA = [
 
 // 4. DANH MỤC 12 SẢN PHẨM SHOP LỮ HÀNH
 export const SHOP_ITEMS = [
-    { id: "PKG_1", name: "📜 PHIÊU LƯU TẬP SỰ", tt: 35, vnd: 850000, iconClass: "ico-pkg1", desc: " Bao gồm Lưu trú + Lương Thực 3 Bữa \n +1 Quest Quang Tinh \n + 🚙Buff dịch chuyển \n Áp dụng Chúc Phúc Tinh Linh 🍀 \n\n ⚠️ Lưu ý: Việc chỉ hoàn thành 1 Nhiệm Vụ Nguyên Tố sẽ khiến 60% bí mật còn lại tại Rừng Tinh Linh bị phong ấn. \n Nâng cấp Góp Phiêu Lưu Trọn Vẹn để mở khoá 100% cốt truyện hoặc để dành cho những kỳ phiêu lưu sau. " },
-    { id: "PKG_2", name: "🍃 PHIÊU LƯU TRỌN VẸN", tt: 60, vnd: 1500000, iconClass: "ico-pkg2", desc: " Bao gồm Lưu trú + Lương Thực 3 Bữa \n + Tất cả 3 Quest Nguyên Tố \n +🚙 Buff dịch chuyển toàn hành trình \n + 1 Mystery Box Trang bị Cơ bản \n Áp dụng Chúc Phúc Tinh Linh🍀" },
-    { id: "PKG_3", name: "👑 PHIÊU LƯU NÂNG CẤP", tt: 80, vnd: 2000000, iconClass: "ico-pkg3", desc: " Bao gồm Lưu trú + Lương Thực 3 Bữa \n + Tất cả 3 Quest Nguyên Tố \n +🚙 Buff dịch chuyển toàn hành trình \n + 1 Mystery Box Trang bị Cơ bản \n +1 Món quà từ Tinh Linh Rừng \n +1 Thẻ bài Tinh Linh ngẫu nhiên.\n +Túi 10 Tinh Thạch  \n Áp dụng Chúc Phúc Tinh Linh🍀" },
-    { id: "PKG_4", name: "⛺ Lưu Trú 1 Đêm", tt: 12, vnd: 300000, iconClass: "ico-pkg4", desc: " 🚙 Buff dịch chuyển từ Điểm Tập Kết\n⛺ 01 Đêm Lưu Trú Lều Trại hoặc Dorm \n 🏚️ Sử dụng tự do Tavern Emerald Guild \n 🌿 Đã bao gồm bộ đệm ấm & túi ngủ." },
-    { id: "Q_1", name: "🌬️ Quest 1: Phong Tinh", tt: 10, vnd: 250000, iconClass: "ico-quest2", desc: "🚙 Buff dịch chuyển đến Đồi Cỏ Lang Thang\n 📜 Nhiệm Vụ Lá Thư Rừng Tập Sự \🔮 Nhận thưởng Tinh Thạch" },
-    { id: "Q_2", name: "✨ Quest 2: Quang Tinh", tt: 10, vnd: 250000, iconClass: "ico-quest1", desc: "🚙 Buff dịch chuyển đến Suối Thì Thầm Rì Rầm \n📜 Nhiệm Vụ Thạch Yêu Lúc Lắc.\n 🔮 Nhận thưởng Tinh Thạch " },
-    { id: "Q_3", name: "🔥 Quest 3: Hỏa Tinh", tt: 10, vnd: 250000, iconClass: "ico-quest3", desc: "📜 Nhiệm Vụ Đốm Than Tinh Nghịch \n🔥 Nhận thưởng Tinh Thạch " },
+    { id: "PKG_1", name: "🎪VÉ THAM GIA LARP - CAMP", tt: 14, vnd: 350000, iconClass: "ico-pkg1", desc: " Bao gồm 1 lều gỗ lưu trú dành cho tối đa 2 mạo hiểm giả. \n( có thể bày hàng trước lều) \nHỗ trợ vật liệu tự nhiên decor\n Tuỳ chọn tham gia Quest nhận thưởng tinh thạch tại Hội." },
+    { id: "PKG_2", name: "🛏️VÉ THAM GIA LARP - DORM", tt: 8, vnd: 200000, iconClass: "ico-pkg2", desc: " 1 bộ nệm/ chăn/ gối tại phòng tập thể dành cho 1 mạo hiểm giả. \n Tuỳ chọn tham gia Quest nhận thưởng tinh thạch tại Hội." },
+    { id: "PKG_3", name: "🏡VÉ THAM GIA LARP - LỮ QUÁN", tt: 16, vnd: 400000, iconClass: "ico-pkg3", desc: " 1 phòng riêng dành cho 2 mạo hiểm giả. \nTuỳ chọn tham gia Quest nhận thưởng tinh thạch tại Hội \n Chỉ có 2 suất dành cho Mạo hiểm giả đăng ký trước." },
+    { id: "PKG_4", name: "🎫VÉ THUÊ KIOSK", tt: 6, vnd: 150000, iconClass: "ico-pkg4", desc: " Dành cho thương nhân chỉ tham gia Phiên Chợ sáng Chủ Nhật, không lưu trú ngày thứ 7." },
+    { id: "Q_1", name: "🌬️ Quest Viễn Chinh Phong Tinh", tt: 10, vnd: 250000, iconClass: "ico-quest2", desc: "🚙 Buff dịch chuyển đến nơi làm 📜 Quest Đồi Cỏ Lang Thang \n 🔮 Nhận thưởng Tinh Thạch" },
+    { id: "Q_2", name: "✨ Quest Viễn Chinh Quang Tinh", tt: 10, vnd: 250000, iconClass: "ico-quest1", desc: "🚙 Buff dịch chuyển đến nơi làm 📜 Quest Suối Thì Thầm Rì Rầm \n 🔮 Nhận thưởng Tinh Thạch " },
     { id: "PKG_5", name: "🕋 Mystery Box", tt: 10, vnd: 250000, iconClass: "ico-pkg5", desc: "Hộp Vật Phẩm\n Trang bị cơ bản cho Nhà Phiêu Lưu" },
-    { id: "PKG_6", name: "🔁 Buff Di Chuyển ", tt: 12, vnd: 300000, iconClass: "ico-pkg6", desc: "Buff Di chuyển Quảng Trường ⇄ Rừng Tinh Linh bằng xe chuyên dụng." },
-    { id: "F_1", name: "🍢  Bữa Tối BBQ", tt: 6, vnd: 150000, iconClass: "ico-food1", desc: "Bữa thịt nướng thơm lừng bên ánh lửa trại ấm cúng." },
-    { id: "F_2", name: "🥪Bữa Sáng Bên Suối", tt: 6, vnd: 150000, iconClass: "ico-food2", desc: "​🥪 Buff dịch chuyển đến Suối Thì Thầm. \n 01 Suất Bữa Sáng bên Bờ Suối.\n 🌿 Có thể ngâm mình trong suối lạnh giữa rừng" },
-    { id: "F_3", name: "🍱 Bữa Trưa Tại Phiên Chợ ", tt: 2, vnd: 50000, iconClass: "ico-food3", desc: "​🍱 01 Suất Bữa Trưa tại Phiên Chợ Tinh Linh nhập vai vui vẻ." }
+    { id: "PKG_6", name: "🚙BUFF XE DỊCH CHUYỂN", tt: 12, vnd: 300000, iconClass: "ico-pkg6", desc: "🚙BUFF hỗ trợ dịch chuyển 2 chiều: \n Quảng Trường Bảo Lộc ↔ Rừng Tinh Linh." },
+    { id: "F_1", name: "🧙🏾THỰC ĐƠN TỐI TAVERN", tt: 6, vnd: 150000, iconClass: "ico-food1", desc: "🍖THỊT NƯỚNG LỬA TRẠI HOẶC 🍛 NAI HẦM HIỆP SĨ. \n 🍶 POTION THẢO MỘC \n 🥗 SALAD NHÂN PHẨM ❔" }
 ];
 
 // 5. CÂU HỎI MẬT MÃ RỪNG TINH LINH
@@ -123,67 +120,22 @@ export const LORE_PAGES_DATA = [
     {
         id: 1,
         title: "Trang 1",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016552/brochure/01_ezxnjr.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791551350/mpcvfe65sdh7vrdkl9oh.png"
     },
     {
         id: 2,
         title: "Trang 2",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016556/brochure/02_qn5qou.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791551352/nzxfnnxoc3xgkckmzxnd.png"
     },
     {
         id: 3,
         title: "Trang 3",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016551/brochure/03_b8qk0q.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791551354/kvnv7zezhbrhvdt4herp.png"
     },
     {
         id: 4,
         title: "Trang 4",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016550/brochure/04_jyj6vq.png"
-    },
-    {
-        id: 5,
-        title: "Trang 5",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016549/brochure/05_rtnkwl.png"
-    },
-    {
-        id: 6,
-        title: "Trang 6",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016554/brochure/06_ixpf5w.png"
-    },
-    {
-        id: 7,
-        title: "Trang 7",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016553/brochure/07_orperc.png"
-    },
-    {
-        id: 8,
-        title: "Trang 8",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016551/brochure/08_pmblc3.png"
-    },
-    {
-        id: 9,
-        title: "Trang 9",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016550/brochure/09_qrmba1.png"
-    },
-    {
-        id: 10,
-        title: "Trang 10",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016549/brochure/10_t1wq9s.png"
-    },
-    {
-        id: 11,
-        title: "Trang 11",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016549/brochure/11_z2k7j7.png"
-    },
-    {
-        id: 12,
-        title: "Trang 12",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791016555/brochure/12_jhp1b5.png"
-    },
-    {
-        id: 13,
-        title: "Trang 13",
-        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790677740/d3l55mbk4c1cganfkipx.png"
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791551357/cglqfpz9xu5pnsqwen1v.png"
     }
  ];
 
