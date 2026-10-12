@@ -3686,6 +3686,11 @@ body.guest-mode .dock-btn:not(.center-core) {
 .sch-info span { font-size: 9px; color: #a8a4c2; display: block; }
 .sch-slots { font-size: 9px; font-weight: bold; color: #00f5d4; background: rgba(0,0,0,0.5); padding: 4px 6px; border-radius: 6px; }
 
+/* EVENT2: gợi ý có thể chạm để xem ảnh hành trình (mở eventReaderModal) */
+.schedule-item.event2 { cursor: pointer; border-color: rgba(255, 209, 102, 0.45); transition: border-color 0.2s ease, background 0.2s ease; box-shadow: 1px 1px 15px 2px #00ff49;}
+.schedule-item.event2:hover, .schedule-item.event2:focus-visible { border-color: #ffd166; background: rgba(255, 209, 102, 0.08); outline: none; }
+.sch-view-hint { font-size: 8px; color: #ffd166; display: block; margin-top: 2px; }
+
 /* 2 BANNER PROFILE */
 .guild-action-banners { display: flex; flex-direction: row;     justify-content: center; gap: 8px; margin-top: 14px; }
 .guild-banner-card {
@@ -3872,7 +3877,7 @@ body.guest-mode .dock-btn:not(.center-core) {
     inset: 0;
     background: transparent;
     backdrop-filter: blur(10px);
-    z-index: 55;
+    z-index: 255;
     display: flex;
     align-items: center;
     justify-content: center;

@@ -48,6 +48,7 @@
             "@vfx": "./vfx.js?v=20261002",
             "@i18n": "./i18n.js?v=20261002",
             "@portal": "./portal-3d.js?v=20261011",
+            "@reader": "./reader-modal.js?v=20261012",
             "@sfx": "./sfx.js?v=20261014"
         }
     }
@@ -189,6 +190,43 @@
                             <i class="fa-solid fa-chevron-left"></i> TRƯỚC
                         </button>
                         <button id="guideBtnNext" class="guide-reader-btn btn-magical" data-i18n="guideReader.nextBtn">
+                            TIẾP <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EVENT READER MODAL (Ảnh hành trình Event2 - dùng chung readerModal, 3 trang) -->
+            <div id="eventReaderModal" class="guide-reader-modal hidden">
+                <div class="guide-reader-container">
+                    <div class="guide-reader-header">
+                        <div class="guide-reader-title">NHẬP VAI L.A.R.P</div>
+                        <div class="guide-reader-page-indicator">
+                            <i class="fa-solid fa-scroll"></i>
+                            <span id="eventPageIndicator">1 / 3</span>
+                        </div>
+                        <button id="closeEventReader" class="close-panel-btn" data-i18n-title="common.close">
+                            <span>&nbsp;&nbsp;&nbsp;</span>
+                        </button>
+                    </div>
+
+                    <div id="eventReaderViewport" class="guide-reader-viewport">
+                        <!-- Swiper Container -->
+                        <div class="swiper eventSwiper">
+                            <div class="swiper-wrapper" id="eventSwiperWrapper">
+                                <!-- Slides will be rendered by JS -->
+                            </div>
+                            <!-- Navigation arrows -->
+                            <div class="swiper-button-prev guide-swiper-btn btn-celtic"></div>
+                            <div class="swiper-button-next guide-swiper-btn btn-celtic"></div>
+                        </div>
+                    </div>
+
+                    <div class="guide-reader-footer">
+                        <button id="eventBtnPrev" class="guide-reader-btn btn-magical">
+                            <i class="fa-solid fa-chevron-left"></i> TRƯỚC
+                        </button>
+                        <button id="eventBtnNext" class="guide-reader-btn btn-magical">
                             TIẾP <i class="fa-solid fa-chevron-right"></i>
                         </button>
                     </div>
@@ -871,7 +909,7 @@
         <span class="close-modal" id="closeScheduleModal" data-i18n-title="common.close">&nbsp;</span>
         <h3 style="color: #ffd166; font-size: 14px; margin-bottom: 8px;" data-i18n="schedule.title"></h3>
         <div class="schedule-list-box">
-            <div class="schedule-item">
+            <div class="schedule-item event1">
                 <div class="sch-date" data-i18n="schedule.events.0.date">15 THÁNG NÀY</div>
                 <div class="sch-info">
                     <b data-i18n="schedule.events.0.title">Đêm Lửa Trại & Khai Mở Thạch Quán</b>
@@ -879,15 +917,16 @@
                 </div>
                 <div class="sch-slots" data-i18n="schedule.events.0.slots">18/25 chỗ</div>
             </div>
-            <div class="schedule-item">
+            <div class="schedule-item event2" id="scheduleEvent2" role="button" tabindex="0" title="Chạm để xem ảnh hành trình">
                 <div class="sch-date" data-i18n="schedule.events.1.date">CUỐI TUẦN NÀY</div>
                 <div class="sch-info">
                     <b data-i18n="schedule.events.1.title">Hành Trình Băng Suối Vực Mây</b>
                     <span data-i18n="schedule.events.1.location">Trekking 8km + Thưởng trà bình minh</span>
+                    <span class="sch-view-hint">👉 Chạm để xem ảnh hành trình</span>
                 </div>
                 <div class="sch-slots" data-i18n="schedule.events.1.slots">22/30 chỗ</div>
             </div>
-            <div class="schedule-item">
+            <div class="schedule-item event3">
                 <div class="sch-date" data-i18n="schedule.events.2.date">MÙNG 1 ĐẦU THÁNG</div>
                 <div class="sch-info">
                     <b data-i18n="schedule.events.2.title">Phiên Chợ Đổi Thạch Tinh Linh</b>

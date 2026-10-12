@@ -15,6 +15,7 @@ import {
     QUIZ_LIST,
     LORE_PAGES_DATA,
     GUIDE_PAGES_DATA,
+    EVENT2_PAGES_DATA,
     MODAL_IMAGES,
     GUILD_QUEST_DATA,
     GUILD_QUEST_META,
@@ -28,6 +29,8 @@ import { toast } from '@toast';
 import { initRollQuest, openRollQuest, refreshRollQuestBadge } from '@rollquest';
 // BUTTON VFX PARTICLE SYSTEM — dùng importmap @vfx
 import { initButtonVFX } from '@vfx';
+// READER-MODAL: module dùng chung cho modal xem ảnh lật trang (thay 2 cụm lore/guide trùng lặp)
+import { createReaderModal } from '@reader';
 // I18N SYSTEM — dùng importmap @i18n
 import { applyI18n, applyI18nToElement } from '@i18n';
 // MODULE 3D "CỔNG MA THUẬT" — dùng importmap @portal (dùng chung scene/camera của app.js)
@@ -135,11 +138,14 @@ let stateStart = performance.now();
 
 // Lore Reader state - MUST be declared early for event handlers
 let loreReaderOpen = false;
+// Event Reader state (ảnh hành trình event2) - MUST be declared early for event handlers
+let eventReaderOpen = false;
 
 // Keyboard navigation for readers (added once)
 document.addEventListener("keydown", (e) => {
     if (guideReaderOpen) handleGuideReaderKeydown(e);
     if (loreReaderOpen) handleLoreReaderKeydown(e);
+    if (eventReaderOpen) handleEventReaderKeydown(e);
 });
 
 if (isFirstTimeGuest) {
@@ -1562,243 +1568,90 @@ document.addEventListener("keydown", (e) => {
 });
 
 // ======================================================
-// LORE READER MODAL LOGIC (Cổ thư lật trang - Swiper Flip Effect)
+// READER-MODAL INSTANCES (thay 2 cụm lore/guide trùng lặp)
+// 1 factory dùng chung — HTML/CSS/ID và tên hàm gọi cũ giữ nguyên.
+// Tái dùng sau này: createReaderModal({ modalId, wrapperId, ... }) + .open(pages)
 // ======================================================
-// Dùng LORE_PAGES_DATA từ data.js
-const lorePagesData = LORE_PAGES_DATA;
-let loreSwiper = null;
+const loreReader = createReaderModal({
+    modalId: "loreReaderModal",
+    wrapperId: "loreSwiperWrapper",
+    swiperSelector: ".loreSwiper",
+    navNext: ".lore-swiper-btn.swiper-button-next",
+    navPrev: ".lore-swiper-btn.swiper-button-prev",
+    indicatorId: "lorePageIndicator",
+    prevBtnId: "loreBtnPrev",
+    nextBtnId: "loreBtnNext",
+    pages: LORE_PAGES_DATA,
+    onOpen: () => { loreReaderOpen = true; },
+    onClose: () => { loreReaderOpen = false; },
+});
 
-function openLoreReaderModal() {
-    if (!loreReaderModal) return;
-    loreReaderModal.classList.remove("hidden");
-    loreReaderOpen = true;
-    
-    // Initialize Swiper if not already initialized
-    if (!loreSwiper) {
-        initLoreSwiper();
-    } else {
-        // Reset to first page
-        loreSwiper.slideTo(0, 0);
-    }
-    updateLorePageIndicator(0);
-    
-    // Force reflow then show
-    loreReaderModal.offsetHeight;
-    requestAnimationFrame(() => {
-        loreReaderModal.classList.add("show");
-    });
-    
-    // Disable body scroll
-    document.body.style.overflow = "hidden";
+const guideReader = createReaderModal({
+    modalId: "guideReaderModal",
+    wrapperId: "guideSwiperWrapper",
+    swiperSelector: ".guideSwiper",
+    navNext: ".guide-swiper-btn.swiper-button-next",
+    navPrev: ".guide-swiper-btn.swiper-button-prev",
+    indicatorId: "guidePageIndicator",
+    prevBtnId: "guideBtnPrev",
+    nextBtnId: "guideBtnNext",
+    pages: GUIDE_PAGES_DATA,
+    onOpen: () => { guideReaderOpen = true; },
+    onClose: () => { guideReaderOpen = false; },
+});
+
+// Wrapper giữ nguyên tên/chữ ký cũ để mọi chỗ gọi không vỡ
+// (initGuideHelper, initLoreHelper, nút Brochure, keydown handler).
+function openLoreReaderModal(pages) {
+    loreReader.open(pages);
 }
 
 function closeLoreReaderModal() {
-    if (!loreReaderModal) return;
-    loreReaderModal.classList.remove("show");
-    loreReaderOpen = false;
-    
-    // Destroy Swiper to release grabCursor styles
-    if (loreSwiper) {
-        loreSwiper.destroy(true, true);
-        loreSwiper = null;
-    }
-    
-    setTimeout(() => {
-        loreReaderModal.classList.add("hidden");
-        // Re-enable body scroll
-        document.body.style.overflow = "";
-        // Ensure cursor resets on body
-        document.body.style.cursor = "";
-    }, 400);
-}
-
-function initLoreSwiper() {
-    const wrapper = document.getElementById("loreSwiperWrapper");
-    if (!wrapper) return;
-    
-    // Render slides
-    wrapper.innerHTML = "";
-    lorePagesData.forEach((page, index) => {
-        const slide = document.createElement("div");
-        slide.className = "swiper-slide";
-        slide.innerHTML = `
-            <img src="${page.url}" alt="${page.title}" class="lore-comic-img" crossorigin="anonymous" onerror="this.src='https://placehold.co/600x900/2a1b12/d4af37?text=Lỗi+tải+ảnh'"/>
-        `;
-        wrapper.appendChild(slide);
-    });
-    
-    // Initialize Swiper with flip effect
-    loreSwiper = new Swiper(".loreSwiper", {
-        effect: "flip",
-        grabCursor: true,
-        speed: 500,
-        flipEffect: {
-            slideShadows: true,
-            limitRotation: true
-        },
-        navigation: {
-            nextEl: ".lore-swiper-btn.swiper-button-next",
-            prevEl: ".lore-swiper-btn.swiper-button-prev",
-        },
-        keyboard: {
-            enabled: true,
-            onlyInViewport: true,
-        },
-        on: {
-            slideChange: () => {
-                updateLorePageIndicator(loreSwiper.activeIndex);
-            }
-        }
-    });
-    
-    // Also handle footer button clicks
-    const btnPrev = document.getElementById("loreBtnPrev");
-    const btnNext = document.getElementById("loreBtnNext");
-    btnPrev?.addEventListener("click", () => loreSwiper?.slidePrev());
-    btnNext?.addEventListener("click", () => loreSwiper?.slideNext());
-}
-
-function updateLorePageIndicator(index) {
-    const pageIndicator = document.getElementById("lorePageIndicator");
-    const btnPrev = document.getElementById("loreBtnPrev");
-    const btnNext = document.getElementById("loreBtnNext");
-    
-    if (pageIndicator) {
-        pageIndicator.innerText = `${index + 1} / ${lorePagesData.length}`;
-    }
-    if (btnPrev) btnPrev.disabled = index === 0;
-    if (btnNext) btnNext.disabled = index === lorePagesData.length - 1;
+    loreReader.close();
 }
 
 function handleLoreReaderKeydown(e) {
-    if (!loreReaderOpen) return;
-    if (e.key === "ArrowRight" || e.key === " ") {
-        loreSwiper?.slideNext();
-    } else if (e.key === "ArrowLeft") {
-        loreSwiper?.slidePrev();
-    } else if (e.key === "Escape") {
-        closeLoreReaderModal();
-    }
+    return loreReader.handleKeydown(e);
 }
 
-// ======================================================
-// GUIDE READER MODAL LOGIC (Hướng dẫn Tinh Thủ - Swiper Flip Effect)
-// ======================================================
-// Dùng GUIDE_PAGES_DATA từ data.js
-const guidePagesData = GUIDE_PAGES_DATA;
-let guideSwiper = null;
-
-function openGuideReaderModal() {
-    if (!guideReaderModal) return;
-    guideReaderModal.classList.remove("hidden");
-    guideReaderOpen = true;
-    
-    // Initialize Swiper if not already initialized
-    if (!guideSwiper) {
-        initGuideSwiper();
-    } else {
-        // Reset to first page
-        guideSwiper.slideTo(0, 0);
-    }
-    updateGuidePageIndicator(0);
-    
-    // Force reflow then show
-    guideReaderModal.offsetHeight;
-    requestAnimationFrame(() => {
-        guideReaderModal.classList.add("show");
-    });
-    
-    // Disable body scroll
-    document.body.style.overflow = "hidden";
+function openGuideReaderModal(pages) {
+    guideReader.open(pages);
 }
 
 function closeGuideReaderModal() {
-    if (!guideReaderModal) return;
-    guideReaderModal.classList.remove("show");
-    guideReaderOpen = false;
-    
-    // Destroy Swiper to release grabCursor styles
-    if (guideSwiper) {
-        guideSwiper.destroy(true, true);
-        guideSwiper = null;
-    }
-    
-    setTimeout(() => {
-        guideReaderModal.classList.add("hidden");
-        // Re-enable body scroll
-        document.body.style.overflow = "";
-        // Ensure cursor resets on body
-        document.body.style.cursor = "";
-    }, 400);
-}
-
-function initGuideSwiper() {
-    const wrapper = document.getElementById("guideSwiperWrapper");
-    if (!wrapper) return;
-    
-    // Render slides
-    wrapper.innerHTML = "";
-    guidePagesData.forEach((page, index) => {
-        const slide = document.createElement("div");
-        slide.className = "swiper-slide";
-        slide.innerHTML = `
-            <img src="${page.url}" alt="${page.title}" class="lore-comic-img" crossorigin="anonymous" onerror="this.src='https://placehold.co/600x900/2a1b12/d4af37?text=Lỗi+tải+ảnh'"/>
-        `;
-        wrapper.appendChild(slide);
-    });
-    
-    // Initialize Swiper with flip effect
-    guideSwiper = new Swiper(".guideSwiper", {
-        effect: "flip",
-        grabCursor: true,
-        speed: 500,
-        flipEffect: {
-            slideShadows: true,
-            limitRotation: true
-        },
-        navigation: {
-            nextEl: ".guide-swiper-btn.swiper-button-next",
-            prevEl: ".guide-swiper-btn.swiper-button-prev",
-        },
-        keyboard: {
-            enabled: true,
-            onlyInViewport: true,
-        },
-        on: {
-            slideChange: () => {
-                updateGuidePageIndicator(guideSwiper.activeIndex);
-            }
-        }
-    });
-    
-    // Also handle footer button clicks
-    const btnPrev = document.getElementById("guideBtnPrev");
-    const btnNext = document.getElementById("guideBtnNext");
-    btnPrev?.addEventListener("click", () => guideSwiper?.slidePrev());
-    btnNext?.addEventListener("click", () => guideSwiper?.slideNext());
-}
-
-function updateGuidePageIndicator(index) {
-    const pageIndicator = document.getElementById("guidePageIndicator");
-    const btnPrev = document.getElementById("guideBtnPrev");
-    const btnNext = document.getElementById("guideBtnNext");
-    
-    if (pageIndicator) {
-        pageIndicator.innerText = `${index + 1} / ${guidePagesData.length}`;
-    }
-    if (btnPrev) btnPrev.disabled = index === 0;
-    if (btnNext) btnNext.disabled = index === guidePagesData.length - 1;
+    guideReader.close();
 }
 
 function handleGuideReaderKeydown(e) {
-    if (!guideReaderOpen) return;
-    if (e.key === "ArrowRight" || e.key === " ") {
-        guideSwiper?.slideNext();
-    } else if (e.key === "ArrowLeft") {
-        guideSwiper?.slidePrev();
-    } else if (e.key === "Escape") {
-        closeGuideReaderModal();
-    }
+    return guideReader.handleKeydown(e);
+}
+
+// Event Reader (ảnh hành trình event2) — tái dùng readerModal, không sao chép logic.
+const eventReaderModal = document.getElementById("eventReaderModal");
+const eventReader = createReaderModal({
+    modalId: "eventReaderModal",
+    wrapperId: "eventSwiperWrapper",
+    swiperSelector: ".eventSwiper",
+    navNext: ".eventSwiper .swiper-button-next",
+    navPrev: ".eventSwiper .swiper-button-prev",
+    indicatorId: "eventPageIndicator",
+    prevBtnId: "eventBtnPrev",
+    nextBtnId: "eventBtnNext",
+    pages: EVENT2_PAGES_DATA,
+    onOpen: () => { eventReaderOpen = true; },
+    onClose: () => { eventReaderOpen = false; },
+});
+
+function openEventReaderModal(pages) {
+    eventReader.open(pages);
+}
+
+function closeEventReaderModal() {
+    eventReader.close();
+}
+
+function handleEventReaderKeydown(e) {
+    return eventReader.handleKeydown(e);
 }
 
 // ======================================================
@@ -3994,6 +3847,25 @@ document.getElementById("btnOpenScheduleModal")?.addEventListener("click", () =>
 });
 document.getElementById("closeScheduleModal")?.addEventListener("click", () => {
     document.getElementById("scheduleModal").classList.add("hidden");
+});
+
+// Click event2 trong Lịch Trình -> mở Event Reader (3 trang ảnh hành trình).
+// Bind 1 lần ở top-level (openEventReaderModal đã hoisted) để không nhân bản listener.
+document.getElementById("scheduleEvent2")?.addEventListener("click", () => {
+    sfxPaper();
+    openEventReaderModal();
+});
+// Hỗ trợ bàn phím (div có tabindex/role=button): Enter/Space để mở
+document.getElementById("scheduleEvent2")?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        sfxPaper();
+        openEventReaderModal();
+    }
+});
+document.getElementById("closeEventReader")?.addEventListener("click", closeEventReaderModal);
+eventReaderModal?.addEventListener("click", (e) => {
+    if (e.target === eventReaderModal) closeEventReaderModal();
 });
 
 // Mở / Đóng Modal Brochure -> mở Lore Reader Modal
