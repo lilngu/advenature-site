@@ -37,7 +37,7 @@ import { applyI18n, applyI18nToElement } from '@i18n';
 import { createPortalScene } from '@portal';
 // SFX MODULE — hệ thống hiệu ứng âm thanh — dùng importmap @sfx
 // mountAudioElements dựng toàn bộ <audio> từ manifest AUDIO_SOURCES trong data.js
-import { mountAudioElements, initSfx, setMainBgm, setMainBgmResumeHandler, isSfxDucking, isQuestBgmActive, sfxGacha, sfxBlanket, sfxBlink, sfxGuild, sfxBlessing, sfxWoodbox, sfxPaper, sfxBell, sfxCoin, sfxWelcome, sfxGuestHelper, stopSfx } from '@sfx';
+import { mountAudioElements, initSfx, setMainBgm, setMainBgmResumeHandler, isSfxDucking, isQuestBgmActive, sfxGacha, sfxBlanket, sfxBlink, sfxGuild, sfxBlessing, sfxWoodbox, sfxPaper, sfxBell, sfxCoin, sfxWelcome, sfxGuestHelper, sfxWelcomeBack, stopSfx } from '@sfx';
 
 // Hằng số toán học dùng chung (Golden Angle cho phân bố đều trên cầu)
 const GOLDEN_ANGLE = Math.PI * (Math.sqrt(5) - 1);
@@ -2361,6 +2361,8 @@ async function handleGoogleSuccess(response) {
             lootText.classList.remove("show");
 
             toast.magic('CHÀO MỪNG QUAY LẠI', `🎉 CHÀO MỪNG QUAY TRỞ LẠI, ${currentUser.full_name}!\nĐã khôi phục Danh tính [${currentUser.adventurer_code}] và kho đồ của bạn.`);
+            // VOICE: chào mừng user đăng nhập trở lại (chạy trong gesture Google login nên qua được autoplay policy)
+            sfxWelcomeBack();
             state = STATE.IDLE;
             // Nhận mốc sưu tầm bị bỏ lỡ ở phiên trước (offline hoặc tab bị đóng)
             checkAndClaimGemMilestones();
@@ -4065,7 +4067,7 @@ document.getElementById("admToggleFastGacha")?.addEventListener("click", () => {
 });
 
 document.getElementById("admResetData")?.addEventListener("click", () => {
-    if (confirm("Reset về Tân Thủ?")) {
+    if (confirm("Thoát khỏi Danh Tính?")) {
         localStorage.removeItem("advenature_user");
         location.reload();
     }

@@ -216,7 +216,9 @@ export const AUDIO_SOURCES = [
     // 12. Voice chào mừng khi banner Cuộn giấy cổ xuất hiện (guest mode)
     { key: "welcome", id: "sfxWelcome", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1791557945/audio/welcome-p_1_jjy5xk.mp3", type: "audio/mpeg", loop: false, preload: "auto" },
     // 13. Voice giới thiệu khi Tinh Linh Guest Helper xuất hiện (guest mode)
-    { key: "guestHelper", id: "sfxGuestHelper", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1791557945/audio/guesthelper-p_1_lk6ogz.mp3", type: "audio/mpeg", loop: false, preload: "auto" }
+    { key: "guestHelper", id: "sfxGuestHelper", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1791557945/audio/guesthelper-p_1_lk6ogz.mp3", type: "audio/mpeg", loop: false, preload: "auto" },
+    // 14. Voice chào mừng user đăng nhập trở lại (toast CHÀO MỪNG QUAY TRỞ LẠI)
+    { key: "welcomeBack", id: "sfxWelcomeBack", src: "https://res.cloudinary.com/aurorawoods/video/upload/v1791776301/audio/welcome-back_1_dqrb2d.mp3", type: "audio/mpeg", loop: false, preload: "auto" }
 ];
 
 // Tra cứu nhanh: key -> cấu hình audio (dựng 1 lần lúc load module)

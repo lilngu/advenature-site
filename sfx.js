@@ -6,7 +6,7 @@
 //      để có thể phát lại liên tiếp mà không bị cắt.
 //   2. BGM nền phải duck (giảm volume) khi SFX phát, tránh lấn át.
 //   3. Chỉ preload nhóm SFX hay dùng (gacha, blessing, teleport, paper, welcome,
-//      guestHelper), nhóm còn lại nạp lazy ở lần phát đầu tiên để tiết kiệm băng thông mobile.
+//      guestHelper, welcomeBack), nhóm còn lại nạp lazy ở lần phát đầu tiên để tiết kiệm băng thông mobile.
 //   4. Unlock AudioContext từ gesture đầu tiên (Safari/iOS chặn autoplay).
 //   5. Tất cả hàm đều no-op an toàn nếu phần tử audio chưa có (tránh crash).
 //   6. Khai báo file âm thanh nằm trong data.js (AUDIO_SOURCES); thẻ <audio>
@@ -30,6 +30,7 @@ const SFX_VOLUMES = {
     coin: 0.45,
     welcome: 0.65,
     guestHelper: 0.65,
+    welcomeBack: 0.65,
 };
 
 // Nhạc nền Roll Quest (loop riêng, không dùng chung BGM chính)
@@ -126,7 +127,7 @@ function initSfx(mainBgm = null) {
     if (mainBgmAudio) mainBgmBaseVolume = mainBgmAudio.volume;
 
     // Nạp trước nhóm SFX hay dùng + voice guest-mode, nhóm còn lại nạp lazy ở lần phát đầu
-    ['gacha', 'blessing', 'teleport', 'paper', 'welcome', 'guestHelper'].forEach(getAudio);
+    ['gacha', 'blessing', 'teleport', 'paper', 'welcome', 'guestHelper', 'welcomeBack'].forEach(getAudio);
 
     // AudioContext để "unlock" âm thanh trên Safari/iOS
     // Nếu không có AudioContext thì các lần play() sau vẫn bị chặn
@@ -224,7 +225,7 @@ function unduckBGM() {
 /**
  * Phát một SFX one-shot
  * @param {string} key - tên audio element (gacha, teleport, blanket, blink, guild,
-//                        blessing, woodbox, paper, bell, coin, welcome, guestHelper)
+//                        blessing, woodbox, paper, bell, coin, welcome, guestHelper, welcomeBack)
  * @param {object} opts
  * @param {number} opts.volume - override volume 0..1
  * @param {number} opts.duckMs - thời gian giữ BGM ở mức thấp
@@ -409,6 +410,7 @@ const sfxBell = () => playSfx('bell');
 const sfxCoin = () => playSfx('coin');
 const sfxWelcome = () => playSfx('welcome', { duckMs: VOICE_DUCK_MS });
 const sfxGuestHelper = () => playSfx('guestHelper', { duckMs: VOICE_DUCK_MS });
+const sfxWelcomeBack = () => playSfx('welcomeBack', { duckMs: VOICE_DUCK_MS });
 
 // ======================================================
 // EXPORTS
@@ -439,4 +441,5 @@ export {
     sfxCoin,
     sfxWelcome,
     sfxGuestHelper,
+    sfxWelcomeBack,
 };
