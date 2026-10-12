@@ -666,8 +666,8 @@ function initCornerPortal() {
             size: { width: 3.0, height: 3.8 },
             strokeCount: 14,
             colors: { primary: 0xff007f, secondary: 0x00f0ff, core: 0x5379b5 },
-            // Chuyển trang trực tiếp (không mở tab mới như bản portal.html)
-            onSelect: () => { window.location.href = CORNER_PORTAL_LINK; }
+            // Click cổng -> mở modal xác nhận (không chuyển trang ngay, tránh chạm nhầm)
+            onSelect: () => { openCornerPortalConfirm(); }
         }]
     });
 
@@ -707,6 +707,54 @@ function hideCornerPortal() {
         cornerPortal3D.classList.remove('exit-to-right');
     }, 800);
 }
+
+// ======================================================
+// CORNER PORTAL CONFIRM MODAL (Xác nhận rời Linh Cảnh -> FB Group L.A.R.P)
+// Pattern tái dùng .modal-overlay + .rpg-glass-box. Text từ TEXTS.cornerPortal.
+// Nút Đến mở tab mới (_blank + noopener) để giữ phiên game.
+// Đóng bằng X / click-outside / Esc (bù cho việc không có nút Ở lại).
+// ======================================================
+const cornerPortalConfirmModal = document.getElementById("cornerPortalConfirmModal");
+const btnGoCornerPortal = document.getElementById("btnGoCornerPortal");
+const closeCornerPortalConfirm = document.getElementById("closeCornerPortalConfirm");
+let cornerPortalConfirmOpen = false;
+
+function openCornerPortalConfirm() {
+    if (!cornerPortalConfirmModal || cornerPortalConfirmOpen) return;
+    cornerPortalConfirmOpen = true;
+    // Sync text từ TEXTS để luôn khớp texts.js (fallback nếu thiếu)
+    const msgEl = document.getElementById("cornerPortalConfirmMsg");
+    if (msgEl && TEXTS?.cornerPortal?.message) msgEl.textContent = TEXTS.cornerPortal.message;
+    if (btnGoCornerPortal && TEXTS?.cornerPortal?.goBtn) btnGoCornerPortal.textContent = TEXTS.cornerPortal.goBtn;
+    cornerPortalConfirmModal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+    btnGoCornerPortal?.focus();
+}
+
+function closeCornerPortalConfirmModal() {
+    if (!cornerPortalConfirmModal || !cornerPortalConfirmOpen) return;
+    cornerPortalConfirmOpen = false;
+    cornerPortalConfirmModal.classList.add("hidden");
+    document.body.style.overflow = "";
+}
+
+btnGoCornerPortal?.addEventListener("click", () => {
+    window.open(CORNER_PORTAL_LINK, "_blank", "noopener");
+    closeCornerPortalConfirmModal();
+});
+closeCornerPortalConfirm?.addEventListener("click", closeCornerPortalConfirmModal);
+closeCornerPortalConfirm?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        closeCornerPortalConfirmModal();
+    }
+});
+cornerPortalConfirmModal?.addEventListener("click", (e) => {
+    if (e.target === cornerPortalConfirmModal) closeCornerPortalConfirmModal();
+});
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && cornerPortalConfirmOpen) closeCornerPortalConfirmModal();
+});
 
 // ======================================================
 // GACHA READY TOOLTIP LOGIC
