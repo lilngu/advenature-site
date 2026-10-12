@@ -99,7 +99,7 @@ export const BLESSINGS_DATA = [
 export const SHOP_ITEMS = [
     { id: "PKG_1", name: "🎪VÉ THAM GIA LARP - CAMP", tt: 14, vnd: 350000, iconClass: "ico-pkg1", desc: " Bao gồm 1 lều gỗ lưu trú dành cho tối đa 2 mạo hiểm giả. \n( có thể bày hàng trước lều) \nHỗ trợ vật liệu tự nhiên decor\n Tuỳ chọn tham gia Quest nhận thưởng tinh thạch tại Hội." },
     { id: "PKG_2", name: "🛏️VÉ THAM GIA LARP - DORM", tt: 8, vnd: 200000, iconClass: "ico-pkg2", desc: " 1 bộ nệm/ chăn/ gối tại phòng tập thể dành cho 1 mạo hiểm giả. \n Tuỳ chọn tham gia Quest nhận thưởng tinh thạch tại Hội." },
-    { id: "PKG_3", name: "🏡VÉ THAM GIA LARP - LỮ QUÁN", tt: 16, vnd: 400000, iconClass: "ico-pkg3", desc: " 1 phòng riêng dành cho 2 mạo hiểm giả. \nTuỳ chọn tham gia Quest nhận thưởng tinh thạch tại Hội \n Chỉ có 2 suất dành cho Mạo hiểm giả đăng ký trước." },
+    { id: "PKG_3", name: "🏡VÉ THAM GIA LARP - LỮ QUÁN", tt: 16, vnd: 450000, iconClass: "ico-pkg3", desc: " 1 phòng riêng dành cho 2 mạo hiểm giả. \nTuỳ chọn tham gia Quest nhận thưởng tinh thạch tại Hội \n Chỉ có 2 suất dành cho Mạo hiểm giả đăng ký trước." },
     { id: "PKG_4", name: "🎫VÉ THUÊ KIOSK", tt: 6, vnd: 150000, iconClass: "ico-pkg4", desc: " Dành cho thương nhân chỉ tham gia Phiên Chợ sáng Chủ Nhật, không lưu trú ngày thứ 7." },
     { id: "Q_1", name: "🌬️ Quest Viễn Chinh Phong Tinh", tt: 10, vnd: 250000, iconClass: "ico-quest2", desc: "🚙 Buff dịch chuyển đến nơi làm 📜 Quest Đồi Cỏ Lang Thang \n 🔮 Nhận thưởng Tinh Thạch" },
     { id: "Q_2", name: "✨ Quest Viễn Chinh Quang Tinh", tt: 10, vnd: 250000, iconClass: "ico-quest1", desc: "🚙 Buff dịch chuyển đến nơi làm 📜 Quest Suối Thì Thầm Rì Rầm \n 🔮 Nhận thưởng Tinh Thạch " },

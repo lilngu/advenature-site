@@ -427,7 +427,7 @@ const TEXTS = {
                 date: "24-25 Tháng 10",
                 title: "PHIÊN CHỢ NHẬP VAI L.A.R.P",
                 location: "Địa điểm: Rừng Tinh Linh",
-                slots: "0/15 chỗ",
+                slots: "3/15 chỗ",
             },
             {
                 date: "Chưa cập nhật",
