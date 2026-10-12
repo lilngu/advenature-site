@@ -4086,16 +4086,41 @@ document.addEventListener("keydown", (e) => {
 // ======================================================
 let logoClicks = 0;
 let logoTimer = null;
+let logoTooltipTimer = null;
 const adminLogo = document.getElementById("adminTriggerLogo");
 const adminModal = document.getElementById("adminGodModal");
+const logoTooltip = document.getElementById("logoTooltip");
+
+function showLogoTooltip() {
+    if (!logoTooltip) return;
+    logoTooltip.classList.remove("hidden");
+    // Force reflow để transition chạy
+    logoTooltip.offsetHeight;
+    requestAnimationFrame(() => logoTooltip.classList.add("show"));
+    clearTimeout(logoTooltipTimer);
+    logoTooltipTimer = setTimeout(hideLogoTooltip, 3000);
+}
+
+function hideLogoTooltip() {
+    if (!logoTooltip) return;
+    clearTimeout(logoTooltipTimer);
+    logoTooltipTimer = null;
+    logoTooltip.classList.remove("show");
+    setTimeout(() => {
+        // Chỉ ẩn hẳn nếu không có lệnh show mới chen vào giữa lúc chờ
+        if (!logoTooltip.classList.contains("show")) logoTooltip.classList.add("hidden");
+    }, 250);
+}
 
 adminLogo?.addEventListener("pointerdown", () => {
+    showLogoTooltip();
     logoClicks++;
     clearTimeout(logoTimer);
     logoTimer = setTimeout(() => { logoClicks = 0; }, 2000);
 
     if (logoClicks >= 5) {
         logoClicks = 0;
+        hideLogoTooltip();
         adminModal?.classList.remove("hidden");
     }
 });

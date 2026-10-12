@@ -390,7 +390,7 @@ const TEXTS = {
     // ADMIN MODAL
     // ======================================================
     admin: {
-        title: "⚡ MASTER MODE",
+        title: "⚡ HỆ THỐNG",
         actions: {
             addTQ: "+99 🔮 Tinh Quang",
             addCH: "+100 🛡️ Cống Hiến",
@@ -401,7 +401,7 @@ const TEXTS = {
         },
         fastGachaOn: "BẬT (0.1s)",
         fastGachaOff: "TẮT",
-        resetConfirm: "Reset về Tân Thủ?",
+        resetConfirm: "Thoát khỏi Danh Tính hiện tại?", 
         feedback: {
             addedTQ: "⚡ Admin: +99 🔮 (Đã ghi nhận vào Database D1)",
             addedTT: "⚡ Admin: +99 💎 (Đã ghi nhận vào Database D1)",
