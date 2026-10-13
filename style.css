@@ -364,7 +364,7 @@ body, html {
    ====================================================== */
 .logo-tooltip {
     position: absolute;
-    left: calc(100% + 12px);
+    left: calc(50% + 1px);
     top: 50%;
     transform: translateY(-50%) translateX(-6px) scale(0.95);
     white-space: nowrap;
@@ -1779,7 +1779,7 @@ i.ico-back-wind {width: 64px; height: 64px;}
     background: url(https://iili.io/n70P1ql.png) center / 100%;
     border: 1.5px solid var(--border-gold);
     border-radius: 12px;
-    padding: 18px;
+    padding: 30px;
     max-width: 320px;
     width: 100%;
     text-align: center;
@@ -3692,7 +3692,7 @@ body.guest-mode .dock-btn:not(.center-core) {
 .sch-view-hint { font-size: 8px; color: #ffd166; display: block; margin-top: 2px; }
 
 /* 2 BANNER PROFILE */
-.guild-action-banners { display: flex; flex-direction: row;     justify-content: center; gap: 8px; margin-top: 14px; }
+.guild-action-banners { display: flex; flex-direction: row;   justify-content: center; gap: 8px; margin-top: 14px; }
 .guild-banner-card {
     background: url(https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1790670395/xem2tgj2qyznxwur5fks.png) center / 100% 100%;
     border: 1px solid rgba(212, 192, 132, 0.3);

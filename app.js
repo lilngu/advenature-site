@@ -19,7 +19,8 @@ import {
     MODAL_IMAGES,
     GUILD_QUEST_DATA,
     GUILD_QUEST_META,
-    GUILD_QUEST_MESSENGER_DEFAULT
+    GUILD_QUEST_MESSENGER_DEFAULT,
+    ZALO_GROUP_URL
 } from '@data';
 // TEXTS từ texts.js (load qua script tag, доступ через window.TEXTS)
 const TEXTS = window.TEXTS;
@@ -754,6 +755,72 @@ cornerPortalConfirmModal?.addEventListener("click", (e) => {
 });
 document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && cornerPortalConfirmOpen) closeCornerPortalConfirmModal();
+    if (e.key === "Escape" && zaloConfirmOpen) closeZaloConfirmModal();
+});
+
+// ======================================================
+// ZALO GROUP CONFIRM MODAL (Banner #btnOpenZalo -> Nhóm Đưa Tin ZépLào)
+// Pattern tái dùng .modal-overlay + .rpg-glass-box (giống cornerPortalConfirmModal).
+// - Link chuyển tiếp: data.js -> ZALO_GROUP_URL (đổi link chỉ sửa 1 chỗ).
+// - Text: texts.js -> TEXTS.zaloPortal { message, goBtn, stayBtn }.
+// - Nút Đến mở tab mới (_blank + noopener) để giữ phiên game.
+// - Đóng bằng X / nút Ở Lại / click-outside / Esc / Enter-Space trên banner.
+// ======================================================
+const zaloConfirmModal = document.getElementById("zaloConfirmModal");
+const zaloConfirmMsg = document.getElementById("zaloConfirmMsg");
+const btnGoZalo = document.getElementById("btnGoZalo");
+const btnStayZalo = document.getElementById("btnStayZalo");
+const closeZaloConfirm = document.getElementById("closeZaloConfirm");
+const btnOpenZalo = document.getElementById("btnOpenZalo");
+let zaloConfirmOpen = false;
+
+function openZaloConfirm() {
+    if (!zaloConfirmModal || zaloConfirmOpen) return;
+    zaloConfirmOpen = true;
+    // Sync text từ TEXTS để luôn khớp texts.js (fallback giữ nội dung HTML sẵn)
+    if (zaloConfirmMsg && TEXTS?.zaloPortal?.message) zaloConfirmMsg.textContent = TEXTS.zaloPortal.message;
+    if (btnGoZalo && TEXTS?.zaloPortal?.goBtn) btnGoZalo.textContent = TEXTS.zaloPortal.goBtn;
+    if (btnStayZalo && TEXTS?.zaloPortal?.stayBtn) btnStayZalo.textContent = TEXTS.zaloPortal.stayBtn;
+    zaloConfirmModal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+    btnGoZalo?.focus();
+}
+
+function closeZaloConfirmModal() {
+    if (!zaloConfirmModal || !zaloConfirmOpen) return;
+    zaloConfirmOpen = false;
+    zaloConfirmModal.classList.add("hidden");
+    document.body.style.overflow = "";
+}
+
+function goToZaloGroup() {
+    if (!ZALO_GROUP_URL) return;
+    window.open(ZALO_GROUP_URL, "_blank", "noopener");
+    closeZaloConfirmModal();
+}
+
+btnOpenZalo?.addEventListener("click", () => {
+    sfxBell();
+    openZaloConfirm();
+});
+btnOpenZalo?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        sfxBell();
+        openZaloConfirm();
+    }
+});
+btnGoZalo?.addEventListener("click", goToZaloGroup);
+btnStayZalo?.addEventListener("click", closeZaloConfirmModal);
+closeZaloConfirm?.addEventListener("click", closeZaloConfirmModal);
+closeZaloConfirm?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        closeZaloConfirmModal();
+    }
+});
+zaloConfirmModal?.addEventListener("click", (e) => {
+    if (e.target === zaloConfirmModal) closeZaloConfirmModal();
 });
 
 // ======================================================

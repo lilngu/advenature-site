@@ -274,8 +274,12 @@ const TEXTS = {
                 desc: "Quy chế lập Hội, quyền lợi thủ lĩnh.",
             },
             ranger: {
-                title: "CHIÊU MỘ NPC & QUÁI RỪNG",
+                title: "CHIÊU MỘ NPC & QUÁI",
                 desc: "Ứng tuyển người dẫn đường thực địa & nhận thù lao.",
+            },
+            zalo: {
+                title: "NHÓM ĐƯA TIN HỘI NGỌC LỤC",
+                desc: "Vào nhóm ZépLào nhận tin Quest & sự kiện.",
             },
         },
         qrNote: "Mã QR Định Danh Nhà Phiêu Lưu Thực Địa",
@@ -495,6 +499,16 @@ const TEXTS = {
     cornerPortal: {
         message: "Tạm thời rời khỏi Linh Cảnh đến Cộng đồng L.A.R.P nhập vai mạo hiểm giả",
         goBtn: "Đến",
+    },
+
+    // ======================================================
+    // ZALO GROUP (Xác nhận rời Linh Cảnh -> Nhóm Đưa Tin ZépLào)
+    // Link chuyển tiếp quản lý trong data.js -> ZALO_GROUP_URL
+    // ======================================================
+    zaloPortal: {
+        message: "Tạm rời khỏi Linh Cảnh đến Nhóm Đưa Tin của Hội Ngọc Lục trên ZépLào",
+        goBtn: "Đến",
+        stayBtn: "Ở Lại",
     },
 
     // ======================================================

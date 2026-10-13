@@ -619,6 +619,13 @@
             <p data-i18n="profile.guildBanners.ranger.desc"></p>
         </div>
     </div>
+    <div class="guild-banner-card banner-zalo" id="btnOpenZalo" role="button" tabindex="0" aria-label="Mở nhóm Zalo Hội Ngọc Lục">
+        <div class="banner-ico-box">💬</div>
+        <div class="banner-txt-box">
+            <h4 data-i18n="profile.guildBanners.zalo.title"></h4>
+            <p data-i18n="profile.guildBanners.zalo.desc"></p>
+        </div>
+    </div>
 </div>
 
                 <div id="userProfileQr" class="qr-box"></div>
@@ -999,7 +1006,21 @@
     <div class="modal-box rpg-glass-box">
         <span class="close-modal" id="closeCornerPortalConfirm" data-i18n-title="common.close" role="button" tabindex="0" aria-label="Đóng">&nbsp;</span>
         <p id="cornerPortalConfirmMsg" class="corner-portal-confirm-msg" data-i18n="cornerPortal.message">Tạm thời rời khỏi Linh Cảnh đến Cộng đồng L.A.R.P nhập vai mạo hiểm giả</p>
-        <button id="btnGoCornerPortal" class="btn-magical btn-claim" style="width:100%; margin-top:14px;" data-i18n="cornerPortal.goBtn">Đến</button>
+        <button id="btnGoCornerPortal" class="btn-magical btn-claim" style="width:50%; margin-top:14px;" data-i18n="cornerPortal.goBtn">Đến</button>
+    </div>
+</div>
+
+<!-- MODAL: XÁC NHẬN RỜI LINH CẢNH SANG NHÓM ZALO HỘI NGỌC LỤC (mở khi click #btnOpenZalo)
+     Link chuyển tiếp quản lý trong data.js -> ZALO_GROUP_URL.
+     Text quản lý trong texts.js -> TEXTS.zaloPortal. -->
+<div id="zaloConfirmModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="zaloConfirmMsg">
+    <div class="modal-box rpg-glass-box">
+        <span class="close-modal" id="closeZaloConfirm" data-i18n-title="common.close" role="button" tabindex="0" aria-label="Đóng">&nbsp;</span>
+        <p id="zaloConfirmMsg" class="corner-portal-confirm-msg" data-i18n="zaloPortal.message">Tạm rời khỏi Linh Cảnh đến Nhóm Đưa Tin của Hội Ngọc Lục trên ZépLào</p>
+        <div style="display:flex; gap:8px; justify-content:center; margin-top:14px;">
+            <button id="btnStayZalo" class="btn-magical" style="flex:1; padding:10px; color: #f29797;" data-i18n="zaloPortal.stayBtn">Ở Lại</button>
+            <button id="btnGoZalo" class="btn-magical btn-claim" style="flex:1; padding:10px;" data-i18n="zaloPortal.goBtn">Đến</button>
+        </div>
     </div>
 </div>
 

@@ -267,3 +267,8 @@ export const GUILD_QUEST_META = {
     emptyText: "Hội Ngọc Lục đang sắp xếp các tờ Quest…"
 };
 
+// 11. LINK CHUYỂN TIẾP NGOÀI LINH CẢNH (mở tab mới, không cần sửa app.js/index.html)
+// ➜ ĐỔI LINK ZALO: chỉ sửa dòng ZALO_GROUP_URL bên dưới.
+//    Banner #btnOpenZalo trong profile-view tự đọc hằng số này qua app.js.
+export const ZALO_GROUP_URL = "https://zalo.me/g/s2itqei4wxk29kddqdw4";
+
