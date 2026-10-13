@@ -416,28 +416,28 @@ const TEXTS = {
     },
 
     // ======================================================
-    // SCHEDULE MODAL
+    // SCHEDULE MODAL - Lịch 
     // ======================================================
     schedule: {
         title: "✦ LỊCH TRÌNH SỰ KIỆN LARP CAMP ✦",
         events: [
             {
-                date: "10-11 Tháng 10",
-                title: "HỘI TRIỆU HỒI - DÀNH CHO THƯƠNG NHÂN VÀ NPC",
-                location: "Địa điểm: Rừng Tinh Linh",
-                slots: "Đã đóng",
-            },
-            {
                 date: "24-25 Tháng 10",
-                title: "PHIÊN CHỢ NHẬP VAI L.A.R.P",
-                location: "Địa điểm: Rừng Tinh Linh",
+                title: "PHIÊN CHỢ NHẬP VAI L.A.R.P & LỬA KHỞI NGUYÊN",
+                location: "Rừng Tinh Linh",
                 slots: "3/15 chỗ",
             },
             {
-                date: "Chưa cập nhật",
-                title: "chưa cập nhật",
-                location: "chưa cập nhật",
-                slots: "--/-- chỗ",
+                date: "7-8 Tháng 11",
+                title: "PHIÊN CHỢ NHẬP VAI L.A.R.P: LỄ HỘI HOA DÃ QUỲ",
+                location: "Rừng Tinh Linh",
+                slots: "0/15 chỗ",
+            },
+            {
+                date: "21-22 Tháng 11",
+                title: "PHIÊN CHỢ NHẬP VAI L.A.R.P",
+                location: "Rừng Tinh Linh",
+                slots: "0/15 chỗ",
             },
         ],
     },

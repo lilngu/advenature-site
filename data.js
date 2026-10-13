@@ -174,6 +174,49 @@ export const EVENT2_PAGES_DATA = [
     }
 ];
 
+// 7c. ẢNH HÀNH TRÌNH EVENT1 — DANH SÁCH TRANG (EVENT READER - 3 trang lật)
+// ➜ THAY LINK ẢNH THẬT: chỉ cần thay 3 dòng `url` bên dưới bằng link Cloudinary,
+//    không cần sửa bất kỳ file nào khác. Tiêu đề mỗi trang sửa ở trường `title`
+//    (trường `title` cũng chính là alt text cho trình đọc màn hình).
+export const EVENT1_PAGES_DATA = [
+    {
+        id: 1,
+        title: "Event2 - Trang 1: PHIÊN CHỢ LARP",
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_mediumWebP/v1791775515/k5ygoql9mtlfhnnzcud9.png"
+    },
+    {
+        id: 2,
+        title: "Event2 - Trang 2: Hoạt động",
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_mediumWebP/v1791775580/xmrlbh4vcyscrprmjd53.png"
+    },
+    {
+        id: 3,
+        title: "Event2 - Trang 3: Quy tắc & Liên Hệ",
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_mediumWebP/v1791775588/fhqdzlmd2qaf0q3bvxn4.png"
+    }
+];
+
+// 7d. ẢNH HÀNH TRÌNH EVENT3 — DANH SÁCH TRANG (EVENT READER - 3 trang lật)
+// ➜ THAY LINK ẢNH THẬT: chỉ cần thay 3 dòng `url` bên dưới bằng link Cloudinary,
+//    không cần sửa bất kỳ file nào khác. Tiêu đề mỗi trang sửa ở trường `title`.
+export const EVENT3_PAGES_DATA = [
+    {
+        id: 1,
+        title: "Event2 - Trang 1: PHIÊN CHỢ LARP",
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_mediumWebP/v1791775515/k5ygoql9mtlfhnnzcud9.png"
+    },
+    {
+        id: 2,
+        title: "Event2 - Trang 2: Hoạt động",
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_mediumWebP/v1791775580/xmrlbh4vcyscrprmjd53.png"
+    },
+    {
+        id: 3,
+        title: "Event2 - Trang 3: Quy tắc & Liên Hệ",
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_mediumWebP/v1791775588/fhqdzlmd2qaf0q3bvxn4.png"
+    }
+];
+
 // 8. ẢNH MINH HOẠ TRONG MODAL (dễ thay thế link ảnh, không cần sửa index.html)
 // Key khớp với thuộc tính data-modal-img của thẻ <img> trong index.html
 export const MODAL_IMAGES = {

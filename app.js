@@ -15,7 +15,9 @@ import {
     QUIZ_LIST,
     LORE_PAGES_DATA,
     GUIDE_PAGES_DATA,
+    EVENT1_PAGES_DATA,
     EVENT2_PAGES_DATA,
+    EVENT3_PAGES_DATA,
     MODAL_IMAGES,
     GUILD_QUEST_DATA,
     GUILD_QUEST_META,
@@ -1741,8 +1743,9 @@ function handleGuideReaderKeydown(e) {
     return guideReader.handleKeydown(e);
 }
 
-// Event Reader (ảnh hành trình event2) — tái dùng readerModal, không sao chép logic.
+// Event Reader (ảnh hành trình event1/2/3) — tái dùng readerModal, không sao chép logic.
 const eventReaderModal = document.getElementById("eventReaderModal");
+const eventReaderTitleEl = document.getElementById("eventReaderTitle");
 const eventReader = createReaderModal({
     modalId: "eventReaderModal",
     wrapperId: "eventSwiperWrapper",
@@ -1757,7 +1760,9 @@ const eventReader = createReaderModal({
     onClose: () => { eventReaderOpen = false; },
 });
 
-function openEventReaderModal(pages) {
+// Tiêu đề modal đổi theo event đang mở (lấy từ TEXTS.schedule.events[i].title).
+function openEventReaderModal(pages, title) {
+    if (title && eventReaderTitleEl) eventReaderTitleEl.textContent = title;
     eventReader.open(pages);
 }
 
@@ -3966,19 +3971,29 @@ document.getElementById("closeScheduleModal")?.addEventListener("click", () => {
     document.getElementById("scheduleModal").classList.add("hidden");
 });
 
-// Click event2 trong Lịch Trình -> mở Event Reader (3 trang ảnh hành trình).
+// Click event1/2/3 trong Lịch Trình -> mở CHUNG eventReaderModal với bộ ảnh riêng.
 // Bind 1 lần ở top-level (openEventReaderModal đã hoisted) để không nhân bản listener.
-document.getElementById("scheduleEvent2")?.addEventListener("click", () => {
-    sfxPaper();
-    openEventReaderModal();
-});
-// Hỗ trợ bàn phím (div có tabindex/role=button): Enter/Space để mở
-document.getElementById("scheduleEvent2")?.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
+// titleIndex trỏ vào TEXTS.schedule.events[] để tiêu đề modal luôn khớp Lịch Trình.
+const EVENT_READER_BINDINGS = [
+    { triggerId: "scheduleEvent1", pages: EVENT1_PAGES_DATA, titleIndex: 0 },
+    { triggerId: "scheduleEvent2", pages: EVENT2_PAGES_DATA, titleIndex: 1 },
+    { triggerId: "scheduleEvent3", pages: EVENT3_PAGES_DATA, titleIndex: 2 },
+];
+EVENT_READER_BINDINGS.forEach(({ triggerId, pages, titleIndex }) => {
+    const trigger = document.getElementById(triggerId);
+    if (!trigger) return;
+    const openThis = () => {
         sfxPaper();
-        openEventReaderModal();
-    }
+        openEventReaderModal(pages, TEXTS?.schedule?.events?.[titleIndex]?.title || "");
+    };
+    trigger.addEventListener("click", openThis);
+    // Hỗ trợ bàn phím (div có tabindex/role=button): Enter/Space để mở
+    trigger.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            openThis();
+        }
+    });
 });
 document.getElementById("closeEventReader")?.addEventListener("click", closeEventReaderModal);
 eventReaderModal?.addEventListener("click", (e) => {
