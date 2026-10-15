@@ -4,6 +4,11 @@
 /*.css
   Cache-Control: public, max-age=3600, s-maxage=300
 
+# Admin tool: không index, không cache
+/admin.html
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store
+
 # Ảnh — hầu như không đổi, TTL rất dài
 /*.png
 /*.jpg

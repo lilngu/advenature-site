@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Advenature — Admin Tool Toàn Năng (D1)</title>
+<style>
+:root{--bg:#0f0d1b;--panel:#18152e;--panel2:#201c3d;--panel3:#231f45;--line:#3d346b;--line2:#332b5e;--txt:#f1f1ff;--mut:#a8a4c2;--gold:#ffd166;--gold2:#ffe66d;--acc:#7c6cff;--acc2:#9283ff;--cyan:#4cc9f0;--green:#00f5d4;--red:#ff3366}
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--txt);margin:0;padding:16px}
+.container{max-width:1180px;margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+h1{font-size:19px;color:var(--gold);margin:0 0 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.badge{font-size:12px;color:var(--mut);font-weight:normal}
+.authbar{display:flex;gap:10px;margin-bottom:12px;background:var(--panel3);padding:12px;border-radius:8px;flex-wrap:wrap;align-items:center}
+.authbar input{flex:1;min-width:200px;padding:10px 14px;background:#0c0a1a;border:1px solid #4a3f82;border-radius:6px;color:#fff;font-size:13px}
+.authbar input:focus{outline:none;border-color:var(--gold)}
+button{background:var(--acc);color:#fff;border:none;padding:9px 15px;border-radius:6px;cursor:pointer;font-weight:bold;transition:all .2s;font-size:13px}
+button:hover{background:var(--acc2)}
+button.ghost{background:#2c2757}
+button.danger{background:#a11b3d}
+button.ok{background:#0d7a5f}
+button.sm{padding:6px 10px;font-size:12px}
+.tabs{display:flex;gap:8px;margin:6px 0 14px;flex-wrap:wrap}
+.tab{padding:9px 14px;border-radius:8px;background:#241f49;border:1px solid var(--line2);cursor:pointer;font-size:13px;font-weight:bold;color:var(--mut)}
+.tab.active{background:var(--acc);color:#fff;border-color:var(--acc)}
+.panel{display:none}
+.panel.active{display:block}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.stat{background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:12px}
+.stat .n{font-size:22px;font-weight:800;color:var(--gold2)}
+.stat .l{font-size:12px;color:var(--mut)}
+.toolbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.toolbar input,.toolbar select{background:#0c0a1a;border:1px solid #4a3f82;border-radius:6px;color:#fff;font-size:13px;padding:9px 12px}
+.toolbar input{flex:1;min-width:180px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line2);vertical-align:middle}
+th{color:var(--gold);font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+.avatar-preview{width:44px;height:44px;border-radius:8px;object-fit:cover;border:2px solid var(--gold);background:#000}
+.mono{font-family:monospace;color:var(--cyan);font-size:12px}
+.mut{color:var(--mut);font-size:12px}
+.rowcard{background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:12px;margin-bottom:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:860px){.grid2{grid-template-columns:1fr}}
+.detail{border:1px solid var(--gold);border-radius:10px;background:#14112a;padding:12px;margin-top:10px}
+.detail h3{margin:0 0 8px;color:var(--gold2);font-size:14px}
+.kv{display:grid;grid-template-columns:150px 1fr;gap:6px;font-size:13px;margin-bottom:8px}
+.kv input,.kv select{background:#0c0a1a;border:1px solid #4a3f82;border-radius:6px;color:#fff;font-size:13px;padding:8px 10px;width:100%}
+.pill{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:800}
+.pill.pending{background:#4a3200;color:#ffd166}
+.pill.done{background:#003a2e;color:#00f5d4}
+.toast{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:8px;z-index:99}
+.toast div{background:#0c0a1a;border:1px solid var(--gold);padding:10px 14px;border-radius:8px;font-size:13px;max-width:340px}
+.small{font-size:12px;color:var(--mut)}
+a{color:var(--cyan)}
+</style>
+</head>
+<body>
+<div class="container">
+<h1><span>🛡️ ADVENATURE ADMIN — TOOL TOÀN NĂNG (D1)</span><span class="badge" id="totalCount">Chưa tải dữ liệu</span></h1>
+<div class="authbar">
+<input type="password" id="adminKey" placeholder="Nhập Mật mã Admin (lưu session, không hardcode)...">
+<button onclick="saveKey()">💾 Lưu key</button>
+<button class="ghost" onclick="toggleKey()">👁 Hiện/Ẩn</button>
+<input type="text" id="apiUrl" value="https://advenature-api.lilnguyen-dcr.workers.dev" style="max-width:340px" title="Worker API URL">
+<button onclick="boot()">🔄 Tải toàn bộ</button>
+</div>
+<div class="small">Key lưu ở <span class="mono">sessionStorage</span> — tải lại trang trong cùng tab vẫn nhớ, đóng tab là mất. Mọi API đều gửi header <span class="mono">x-admin-key</span>.</div>
+<div class="tabs" style="margin-top:12px">
+<div class="tab active" data-t="stats" onclick="switchTab('stats')">📊 Tổng quan</div>
+<div class="tab" data-t="users" onclick="switchTab('users')">🧝 Người chơi</div>
+<div class="tab" data-t="orders" onclick="switchTab('orders')">🛒 Đơn hàng</div>
+<div class="tab" data-t="bless" onclick="switchTab('bless')">🎁 Blessings</div>
+<div class="tab" data-t="audit" onclick="switchTab('audit')">📜 Audit</div>
+<div class="tab" data-t="sys" onclick="switchTab('sys')">⚙️ Hệ thống</div>
+</div>
+
+<!-- STATS -->
+<div class="panel active" id="p-stats">
+<div class="cards" id="statCards"></div>
+<div class="rowcard"><b>🏆 Top sưu tầm Quang Thạch</b><div id="topGems" class="small" style="margin-top:8px">—</div></div>
+</div>
+
+<!-- USERS -->
+<div class="panel" id="p-users">
+<div class="toolbar">
+<input type="text" id="searchUser" placeholder="Tìm Tên / Mã AWxxxx / Email / SĐT..." oninput="renderUsers()">
+<select id="filterClass" onchange="renderUsers()"><option value="">— Tất cả lớp —</option></select>
+<select id="filterSort" onchange="renderUsers()"><option value="new">Mới nhất</option><option value="tq">🔮 Tinh Quang cao</option><option value="ch">🛡️ Cống Hiến cao</option><option value="name">Tên A-Z</option></select>
+<button class="ghost" onclick="exportCSV()">⬇ CSV</button>
+</div>
+<div id="userList"></div>
+<div id="userDetail"></div>
+</div>
+
+<!-- ORDERS -->
+<div class="panel" id="p-orders">
+<div class="toolbar">
+<select id="orderFilter" onchange="loadOrders()"><option value="all">Tất cả</option><option value="pending">Pending</option><option value="done">Đã xử lý</option></select>
+<button onclick="loadOrders()">🔄 Tải đơn</button>
+</div>
+<div id="orderList"></div>
+</div>
+
+<!-- BLESS -->
+<div class="panel" id="p-bless">
+<div class="rowcard">
+<b>🎁 Tặng vật phẩm cho user đang chọn</b>
+<div class="small">Chọn user ở tab Người chơi (bấm Chi tiết) trước, hoặc nhập User ID thủ công.</div>
+<div class="toolbar" style="margin-top:8px">
+<input type="text" id="grantUserId" placeholder="User ID (google sub)...">
+<select id="grantItem"></select>
+<input type="number" id="grantQty" value="1" min="1" max="99" style="max-width:80px">
+<button onclick="grantItem()">Tặng</button>
+</div>
+<div class="small">Danh mục 30 Chúc Phúc + 4 Free Tân Thủ — trùng logic gacha trong worker.</div>
+</div>
+<div id="blessList"></div>
+</div>
+
+<!-- SYS -->
+<div class="panel" id="p-audit">
+<div class="toolbar"><button onclick="loadAudit()">🔄 Tải nhật ký</button><span class="small">Key WRITE mới xem được. Key VIEW bị 403.</span></div>
+<div id="auditList"><div class="small">Chưa tải.</div></div>
+</div>
+
+<!-- SYS -->
+<div class="panel" id="p-sys">
+<div class="grid2">
+<div class="rowcard"><b>📦 Build / Deploy</b><div class="small" style="margin-top:6px">Worker file: <span class="mono">.worker/worker.js</span> (single-file, copy-paste lên Dashboard).<br>Admin file này: mở trực tiếp hoặc deploy Pages.<br><button class="sm ghost" style="margin-top:8px" onclick="checkApi()">🔌 Kiểm tra API</button> <span id="apiStatus" class="small"></span></div></div>
+<div class="rowcard"><b>🧹 Tác vụ nhanh</b><div class="small">Dùng tab Người chơi → Chi tiết để reset checkin/quiz/rollquest từng người.</div></div>
+</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+let allUsers = [];
+let selectedUserId = "";
+let selectedDetail = null;
+
+const BLESSINGS = [
+["BLESS_01","1 ống tre"],["BLESS_02","Nhựa thông"],["BLESS_03","+1 Điểm Tinh Quang"],
+["BLESS_04","1 mảnh vải ngẫu nhiên"],["BLESS_05","1 Gậy gỗ"],["BLESS_06","2 quả trứng gà"],
+["BLESS_07","1 quả bắp"],["BLESS_08","+1 Điểm Cống Hiến"],["BLESS_09","+2 Điểm Cống Hiến"],
+["BLESS_10","1 Ly Trà Thảo Mộc"],["BLESS_11","1 Củ khoai lang"],["BLESS_12","Thẻ thêm thịt nướng"],
+["BLESS_13","1 Bình Potion"],["BLESS_14","1 Ly Cocktail Tavern"],["BLESS_15","Thẻ X2 Tinh Thạch Quest"],
+["BLESS_16","Thẻ Thuê Áo Choàng Free"],["BLESS_17","Thẻ Trợ Thủ NPC"],["BLESS_18","+1 Tinh Thạch"],
+["BLESS_19","+2 Tinh Thạch"],["BLESS_20","Thẻ mượn Đạo cụ Quest"],["BLESS_21","Thẻ Mượn Đèn Bão Đêm"],
+["BLESS_22","Huy Hiệu Phiêu Lưu Xanh"],["BLESS_23","Thẻ Dịch Chuyển"],["BLESS_24","Thẻ Gacha Phiên Chợ"],
+["BLESS_25","Dây chuyền Tinh Linh"],["BLESS_26","Món Quà Bí Mật Tinh Linh"],["BLESS_27","Thẻ bài Tinh Linh Rừng"],
+["BLESS_28","Thẻ Nâng Cấp Phòng Riêng"],["BLESS_29","Thẻ Lưu Trú Miễn Phí"],["BLESS_30","Trang Bị Nhà Phiêu Lưu"],
+["BLESS_FREE_THUY","+1 Chúc Phúc Thuỷ"],["BLESS_FREE_HOA","+1 Chúc Phúc Hoả"],
+["BLESS_FREE_QUANG","+1 Chúc Phúc Quang"],["BLESS_FREE_THO","+1 Chúc Phúc Thổ"]
+];
+
+function apiUrl(){ return $("apiUrl").value.trim().replace(/\/+$/,""); }
+function adminKey(){ return $("adminKey").value.trim(); }
+function toast(msg, ok=true){
+  const t = document.createElement("div");
+  t.style.borderColor = ok ? "#ffd166" : "#ff3366";
+  t.textContent = msg;
+  $("toast").appendChild(t);
+  setTimeout(()=>t.remove(), 4200);
+}
+function esc(s){ return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+async function adminFetch(path, opts={}){
+  const headers = Object.assign({"x-admin-key": adminKey()}, opts.headers || {});
+  if(opts.body && !headers["Content-Type"]) headers["Content-Type"] = "application/json";
+  const res = await fetch(apiUrl() + path, Object.assign({}, opts, {headers}));
+  const data = await res.json().catch(()=>({success:false, error:"JSON lỗi"}));
+  if(res.status === 401) throw new Error("Sai Mật mã Admin (401)");
+  if(!data.success && data.error) throw new Error(data.error);
+  return data;
+}
+
+function saveKey(){ sessionStorage.setItem("ADVEN_ADMIN_KEY", adminKey()); toast("Đã lưu key vào sessionStorage"); }
+function toggleKey(){ const el=$("adminKey"); el.type = el.type==="password"?"text":"password"; }
+function switchTab(t){
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active", x.dataset.t===t));
+  document.querySelectorAll(".panel").forEach(x=>x.classList.toggle("active", x.id==="p-"+t));
+}
+
+async function boot(){
+  if(!adminKey()){ toast("Nhập Mật mã Admin trước!", false); return; }
+  saveKey();
+  await Promise.allSettled([loadStats(), loadUsers(), loadOrders()]);
+  switchTab("users");
+}
+async function checkApi(){
+  try{ const d = await adminFetch("/api/admin/stats"); $("apiStatus").textContent = "OK — " + d.stats.totalUsers + " users"; toast("API OK"); }
+  catch(e){ $("apiStatus").textContent = "Lỗi: " + e.message; toast(e.message, false); }
+}
+
+// ---- STATS ----
+async function loadStats(){
+  try{
+    const d = await adminFetch("/api/admin/stats");
+    const s = d.stats;
+    $("statCards").innerHTML = [
+      [s.totalUsers,"🧝 Tổng user"],[s.newToday,"✨ Mới hôm nay"],
+      [s.totalTinhQuang,"🔮 Tổng Tinh Quang"],[s.totalCongHien,"🛡️ Tổng Cống Hiến"],
+      [s.totalGems,"💎 Lượt đá sưu tầm"],[s.totalItems,"🎒 Vật phẩm tồn"],
+      [s.totalOrders,"🛒 Đơn hàng"],[s.pendingOrders,"⏳ Đơn pending"]
+    ].map(x=>`<div class="stat"><div class="n">${x[0]}</div><div class="l">${x[1]}</div></div>`).join("");
+    $("topGems").innerHTML = (d.topGems||[]).map((t,i)=>`${i+1}. <b>${esc(t.full_name)}</b> <span class="mono">${esc(t.adventurer_code)}</span> — ${t.gem_count} đá`).join("<br>") || "Chưa có dữ liệu";
+    $("totalCount").textContent = s.totalUsers + " Thành viên";
+  }catch(e){ $("statCards").innerHTML = `<div class="small">❌ ${esc(e.message)} — kiểm tra key/API URL.</div>`; }
+}
+
+// ---- USERS ----
+async function loadUsers(){
+  const box = $("userList");
+  box.innerHTML = `<div class="small">⏳ Đang kéo D1...</div>`;
+  try{
+    const d = await adminFetch("/api/admin/users-list");
+    allUsers = d.users || [];
+    const classes = [...new Set(allUsers.map(u=>u.class_name).filter(Boolean))];
+    $("filterClass").innerHTML = `<option value="">— Tất cả lớp (${allUsers.length}) —</option>` + classes.map(c=>`<option>${esc(c)}</option>`).join("");
+    $("totalCount").textContent = allUsers.length + " Thành viên";
+    renderUsers();
+  }catch(e){ box.innerHTML = `<div style="color:#ff3366">❌ ${esc(e.message)}</div>`; }
+}
+function renderUsers(){
+  const kw = $("searchUser").value.trim().toLowerCase();
+  const fc = $("filterClass").value;
+  const sort = $("filterSort").value;
+  let list = allUsers.filter(u=>{
+    if(fc && u.class_name !== fc) return false;
+    if(!kw) return true;
+    return (u.full_name||"").toLowerCase().includes(kw) || (u.adventurer_code||"").toLowerCase().includes(kw)
+      || (u.email||"").toLowerCase().includes(kw) || (u.phone_number||"").toLowerCase().includes(kw);
+  });
+  if(sort==="tq") list.sort((a,b)=>(b.tinh_quang_points||0)-(a.tinh_quang_points||0));
+  else if(sort==="ch") list.sort((a,b)=>(b.cong_hien_points||0)-(a.cong_hien_points||0));
+  else if(sort==="name") list.sort((a,b)=>String(a.full_name||"").localeCompare(String(b.full_name||"")));
+  if(!list.length){ $("userList").innerHTML = `<div class="small">Không tìm thấy.</div>`; return; }
+  $("userList").innerHTML = `<table><tr><th></th><th>Người chơi</th><th>Điểm</th><th>Avatar</th><th></th></tr>` + list.slice(0,200).map(u=>`
+  <tr>
+    <td><img src="${esc(u.avatar_url||'https://api.dicebear.com/7.x/adventurer/svg?seed=advenature')}" class="avatar-preview" loading="lazy"></td>
+    <td><b style="color:#ffe66d">${esc(u.full_name||'—')}</b><br><span class="mono">${esc(u.adventurer_code||'AW----')} • ${esc(u.class_name||'')}</span><br><span class="mut">${esc(u.email||'')} ${u.phone_number?'• '+esc(u.phone_number):''}</span></td>
+    <td>🔮 <b>${u.tinh_quang_points||0}</b><br>🛡️ <b>${u.cong_hien_points||0}</b><br><span class="mut">🎰 ${u.gacha_counter||0}</span></td>
+    <td style="min-width:220px"><div style="display:flex;gap:6px"><input id="av-${esc(u.id)}" value="${esc(u.avatar_url||'')}" placeholder="Link ảnh..." style="flex:1;background:#0c0a1a;border:1px solid #4a3f82;border-radius:6px;color:#fff;padding:7px;font-size:12px"><button class="sm" onclick="saveAvatar('${esc(u.id)}')">Lưu</button></div></td>
+    <td style="white-space:nowrap"><button class="sm ghost" onclick="openDetail('${esc(u.id)}')">Chi tiết</button></td>
+  </tr>`).join("") + `</table>` + (list.length>200?`<div class="small">Hiển thị 200/${list.length} — hãy tìm kiếm để lọc.</div>`:"");
+}
+async function saveAvatar(uid){
+  const v = document.getElementById("av-"+uid).value.trim();
+  if(!v){ toast("Nhập link ảnh!", false); return; }
+  try{ await adminFetch("/api/admin/update-user-avatar",{method:"POST",body:JSON.stringify({targetUserId:uid,newAvatarUrl:v})}); toast("✓ Đã cập nhật avatar"); loadUsers(); }
+  catch(e){ toast(e.message,false); }
+}
+async function openDetail(uid){
+  selectedUserId = uid;
+  $("grantUserId").value = uid;
+  const box = $("userDetail");
+  box.innerHTML = `<div class="small">⏳ Đang tải chi tiết...</div>`;
+  try{
+    const d = await adminFetch("/api/admin/user-detail?userId="+encodeURIComponent(uid));
+    selectedDetail = d;
+    const u = d.user;
+    box.innerHTML = `<div class="detail">
+    <h3>🧝 ${esc(u.full_name)} <span class="mono">${esc(u.adventurer_code)}</span></h3>
+    <div class="kv">
+      <span class="mut">Tên</span><input id="e-name" value="${esc(u.full_name||'')}">
+      <span class="mut">Lớp</span><input id="e-class" value="${esc(u.class_name||'')}">
+      <span class="mut">Avatar</span><input id="e-avatar" value="${esc(u.avatar_url||'')}">
+      <span class="mut">SĐT</span><input id="e-phone" value="${esc(u.phone_number||'')}">
+      <span class="mut">Bio</span><input id="e-bio" value="${esc(u.bio||'')}">
+      <span class="mut">Role</span><select id="e-role"><option value="">(null)</option><option ${u.role==='user'?'selected':''}>user</option><option ${u.role==='manager'?'selected':''}>manager</option><option ${u.role==='admin'?'selected':''}>admin</option></select>
+    </div>
+    <div class="kv"><span class="mut">Điểm</span><span>🔮 <b>${u.tinh_quang_points||0}</b> • 🛡️ <b>${u.cong_hien_points||0}</b> • 🎰 ${u.gacha_counter||0} • streak ${u.checkin_streak||0} (${esc(u.last_checkin_date||'—')}) • quiz ${esc(u.last_quiz_date||'—')}/${u.quiz_count_today||0} • roll ${u.rollquest_used||0} (${esc(u.last_rollquest_date||'—')})</span></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0">
+      <button class="sm ok" onclick="addPoints(1,0)">+1 🔮</button><button class="sm" onclick="addPoints(-1,0)">-1 🔮</button>
+      <button class="sm ok" onclick="addPoints(0,1)">+1 🛡️</button><button class="sm" onclick="addPoints(0,-1)">-1 🛡️</button>
+      <button class="sm ghost" onclick="saveProfile()">💾 Lưu hồ sơ</button>
+      <button class="sm ghost" onclick="resetDaily('all')">♻ Reset daily</button>
+      <button class="sm ghost" onclick="resetDaily('checkin')">Checkin</button>
+      <button class="sm ghost" onclick="resetDaily('quiz')">Quiz</button>
+      <button class="sm ghost" onclick="resetDaily('rollquest')">RollQuest</button>
+      <button class="sm danger" onclick="delUser()">🗑 Xóa user</button>
+      <button class="sm ghost" onclick="document.getElementById('userDetail').innerHTML=''">Đóng</button>
+    </div>
+    <div class="grid2">
+      <div><b>🎒 Túi đồ (${d.inventory.length})</b>${d.inventory.map(it=>`<div class="small">• [${it.id}] ${esc(it.item_name)} (${esc(it.item_code)}) x${it.quantity} <a href="#" onclick="removeItem(${it.id});return false">trừ 1</a></div>`).join("")||'<div class="small">Trống</div>'}</div>
+      <div><b>💎 Đá (${d.gems.length})</b><div class="small">${d.gems.slice(0,30).map(g=>esc(g.gem_code)).join(", ")||"Trống"}</div>
+      <b style="margin-top:6px;display:block">🔗 Kết nối (${d.connections.length}) • 🛒 Đơn (${d.orders.length})</b><div class="small">${d.orders.map(o=>`#${o.id} ${esc(o.package_type||'').slice(0,60)} [${esc(o.selected_quest||'Pending')}]`).join("<br>")||"—"}</div></div>
+    </div></div>`;
+    box.scrollIntoView({behavior:"smooth", block:"nearest"});
+  }catch(e){ box.innerHTML = `<div style="color:#ff3366">❌ ${esc(e.message)}</div>`; }
+}
+async function addPoints(tq,ch){
+  try{ await adminFetch("/api/user/add-points",{method:"POST",body:JSON.stringify({userId:selectedUserId,tinhQuang:tq,congHien:ch})}); toast(`Đã cập nhật điểm (${tq}, ${ch})`); openDetail(selectedUserId); loadUsers(); }
+  catch(e){ toast(e.message,false); }
+}
+async function saveProfile(){
+  const body = {targetUserId:selectedUserId, full_name:$("e-name").value, class_name:$("e-class").value, avatar_url:$("e-avatar").value, phone_number:$("e-phone").value, bio:$("e-bio").value, role:$("e-role").value};
+  try{ await adminFetch("/api/admin/update-user",{method:"POST",body:JSON.stringify(body)}); toast("Đã lưu hồ sơ"); loadUsers(); openDetail(selectedUserId); }
+  catch(e){ toast(e.message,false); }
+}
+async function delUser(){
+  const u = selectedDetail?.user;
+  if(!confirm(`XÓA VĨNH VIỄN ${u?.full_name} (${u?.adventurer_code})?\nMất toàn bộ đá + túi + kết nối + đơn!`)) return;
+  if(!confirm("Xác nhận lần 2 — chắc chắn xóa?")) return;
+  try{ await adminFetch("/api/admin/delete-user",{method:"POST",body:JSON.stringify({targetUserId:selectedUserId})}); toast("Đã xóa user"); $("userDetail").innerHTML=""; loadUsers(); loadStats(); }
+  catch(e){ toast(e.message,false); }
+}
+async function resetDaily(scope){
+  try{ await adminFetch("/api/admin/reset-daily",{method:"POST",body:JSON.stringify({targetUserId:selectedUserId,scope})}); toast("Đã reset: "+scope); openDetail(selectedUserId); }
+  catch(e){ toast(e.message,false); }
+}
+async function removeItem(invId){
+  if(!confirm("Trừ 1 số lượng / xóa vật phẩm #"+invId+"?")) return;
+  try{ await adminFetch("/api/admin/remove-item",{method:"POST",body:JSON.stringify({inventoryId:invId})}); toast("Đã trừ vật phẩm"); openDetail(selectedUserId); }
+  catch(e){ toast(e.message,false); }
+}
+async function grantItem(){
+  const uid = $("grantUserId").value.trim() || selectedUserId;
+  if(!uid){ toast("Chưa chọn user!", false); return; }
+  try{ await adminFetch("/api/admin/grant-item",{method:"POST",body:JSON.stringify({targetUserId:uid,itemCode:$("grantItem").value,quantity:Number($("grantQty").value||1)})}); toast("Đã tặng vật phẩm"); if(selectedUserId) openDetail(selectedUserId); }
+  catch(e){ toast(e.message,false); }
+}
+function exportCSV(){
+  const rows = [["adventurer_code","full_name","email","phone","class","tinh_quang","cong_hien","gacha","created_at"]];
+  allUsers.forEach(u=>rows.push([u.adventurer_code,u.full_name,u.email,u.phone_number,u.class_name,u.tinh_quang_points,u.cong_hien_points,u.gacha_counter,u.created_at]));
+  const csv = rows.map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(",")).join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv"}));
+  a.download = "advenature-users.csv"; a.click();
+}
+
+// ---- ORDERS ----
+async function loadOrders(){
+  const box = $("orderList");
+  box.innerHTML = `<div class="small">⏳ Đang tải đơn...</div>`;
+  try{
+    const d = await adminFetch("/api/admin/orders-list?status="+$("orderFilter").value);
+    const o = d.orders||[];
+    if(!o.length){ box.innerHTML = `<div class="small">Chưa có đơn.</div>`; return; }
+    box.innerHTML = o.map(x=>{
+      const st = (x.selected_quest && x.selected_quest!=="Pending") ? `<span class="pill done">${esc(x.selected_quest)}</span>` : `<span class="pill pending">Pending</span>`;
+      return `<div class="rowcard"><b>#${x.id}</b> ${st} — <b>${esc(x.full_name||'?')}</b> <span class="mono">${esc(x.adventurer_code||'')}</span><br><span class="small">${esc(x.package_type||'')}</span><br><span class="small">💎 ${x.tinh_thach_total||0} • ₫ ${Number(x.vnd_estimate||0).toLocaleString('vi-VN')} • ${esc(x.created_at||'')}</span><br><div style="margin-top:6px;display:flex;gap:6px"><button class="sm ok" onclick="setOrder(${x.id},'Done')">✓ Done</button><button class="sm ghost" onclick="setOrder(${x.id},'Pending')">↩ Pending</button><button class="sm danger" onclick="delOrder(${x.id})">Xóa</button></div></div>`;
+    }).join("");
+  }catch(e){ box.innerHTML = `<div style="color:#ff3366">❌ ${esc(e.message)}</div>`; }
+}
+async function setOrder(id,status){
+  try{ await adminFetch("/api/admin/update-order-status",{method:"POST",body:JSON.stringify({orderId:id,status})}); toast("Đã cập nhật đơn #"+id); loadOrders(); }
+  catch(e){ toast(e.message,false); }
+}
+async function delOrder(id){
+  if(!confirm("Xóa đơn #"+id+"?")) return;
+  try{ await adminFetch("/api/admin/delete-order",{method:"POST",body:JSON.stringify({orderId:id})}); toast("Đã xóa đơn"); loadOrders(); loadStats(); }
+  catch(e){ toast(e.message,false); }
+}
+
+// ---- AUDIT ----
+async function loadAudit(){
+  const box = $("auditList");
+  box.innerHTML = `<div class="small">⏳ Đang tải...</div>`;
+  try{
+    const d = await adminFetch("/api/admin/audit-log");
+    const logs = d.logs || [];
+    if(!logs.length){ box.innerHTML = `<div class="small">Chưa có log nào.</div>`; return; }
+    box.innerHTML = `<table><tr><th>#</th><th>Action</th><th>Target</th><th>Detail</th><th>IP</th><th>Time</th></tr>` + logs.map(l=>`<tr><td>${l.id}</td><td><b>${esc(l.action)}</b></td><td class="mono">${esc(l.target_id||'')}</td><td class="small">${esc(l.detail||'')}</td><td class="mono">${esc(l.ip||'')}</td><td class="mut">${esc(l.created_at||'')}</td></tr>`).join("") + `</table>`;
+  }catch(e){ box.innerHTML = `<div style="color:#ff3366">❌ ${esc(e.message)} (cần key WRITE)</div>`; }
+}
+
+// init
+(function(){
+  const k = sessionStorage.getItem("ADVEN_ADMIN_KEY");
+  if(k) $("adminKey").value = k;
+  $("grantItem").innerHTML = BLESSINGS.map(b=>`<option value="${b[0]}">${b[0]} — ${esc(b[1])}</option>`).join("");
+  $("blessList").innerHTML = `<div class="rowcard"><b>📋 Bảng mã (copy nhanh)</b><div class="small" style="margin-top:6px">`+BLESSINGS.map(b=>`<span class="mono">${b[0]}</span> ${esc(b[1])}`).join(" • ")+`</div></div>`;
+})();
+</script>
+</body>
+</html>
