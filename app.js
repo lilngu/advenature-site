@@ -1811,12 +1811,65 @@ function updateTopBarUI() {
     const needPoints = Math.max(0, 100 - (currentUser.cong_hien_points || 0));
     setSafeText("profRankNeed", `${needPoints} Điểm Lên Cấp`);
 
-    // 7. Avatar
+    // 7. Avatar & Tooltip "Đổi Avatar"
+    // Xác định xem user có đang dùng avatar mặc định hay đã upload ảnh cá nhân
+    // URL có chứa "image/upload/t_avatar/" → user đã upload ảnh cá nhân (changeAvatar = true)
+    // URL chứa "t_iconWebP" → dùng avatar preset (chưa upload ảnh cá nhân)
+    // URL khác (DiceBear) → chưa setup avatar (chưa upload)
+    const avatarUrl = currentUser.avatar_url || "";
+    const hasChangedAvatar = avatarUrl.includes("image/upload/t_avatar/");
+
     if (currentUser.avatar_url) {
         const profAv = document.getElementById("profAvatar");
         const topAv = document.getElementById("userAvatarImg");
         if (profAv) profAv.src = currentUser.avatar_url;
         if (topAv) topAv.src = currentUser.avatar_url;
+    }
+
+    // Hiển thị/tooltip "Đổi Avatar = +1✨" cho user chưa upload avatar cá nhân
+    // Kiểm tra avatar_url pattern: nếu KHÕNG có "t_avatar" thì hiển thị tooltip
+    const avatarDisplay = document.getElementById("profAvatar") || document.getElementById("userAvatarImg");
+    
+    // Xóa tooltip cũ nếu tồn tại (tránh duplicate khi reload)
+    const oldTooltip = document.querySelector(".avatar-change-tooltip");
+    if (oldTooltip) {
+        oldTooltip.remove();
+    }
+
+    if (!hasChangedAvatar && avatarDisplay) {
+        // Tạo tooltip element
+        const tooltip = document.createElement("div");
+        tooltip.className = "avatar-change-tooltip";
+        tooltip.textContent = "Đổi Avatar = +1✨";
+        tooltip.style.cssText = `
+            position: absolute;
+            bottom: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4a90e2;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            z-index: 100;
+            white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            line-height: 1.2;
+       `;
+        // Ensure parent has position: relative for absolute tooltip positioning
+        const parent = avatarDisplay.parentNode;
+        if (parent && parent.style.position !== "relative") {
+            parent.style.position = "relative";
+        }
+        parent.appendChild(tooltip);
+
+        // Tự động消失 sau 5 giây khi reload trang (hoặc khi user tương tác)
+        setTimeout(() => {
+            if (tooltip.parentElement) {
+                tooltip.remove();
+            }
+        }, 5000);
     }
 
     // 8. Thanh tiến trình Bang hội
@@ -4244,7 +4297,7 @@ inputAvatarFile?.addEventListener("change", async (e) => {
             const newAvatarUrl = uploadData.secure_url.replace("/image/upload/", "/image/upload/t_avatar/");
 
             // Gửi link ảnh mới lên Cloudflare Worker để lưu vào Database D1
-            await fetch(`${API_URL}/api/user/update-avatar`, {
+            const resp = await fetch(`${API_URL}/api/user/update-avatar`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -4252,14 +4305,20 @@ inputAvatarFile?.addEventListener("change", async (e) => {
                     avatarUrl: newAvatarUrl
                 })
             });
+            const responseData = await resp.json();
 
             // Cập nhật giao diện người dùng
             currentUser.avatar_url = newAvatarUrl;
+            currentUser.tinh_quang_points = responseData.newTinhQuangPoints;
             saveUserData();
             document.getElementById("profAvatar").src = newAvatarUrl;
             document.getElementById("userAvatarImg").src = newAvatarUrl;
 
-            alert("✧ Cập nhật ảnh đại diện thành công qua Cloudinary!");
+            if (responseData.avatarBonusGranted) {
+                toast.magic('THÒA THANH', `🎉 Đổi avatar thành công!\nBạn nhận được +1 🔮 Tinh Quang!\nTổng Tinh Quang: ${responseData.newTinhQuangPoints} điểm`);
+            } else {
+                toast.success('SỬ DỤNG THÀNH CÔNG', '✧ Cập nhật ảnh đại diện thành công!');
+            }
         } else {
             alert("Lỗi tải ảnh: " + (uploadData.error?.message || "Kiểm tra lại Cloud Name / Preset!"));
         }

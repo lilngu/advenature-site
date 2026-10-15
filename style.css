@@ -3298,7 +3298,7 @@ body.guest-mode .dock-btn:not(.center-core) {
 .lore-helper .helper-fairy-img {
     width: 90px;
     height: 130px;
-    filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.9));
+    filter: drop-shadow(0 0 22px rgb(255, 163, 57));
     animation: fairyFloat 2.5s ease-in-out infinite alternate;
 }
 
