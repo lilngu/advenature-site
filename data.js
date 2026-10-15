@@ -285,15 +285,21 @@ export const AUDIO_MAP = Object.fromEntries(AUDIO_SOURCES.map((a) => [a.key, a])
 export const GUILD_QUEST_MESSENGER_DEFAULT = "https://m.me/463539600777112";
 
 export const GUILD_QUEST_DATA = [
-      {
+     {
         id: 1,
-        title: "Quest I · Thương Hội",
+        title: "SỰ KIỆN L.A.R.P CAMP & LỬA KHỞI NGUYÊN",
+        url: "https://res.cloudinary.com/aurorawoods/image/upload/t_mediumWebP/v1792054924/tnrmj3aoh6gm7qf6kkj3.png",
+        messenger: "https://m.me/463539600777112?text=Xin%20ch%C3%A0o%20H%E1%BB%99i%20Ng%E1%BB%8Dc%20L%E1%BB%A5c!%20T%C3%B4i%20mu%E1%BB%91n%20tham%20gia%20Phi%C3%AAn%20Ch%E1%BB%A3%20LARP%20%26%20L%E1%BB%ADa%20Kh%E1%BB%9Fi%20Nguy%C3%AAn%20ng%C3%A0y%2024-25%2F10!"
+    },
+      {
+        id: 2,
+        title: "Quest · Thương Hội",
         url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791046797/ukoqthjxzapum1snkxwg.png",
         messenger: "https://m.me/463539600777112"
     },
     // --- [placeholder] Ảnh dựng lưới, thay bằng quest thật khi có ---
      {
-        id: 2,
+        id: 3,
         title: "Quest II · Hội Ngọc Lục",
         url: "https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1791043557/l2gwcmzyz050izqlfye3.png",
         messenger: "https://m.me/463539600777112"
