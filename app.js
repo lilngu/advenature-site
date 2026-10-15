@@ -1815,9 +1815,10 @@ function updateTopBarUI() {
     // Xác định xem user có đang dùng avatar mặc định hay đã upload ảnh cá nhân
     // URL có chứa "image/upload/t_avatar/" → user đã upload ảnh cá nhân (changeAvatar = true)
     // URL chứa "t_iconWebP" → dùng avatar preset (chưa upload ảnh cá nhân)
-    // URL khác (DiceBear) → chưa setup avatar (chưa upload)
+    // URL khác (DiceBear / rỗng) → chưa setup avatar (chưa upload - TOÀN BẬC hiển thị tooltip)
     const avatarUrl = currentUser.avatar_url || "";
-    const hasChangedAvatar = avatarUrl.includes("image/upload/t_avatar/");
+    const isDefaultAvatar = !avatarUrl || avatarUrl.includes("dicebear.com") || avatarUrl.includes("bottts");
+    const hasChangedAvatar = avatarUrl.includes("image/upload/t_avatar/") && !isDefaultAvatar;
 
     if (currentUser.avatar_url) {
         const profAv = document.getElementById("profAvatar");
@@ -1827,7 +1828,8 @@ function updateTopBarUI() {
     }
 
     // Hiển thị/tooltip "Đổi Avatar = +1✨" cho user chưa upload avatar cá nhân
-    // Kiểm tra avatar_url pattern: nếu KHÕNG có "t_avatar" thì hiển thị tooltip
+    // Logic an toàn: Nếu là avatar mặc định (rỗng/Dicebear) → 반드시 show tooltip
+    // Nếu có URL thực → chỉ check pattern t_avatar
     const avatarDisplay = document.getElementById("profAvatar") || document.getElementById("userAvatarImg");
     
     // Xóa tooltip cũ nếu tồn tại (tránh duplicate khi reload)
@@ -1836,7 +1838,11 @@ function updateTopBarUI() {
         oldTooltip.remove();
     }
 
-    if (!hasChangedAvatar && avatarDisplay) {
+    // ĐỔI NGẦM: Hiển thị tooltip nếu là avatar DEFAULT (chưa upload)
+    // Hoặc chưa có pattern t_avatar (chưa upload cá nhân)
+    const shouldShowTooltip = isDefaultAvatar || !hasChangedAvatar;
+    
+    if (shouldShowTooltip && avatarDisplay) {
         // Tạo tooltip element
         const tooltip = document.createElement("div");
         tooltip.className = "avatar-change-tooltip";
