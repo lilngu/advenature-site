@@ -71,6 +71,7 @@ a{color:var(--cyan)}
 <div class="tab" data-t="users" onclick="switchTab('users')">🧝 Người chơi</div>
 <div class="tab" data-t="orders" onclick="switchTab('orders')">🛒 Đơn hàng</div>
 <div class="tab" data-t="shop" onclick="switchTab('shop')">🏪 Shop</div>
+<div class="tab" data-t="quest" onclick="switchTab('quest')">⚔️ Guild Quest</div>
 <div class="tab" data-t="bless" onclick="switchTab('bless')">🎁 Blessings</div>
 <div class="tab" data-t="audit" onclick="switchTab('audit')">📜 Audit</div>
 <div class="tab" data-t="sys" onclick="switchTab('sys')">⚙️ Hệ thống</div>
@@ -120,6 +121,35 @@ a{color:var(--cyan)}
 </div>
 <div class="toolbar"><input type="text" id="searchShop" placeholder="Tìm ID / Tên..." oninput="renderShopAdmin()"><button onclick="loadShopAdmin()">🔄 Tải Shop</button></div>
 <div id="shopList"><div class="small">Chưa tải.</div></div>
+</div>
+
+<!-- QUEST -->
+<div class="panel" id="p-quest">
+<div class="rowcard">
+<b>⚔️ Thêm / Sửa tờ Quest Hội Ngọc Lục</b>
+<div class="small">ID 1-20 ký tự A-Z 0-9 _ - (giữ nguyên ID cũ 1..5 để Telegram log nhất quán). Tắt Active = ẩn khỏi Bảng Quest nhưng giữ đơn đăng ký cũ. Messenger để trống = dùng link mặc định bên dưới.</div>
+<div class="kv" style="margin-top:8px">
+<span class="mut">ID</span><input id="q-id" placeholder="6" style="text-transform:uppercase">
+<span class="mut">Tiêu đề</span><input id="q-title" placeholder="Quest · Tên quest...">
+<span class="mut">Ảnh (https://)</span><input id="q-url" placeholder="https://res.cloudinary.com/...">
+<span class="mut">Messenger + Sort</span><div style="display:flex;gap:6px"><input id="q-messenger" placeholder="https://m.me/... (trống = mặc định)" style="flex:2"><input id="q-sort" type="number" value="10" min="0" style="max-width:90px"></div>
+<span class="mut">Active</span><select id="q-active"><option value="1">Hiện (1)</option><option value="0">Ẩn (0)</option></select>
+</div>
+<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap"><button class="sm ok" onclick="saveQuest()">💾 Lưu (tạo/sửa)</button><button class="sm ghost" onclick="resetQuestForm()">↩ Mới</button><span class="small" id="questPreview" style="align-self:center"></span></div>
+</div>
+<div class="rowcard">
+<b>⚙️ Cấu hình Bảng Quest (META)</b>
+<div class="small">Áp dụng cho toàn bảng. maxTiltDeg 0-70 (app.js kẹp trần 70).</div>
+<div class="kv" style="margin-top:8px">
+<span class="mut">Tiêu đề</span><input id="qc-title" placeholder="BẢNG NHIỆM VỤ HỘI NGỌC LỤC">
+<span class="mut">Ảnh nền</span><input id="qc-background" placeholder="https://...">
+<span class="mut">maxTilt + Empty</span><div style="display:flex;gap:6px"><input id="qc-tilt" type="number" value="30" min="0" max="70" style="max-width:90px"><input id="qc-empty" placeholder="Hội đang sắp xếp..." style="flex:1"></div>
+<span class="mut">Messenger mặc định</span><input id="qc-messenger" placeholder="https://m.me/...">
+</div>
+<div style="display:flex;gap:6px;margin-top:8px"><button class="sm ok" onclick="saveQuestConfig()">💾 Lưu cấu hình</button><button class="sm ghost" onclick="loadQuestsAdmin()">🔄 Tải lại</button></div>
+</div>
+<div class="toolbar"><input type="text" id="searchQuest" placeholder="Tìm ID / Tiêu đề..." oninput="renderQuestsAdmin()"><button onclick="loadQuestsAdmin()">🔄 Tải Quest</button></div>
+<div id="questList"><div class="small">Chưa tải.</div></div>
 </div>
 
 <!-- BLESS -->
@@ -206,7 +236,7 @@ function switchTab(t){
 async function boot(){
   if(!adminKey()){ toast("Nhập Mật mã Admin trước!", false); return; }
   saveKey();
-  await Promise.allSettled([loadStats(), loadUsers(), loadOrders(), loadShopAdmin()]);
+  await Promise.allSettled([loadStats(), loadUsers(), loadOrders(), loadShopAdmin(), loadQuestsAdmin()]);
   switchTab("users");
 }
 async function checkApi(){
@@ -434,6 +464,77 @@ async function delShop(id){
     else return;
     loadShopAdmin();
   }catch(e){ toast(e.message,false); }
+}
+
+// ---- GUILD QUEST ADMIN (DB dong, clone pattern Shop) ----
+let allQuests = [];
+let questMeta = {};
+async function loadQuestsAdmin(){
+  const box = $("questList");
+  box.innerHTML = `<div class="small">⏳ Đang tải Quest...</div>`;
+  try{
+    const d = await adminFetch("/api/admin/guild-quests-all");
+    allQuests = d.quests || [];
+    questMeta = d.meta || {};
+    if(questMeta.title) $("qc-title").value = questMeta.title;
+    if(questMeta.background) $("qc-background").value = questMeta.background;
+    if(questMeta.maxTiltDeg) $("qc-tilt").value = questMeta.maxTiltDeg;
+    if(questMeta.emptyText) $("qc-empty").value = questMeta.emptyText;
+    if(questMeta.messenger_default) $("qc-messenger").value = questMeta.messenger_default;
+    renderQuestsAdmin();
+  }catch(e){ box.innerHTML = `<div style="color:#ff3366">❌ ${esc(e.message)} (chua migrate 004? chay migration D1)</div>`; }
+}
+function renderQuestsAdmin(){
+  const kw = ($("searchQuest").value || "").trim().toLowerCase();
+  const list = allQuests.filter(q => !kw || (q.id||"").toLowerCase().includes(kw) || (q.title||"").toLowerCase().includes(kw));
+  if(!list.length){ $("questList").innerHTML = `<div class="small">Chưa có quest.</div>`; return; }
+  $("questList").innerHTML = `<table><tr><th>ID</th><th>Tờ Quest</th><th>Active</th><th></th></tr>` + list.map(q=>{
+    const st = Number(q.active)===1 ? `<span class="pill done">Hiện</span>` : `<span class="pill pending">Ẩn</span>`;
+    const thumb = q.url ? `<img src="${esc(q.url)}" class="avatar-preview" loading="lazy" style="width:60px;height:80px;object-fit:cover">` : `<span class="mut">—</span>`;
+    return `<tr><td class="mono">${esc(q.id)}</td><td><div style="display:flex;gap:8px;align-items:center">${thumb}<div><b>${esc(q.title)}</b><br><span class="small">sort ${q.sort_order||0}</span><br><a href="${esc(q.messenger||questMeta.messenger_default||'')}" target="_blank" rel="noopener" class="small">Messenger ↗</a></div></div></td><td>${st}</td><td style="white-space:nowrap"><button class="sm ghost" onclick="editQuest('${esc(q.id)}')">Sửa</button> <button class="sm ${Number(q.active)===1?'':'ok'}" onclick="toggleQuestActive('${esc(q.id)}')">${Number(q.active)===1?'Ẩn':'Hiện'}</button> <button class="sm danger" onclick="delQuest('${esc(q.id)}')">Xóa</button></td></tr>`;
+  }).join("") + `</table>`;
+}
+function editQuest(id){
+  const q = allQuests.find(x=>String(x.id)===String(id));
+  if(!q) return;
+  $("q-id").value = q.id; $("q-id").disabled = true;
+  $("q-title").value = q.title || ""; $("q-url").value = q.url || "";
+  $("q-messenger").value = q.messenger || ""; $("q-sort").value = q.sort_order||0;
+  $("q-active").value = String(q.active===0?0:1);
+  $("questPreview").textContent = `Đang sửa ${q.id} — bấm Lưu để upsert.`;
+  window.scrollTo({behavior:"smooth"});
+}
+function resetQuestForm(){
+  ["q-id","q-title","q-url","q-messenger"].forEach(i=>$(i).value="");
+  $("q-id").disabled = false; $("q-sort").value = 10; $("q-active").value = "1";
+  $("questPreview").textContent = "";
+}
+async function saveQuest(){
+  const body = {id:$("q-id").value.trim(), title:$("q-title").value.trim(), url:$("q-url").value.trim(), messenger:$("q-messenger").value.trim(), active:Number($("q-active").value), sort_order:Number($("q-sort").value||0)};
+  if(!body.id || !body.title){ toast("Nhập ID + Tiêu đề!", false); return; }
+  if(!/^https?:\/\//i.test(body.url)){ toast("URL ảnh phải bắt đầu https://", false); return; }
+  try{ await adminFetch("/api/admin/guild-quest-upsert",{method:"POST",body:JSON.stringify(body)}); toast("Đã lưu "+body.id); resetQuestForm(); loadQuestsAdmin(); }
+  catch(e){ toast(e.message,false); }
+}
+async function toggleQuestActive(id){
+  const q = allQuests.find(x=>String(x.id)===String(id));
+  if(!q) return;
+  try{ await adminFetch("/api/admin/guild-quest-upsert",{method:"POST",body:JSON.stringify({id:q.id, title:q.title, url:q.url, messenger:q.messenger, active:Number(q.active)===1?0:1, sort_order:q.sort_order})}); toast("Đã đổi trạng thái "+id); loadQuestsAdmin(); }
+  catch(e){ toast(e.message,false); }
+}
+async function delQuest(id){
+  const soft = confirm(`Ẩn "${id}" khỏi Bảng Quest (giữ data, khuyên dùng)?\nOK = Ẩn (active=0) • Cancel = mở tiếp chọn Xóa cứng.`);
+  try{
+    if(soft){ await adminFetch("/api/admin/guild-quest-delete",{method:"POST",body:JSON.stringify({id})}); toast("Đã ẩn "+id); }
+    else if(confirm(`XÓA CỨNG "${id}"? Log Telegram cũ giữ questTitle string nên không vỡ, nhưng không khôi phục được!`)){ await adminFetch("/api/admin/guild-quest-delete",{method:"POST",body:JSON.stringify({id, hard:true})}); toast("Đã xóa cứng "+id); }
+    else return;
+    loadQuestsAdmin();
+  }catch(e){ toast(e.message,false); }
+}
+async function saveQuestConfig(){
+  const body = {title:$("qc-title").value.trim(), background:$("qc-background").value.trim(), maxTiltDeg:$("qc-tilt").value, emptyText:$("qc-empty").value.trim(), messenger_default:$("qc-messenger").value.trim()};
+  try{ await adminFetch("/api/admin/guild-quest-config-upsert",{method:"POST",body:JSON.stringify(body)}); toast("Đã lưu cấu hình Bảng Quest"); }
+  catch(e){ toast(e.message,false); }
 }
 
 // ---- AUDIT ----

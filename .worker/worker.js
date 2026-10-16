@@ -140,7 +140,7 @@ function sanitizeURL(url) {
 const ADMIN_ENDPOINTS = ["/api/user/add-points", "/api/admin/"];
 // Write endpoints: mọi POST thay đổi dữ liệu bắt buộc key WRITE.
 // Read endpoints (GET): chấp nhận cả VIEW và WRITE.
-const ADMIN_WRITE_PATHS = ["/api/user/add-points", "/api/admin/update-", "/api/admin/delete-", "/api/admin/grant-", "/api/admin/remove-", "/api/admin/reset-daily", "/api/admin/shop-product-"];
+const ADMIN_WRITE_PATHS = ["/api/user/add-points", "/api/admin/update-", "/api/admin/delete-", "/api/admin/grant-", "/api/admin/remove-", "/api/admin/reset-daily", "/api/admin/shop-product-", "/api/admin/guild-quest-"];
 
 function isAdminEndpoint(path) {
 	return ADMIN_ENDPOINTS.some(endpoint => path.startsWith(endpoint));
@@ -1150,6 +1150,26 @@ export default {
 				} catch (_e) {
 					// Bảng chưa migrate ở DB cũ → trả rỗng để frontend fallback data.js
 					return jsonResponse({ success: true, products: [], fallback: true }, 200, request);
+				}
+			}
+			// ===================================================
+			// 4.A3 ENDPOINT PUBLIC: GUILD QUESTS (DB dong + fallback data.js)
+			// Cache 5 phut nhu shop-products de tiet kiem D1 reads Free Tier.
+			// Tra ve: quests[] {id,title,url,messenger,sort_order} + meta {title,background,maxTiltDeg,emptyText,messenger_default}
+			// ===================================================
+			if (cleanPath === "/api/guild-quests" && request.method === "GET") {
+				try {
+					const q = await env.DB.prepare("SELECT id, title, image_url AS url, messenger_url AS messenger, sort_order FROM guild_quests WHERE active = 1 ORDER BY sort_order ASC, id ASC").all();
+					let meta = {};
+					try {
+						const rows = await env.DB.prepare("SELECT key, value FROM guild_quest_config").all();
+						(rows.results || []).forEach(r => { meta[r.key] = r.value; });
+					} catch (_m) {}
+					const res = jsonResponse({ success: true, quests: q.results || [], meta }, 200, request);
+					res.headers.set("Cache-Control", "public, max-age=300");
+					return res;
+				} catch (_e) {
+					return jsonResponse({ success: true, quests: [], meta: {}, fallback: true }, 200, request);
 				}
 			}
 			// ===================================================
@@ -2427,6 +2447,96 @@ export default {
 					await logAdminAction(env, request, "shop-delete-soft", cleanId, "an (active=0)");
 				}
 				return jsonResponse({ success: true }, 200, request);
+			}
+			// ---------- ADMIN GUILD QUEST: LIST ALL (ke ca active=0) ----------
+			if (cleanPath === "/api/admin/guild-quests-all" && request.method === "GET") {
+				const authError = checkAdminAuth(request, env, { requireWrite: requiresWriteKey(cleanPath, request.method) });
+				if (authError) {
+					return addCORSHeaders(authError, request);
+				}
+				try {
+					const list = await env.DB.prepare("SELECT id, title, image_url AS url, messenger_url AS messenger, active, sort_order FROM guild_quests ORDER BY sort_order ASC, id ASC LIMIT 200").all();
+					let meta = {};
+					try {
+						const rows = await env.DB.prepare("SELECT key, value FROM guild_quest_config").all();
+						(rows.results || []).forEach(r => { meta[r.key] = r.value; });
+					} catch (_m) {}
+					return jsonResponse({ success: true, quests: list.results || [], meta }, 200, request);
+				} catch (_e) {
+					return jsonResponse({ success: false, error: "Chua migrate 004_guild_quests. Chay migration D1." }, 500, request);
+				}
+			}
+			// ---------- ADMIN GUILD QUEST: UPSERT (tao + sua, idempotent) ----------
+			if (cleanPath === "/api/admin/guild-quest-upsert" && request.method === "POST") {
+				const authError = checkAdminAuth(request, env, { requireWrite: requiresWriteKey(cleanPath, request.method) });
+				if (authError) {
+					return addCORSHeaders(authError, request);
+				}
+				const b = await request.json();
+				const id = String(b.id || "").trim().slice(0, 20);
+				if (!id || !/^[A-Za-z0-9_-]{1,20}$/.test(id)) return errorResponse("ID 1-20 ky tu A-Z 0-9 _ - !", 400, request);
+				const title = sanitizeInput(String(b.title || ""), 120);
+				if (!title) return errorResponse("Thieu tieu de!", 400, request);
+				const image_url = sanitizeURL(String(b.url || b.image_url || "")) || "";
+				if (!image_url) return errorResponse("URL anh khong hop le (https://)!", 400, request);
+				let messenger_url = String(b.messenger || b.messenger_url || "").trim().slice(0, 500);
+				if (messenger_url && !/^https?:\/\//i.test(messenger_url)) messenger_url = "https://" + messenger_url;
+				if (messenger_url && /javascript:|data:|vbscript:|file:/i.test(messenger_url)) messenger_url = "";
+				messenger_url = sanitizeInput(messenger_url, 500);
+				const active = Number(b.active) === 0 ? 0 : 1;
+				const sort_order = Math.max(0, Number(b.sort_order) || 0);
+				await env.DB.prepare(`INSERT INTO guild_quests (id, title, image_url, messenger_url, active, sort_order, updated_at)
+					VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+					ON CONFLICT(id) DO UPDATE SET title=excluded.title, image_url=excluded.image_url, messenger_url=excluded.messenger_url, active=excluded.active, sort_order=excluded.sort_order, updated_at=CURRENT_TIMESTAMP`).bind(id, title, image_url, messenger_url, active, sort_order).run();
+				await logAdminAction(env, request, "guild-quest-upsert", id, `${title} active=${active} sort=${sort_order}`);
+				return jsonResponse({ success: true, id }, 200, request);
+			}
+			// ---------- ADMIN GUILD QUEST: DELETE (uu tien active=0) ----------
+			if (cleanPath === "/api/admin/guild-quest-delete" && request.method === "POST") {
+				const authError = checkAdminAuth(request, env, { requireWrite: requiresWriteKey(cleanPath, request.method) });
+				if (authError) {
+					return addCORSHeaders(authError, request);
+				}
+				const { id, hard } = await request.json();
+				const cleanId = String(id || "").trim().slice(0, 20);
+				if (!cleanId) return errorResponse("Thieu id!", 400, request);
+				if (hard === true) {
+					await env.DB.prepare("DELETE FROM guild_quests WHERE id = ?").bind(cleanId).run();
+					await logAdminAction(env, request, "guild-quest-delete-hard", cleanId, "xoa cung");
+				} else {
+					await env.DB.prepare("UPDATE guild_quests SET active = 0, updated_at = CURRENT_TIMESTAMP WHERE id = ?").bind(cleanId).run();
+					await logAdminAction(env, request, "guild-quest-delete-soft", cleanId, "an (active=0)");
+				}
+				return jsonResponse({ success: true }, 200, request);
+			}
+			// ---------- ADMIN GUILD QUEST: CONFIG UPSERT (META + messenger_default) ----------
+			if (cleanPath === "/api/admin/guild-quest-config-upsert" && request.method === "POST") {
+				const authError = checkAdminAuth(request, env, { requireWrite: requiresWriteKey(cleanPath, request.method) });
+				if (authError) {
+					return addCORSHeaders(authError, request);
+				}
+				const b = await request.json();
+				const allowed = ["title", "background", "maxTiltDeg", "emptyText", "messenger_default"];
+				let saved = 0;
+				for (const k of allowed) {
+					if (!(k in b)) continue;
+					let v = String(b[k] ?? "").trim();
+					if (k === "background" || k === "messenger_default") {
+						if (v && !/^https?:\/\//i.test(v)) v = "https://" + v;
+						const safe = v ? sanitizeURL(v) : "";
+						v = safe || "";
+						if ((k === "background" || k === "messenger_default") && b[k] && !v) return errorResponse(`Link ${k} khong hop le!`, 400, request);
+					} else if (k === "maxTiltDeg") {
+						const n = Math.min(70, Math.max(0, Number(v) || 0));
+						v = String(n);
+					} else {
+						v = sanitizeInput(v, k === "title" ? 120 : 300);
+					}
+					await env.DB.prepare("INSERT INTO guild_quest_config (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").bind(k, v).run();
+					saved++;
+				}
+				await logAdminAction(env, request, "guild-quest-config", "meta", `saved ${saved} keys`);
+				return jsonResponse({ success: true, saved }, 200, request);
 			}
 			// ---------- ADMIN: RESET DAILY (checkin/quiz/rollquest) ----------
 			if (cleanPath === "/api/admin/reset-daily" && request.method === "POST") {

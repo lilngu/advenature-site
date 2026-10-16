@@ -1281,9 +1281,54 @@ playerInfoModal?.addEventListener("click", (e) => {
 // Layout 2 cột rời rạc tự động: thêm/bớt ảnh trong data.js là xong, không cần sửa file này.
 // Click vào tờ ảnh -> xem lightbox toàn màn hình.
 // ======================================================
-// Độ nghiêng tối đa lấy từ GUILD_QUEST_META.maxTiltDeg (mặc định 10 độ).
-// Math.min(70, ...) chỉ là TRẦN AN TOÀN chống cấu hình sai trong data.js, không phải giới hạn thực tế.
+// Độ nghiêng tối đa lấy từ META động (D1) với fallback data.js (mặc định 10 độ).
+// Math.min(70, ...) chỉ là TRẦN AN TOÀN chống cấu hình sai, không phải giới hạn thực tế.
+function getGuildQuestMaxTilt() {
+    const raw = Number(activeGuildQuestMeta?.maxTiltDeg ?? GUILD_QUEST_META?.maxTiltDeg) || 10;
+    return Math.min(70, Math.abs(raw));
+}
 const GUILD_QUEST_MAX_TILT = Math.min(70, Math.abs(Number(GUILD_QUEST_META?.maxTiltDeg) || 10));
+// Nguồn động cho Bảng Quest: D1 (/api/guild-quests) ưu tiên, data.js fallback.
+// Giữ GUILD_QUEST_DATA nguyên để offline / chưa migrate vẫn hiện bảng cũ.
+let activeGuildQuestData = Array.isArray(GUILD_QUEST_DATA) ? GUILD_QUEST_DATA.slice() : [];
+let activeGuildQuestMeta = { ...(GUILD_QUEST_META || {}) };
+let activeGuildQuestMessengerDefault = GUILD_QUEST_MESSENGER_DEFAULT;
+let guildQuestDbLoaded = false;
+let guildQuestDbLoading = null;
+
+/**
+ * Kéo quest động từ D1 (cache CDN 5p). Gọi 1 lần lúc boot + refresh nền mỗi lần mở modal.
+ * Lỗi / fallback:true -> giữ data.js, không làm vỡ UI.
+ */
+async function fetchGuildQuests(force = false) {
+    if (guildQuestDbLoaded && !force) return true;
+    if (guildQuestDbLoading && !force) return guildQuestDbLoading;
+    guildQuestDbLoading = (async () => {
+        try {
+            const res = await fetch(`${API_URL}/api/guild-quests`, { cache: "default" });
+            const data = await res.json().catch(() => ({}));
+            if (data?.success && Array.isArray(data.quests) && data.quests.length > 0) {
+                activeGuildQuestData = data.quests.filter((q) => q && q.url);
+                guildQuestDbLoaded = true;
+            }
+            if (data?.meta && typeof data.meta === "object") {
+                if (data.meta.title) activeGuildQuestMeta.title = data.meta.title;
+                if (data.meta.background) activeGuildQuestMeta.background = data.meta.background;
+                if (data.meta.maxTiltDeg) activeGuildQuestMeta.maxTiltDeg = data.meta.maxTiltDeg;
+                if (data.meta.emptyText) activeGuildQuestMeta.emptyText = data.meta.emptyText;
+                if (data.meta.messenger_default) activeGuildQuestMessengerDefault = data.meta.messenger_default;
+            }
+            return guildQuestDbLoaded;
+        } catch {
+            return false;
+        } finally {
+            guildQuestDbLoading = null;
+        }
+    })();
+    return guildQuestDbLoading;
+}
+// Prefetch nền để lần mở đầu đã có DB mới nhất (không block render 3D)
+fetchGuildQuests().catch(() => {});
 // guildQuestModal / guildQuestBox / guildQuestGrid / guildQuestTitle đã khai báo ở đầu file.
 const guildQuestLightbox = document.getElementById("guildQuestLightbox");
 const guildQuestLbImg = document.getElementById("guildQuestLightboxImg");
@@ -1348,12 +1393,12 @@ function normalizeMessengerUrl(rawUrl) {
 
 /**
  * Lấy link Messenger của một tờ quest.
- * Ưu tiên trường `messenger` của chính tờ đó, không có thì dùng GUILD_QUEST_MESSENGER_DEFAULT
- * (link mặc định admin chỉnh trong data.js).
+ * Ưu tiên trường `messenger` của chính tờ đó, không có thì dùng messenger_default động (D1)
+ * với fallback GUILD_QUEST_MESSENGER_DEFAULT trong data.js.
  */
 function getGuildQuestMessengerUrl(item) {
-    return normalizeMessengerUrl(item?.messenger || GUILD_QUEST_MESSENGER_DEFAULT)
-        || normalizeMessengerUrl(GUILD_QUEST_MESSENGER_DEFAULT);
+    return normalizeMessengerUrl(item?.messenger || activeGuildQuestMessengerDefault || GUILD_QUEST_MESSENGER_DEFAULT)
+        || normalizeMessengerUrl(activeGuildQuestMessengerDefault || GUILD_QUEST_MESSENGER_DEFAULT);
 }
 
 /**
@@ -1366,25 +1411,26 @@ function randomTiltDeg(maxDeg) {
 }
 
 /**
- * Dựng lại lưới tờ ảnh từ GUILD_QUEST_DATA.
+ * Dựng lại lưới tờ ảnh từ DB động (activeGuildQuestData) với fallback data.js.
  * Mỗi lần gọi sẽ bốc lại góc nghiêng + khoảng lệch để bảng trông rời rạc mới mỗi lượt.
  */
 function renderGuildQuestGrid() {
     if (!guildQuestGrid) return;
 
-    guildQuestItems = Array.isArray(GUILD_QUEST_DATA)
-        ? GUILD_QUEST_DATA.filter((item) => item && item.url)
+    guildQuestItems = Array.isArray(activeGuildQuestData)
+        ? activeGuildQuestData.filter((item) => item && item.url)
         : [];
 
     if (guildQuestItems.length === 0) {
         guildQuestGrid.innerHTML = `<p class="guild-quest-empty">${escapeHtml(
-            GUILD_QUEST_META?.emptyText || "Chưa có Quest nào."
+            activeGuildQuestMeta?.emptyText || GUILD_QUEST_META?.emptyText || "Chưa có Quest nào."
         )}</p>`;
         return;
     }
 
+    const maxTilt = getGuildQuestMaxTilt();
     guildQuestGrid.innerHTML = guildQuestItems.map((item, index) => {
-        const tilt = randomTiltDeg(GUILD_QUEST_MAX_TILT).toFixed(2);
+        const tilt = randomTiltDeg(maxTilt).toFixed(2);
         const dx = (Math.random() * 20 - 10).toFixed(1);   // lệch ngang -> rời rạc
         const dy = (Math.random() * 14 - 7).toFixed(1);    // lệch dọc
         const zIndex = 1 + (index % 5);                   // chồng nhẹ cho đỡ đều tăm tắp
@@ -1406,16 +1452,16 @@ function renderGuildQuestGrid() {
     });
 }
 
-/** Mở bảng Quest tại Hội Ngọc Lục. */
+/** Mở bảng Quest tại Hội Ngọc Lục (DB động + fallback tĩnh). */
 function openGuildQuestModal() {
     if (!guildQuestModal) return;
 
-    // Tiêu đề + ảnh nền lấy từ data.js để đổi nội dung không phải đụng HTML
-    if (guildQuestTitle && GUILD_QUEST_META?.title) {
-        guildQuestTitle.textContent = GUILD_QUEST_META.title;
+    // Tiêu đề + ảnh nền lấy từ META động (D1) để admin đổi không cần đụng HTML
+    if (guildQuestTitle && (activeGuildQuestMeta?.title || GUILD_QUEST_META?.title)) {
+        guildQuestTitle.textContent = activeGuildQuestMeta?.title || GUILD_QUEST_META.title;
     }
-    if (guildQuestBox && GUILD_QUEST_META?.background) {
-        guildQuestBox.style.backgroundImage = `url("${GUILD_QUEST_META.background}")`;
+    if (guildQuestBox && (activeGuildQuestMeta?.background || GUILD_QUEST_META?.background)) {
+        guildQuestBox.style.backgroundImage = `url("${activeGuildQuestMeta?.background || GUILD_QUEST_META.background}")`;
     }
 
     renderGuildQuestGrid();
@@ -1429,6 +1475,17 @@ function openGuildQuestModal() {
     requestAnimationFrame(() => guildQuestModal.classList.add("show"));
 
     document.body.style.overflow = "hidden";
+
+    // Refresh nền: nếu DB có quest mới/meta mới mà prefetch trước đó chưa về kịp,
+    // vẽ lại lưới + meta mà không chớp modal (giữ scroll + lightbox state).
+    fetchGuildQuests(true).then((ok) => {
+        if (!ok || !guildQuestOpen) return;
+        if (guildQuestTitle && activeGuildQuestMeta?.title) guildQuestTitle.textContent = activeGuildQuestMeta.title;
+        if (guildQuestBox && activeGuildQuestMeta?.background) guildQuestBox.style.backgroundImage = `url("${activeGuildQuestMeta.background}")`;
+        const keepScroll = guildQuestGrid ? guildQuestGrid.scrollTop : 0;
+        renderGuildQuestGrid();
+        if (guildQuestGrid) guildQuestGrid.scrollTop = keepScroll;
+    }).catch(() => {});
 }
 
 /** Đóng bảng Quest (kéo theo đóng lightbox nếu đang mở). */
@@ -1564,8 +1621,8 @@ async function handleGuildQuestRegister() {
     }
 
     const questTitle = item.title || `Quest ${guildQuestLbIndex + 1}`;
-    const rawQuestId = Number(item.id);
-    const questId = Number.isFinite(rawQuestId) ? rawQuestId : guildQuestLbIndex + 1;
+    const rawId = String(item.id ?? "").trim();
+    const questId = rawId || String(guildQuestLbIndex + 1);
     const messengerUrl = guildQuestLbMessengerUrl || getGuildQuestMessengerUrl(item);
 
     if (!messengerUrl) {
