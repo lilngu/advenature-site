@@ -437,9 +437,14 @@ if (isFirstTimeGuest && scrollBanner) {
 async function syncUserDataFromBackend() {
     if (!currentUser || !currentUser.id || currentUser.id.startsWith("AW_USER_")) return;
 
+    // P0 FIX: error boundary tập trung + encode userId + check res.ok (fetchJSON)
+    const data = await safeApiCall(
+        () => fetchJSON(`${API_URL}/api/user/sync?userId=${encodeURIComponent(currentUser.id)}`),
+        null,
+        "sync"
+    );
+    if (!data) return;
     try {
-        const res = await fetch(`${API_URL}/api/user/sync?userId=${currentUser.id}`);
-        const data = await res.json();
         if (data.success && data.user) {
             // Kiểm tra nếu điểm Tinh Quang từ D1 cao hơn số điểm hiện tại ở máy
             const oldTQ = currentUser.tinh_quang_points || 0;
@@ -1128,10 +1133,10 @@ async function openGemLeaderboardModal() {
 
         gemLeaderboardList.innerHTML = list.slice(0, 10).map((user, idx) => {
             const rank = idx + 1;
-            const gemCount = user.gem_count ?? user.unlocked_count ?? user.gems ?? 0;
+            const gemCount = Number(user.gem_count ?? user.unlocked_count ?? user.gems ?? 0) || 0;
             const name = user.full_name || "Nhà Phiêu Lưu";
             const code = user.adventurer_code || "AW----";
-            const avatar = user.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${code}`;
+            const avatar = sanitizeAvatarUrl(user.avatar_url, code);
             const userId = user.id || "";
             const rankClass = rank === 1 ? "lb-rank-1" : rank === 2 ? "lb-rank-2" : rank === 3 ? "lb-rank-3" : "";
             const isMe = currentUser && userId === currentUser.id ? " lb-me" : "";
@@ -1140,7 +1145,7 @@ async function openGemLeaderboardModal() {
                 <div class="lb-item ${rankClass}${isMe}" data-user-id="${escapeHtml(userId)}">
                     <div class="lb-rank">#${rank}</div>
                     <div class="lb-avatar">
-                        <img src="${avatar}" alt="${name}" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=advenature'">
+                        <img src="${escapeHtml(avatar)}" alt="${escapeHtml(name)}" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=advenature'">
                     </div>
                     <div class="lb-info">
                         <div class="lb-name" data-user-id="${escapeHtml(userId)}" style="cursor: pointer;">${escapeHtml(name)}</div>
@@ -1368,6 +1373,51 @@ function escapeHtml(value) {
     return String(value ?? "").replace(/[&<>"']/g, (ch) => ({
         "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
     })[ch]);
+}
+
+/**
+ * P0 FIX: error boundary + XSS helpers tập trung.
+ * - safeIconClass: chỉ cho phép [a-z0-9-_ ] (chặn class injection qua innerHTML).
+ * - sanitizeAvatarUrl: chỉ nhận http(s) hoặc relative; còn lại fallback dicebear.
+ * - fetchJSON: fetch có timeout + check res.ok, ném Error rõ ràng.
+ * - safeApiCall: wrapper try/catch chuẩn — không bao giờ để crash app, trả fallback.
+ */
+function safeIconClass(raw, fallback = "") {
+    const v = String(raw ?? "").trim();
+    if (!v) return fallback;
+    if (!/^[A-Za-z0-9\-_ ]+$/.test(v)) return fallback;
+    return v.slice(0, 80);
+}
+
+function sanitizeAvatarUrl(raw, seed = "advenature") {
+    const v = String(raw ?? "").trim();
+    if (!v) return `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(seed)}`;
+    if (/^https?:\/\//i.test(v) && !/javascript:|data:|vbscript:|file:/i.test(v)) return v;
+    if (v.startsWith("/") && !v.startsWith("//")) return v;
+    return `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(seed)}`;
+}
+
+async function fetchJSON(url, options = {}, timeoutMs = 15000) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+    try {
+        const res = await fetch(url, { ...options, signal: ctrl.signal });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+    } finally {
+        clearTimeout(timer);
+    }
+}
+
+async function safeApiCall(fn, fallback = null, logTag = "API") {
+    try {
+        return await fn();
+    } catch (e) {
+        if (e?.name === "AbortError") console.warn(`[${logTag}] timeout`);
+        else console.warn(`[${logTag}]`, e);
+        try { toast?.error?.("LỖI KẾT NỐI", "Đã có lỗi xảy ra. Vui lòng thử lại sau."); } catch (_) {}
+        return fallback;
+    }
 }
 
 /**
@@ -2195,9 +2245,9 @@ function triggerGachaSummon() {
     crystalHeader.textContent = gem.name;
 
     lootText.innerHTML = `
-        <div style="font-size: large; font-weight: bold; font-family: 'Spectral SC', serif; color: #fff9da;">✧ ${gem.name} ✧</div>
+        <div style="font-size: large; font-weight: bold; font-family: 'Spectral SC', serif; color: #fff9da;">✧ ${escapeHtml(gem.name)} ✧</div>
         <div style="font-size: 10px; color: #c9c3ff; letter-spacing: 1.5px; margin-top: 3px;">
-            [${gem.shapeName.toUpperCase()}] • ${gem.faceCount} DIỆN THỂ • MÃ: ${gem.code}
+            [${escapeHtml(gem.shapeName).toUpperCase()}] • ${Number(gem.faceCount) || 0} DIỆN THỂ • MÃ: ${escapeHtml(gem.code)}
         </div>
     `;
 
@@ -2237,7 +2287,7 @@ const blessingModal = document.getElementById("blessingModal");
 function openBlessingModal(blessing, reasonText) {
     document.getElementById("blessTierTag").textContent = (blessing.tier || "common").toUpperCase();
     document.getElementById("blessTierTag").className = `blessing-tier-tag tier-${blessing.tier || "common"}`;
-    document.getElementById("blessIconBox").innerHTML = `<i class="item-ico ${blessing.iconClass}" style="width:88px;height:88px;"></i>`;
+    document.getElementById("blessIconBox").innerHTML = `<i class="item-ico ${safeIconClass(blessing.iconClass, "ico-item-unknown")}" style="width:88px;height:88px;"></i>`;
     document.getElementById("blessTitle").textContent = blessing.name;
     document.getElementById("blessDesc").textContent = `${reasonText}\n${blessing.desc || ''}`;
     blessingModal.classList.remove("hidden");
@@ -3432,12 +3482,12 @@ function renderInventoryGems() {
     const sortedGems = [...unlockedList, ...lockedList];
 
     grid.innerHTML = sortedGems.map((g, idx) => {
-        const elemIconClass = g.isUnlocked ? `ico-elem-${g.sysKey}` : `ico-elem-unknown`;
+        const elemIconClass = g.isUnlocked ? safeIconClass(`ico-elem-${g.sysKey}`, "ico-elem-unknown") : `ico-elem-unknown`;
         return `
             <div class="gem-slot ${g.isUnlocked ? 'unlocked' : 'locked'}" data-idx="${idx}">
                 <div class="gem-slot-icon"><i class="rpg-ico ${elemIconClass}"></i></div>
-                <div class="gem-slot-code">${g.isUnlocked ? g.code : '???'}</div>
-                <div class="gem-slot-name" ${g.isUnlocked ? '' : 'data-i18n="gemPreview.lockedName"'}>${g.isUnlocked ? g.name : ''}</div>
+                <div class="gem-slot-code">${g.isUnlocked ? escapeHtml(g.code) : '???'}</div>
+                <div class="gem-slot-name" ${g.isUnlocked ? '' : 'data-i18n="gemPreview.lockedName"'}>${g.isUnlocked ? escapeHtml(g.name) : ''}</div>
             </div>
         `;
     }).join('');
@@ -3462,8 +3512,8 @@ function renderInventory5x5() {
         if (item) {
             slotsHtml += `
                 <div class="item-slot" data-index="${i}">
-                    <span class="item-slot-icon"><i class="item-ico ${item.iconClass}"></i></span>
-                    <span class="item-slot-qty">x${item.quantity}</span>
+                    <span class="item-slot-icon"><i class="item-ico ${safeIconClass(item.iconClass, "ico-item-unknown")}"></i></span>
+                    <span class="item-slot-qty">x${Number(item.quantity) || 0}</span>
                 </div>
             `;
         } else {
@@ -3510,7 +3560,7 @@ function openItemModal(item, itemIndex) {
 
     itemModal.classList.remove("hidden");
     applyI18nToElement(itemModal);
-    document.getElementById("modalItemTitle").innerHTML = `<i class="item-ico ${item.iconClass}"></i> ${item.name}`;
+    document.getElementById("modalItemTitle").innerHTML = `<i class="item-ico ${safeIconClass(item.iconClass, "ico-item-unknown")}"></i> ${escapeHtml(item.name)}`;
     document.getElementById("modalItemDesc").textContent = item.desc || "Vật phẩm dã ngoại thuộc Hội Ngọc Lục.";
     
     const qrWrapper = document.getElementById("qrWrapperOffline");
@@ -3691,11 +3741,12 @@ function renderShop() {
 
     container.innerHTML = activeShopItems.map(p => {
         const out = isOutOfStock(p);
+        const pid = escapeHtml(String(p.id ?? ""));
         return `
-        <div class="shop-2col-card ${selectedShopIds.has(p.id) ? 'selected' : ''} ${out ? 'out-of-stock' : ''}" data-id="${p.id}" ${out ? 'aria-disabled="true"' : 'tabindex="0" role="button"'}>
-            <div class="shop-2col-icon"><i class="rpg-ico ${p.iconClass}" style="width:32px;height:32px;"></i></div>
-            <div class="shop-2col-title">${p.name}</div>
-            <div class="shop-2col-tag">💎 ${p.tt} Tinh Thạch${out ? ' • HẾT' : ''}</div>
+        <div class="shop-2col-card ${selectedShopIds.has(p.id) ? 'selected' : ''} ${out ? 'out-of-stock' : ''}" data-id="${pid}" ${out ? 'aria-disabled="true"' : 'tabindex="0" role="button"'}>
+            <div class="shop-2col-icon"><i class="rpg-ico ${safeIconClass(p.iconClass, "ico-item-unknown")}" style="width:32px;height:32px;"></i></div>
+            <div class="shop-2col-title">${escapeHtml(p.name)}</div>
+            <div class="shop-2col-tag">💎 ${Number(p.tt) || 0} Tinh Thạch${out ? ' • HẾT' : ''}</div>
         </div>`;
     }).join('');
 
@@ -3724,7 +3775,7 @@ function openShopDetail(item) {
         toast.warning('HẾT HÀNG', 'Gói này đã hết suất. Vui lòng chọn gói khác!');
         return;
     }
-    document.getElementById("shopModalIconBox").innerHTML = `<i class="rpg-ico ${item.iconClass}" style="width:48px;height:48px;"></i>`;
+    document.getElementById("shopModalIconBox").innerHTML = `<i class="rpg-ico ${safeIconClass(item.iconClass, "ico-item-unknown")}" style="width:48px;height:48px;"></i>`;
     document.getElementById("shopModalTitle").textContent = item.name;
     document.getElementById("shopModalPrice").textContent = `💎 ${item.tt} Tinh Thạch (~${item.vnd.toLocaleString()} đ)`;
     document.getElementById("shopModalDesc").textContent = item.desc;
@@ -4100,13 +4151,13 @@ function showQuizQuestion() {
     }
     const qData = quizPool[currentQuizIdx];
     document.getElementById("quizQuestionText").innerHTML = `
-        <div style="font-size: 10px; color: #00f5d4; margin-bottom: 4px;">Tiến trình: ${quizCorrectCount}/10 câu đúng</div>
-        <b>Câu hỏi:</b> ${qData.q}
+        <div style="font-size: 10px; color: #00f5d4; margin-bottom: 4px;">Tiến trình: ${Number(quizCorrectCount) || 0}/10 câu đúng</div>
+        <b>Câu hỏi:</b> ${escapeHtml(qData.q)}
     `;
 
     const ansBox = document.getElementById("quizAnswersBox");
     ansBox.innerHTML = qData.a.map((ans, idx) => `
-        <button class="btn-quiz-ans" data-idx="${idx}">✧ ${ans}</button>
+        <button class="btn-quiz-ans" data-idx="${idx}">✧ ${escapeHtml(ans)}</button>
     `).join('');
 
     ansBox.querySelectorAll(".btn-quiz-ans").forEach(btn => {

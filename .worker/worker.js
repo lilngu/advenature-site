@@ -278,6 +278,25 @@ function errorResponse(message, status = 400, request) {
 		success: false
 	}, status, request);
 }
+// ============ P0: PAGINATION + VALIDATION HELPERS ============
+// Chuẩn query ?page=1&limit=50. Clamp để chống abuse (limit tối đa 100).
+function parsePagination(url, defaultLimit = 50, maxLimit = 100) {
+	let page = parseInt(url.searchParams.get("page") || "1", 10);
+	let limit = parseInt(url.searchParams.get("limit") || String(defaultLimit), 10);
+	if (!Number.isFinite(page) || page < 1) page = 1;
+	if (!Number.isFinite(limit) || limit < 1) limit = defaultLimit;
+	if (limit > maxLimit) limit = maxLimit;
+	return { page, limit, offset: (page - 1) * limit };
+}
+
+// userId từ client: chỉ nhận [A-Za-z0-9-_], dài 1..128. Trả về null nếu sai.
+function validateUserId(raw) {
+	if (raw === null || raw === undefined) return null;
+	const v = String(raw).trim();
+	if (!v || v.length > 128) return null;
+	if (!/^[A-Za-z0-9\-_]+$/.test(v)) return null;
+	return v;
+}
 // ======================================================
 // END OF INLINE UTILITIES
 // ======================================================
@@ -1069,18 +1088,45 @@ export default {
 			// 3. ENDPOINT: ĐỒNG BỘ DỮ LIỆU USER (SYNC)
 			// ===================================================
 			if (cleanPath === "/api/user/sync" && request.method === "GET") {
-				const userId = url.searchParams.get("userId");
-				if (!userId) return errorResponse("Missing userId", 400, request);
-				// P0 FIX: Query batching (3 queries → 1 batch)
-				const [userResult, gemsResult, itemsResult] = await env.DB.batch([
+				const rawUserId = url.searchParams.get("userId");
+				const userId = validateUserId(rawUserId);
+				if (!userId) return errorResponse("Missing or invalid userId", 400, request);
+				// P0 FIX: pagination cho inventory/gems (backward-compat: không có ?page&limit
+				// vẫn trả full nhưng cap 500 + kèm total để frontend biết bị cắt).
+				const hasPaging = url.searchParams.has("page") || url.searchParams.has("limit")
+					|| url.searchParams.has("invPage") || url.searchParams.has("gemsPage");
+				const invPaging = parsePagination({
+					searchParams: {
+						get: (k) => k === "page"
+							? (url.searchParams.get("invPage") || url.searchParams.get("page"))
+							: (k === "limit"
+								? (url.searchParams.get("invLimit") || url.searchParams.get("limit"))
+								: null)
+					}
+				}, 50, 100);
+				const gemsPaging = parsePagination({
+					searchParams: {
+						get: (k) => k === "page"
+							? (url.searchParams.get("gemsPage") || url.searchParams.get("page"))
+							: (k === "limit"
+								? (url.searchParams.get("gemsLimit") || url.searchParams.get("limit"))
+								: null)
+					}
+				}, 200, 500);
+				// P0 FIX: Query batching (user + counts + page dữ liệu → 1 batch)
+				const [userResult, gemCountRes, invCountRes, gemsResult, itemsResult] = await env.DB.batch([
 					env.DB.prepare("SELECT * FROM users WHERE id = ?").bind(userId),
-					env.DB.prepare("SELECT gem_code FROM user_gem_collection WHERE user_id = ?").bind(userId),
-					env.DB.prepare("SELECT * FROM user_inventory WHERE user_id = ? AND is_used = 0").bind(userId)
+					env.DB.prepare("SELECT COUNT(*) AS c FROM user_gem_collection WHERE user_id = ?").bind(userId),
+					env.DB.prepare("SELECT COUNT(*) AS c FROM user_inventory WHERE user_id = ? AND is_used = 0").bind(userId),
+					env.DB.prepare("SELECT gem_code FROM user_gem_collection WHERE user_id = ? ORDER BY obtained_at DESC LIMIT ? OFFSET ?").bind(userId, gemsPaging.limit, gemsPaging.offset),
+					env.DB.prepare("SELECT * FROM user_inventory WHERE user_id = ? AND is_used = 0 ORDER BY created_at DESC LIMIT ? OFFSET ?").bind(userId, invPaging.limit, invPaging.offset)
 				]);
 				const user = userResult.results?.[0];
 				if (!user) return errorResponse("User not found", 404, request);
 				const gems = gemsResult;
 				const items = itemsResult;
+				const totalGems = gemCountRes.results?.[0]?.c || 0;
+				const totalItems = invCountRes.results?.[0]?.c || 0;
 				let tribe = "Tự do",
 					gender = "Nam",
 					birthYear = "----";
@@ -1098,7 +1144,48 @@ export default {
 						...user,
 						unlocked_gems: (gems.results || []).map(g => g.gem_code),
 						inventory: items.results || []
+					},
+					pagination: {
+						gems: { page: gemsPaging.page, limit: gemsPaging.limit, total: totalGems, totalPages: Math.max(1, Math.ceil(totalGems / gemsPaging.limit)) },
+						inventory: { page: invPaging.page, limit: invPaging.limit, total: totalItems, totalPages: Math.max(1, Math.ceil(totalItems / invPaging.limit)) }
 					}
+				}, 200, request);
+			}
+			// ===================================================
+			// P0: INVENTORY LIST PAGINATED (GET /api/inventory/list?userId=&page=&limit=)
+			// ===================================================
+			if (cleanPath === "/api/inventory/list" && request.method === "GET") {
+				const userId = validateUserId(url.searchParams.get("userId"));
+				if (!userId) return errorResponse("Missing or invalid userId", 400, request);
+				const { page, limit, offset } = parsePagination(url, 50, 100);
+				const [countRes, rows] = await env.DB.batch([
+					env.DB.prepare("SELECT COUNT(*) AS c FROM user_inventory WHERE user_id = ? AND is_used = 0").bind(userId),
+					env.DB.prepare("SELECT * FROM user_inventory WHERE user_id = ? AND is_used = 0 ORDER BY created_at DESC LIMIT ? OFFSET ?").bind(userId, limit, offset)
+				]);
+				const total = countRes.results?.[0]?.c || 0;
+				return jsonResponse({
+					success: true,
+					items: rows.results || [],
+					pagination: { page, limit, total, totalPages: Math.max(1, Math.ceil(total / limit)) }
+				}, 200, request);
+			}
+			// ===================================================
+			// P0: GEMS LIST PAGINATED (GET /api/gems/list?userId=&page=&limit=)
+			// ===================================================
+			if (cleanPath === "/api/gems/list" && request.method === "GET") {
+				const userId = validateUserId(url.searchParams.get("userId"));
+				if (!userId) return errorResponse("Missing or invalid userId", 400, request);
+				const { page, limit, offset } = parsePagination(url, 200, 500);
+				const [countRes, rows] = await env.DB.batch([
+					env.DB.prepare("SELECT COUNT(*) AS c FROM user_gem_collection WHERE user_id = ?").bind(userId),
+					env.DB.prepare("SELECT gem_code, obtained_at FROM user_gem_collection WHERE user_id = ? ORDER BY obtained_at DESC LIMIT ? OFFSET ?").bind(userId, limit, offset)
+				]);
+				const total = countRes.results?.[0]?.c || 0;
+				return jsonResponse({
+					success: true,
+					gems: (rows.results || []).map(g => g.gem_code),
+					rows: rows.results || [],
+					pagination: { page, limit, total, totalPages: Math.max(1, Math.ceil(total / limit)) }
 				}, 200, request);
 			}
 			// ===================================================
