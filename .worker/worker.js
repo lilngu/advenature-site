@@ -140,7 +140,7 @@ function sanitizeURL(url) {
 const ADMIN_ENDPOINTS = ["/api/user/add-points", "/api/admin/"];
 // Write endpoints: mọi POST thay đổi dữ liệu bắt buộc key WRITE.
 // Read endpoints (GET): chấp nhận cả VIEW và WRITE.
-const ADMIN_WRITE_PATHS = ["/api/user/add-points", "/api/admin/update-", "/api/admin/delete-", "/api/admin/grant-", "/api/admin/remove-", "/api/admin/reset-daily"];
+const ADMIN_WRITE_PATHS = ["/api/user/add-points", "/api/admin/update-", "/api/admin/delete-", "/api/admin/grant-", "/api/admin/remove-", "/api/admin/reset-daily", "/api/admin/shop-product-"];
 
 function isAdminEndpoint(path) {
 	return ADMIN_ENDPOINTS.some(endpoint => path.startsWith(endpoint));
@@ -2373,6 +2373,59 @@ export default {
 				if (!orderId) return errorResponse("Thiếu orderId!", 400, request);
 				await env.DB.prepare("DELETE FROM shop_orders WHERE id = ?").bind(Number(orderId)).run();
 				await logAdminAction(env, request, "delete-order", String(orderId), "xoa don");
+				return jsonResponse({ success: true }, 200, request);
+			}
+			// ---------- ADMIN SHOP: LIST ALL (ke ca active=0) ----------
+			if (cleanPath === "/api/admin/shop-products-all" && request.method === "GET") {
+				const authError = checkAdminAuth(request, env, { requireWrite: requiresWriteKey(cleanPath, request.method) });
+				if (authError) {
+					return addCORSHeaders(authError, request);
+				}
+				const list = await env.DB.prepare("SELECT id, name, tt, vnd, icon_class AS iconClass, description AS desc, active, stock, sort_order FROM shop_products ORDER BY sort_order ASC, id ASC LIMIT 200").all();
+				return jsonResponse({ success: true, products: list.results || [] }, 200, request);
+			}
+			// ---------- ADMIN SHOP: UPSERT (tao + sua, 1 endpoint idempotent) ----------
+			if (cleanPath === "/api/admin/shop-product-upsert" && request.method === "POST") {
+				const authError = checkAdminAuth(request, env, { requireWrite: requiresWriteKey(cleanPath, request.method) });
+				if (authError) {
+					return addCORSHeaders(authError, request);
+				}
+				const b = await request.json();
+				const id = String(b.id || "").trim().toUpperCase();
+				if (!id || !/^[A-Z0-9_]{2,20}$/.test(id)) return errorResponse("ID 2-20 ky tu A-Z 0-9 _ !", 400, request);
+				const name = sanitizeInput(String(b.name || ""), 80);
+				if (!name) return errorResponse("Thieu ten!", 400, request);
+				const tt = Math.max(0, Number(b.tt) || 0);
+				const vnd = Math.max(0, Number(b.vnd) || 0);
+				const iconClass = sanitizeInput(String(b.iconClass || b.icon_class || ""), 40) || "ico-pkg1";
+				const desc = sanitizeInput(String(b.desc || b.description || ""), 500);
+				const active = Number(b.active) === 0 ? 0 : 1;
+				let stock = Number(b.stock);
+				if (!Number.isFinite(stock)) stock = -1;
+				stock = Math.max(-1, Math.floor(stock));
+				const sort_order = Math.max(0, Number(b.sort_order) || 0);
+				await env.DB.prepare(`INSERT INTO shop_products (id, name, tt, vnd, icon_class, description, active, stock, sort_order, updated_at)
+					VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+					ON CONFLICT(id) DO UPDATE SET name=excluded.name, tt=excluded.tt, vnd=excluded.vnd, icon_class=excluded.icon_class, description=excluded.description, active=excluded.active, stock=excluded.stock, sort_order=excluded.sort_order, updated_at=CURRENT_TIMESTAMP`).bind(id, name, tt, vnd, iconClass, desc, active, stock, sort_order).run();
+				await logAdminAction(env, request, "shop-upsert", id, `${name} tt=${tt} stock=${stock} active=${active}`);
+				return jsonResponse({ success: true, id }, 200, request);
+			}
+			// ---------- ADMIN SHOP: DELETE (uu tien active=0 hon xoa cung) ----------
+			if (cleanPath === "/api/admin/shop-product-delete" && request.method === "POST") {
+				const authError = checkAdminAuth(request, env, { requireWrite: requiresWriteKey(cleanPath, request.method) });
+				if (authError) {
+					return addCORSHeaders(authError, request);
+				}
+				const { id, hard } = await request.json();
+				const cleanId = String(id || "").trim().toUpperCase();
+				if (!cleanId) return errorResponse("Thieu id!", 400, request);
+				if (hard === true) {
+					await env.DB.prepare("DELETE FROM shop_products WHERE id = ?").bind(cleanId).run();
+					await logAdminAction(env, request, "shop-delete-hard", cleanId, "xoa cung");
+				} else {
+					await env.DB.prepare("UPDATE shop_products SET active = 0, updated_at = CURRENT_TIMESTAMP WHERE id = ?").bind(cleanId).run();
+					await logAdminAction(env, request, "shop-delete-soft", cleanId, "an (active=0)");
+				}
 				return jsonResponse({ success: true }, 200, request);
 			}
 			// ---------- ADMIN: RESET DAILY (checkin/quiz/rollquest) ----------

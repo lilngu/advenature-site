@@ -70,6 +70,7 @@ a{color:var(--cyan)}
 <div class="tab active" data-t="stats" onclick="switchTab('stats')">📊 Tổng quan</div>
 <div class="tab" data-t="users" onclick="switchTab('users')">🧝 Người chơi</div>
 <div class="tab" data-t="orders" onclick="switchTab('orders')">🛒 Đơn hàng</div>
+<div class="tab" data-t="shop" onclick="switchTab('shop')">🏪 Shop</div>
 <div class="tab" data-t="bless" onclick="switchTab('bless')">🎁 Blessings</div>
 <div class="tab" data-t="audit" onclick="switchTab('audit')">📜 Audit</div>
 <div class="tab" data-t="sys" onclick="switchTab('sys')">⚙️ Hệ thống</div>
@@ -100,6 +101,25 @@ a{color:var(--cyan)}
 <button onclick="loadOrders()">🔄 Tải đơn</button>
 </div>
 <div id="orderList"></div>
+</div>
+
+<!-- SHOP -->
+<div class="panel" id="p-shop">
+<div class="rowcard">
+<b>🏪 Thêm / Sửa sản phẩm Shop</b>
+<div class="small">ID 2-20 ký tự A-Z 0-9 _ (vd PKG_7). Stock -1 = vô hạn, PKG_3 hiện stock=2. Tắt Active = ẩn khỏi Shop nhưng giữ đơn cũ.</div>
+<div class="kv" style="margin-top:8px">
+<span class="mut">ID</span><input id="s-id" placeholder="PKG_7" style="text-transform:uppercase">
+<span class="mut">Tên</span><input id="s-name" placeholder="Tên gói...">
+<span class="mut">Giá TT + VND</span><div style="display:flex;gap:6px"><input id="s-tt" type="number" value="10" min="0" style="flex:1"><input id="s-vnd" type="number" value="250000" min="0" step="1000" style="flex:2"></div>
+<span class="mut">Icon + Sort</span><div style="display:flex;gap:6px"><input id="s-icon" value="ico-pkg1" style="flex:1" list="iconList"><input id="s-sort" type="number" value="10" min="0" style="max-width:90px"><datalist id="iconList"><option value="ico-pkg1"></option><option value="ico-pkg2"></option><option value="ico-pkg3"></option><option value="ico-pkg4"></option><option value="ico-pkg5"></option><option value="ico-pkg6"></option><option value="ico-food1"></option><option value="ico-quest1"></option><option value="ico-quest2"></option></datalist></div>
+<span class="mut">Stock + Active</span><div style="display:flex;gap:6px"><input id="s-stock" type="number" value="-1" min="-1" style="flex:1"><select id="s-active" style="flex:1"><option value="1">Hiện (1)</option><option value="0">Ẩn (0)</option></select></div>
+<span class="mut">Mô tả</span><input id="s-desc" placeholder="Mô tả cho player...">
+</div>
+<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap"><button class="sm ok" onclick="saveShop()">💾 Lưu (tạo/sửa)</button><button class="sm ghost" onclick="resetShopForm()">↩ Mới</button><span class="small" id="shopPreview" style="align-self:center"></span></div>
+</div>
+<div class="toolbar"><input type="text" id="searchShop" placeholder="Tìm ID / Tên..." oninput="renderShopAdmin()"><button onclick="loadShopAdmin()">🔄 Tải Shop</button></div>
+<div id="shopList"><div class="small">Chưa tải.</div></div>
 </div>
 
 <!-- BLESS -->
@@ -186,7 +206,7 @@ function switchTab(t){
 async function boot(){
   if(!adminKey()){ toast("Nhập Mật mã Admin trước!", false); return; }
   saveKey();
-  await Promise.allSettled([loadStats(), loadUsers(), loadOrders()]);
+  await Promise.allSettled([loadStats(), loadUsers(), loadOrders(), loadShopAdmin()]);
   switchTab("users");
 }
 async function checkApi(){
@@ -353,6 +373,67 @@ async function delOrder(id){
   if(!confirm("Xóa đơn #"+id+"?")) return;
   try{ await adminFetch("/api/admin/delete-order",{method:"POST",body:JSON.stringify({orderId:id})}); toast("Đã xóa đơn"); loadOrders(); loadStats(); }
   catch(e){ toast(e.message,false); }
+}
+
+// ---- SHOP ADMIN (Full CRUD) ----
+let allShopProducts = [];
+async function loadShopAdmin(){
+  const box = $("shopList");
+  box.innerHTML = `<div class="small">⏳ Đang tải Shop...</div>`;
+  try{
+    const d = await adminFetch("/api/admin/shop-products-all");
+    allShopProducts = d.products || [];
+    renderShopAdmin();
+  }catch(e){ box.innerHTML = `<div style="color:#ff3366">❌ ${esc(e.message)} (cần key WRITE để xem full? thử key WRITE)</div>`; }
+}
+function renderShopAdmin(){
+  const kw = ($("searchShop").value || "").trim().toLowerCase();
+  const list = allShopProducts.filter(p => !kw || (p.id||"").toLowerCase().includes(kw) || (p.name||"").toLowerCase().includes(kw));
+  if(!list.length){ $("shopList").innerHTML = `<div class="small">Chưa có sản phẩm.</div>`; return; }
+  $("shopList").innerHTML = `<table><tr><th>ID</th><th>Tên / Giá</th><th>Stock</th><th>Active</th><th></th></tr>` + list.map(p=>{
+    const st = Number(p.active)===1 ? `<span class="pill done">Hiện</span>` : `<span class="pill pending">Ẩn</span>`;
+    const stockTxt = Number(p.stock)===-1 ? "∞" : esc(p.stock);
+    return `<tr><td class="mono">${esc(p.id)}</td><td><b>${esc(p.name)}</b><br><span class="small">💎 ${p.tt} • ₫ ${Number(p.vnd||0).toLocaleString('vi-VN')} • sort ${p.sort_order||0} • <span class="mono">${esc(p.iconClass||'')}</span></span></td><td><b>${stockTxt}</b></td><td>${st}</td><td style="white-space:nowrap"><button class="sm ghost" onclick="editShop('${esc(p.id)}')">Sửa</button> <button class="sm ${Number(p.active)===1?'':'ok'}" onclick="toggleShopActive('${esc(p.id)}')">${Number(p.active)===1?'Ẩn':'Hiện'}</button> <button class="sm danger" onclick="delShop('${esc(p.id)}')">Xóa</button></td></tr>`;
+  }).join("") + `</table>`;
+}
+function editShop(id){
+  const p = allShopProducts.find(x=>x.id===id);
+  if(!p) return;
+  $("s-id").value = p.id; $("s-id").disabled = true;
+  $("s-name").value = p.name || ""; $("s-tt").value = p.tt||0; $("s-vnd").value = p.vnd||0;
+  $("s-icon").value = p.iconClass||""; $("s-sort").value = p.sort_order||0;
+  $("s-stock").value = (p.stock===null||p.stock===undefined)?-1:p.stock;
+  $("s-active").value = String(p.active===0?0:1);
+  $("s-desc").value = p.desc||"";
+  $("shopPreview").textContent = `Đang sửa ${p.id} — bấm Lưu để upsert.`;
+  window.scrollTo({behavior:"smooth"});
+}
+function resetShopForm(){
+  ["s-id","s-name","s-icon","s-desc"].forEach(i=>$(i).value="");
+  $("s-id").disabled = false; $("s-tt").value = 10; $("s-vnd").value = 250000;
+  $("s-sort").value = 10; $("s-stock").value = -1; $("s-active").value = "1";
+  $("shopPreview").textContent = "";
+}
+async function saveShop(){
+  const body = {id:$("s-id").value.trim().toUpperCase(), name:$("s-name").value.trim(), tt:Number($("s-tt").value||0), vnd:Number($("s-vnd").value||0), iconClass:$("s-icon").value.trim(), desc:$("s-desc").value.trim(), active:Number($("s-active").value), stock:Number($("s-stock").value), sort_order:Number($("s-sort").value||0)};
+  if(!body.id || !body.name){ toast("Nhập ID + Tên!", false); return; }
+  try{ await adminFetch("/api/admin/shop-product-upsert",{method:"POST",body:JSON.stringify(body)}); toast("Đã lưu "+body.id); resetShopForm(); loadShopAdmin(); }
+  catch(e){ toast(e.message,false); }
+}
+async function toggleShopActive(id){
+  const p = allShopProducts.find(x=>x.id===id);
+  if(!p) return;
+  try{ await adminFetch("/api/admin/shop-product-upsert",{method:"POST",body:JSON.stringify({id:p.id, name:p.name, tt:p.tt, vnd:p.vnd, iconClass:p.iconClass, desc:p.desc, active:Number(p.active)===1?0:1, stock:p.stock, sort_order:p.sort_order})}); toast("Đã đổi trạng thái "+id); loadShopAdmin(); }
+  catch(e){ toast(e.message,false); }
+}
+async function delShop(id){
+  const soft = confirm(`Ẩn "${id}" khỏi Shop (giữ data, khuyên dùng)?\nOK = Ẩn (active=0) • Cancel = mở tiếp chọn Xóa cứng.`);
+  try{
+    if(soft){ await adminFetch("/api/admin/shop-product-delete",{method:"POST",body:JSON.stringify({id})}); toast("Đã ẩn "+id); }
+    else if(confirm(`XÓA CỨNG "${id}"? Đơn cũ giữ package_type string nên không vỡ, nhưng không khôi phục được!`)){ await adminFetch("/api/admin/shop-product-delete",{method:"POST",body:JSON.stringify({id, hard:true})}); toast("Đã xóa cứng "+id); }
+    else return;
+    loadShopAdmin();
+  }catch(e){ toast(e.message,false); }
 }
 
 // ---- AUDIT ----
