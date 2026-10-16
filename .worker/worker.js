@@ -1,283 +1,40 @@
 // ======================================================
 // CLOUDFLARE WORKER: ADVENATURE BACKEND API (PRODUCTION)
 // ======================================================
-// ======================================================
-// P0 SECURITY FIXES - INLINE UTILITIES
-// ======================================================
-// Các function này thay thế cho import từ utils/*.js
-// để có thể deploy thủ công qua Dashboard
-// ============ CORS UTILITY ============
-const ALLOWED_ORIGINS = ["https://rungtinhlinh.com",
-  "https://advenature-site.pages.dev",
-  "http://127.0.0.1:5500", "http://localhost:5500",
-  "http://127.0.0.1:5501", "http://localhost:5501",
-  "http://127.0.0.1:8788", "http://localhost:8788"
-];
-
-function getCORSHeaders(request) {
-	const origin = request.headers.get("Origin");
-	const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : "";
-	return {
-		"Access-Control-Allow-Origin": allowedOrigin,
-		"Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-		"Access-Control-Allow-Headers": "Content-Type, Authorization, x-admin-key",
-		"Access-Control-Allow-Credentials": "true",
-		"Access-Control-Max-Age": "3600"
-	};
-}
-
-function handleCORSPreflight(request) {
-	return new Response(null, {
-		status: 204,
-		headers: getCORSHeaders(request)
-	});
-}
-
-function addCORSHeaders(response, request) {
-	const corsHeaders = getCORSHeaders(request);
-	const headers = new Headers(response.headers);
-	Object.entries(corsHeaders).forEach(([key, value]) => {
-		if (value) headers.set(key, value);
-	});
-	return new Response(response.body, {
-		status: response.status,
-		statusText: response.statusText,
-		headers
-	});
-}
-// ============ RATE LIMIT UTILITY ============
-async function checkRateLimit(env, userId, endpoint, limit = 10, windowSeconds = 60) {
-	if (!env.QUIZ_KV) {
-		console.warn(`[RATE_LIMIT] KV not available - rate limiting disabled for ${endpoint}`);
-		return true;
-	}
-	const key = `ratelimit:${userId}:${endpoint}`;
-	try {
-		const countStr = await env.QUIZ_KV.get(key);
-		const count = countStr ? parseInt(countStr, 10) : 0;
-		if (count >= limit) {
-			throw new Error(`Rate limit exceeded. Maximum ${limit} requests per ${windowSeconds} seconds. Please try again later.`);
-		}
-		await env.QUIZ_KV.put(key, String(count + 1), {
-			expirationTtl: windowSeconds
-		});
-		return true;
-	} catch (error) {
-		if (error.message.includes('Rate limit exceeded')) {
-			throw error;
-		}
-		console.error(`[RATE_LIMIT] KV error for ${key}:`, error);
-		return true;
-	}
-}
-const RATE_LIMITS = {
-	gacha: {
-		limit: 5,
-		window: 60
-	},
-	quest: {
-		limit: 10,
-		window: 60
-	},
-	auth: {
-		limit: 3,
-		window: 60
-	},
-	shop: {
-		limit: 5,
-		window: 3600
-	},
-	admin: {
-		limit: 20,
-		window: 60
-	},
-	sync: {
-		limit: 30,
-		window: 60
-	},
-	profile: {
-		limit: 5,
-		window: 60
-	}
-};
-async function applyRateLimit(env, userId, endpointType) {
-	const config = RATE_LIMITS[endpointType];
-	if (!config) {
-		console.warn(`[RATE_LIMIT] No config found for ${endpointType}`);
-		return checkRateLimit(env, userId, endpointType, 10, 60);
-	}
-	return checkRateLimit(env, userId, endpointType, config.limit, config.window);
-}
-// ============ SANITIZATION UTILITY ============
-function escapeHTML(value) {
-	return String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#x27;").replace(/\//g, "&#x2F;");
-}
-
-function sanitizeInput(input, maxLength = 1000) {
-	if (!input) return "";
-	let cleaned = String(input).trim();
-	if (cleaned.length > maxLength) cleaned = cleaned.substring(0, maxLength);
-	cleaned = cleaned.replace(/\0/g, "");
-	cleaned = cleaned.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "");
-	return cleaned;
-}
-
-function sanitizeName(name, minLength = 2, maxLength = 50) {
-	if (!name) return null;
-	const cleaned = sanitizeInput(name, maxLength).trim();
-	if (cleaned.length < minLength || cleaned.length > maxLength) return null;
-	return cleaned.replace(/\s+/g, " ");
-}
-
-function sanitizeURL(url) {
-	if (!url) return null;
-	const cleaned = sanitizeInput(url, 300).trim();
-	if (!/^https?:\/\//i.test(cleaned)) return null;
-	if (/javascript:|data:|vbscript:|file:/i.test(cleaned)) return null;
-	return cleaned;
-}
-// ============ ADMIN AUTH (HARDENED: VIEW/WRITE + LOCKOUT + AUDIT) ============
-const ADMIN_ENDPOINTS = ["/api/user/add-points", "/api/admin/"];
-// Write endpoints: mọi POST thay đổi dữ liệu bắt buộc key WRITE.
-// Read endpoints (GET): chấp nhận cả VIEW và WRITE.
-const ADMIN_WRITE_PATHS = ["/api/user/add-points", "/api/admin/update-", "/api/admin/delete-", "/api/admin/grant-", "/api/admin/remove-", "/api/admin/reset-daily", "/api/admin/shop-product-", "/api/admin/guild-quest-"];
-
-function isAdminEndpoint(path) {
-	return ADMIN_ENDPOINTS.some(endpoint => path.startsWith(endpoint));
-}
-
-function requiresWriteKey(path, method) {
-	if (method !== "POST") return false;
-	return ADMIN_WRITE_PATHS.some(p => path.startsWith(p));
-}
-
-function constantTimeCompare(a, b) {
-	if (typeof a !== 'string' || typeof b !== 'string') return false;
-	if (a.length !== b.length) return false;
-	let result = 0;
-	for (let i = 0; i < a.length; i++) {
-		result |= a.charCodeAt(i) ^ b.charCodeAt(i);
-	}
-	return result === 0;
-}
-
-function getClientIP(request) {
-	return request.headers.get("cf-connecting-ip")
-		|| (request.headers.get("x-forwarded-for") || "").split(",")[0].trim()
-		|| "unknown";
-}
-
-// Trả về "write" | "view" | null. WRITE = ADMIN_SECRET_KEY, VIEW = ADMIN_VIEW_KEY (chỉ đọc).
-function verifyAdminRole(request, env) {
-	const providedKey = request.headers.get("x-admin-key");
-	if (!providedKey) return null;
-	const writeKey = env.ADMIN_SECRET_KEY || "AdvenatureAdmin2026@";
-	if (constantTimeCompare(providedKey, writeKey)) return "write";
-	const viewKey = env.ADMIN_VIEW_KEY || "";
-	if (viewKey && constantTimeCompare(providedKey, viewKey)) return "view";
-	return null;
-}
-
-function verifyAdminKey(request, env) {
-	return verifyAdminRole(request, env) !== null;
-}
-
-async function isAdminLocked(env, ip) {
-	if (!env.QUIZ_KV || ip === "unknown") return false;
-	try {
-		const v = await env.QUIZ_KV.get(`admin_lock:${ip}`);
-		return !!v;
-	} catch (_e) { return false; }
-}
-
-async function recordAdminFail(env, ip) {
-	if (!env.QUIZ_KV || ip === "unknown") return;
-	try {
-		const k = `admin_fail:${ip}`;
-		const cur = Number(await env.QUIZ_KV.get(k) || 0) + 1;
-		await env.QUIZ_KV.put(k, String(cur), { expirationTtl: 600 });
-		if (cur >= 5) {
-			await env.QUIZ_KV.put(`admin_lock:${ip}`, String(Date.now()), { expirationTtl: 600 });
-		}
-	} catch (_e) {}
-}
-
-async function clearAdminFail(env, ip) {
-	if (!env.QUIZ_KV || ip === "unknown") return;
-	try { await env.QUIZ_KV.delete(`admin_fail:${ip}`); } catch (_e) {}
-}
-
-async function checkAdminRateLimit(env, ip) {
-	if (!env.QUIZ_KV || ip === "unknown") return true;
-	const k = `admin_rl:${ip}`;
-	const cur = Number(await env.QUIZ_KV.get(k) || 0);
-	if (cur >= 30) throw new Error("Admin rate limit: tối đa 30 request/phút/IP. Thử lại sau.");
-	await env.QUIZ_KV.put(k, String(cur + 1), { expirationTtl: 60 });
-	return true;
-}
-
-function checkAdminAuth(request, env, opts) {
-	const needWrite = !!(opts && opts.requireWrite);
-	const role = verifyAdminRole(request, env);
-	if (!role) {
-		return new Response(JSON.stringify({
-			error: "Invalid or missing admin key. Please provide x-admin-key header.",
-			code: "UNAUTHORIZED"
-		}), {
-			status: 401,
-			headers: { "Content-Type": "application/json" }
-		});
-	}
-	if (needWrite && role !== "write") {
-		return new Response(JSON.stringify({
-			error: "Key VIEW chỉ được đọc. Thao tác ghi cần key WRITE.",
-			code: "FORBIDDEN"
-		}), {
-			status: 403,
-			headers: { "Content-Type": "application/json" }
-		});
-	}
-	return null;
-}
-
-// Ghi audit, nuốt lỗi (không bao giờ làm hỏng request chính). Tự tạo bảng nếu chưa có.
-async function logAdminAction(env, request, action, targetId, detail) {
-	try {
-		await env.DB.prepare(`CREATE TABLE IF NOT EXISTS admin_audit (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      action TEXT NOT NULL,
-      target_id TEXT,
-      detail TEXT,
-      ip TEXT,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`).run();
-		await env.DB.prepare(
-			"INSERT INTO admin_audit (action, target_id, detail, ip) VALUES (?, ?, ?, ?)"
-		).bind(
-			String(action).slice(0, 80),
-			targetId ? String(targetId).slice(0, 200) : null,
-			detail ? String(detail).slice(0, 1000) : null,
-			getClientIP(request).slice(0, 60)
-		).run();
-	} catch (_e) {}
-}
-// ============ RESPONSE HELPER ============
-function jsonResponse(data, status = 200, request) {
-	const response = new Response(JSON.stringify(data), {
-		status,
-		headers: {
-			"Content-Type": "application/json"
-		}
-	});
-	return addCORSHeaders(response, request);
-}
-
-function errorResponse(message, status = 400, request) {
-	return jsonResponse({
-		error: message,
-		success: false
-	}, status, request);
-}
+// P1 REFACTOR: utilities đã chuyển sang .worker/utils/
+import {
+  getCORSHeaders,
+  handleCORSPreflight,
+  addCORSHeaders
+} from './utils/cors.js';
+import {
+  checkRateLimit,
+  applyRateLimit
+} from './utils/rate-limit.js';
+import {
+  escapeHTML,
+  sanitizeInput,
+  sanitizeName,
+  sanitizeURL
+} from './utils/sanitize.js';
+import {
+  isAdminEndpoint,
+  requiresWriteKey,
+  constantTimeCompare,
+  getClientIP,
+  verifyAdminRole,
+  verifyAdminKey,
+  isAdminLocked,
+  recordAdminFail,
+  clearAdminFail,
+  checkAdminRateLimit,
+  checkAdminAuth,
+  logAdminAction
+} from './utils/auth.js';
+import {
+  jsonResponse,
+  errorResponse
+} from './utils/response.js';
 // ============ P0: PAGINATION + VALIDATION HELPERS ============
 // Chuẩn query ?page=1&limit=50. Clamp để chống abuse (limit tối đa 100).
 function parsePagination(url, defaultLimit = 50, maxLimit = 100) {

@@ -41,6 +41,9 @@ import { createPortalScene } from '@portal';
 // SFX MODULE — hệ thống hiệu ứng âm thanh — dùng importmap @sfx
 // mountAudioElements dựng toàn bộ <audio> từ manifest AUDIO_SOURCES trong data.js
 import { mountAudioElements, initSfx, setMainBgm, setMainBgmResumeHandler, isSfxDucking, isQuestBgmActive, sfxGacha, sfxBlanket, sfxBlink, sfxGuild, sfxBlessing, sfxWoodbox, sfxPaper, sfxBell, sfxCoin, sfxWelcome, sfxGuestHelper, sfxWelcomeBack, stopSfx } from '@sfx';
+// P1 REFACTOR: constants + apiClient
+import { API_URL, GOOGLE_CLIENT_ID, CLOUDINARY_CLOUD_NAME, CLOUDINARY_UPLOAD_PRESET, TIMING, UI, API_TIMEOUT, VALIDATION, PAGINATION, GAME } from '@constants';
+import { fetchJSON, safeApiCall, apiSyncUser, apiGetLeaderboard, apiGetProfile, apiGetGuildQuests, apiRegisterGuildQuest, apiGetGemMilestone, apiGoogleLogin, apiRegisterFirstGacha, apiGacha, apiUseBuff, apiCheckQR, apiGetShopProducts, apiPlaceShopOrder, apiCheckin, apiSubmitFB, apiRequestChangeName, apiReferral, apiGetQuizQuestions, apiQuizComplete, apiSyncPoints, apiUpdateAvatar, apiGetInventoryList, apiGetGemsList } from '@api';
 
 // Hằng số toán học dùng chung (Golden Angle cho phân bố đều trên cầu)
 const GOLDEN_ANGLE = Math.PI * (Math.sqrt(5) - 1);
@@ -48,10 +51,6 @@ const GOLDEN_ANGLE = Math.PI * (Math.sqrt(5) - 1);
 // ======================================================
 // 1. CONFIG & DATA SYNC (BỎ DẤU / Ở CUỐI TRÁNH LỖI 404)
 // ======================================================
-const API_URL = "https://advenature-api.lilnguyen-dcr.workers.dev";
-const GOOGLE_CLIENT_ID = "581456693359-uuhqadehjdotrjr37mo8iei02pvilthf.apps.googleusercontent.com";
-const CLOUDINARY_CLOUD_NAME = "aurorawoods"; 
-const CLOUDINARY_UPLOAD_PRESET = "advenature";
 
 let tempGoogleProfile = null;
 let selectedClass = "Ranger";
@@ -1395,29 +1394,6 @@ function sanitizeAvatarUrl(raw, seed = "advenature") {
     if (/^https?:\/\//i.test(v) && !/javascript:|data:|vbscript:|file:/i.test(v)) return v;
     if (v.startsWith("/") && !v.startsWith("//")) return v;
     return `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(seed)}`;
-}
-
-async function fetchJSON(url, options = {}, timeoutMs = 15000) {
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
-    try {
-        const res = await fetch(url, { ...options, signal: ctrl.signal });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return await res.json();
-    } finally {
-        clearTimeout(timer);
-    }
-}
-
-async function safeApiCall(fn, fallback = null, logTag = "API") {
-    try {
-        return await fn();
-    } catch (e) {
-        if (e?.name === "AbortError") console.warn(`[${logTag}] timeout`);
-        else console.warn(`[${logTag}]`, e);
-        try { toast?.error?.("LỖI KẾT NỐI", "Đã có lỗi xảy ra. Vui lòng thử lại sau."); } catch (_) {}
-        return fallback;
-    }
 }
 
 /**

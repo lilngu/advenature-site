@@ -2,18 +2,20 @@
 // CORS CONFIGURATION (P0 SECURITY FIX)
 // ======================================================
 // Whitelist specific domains instead of allowing all origins
+// Aligned with inline worker.js (2026-10-16)
 
 /**
  * Allowed origins - ONLY these domains can make API requests
- * Add your production and staging domains here
  */
-const ALLOWED_ORIGINS = [
-  "https://advenature.pages.dev",           // Cloudflare Pages production
-  "https://advenature-staging.pages.dev",   // Staging environment (if you have one)
-  "http://localhost:3000",                  // Local development
-  "http://localhost:8788",                  // Wrangler dev server
-  "http://127.0.0.1:3000",                  // Alternative localhost
-  "http://127.0.0.1:8788"                   // Alternative localhost
+export const ALLOWED_ORIGINS = [
+  "https://rungtinhlinh.com",
+  "https://advenature-site.pages.dev",
+  "http://127.0.0.1:5500",
+  "http://localhost:5500",
+  "http://127.0.0.1:5501",
+  "http://localhost:5501",
+  "http://127.0.0.1:8788",
+  "http://localhost:8788"
 ];
 
 /**
@@ -23,17 +25,12 @@ const ALLOWED_ORIGINS = [
  */
 export function getCORSHeaders(request) {
   const origin = request.headers.get("Origin");
-  
-  // Check if origin is in whitelist
   const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : "";
-  
   return {
     "Access-Control-Allow-Origin": allowedOrigin,
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization, x-admin-key",
-    // Optional: Allow credentials (cookies, authorization headers)
     "Access-Control-Allow-Credentials": "true",
-    // Cache preflight requests for 1 hour
     "Access-Control-Max-Age": "3600"
   };
 }
@@ -59,13 +56,11 @@ export function handleCORSPreflight(request) {
 export function addCORSHeaders(response, request) {
   const corsHeaders = getCORSHeaders(request);
   const headers = new Headers(response.headers);
-  
+
   Object.entries(corsHeaders).forEach(([key, value]) => {
-    if (value) { // Only add if value is not empty
-      headers.set(key, value);
-    }
+    if (value) headers.set(key, value);
   });
-  
+
   return new Response(response.body, {
     status: response.status,
     statusText: response.statusText,
