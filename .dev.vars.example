@@ -1,0 +1,15 @@
+# ============================================
+# Local dev vars (wrangler dev) — KHONG commit file .dev.vars that!
+# Copy: cp .dev.vars.example .dev.vars  (Windows: copy)
+# Docs: https://developers.cloudflare.com/workers/configuration/secrets/
+# ============================================
+
+# D1/KV local se tu dong mock khi chay `wrangler dev`.
+# Cac secret duoi chi dung cho local, prod dung `wrangler secret put`.
+
+TELEGRAM_BOT_TOKEN="paste-dev-bot-token"
+TELEGRAM_ADMIN_CHAT_ID="paste-dev-chat-id"
+MANAGER_IDS="paste-dev-chat-id"
+ADMIN_SECRET_KEY="dev-only-change-me-32chars-min"
+ADMIN_VIEW_KEY="dev-view-only-key"
+ENVIRONMENT="development"

@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "title": "Hang Ổ Goblin Ma Quái",
+    "image": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=60",
+    "desc": "Đột nhập vào sào huyệt goblin lấy lại bảo ngọc. Hãy né tránh các cạm bẫy và lính gác.",
+    "threshold": 10,
+    "speaker": "Thợ Săn Bram",
+    "dialogue": {
+      "success": [
+        "Bạn lật tấm bia đá nhẹ nhàng — không một lính gác nào kịp nhận ra.",
+        "Con goblin gục xuống trước khi kịp hú gọi. Bảo ngọc nằm ngay trên bàn thờ.",
+        "Dây cạm bẫy đứt trong khoảnh khắc thần kỳ, bạn lọt qua khe hở mà không bị phát hiện.",
+        "Ánh sáng từ bảo ngọc dẫn lối, cả đàn goblin vẫn đang ngủ say sau bức tường đá."
+      ],
+      "fail": [
+        "Tiếng rào lạnh sống lưng — bạn vấp phải dây bẫy! Cả ổ đánh thức trong một giây.",
+        "Lính gác chỉ cần một tiếng kêu là mọi thứ đổi bên, bạn phải lùi lại liền mạt.",
+        "Bạn để lộ dấu chân vào bùn. Một mũi tên đã kịp găm vào ba lô của ngươi.",
+        "Gương mặt bạn phản chiếu trên mặt nước đọng — và con quái vật đã nhìn thấy nó."
+      ],
+      "victory": "\"Bảo ngọc đã thuộc về ngươi. Sào huyệt này giờ chỉ còn là một căn nhà trống.\"",
+      "defeat": "\"Chưa xong đâu. Nhưng ngươi vẫn còn cơ hội — vận may thường quay về ở lần sau.\""
+    }
+  },
+  {
+    "id": 2,
+    "title": "Giải Ấn Phong Tháp Cổ",
+    "image": "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600&auto=format&fit=crop&q=60",
+    "desc": "Thần chú phong ấn đòi hỏi sự tập trung pháp lực cao độ. Giải trừ cả 3 tầng kết giới.",
+    "threshold": 13,
+    "speaker": "Học Giả Vell",
+    "dialogue": {
+      "success": [
+        "Vòng ma thuật vỡ tan! Bạn đã phá vỡ tầng ấn đầu tiên của phong tháp.",
+        "Cổng đá khẽ rít rồi hé mở, ánh sáng xanh lạnh tràn ra từ bên trong.",
+        "Răn chữ cổ phát sáng rồi tan thành bụi vàng. Tầng ấn tiếp theo đã lộ ra.",
+        "Dòng chữ cổ đáp lại bằng giọng thì thầm: \"Đủ tư cách. Đi tiếp đi, kẻ xâm nhập.\""
+      ],
+      "fail": [
+        "Bạn đọc sai một vần ấn. Luồng ma lực phản phong thi triền đầu bạn.",
+        "Phong tháp tự khép lại. Cánh cửa đá nghiến răng chặn đường ra của bạn.",
+        "Áp lực ma lực dồn nặng lên vai, bạn phải dừng lại trước khi tổng thất.",
+        "Bóng tối trong hành lang nhảy sang bên, nuốt chửng biển đèn của bạn."
+      ],
+      "victory": "\"Ba tầng kết giới đã mở. Những gì chôn bên dưới phong tháp giờ thuộc về ngươi.\"",
+      "defeat": "\"Phong ấn vẫn nguyên vẹn, nhưng nó đã ghi nhớ hơi thở của ngươi. Hãy đi và suy nghĩ thêm.\""
+    }
+  },
+  {
+    "id": 3,
+    "title": "Đánh Thức Rồng Lửa",
+    "image": "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=60",
+    "desc": "Con rồng ngủ say trên kho vàng viễn cổ. Bạn cần 3 bước di chuyển khéo léo để rút lui an toàn.",
+    "threshold": 15,
+    "speaker": "Thủ Lĩnh Riven",
+    "dialogue": {
+      "success": [
+        "Bạn trượt qua cơn thở nóng của con rồng mà nó vẫn chưa tỉnh giấc.",
+        "Kho vàng tỏa sáng trước mắt. Tim bạn đập dồn dập, nhưng đôi tay vẫn vững.",
+        "Vảy đỏ rực chỉ cách bạn vài bước chân — và thứ đáng sợ nhất vẫn đang ngủ.",
+        "Con rồng trở mình, đá chạm nhau vang lên, nhưng ánh mắt vẫn nhắm nghiền."
+      ],
+      "fail": [
+        "Một vảy rơi trúng vai bạn. Rồng rít lên và cả kho cháy bừng.",
+        "Bạn bước phải rương vàng, tiếng kim loại vang lên giữa tầng ức rồng.",
+        "Hơi thở rồng thiêu rụi phần da thịt còn lại. Bạn phải lùi lại thật nhanh.",
+        "Móng vuốt của nó lướt qua bên tai bạn. Chỉ một phẩy nữa là hết."
+      ],
+      "victory": "\"Con rồng vẫn ngủ, kho vàng đã là của ngươi. Câu chuyện này sẽ được kể ở một quán rượu khác.\"",
+      "defeat": "\"Tiếng gầm vọng khắp sàn đá. Ngươi đã mất dấu trong đám khói đen — hãy quay lại khi còn kịp.\""
+    }
+  }
+]

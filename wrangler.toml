@@ -1,0 +1,48 @@
+# ======================================================
+# advenature-api — Cloudflare Worker config (wrangler)
+# Deploy: wrangler deploy
+# Dev:    wrangler dev
+# D1:     wrangler d1 migrations apply advenature-db --remote
+# ======================================================
+name = "advenature-api"
+main = ".worker/worker.js"
+compatibility_date = "2026-10-01"
+compatibility_flags = ["nodejs_compat"]
+
+# ---- D1 Database ----
+[[d1_databases]]
+binding = "DB"
+database_name = "advenature-db"
+database_id = "7e0f3e06-b89c-4062-900b-53626c979601"
+migrations_dir = ".worker/migrations"
+
+# ---- KV (rate-limit, rollquest, admin lockout) ----
+[[kv_namespaces]]
+binding = "QUIZ_KV"
+id = "985abdfca39048ffb25ff6063817492a"
+
+# ---- Public vars (non-secret) ----
+[vars]
+ENVIRONMENT = "production"
+MANAGER_IDS = "1994636084"
+# TELEGRAM_ADMIN_CHAT_ID + BOT_TOKEN + ADMIN keys
+# => cau hinh bang `wrangler secret put`, KHONG commit vao git.
+# Danh sach secret can thiet:
+#   TELEGRAM_BOT_TOKEN, TELEGRAM_ADMIN_CHAT_ID,
+#   ADMIN_SECRET_KEY, ADMIN_VIEW_KEY (optional)
+# Ghi chu: MANAGER_IDS de o vars de khoi mat khi deploy de (remote cu co san).
+
+# ---- Durable Objects (tuong lai, hien de placeholder) ----
+# Khi scale them DO (vi du: realtime phong cho, order coordinator):
+# 1. Tao class trong .worker/do/*.js
+# 2. Mo comment khoi duoi + them binding tuong ung
+# 3. Chay `wrangler deploy` (can migration new_classes)
+#
+# [[durable_objects.bindings]]
+# name = "ORDER_COORDINATOR"
+# class_name = "OrderCoordinator"
+# script_name = "advenature-api"
+#
+# [[migrations]]
+# tag = "v1-do"
+# new_classes = ["OrderCoordinator"]

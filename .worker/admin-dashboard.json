@@ -1,0 +1,23 @@
+{
+  "note": "Copy-paste thủ công vào Cloudflare Dashboard. KHÔNG dùng wrangler.",
+  "worker_secrets": {
+    "where": "Workers > advenature-api > Settings > Variables > Secrets",
+    "add": [
+      { "name": "ADMIN_SECRET_KEY", "note": "Key WRITE toàn quyền, chuỗi random >=32 ký tự. VD tạo bằng: openssl rand -base64 32" },
+      { "name": "ADMIN_VIEW_KEY", "note": "Key VIEW chỉ đọc (GET). Cấp cho người chỉ cần xem. Để trống nếu chưa cần." }
+    ]
+  },
+  "waf_custom_rule": {
+    "where": "Security > WAF > Custom rules > Create rule",
+    "rule_name": "Guard admin.html",
+    "expression": "(http.request.uri.path eq \"/admin.html\")",
+    "action_example": "Managed Challenge (hoặc Block ngoài IP VN của bạn)",
+    "ip_allowlist_suggestion": "Nếu có IP tĩnh, thêm AND (ip.src ne 1.2.3.4) rồi Block"
+  },
+  "verify_after_deploy": [
+    "GET /api/admin/stats với key VIEW phải 200",
+    "POST /api/admin/reset-daily với key VIEW phải 403",
+    "Sai key 5 lần từ 1 IP phải 429 trong 10 phút",
+    "GET /api/admin/audit-log với key WRITE phải thấy log add-points/delete-user"
+  ]
+}

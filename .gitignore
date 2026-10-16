@@ -1,14 +1,30 @@
-.worker/
-.worker/worker.js
+# ---- Cloudflare / wrangler (chi giu secret, commit ha tang) ----
+# Secret local — KHONG commit
 .worker/.env
-.worker/rollquest_scenarios.json
+.worker/.dev.vars
+.dev.vars
+.wrangler/
+# .dev.vars.example DUOC commit (mau cho dev moi)
+# Cho phep commit ha tang worker (bo blanket .worker/)
+!.worker/worker.js
+!.worker/schema.sql
+!.worker/migrations/
+!.worker/utils/
+!.worker/admin-dashboard.json
+!.worker/rollquest_scenarios.json
+# wrangler + package o root duoc commit (khong ignore)
 .module/rpg-quest.html
 .module/portal.html
-.worker/schema.sql
-.worker/migrate-rollquest.sql
 .opencode/
 .opencode-framework/
 .opencode-history
+# Markdown: ignore md rac + docs không cần thiết, chỉ giữ 2 file cần
 *.md
+docs/**/*.md
+!docs/WORKFLOW-WRANGLER.md
+!docs/adr/002-wrangler-pipeline.md
+!design/**/*.md
+!README.md
 .admin/
 dist-admin/
+node_modules/

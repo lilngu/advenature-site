@@ -1,0 +1,20 @@
+{
+  "name": "advenature-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Rung Tinh Linh — Pages + Worker API (Cloudflare D1/KV)",
+  "scripts": {
+    "dev": "wrangler dev --config wrangler.toml",
+    "deploy": "wrangler deploy --config wrangler.toml",
+    "deploy:dry": "wrangler deploy --config wrangler.toml --dry-run",
+    "d1:list": "wrangler d1 list",
+    "d1:migrate:local": "wrangler d1 migrations apply advenature-db --local --config wrangler.toml",
+    "d1:migrate:remote": "wrangler d1 migrations apply advenature-db --remote --config wrangler.toml",
+    "secret:put": "wrangler secret put --config wrangler.toml",
+    "pages:deploy": "wrangler pages deploy . --project-name=advenature-site --commit-dirty=true"
+  },
+  "devDependencies": {
+    "wrangler": "^4.151.0"
+  }
+}
