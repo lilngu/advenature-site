@@ -3134,15 +3134,6 @@ body.guest-mode .dock-btn:not(.center-core) {
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     z-index: 60;
 }
-.avatar-change-tooltip::after {    /* mũi tên chỉ lên avatar */
-    content: '';
-    position: absolute;
-    top: -6px;
-    left: 50%;
-    transform: translateX(-50%);
-    border: 6px solid transparent;
-    border-bottom-color: #2f6cb0;
-}
 .avatar-change-tooltip.show {
     opacity: 1;
     transform: translateX(-50%) scale(1);
