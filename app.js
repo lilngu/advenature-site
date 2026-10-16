@@ -2256,16 +2256,19 @@ function mapInventoryFromBackend(rawItems) {
     if (!Array.isArray(rawItems)) return [];
     return rawItems.map(invItem => {
         const masterItem = BLESSINGS_DATA.find(b => b.id === invItem.item_code);
+        const shopItem = (typeof activeShopItems !== 'undefined' ? activeShopItems : []).find(s => s.id === invItem.item_code);
+        const isShopTicket = String(invItem.category || '') === 'shop_ticket' || !!shopItem;
         return {
             id: invItem.item_code,
-            name: invItem.item_name,
-            iconClass: masterItem ? masterItem.iconClass : "ico-item-01",
-            tier: masterItem ? masterItem.tier : "common",
-            desc: masterItem ? masterItem.desc : "Vật phẩm lưu trữ thực địa.",
+            name: invItem.item_name || (shopItem ? shopItem.name : invItem.item_code),
+            iconClass: masterItem ? masterItem.iconClass : (shopItem ? shopItem.iconClass : "ico-item-01"),
+            tier: masterItem ? masterItem.tier : "rare",
+            desc: masterItem ? masterItem.desc : (shopItem ? shopItem.desc : "Vé dịch vụ LARP — đưa QR này cho manager quét tại cổng."),
             isBuff: masterItem ? masterItem.isBuff : false,
             buff: masterItem ? masterItem.buff : null,
             quantity: invItem.quantity || 1,
-            qr_token: invItem.qr_token
+            qr_token: invItem.qr_token,
+            category: invItem.category || (isShopTicket ? 'shop_ticket' : 'qr_offline')
         };
     });
 }
@@ -3035,7 +3038,7 @@ navButtons.forEach(btn => {
         navButtons.forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         if (targetId === "inventory-view") {
-            syncUserDataFromBackend(); // Kéo dữ liệu D1 mới nhất về túi đồ
+            syncUserDataFromBackend().finally(() => updateInventoryDot()); // Kéo D1 mới nhất + refresh dot MỚI
             checkAndClaimGemMilestones(); // Nhận mốc sưu tầm 33 biến thể nếu còn thiếu
             // SFX: tiếng mở túi vật phẩm
             sfxBlanket();
@@ -3420,6 +3423,7 @@ function renderInventory5x5() {
             openItemModal(currentUser.inventory[idx], idx);
         });
     });
+    if (typeof updateInventoryDot === "function") updateInventoryDot();
 }
 
 // Modal Item QR
@@ -3434,6 +3438,18 @@ const BUFF_USE_BTN_LABEL = "✧ SỬ DỤNG BUFF NGAY ✧";
 
 function openItemModal(item, itemIndex) {
     if (qrCheckPollTimer) clearInterval(qrCheckPollTimer);
+
+    // Spec: mo ve lan dau thi het dot MOI (per-ticket)
+    if (item && item.qr_token && String(item.category || '') === 'shop_ticket') {
+        try {
+            const seen = getSeenTicketIds();
+            if (!seen.has(item.qr_token)) {
+                seen.add(item.qr_token);
+                localStorage.setItem("seenTicketIds", JSON.stringify(Array.from(seen)));
+                setTimeout(updateInventoryDot, 500);
+            }
+        } catch (e) {}
+    }
 
     itemModal.classList.remove("hidden");
     applyI18nToElement(itemModal);
@@ -3576,29 +3592,81 @@ document.getElementById("closeItemModal").addEventListener("click", () => {
 const selectedShopIds = new Set();
 const shopDetailModal = document.getElementById("shopDetailModal");
 let viewingShopItem = null;
+// Spec shop-order-fulfillment: DB dong + fallback data.js, cache 5p
+let activeShopItems = SHOP_ITEMS;
+let shopLoading = false;
+
+async function fetchShopProducts() {
+    const container = document.getElementById("shopItemsContainer");
+    // Loading skeleton (Acceptance: skeleton + disable checkout)
+    shopLoading = true;
+    if (container) {
+        container.innerHTML = Array.from({ length: 6 }).map(() => `<div class="shop-2col-card skeleton" aria-hidden="true"><div class="shop-2col-title">…</div></div>`).join('');
+    }
+    const checkoutBtn = document.getElementById("btnCheckoutShop");
+    if (checkoutBtn) { checkoutBtn.disabled = true; checkoutBtn.textContent = "Đang tải…"; }
+    try {
+        const res = await fetch(`${API_URL}/api/shop-products`, { headers: { "Content-Type": "application/json" } });
+        const data = await res.json();
+        if (data.success && Array.isArray(data.products) && data.products.length) {
+            activeShopItems = data.products;
+        } else {
+            activeShopItems = SHOP_ITEMS;
+        }
+    } catch (e) {
+        activeShopItems = SHOP_ITEMS;
+    } finally {
+        shopLoading = false;
+        if (checkoutBtn) { checkoutBtn.disabled = false; checkoutBtn.textContent = "ĐẶT TRƯỚC VÉ"; }
+        renderShop();
+        updateShopCheckout();
+    }
+}
+
+function isOutOfStock(p) {
+    return p && p.stock !== undefined && p.stock !== null && Number(p.stock) !== -1 && Number(p.stock) <= 0;
+}
 
 function renderShop() {
     const container = document.getElementById("shopItemsContainer");
     if (!container) return;
+    if (shopLoading) return;
 
-    container.innerHTML = SHOP_ITEMS.map(p => `
-        <div class="shop-2col-card ${selectedShopIds.has(p.id) ? 'selected' : ''}" data-id="${p.id}">
+    container.innerHTML = activeShopItems.map(p => {
+        const out = isOutOfStock(p);
+        return `
+        <div class="shop-2col-card ${selectedShopIds.has(p.id) ? 'selected' : ''} ${out ? 'out-of-stock' : ''}" data-id="${p.id}" ${out ? 'aria-disabled="true"' : 'tabindex="0" role="button"'}>
             <div class="shop-2col-icon"><i class="rpg-ico ${p.iconClass}" style="width:32px;height:32px;"></i></div>
             <div class="shop-2col-title">${p.name}</div>
-            <div class="shop-2col-tag">💎 ${p.tt} Tinh Thạch</div>
-        </div>
-    `).join('');
+            <div class="shop-2col-tag">💎 ${p.tt} Tinh Thạch${out ? ' • HẾT' : ''}</div>
+        </div>`;
+    }).join('');
 
     container.querySelectorAll(".shop-2col-card").forEach(c => {
-        c.addEventListener("click", () => {
+        if (c.classList.contains('out-of-stock')) {
+            c.addEventListener("click", () => {
+                toast.warning('HẾT HÀNG', 'Gói này đã hết suất (PKG_3 chỉ 2 phòng). Vui lòng chọn gói khác!');
+            });
+            return;
+        }
+        const open = () => {
             const id = c.dataset.id;
-            viewingShopItem = SHOP_ITEMS.find(x => x.id === id);
+            viewingShopItem = activeShopItems.find(x => x.id === id);
             openShopDetail(viewingShopItem);
+        };
+        c.addEventListener("click", open);
+        c.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); }
         });
     });
 }
 
 function openShopDetail(item) {
+    if (!item) return;
+    if (isOutOfStock(item)) {
+        toast.warning('HẾT HÀNG', 'Gói này đã hết suất. Vui lòng chọn gói khác!');
+        return;
+    }
     document.getElementById("shopModalIconBox").innerHTML = `<i class="rpg-ico ${item.iconClass}" style="width:48px;height:48px;"></i>`;
     document.getElementById("shopModalTitle").textContent = item.name;
     document.getElementById("shopModalPrice").textContent = `💎 ${item.tt} Tinh Thạch (~${item.vnd.toLocaleString()} đ)`;
@@ -3606,7 +3674,7 @@ function openShopDetail(item) {
 
     const btn = document.getElementById("btnToggleCartItem");
     const isSelected = selectedShopIds.has(item.id);
-    btn.textContent = isSelected ? "BỎ CHỌN MỤC NÀY" : "CHỌN MỤC NÀY";
+    btn.textContent = isSelected ? "BỎ CHỌN MỤC NÀY" : "THÊM VÀO GIỎ";
     btn.style.background = isSelected ? "#c9184a" : "linear-gradient(180deg, #7c6cff, #4a34b8)";
 
     btn.onclick = () => {
@@ -3622,14 +3690,20 @@ function openShopDetail(item) {
 
     shopDetailModal.classList.remove("hidden");
     applyI18nToElement(shopDetailModal);
+    btn.focus();
 }
 document.getElementById("closeShopDetailModal")?.addEventListener("click", () => shopDetailModal.classList.add("hidden"));
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !shopDetailModal.classList.contains("hidden")) {
+        shopDetailModal.classList.add("hidden");
+    }
+});
 
 function updateShopCheckout() {
     let totalTT = 0;
     let totalVND = 0;
     selectedShopIds.forEach(id => {
-        const item = SHOP_ITEMS.find(x => x.id === id);
+        const item = activeShopItems.find(x => x.id === id);
         if (item) {
             totalTT += item.tt;
             totalVND += item.vnd;
@@ -3640,11 +3714,49 @@ function updateShopCheckout() {
     document.getElementById("cartTotalVnd").textContent = totalVND.toLocaleString();
 }
 
+// Dot MOI tren dock tui: persist toi khi user mo ve lan dau
+function getSeenTicketIds() {
+    try { return new Set(JSON.parse(localStorage.getItem("seenTicketIds") || "[]")); }
+    catch (e) { return new Set(); }
+}
+function markTicketsSeen() {
+    try {
+        const ids = (currentUser.inventory || []).map(i => i.qr_token).filter(Boolean);
+        localStorage.setItem("seenTicketIds", JSON.stringify(ids));
+    } catch (e) {}
+    updateInventoryDot();
+}
+function updateInventoryDot() {
+    const seen = getSeenTicketIds();
+    const hasNew = (currentUser.inventory || []).some(i => i.qr_token && !seen.has(i.qr_token) && String(i.category || '') === 'shop_ticket');
+    let dot = document.getElementById("inventoryNewDot");
+    const dockBtn = document.querySelector('.dock-btn[data-target="inventory-view"]');
+    // Neo vao .medallion-btn (da position:relative san), KHONG dung toi .dock-btn (absolute + transform)
+    const anchor = dockBtn ? dockBtn.querySelector(".medallion-btn, .dock-icon-ring") : null;
+    if (hasNew && anchor) {
+        if (!dot) {
+            dot = document.createElement("span");
+            dot.id = "inventoryNewDot";
+            dot.textContent = "MỚI";
+            dot.style.cssText = "position:absolute;top:-6px;right:-10px;background:#ff3355;color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:10px;z-index:6;pointer-events:none;line-height:1.2;white-space:nowrap;";
+            anchor.appendChild(dot);
+        } else if (dot.parentElement !== anchor) {
+            anchor.appendChild(dot);
+        }
+        dot.style.display = "";
+    } else if (dot) {
+        dot.style.display = "none";
+    }
+}
+
 document.getElementById("btnCheckoutShop")?.addEventListener("click", async () => {
+    const btn = document.getElementById("btnCheckoutShop");
     if (selectedShopIds.size === 0) {
         toast.warning('CHƯA CHỌN SẢN PHẨM', 'Vui lòng chạm chọn ít nhất 1 gói hoặc tiện ích!');
         return;
     }
+    // Chan double-tap khi dang gui (spec: Submitting)
+    if (btn.disabled) return;
     const phone = prompt("Nhập SĐT hoặc Zalo để Hội Ngọc Lục liên hệ xác nhận đơn:");
     if (!phone) return;
 
@@ -3652,8 +3764,12 @@ document.getElementById("btnCheckoutShop")?.addEventListener("click", async () =
     // (đặt sau 2 lần check ở trên để không phát nhầm khi giỏ rỗng hoặc user bỏ prompt)
     sfxCoin();
 
+    const origText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Đang gửi...";
+
     try {
-        await fetch(`${API_URL}/api/shop-order`, {
+        const res = await fetch(`${API_URL}/api/shop-order`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -3664,12 +3780,25 @@ document.getElementById("btnCheckoutShop")?.addEventListener("click", async () =
                 phone: phone
             })
         });
-    } catch(e) {}
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || data.success === false) {
+            throw new Error(data.error || "Gửi đơn thất bại");
+        }
+    } catch(e) {
+        toast.error('GỬI ĐƠN THẤT BẠI', e.message || 'Lỗi kết nối, thử lại sau!');
+        btn.disabled = false;
+        btn.textContent = origText || "ĐẶT TRƯỚC VÉ";
+        return;
+    }
 
-    toast.success('ĐẶT HÀNG THÀNH CÔNG', '✧ Thông tin đơn hàng đã gửi tới Hội Ngọc Lục! Trưởng đoàn sẽ liên hệ sớm nhất qua SĐT/Zalo.');
+    toast.success('ĐÃ TIẾP NHẬN — CHỜ DUYỆT', '✧ Đơn đã gửi tới Hội Ngọc Lục! Vé QR sẽ về túi sau khi Trưởng đoàn bấm duyệt. Mở túi để kiểm tra dot MỚI.');
     selectedShopIds.clear();
     renderShop();
     updateShopCheckout();
+    btn.disabled = false;
+    btn.textContent = "ĐẶT TRƯỚC VÉ";
+    // Refresh DB de lay stock moi (PKG_3) sau khi dat
+    fetchShopProducts();
 });
 
 // ======================================================
@@ -4338,7 +4467,8 @@ inputAvatarFile?.addEventListener("change", async (e) => {
 updateTopBarUI();
 renderInventoryGems();
 renderInventory5x5();
-renderShop();
+updateInventoryDot();
+fetchShopProducts();
 
 // Khởi tạo Button VFX Particle System
 initButtonVFX();

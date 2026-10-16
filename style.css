@@ -171,6 +171,9 @@ body, html {
     vertical-align: middle;
     position: relative;
     flex-shrink: 0;
+    background-position: center;
+    background-size: 100%;
+    background-repeat: no-repeat;
 }
 
 .item-ico::before {
