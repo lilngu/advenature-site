@@ -5352,3 +5352,4 @@ body.guest-mode .dock-btn:not(.center-core) {
  .lb-rank-1 {background-color: #ffbe002b;box-shadow: yellow 2px 2px 2px;}
 .lb-rank-2 {box-shadow: #00abffa6 2px 2px 2px; background: #00ceff2b;}
 .lb-rank-3 {box-shadow: #00ff68a6 2px 2px 2px;    background: #00ff392b;}
+#myRefCodeDisplay {font-family: 'Cinzel';}
