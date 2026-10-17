@@ -723,7 +723,44 @@
             </div>
 
         </div>
-    </div>    <!-- 7. MODAL RPG: TINH LINH BAN CHUC PHUC (THAY THE HOAN TOAN ALERT BROWSER) -->
+    </div>    <!-- MODAL: XÁC NHẬN GACHA CHO GUEST (chưa có Tinh Quang) -->
+    <div id="guestGachaConfirmModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="guestGachaConfirmTitle">
+        <div class="modal-box rpg-glass-box" style="max-width: 320px; text-align: center;">
+            <span class="close-modal" id="closeGuestGachaConfirm" data-i18n-title="common.close">&nbsp;</span>
+            <div style="font-size: 48px; margin-bottom: 12px;">✨</div>
+            <h3 id="guestGachaConfirmTitle" style="color: #ffd166; font-size: 14px; margin-bottom: 8px; font-family: Retro2k;">CHƯA CÓ TINH QUANG</h3>
+            <p style="font-size: 11px; color: #c9c3ff; margin-bottom: 16px; line-height: 1.5; font-family: Retro2k;">
+                Bạn cần quay Gacha để nhận Tinh Quang đầu tiên!<br>
+                Hãy nhấn vào <b style="color: #ffe66d;">Quả Cầu Phép thuật</b> bên dưới để bắt đầu.
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button id="btnGuestGachaNow" class="btn-magical btn-claim" style="width: 100%; padding: 12px;">
+                    ✦ QUAY GACHA NGAY ✦
+                </button>
+                <button id="btnGuestGachaLater" class="btn-celtic" style="width: 100%; padding: 10px; border: 1px solid rgba(255,255,255,0.2);">
+                    Tôi đã là Nhà Phiêu Lưu
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ĐĂNG NHẬP CHO USER ĐÃ ĐĂNG KÝ -->
+    <div id="returningUserLoginModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="returningUserLoginTitle">
+        <div class="modal-box rpg-glass-box" style="max-width: 320px; text-align: center;">
+            <span class="close-modal" id="closeReturningUserLogin" data-i18n-title="common.close">&nbsp;</span>
+            <div style="font-size: 48px; margin-bottom: 12px;">🏰</div>
+            <h3 id="returningUserLoginTitle" style="color: #ffd166; font-size: 14px; margin-bottom: 8px; font-family: Retro2k;">CHÀO MỪNG TRỞ LẠI</h3>
+            <p style="font-size: 11px; color: #c9c3ff; margin-bottom: 16px; line-height: 1.5; font-family: Retro2k;">
+                Nhà Phiêu Lưu đã đăng ký hãy đăng nhập để tiếp tục hành trình!
+            </p>
+            <div id="returningGoogleBtnContainer" style="display: flex; justify-content: center; min-height: 44px; margin-bottom: 10px;"></div>
+            <button id="btnBackToGuestConfirm" class="btn-celtic" style="width: 100%; padding: 10px; border: 1px solid rgba(255,255,255,0.2);">
+                ← Quay Lại
+            </button>
+        </div>
+    </div>
+
+    <!-- 7. MODAL RPG: TINH LINH BAN CHUC PHUC (THAY THE HOAN TOAN ALERT BROWSER) -->
     <div id="blessingModal" class="modal-overlay hidden">
         <div class="modal-box rpg-blessing-box">
             <div class="blessing-halo"></div>

@@ -2204,6 +2204,23 @@ function triggerGachaSummon() {
     if (guideHelperInitTimeout) clearTimeout(guideHelperInitTimeout);
     if (loreHelperInitTimeout) clearTimeout(loreHelperInitTimeout);
 
+    // Ẩn toàn bộ Magic Orb và Dock Trigger khi Gacha bắt đầu
+    const magicOrbWrapper = document.getElementById("magicOrbWrapper");
+    if (magicOrbWrapper) {
+        magicOrbWrapper.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        magicOrbWrapper.style.opacity = '0';
+        magicOrbWrapper.style.transform = 'scale(0.5)';
+    }
+    
+    // Ẩn Dock Gacha Trigger (bao gồm hào quang vàng)
+    const dockGachaTriggerEl = document.getElementById("dockGachaTrigger");
+    if (dockGachaTriggerEl) {
+        dockGachaTriggerEl.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        dockGachaTriggerEl.style.opacity = '0';
+        dockGachaTriggerEl.style.transform = 'translateX(-50%) scale(0.5)';
+        dockGachaTriggerEl.style.pointerEvents = 'none';
+    }
+
     claimContainer.classList.add("hidden");
     lootText.classList.remove("show");
     
@@ -2621,6 +2638,7 @@ async function handleGoogleSuccess(response) {
             // VOICE: chào mừng user đăng nhập trở lại (chạy trong gesture Google login nên qua được autoplay policy)
             sfxWelcomeBack();
             state = STATE.IDLE;
+            showMagicOrb();
             // Nhận mốc sưu tầm bị bỏ lỡ ở phiên trước (offline hoặc tab bị đóng)
             checkAndClaimGemMilestones();
             // Trigger helpers sau 3s khi đã login xong
@@ -2655,8 +2673,181 @@ document.getElementById("closeOnboardingModal")?.addEventListener("click", () =>
     }
 });
 
+// =====================================================
+// HELPER: Hiện lại Magic Orb sau khi Gacha kết thúc
+// =====================================================
+function showMagicOrb() {
+    const magicOrbWrapper = document.getElementById("magicOrbWrapper");
+    if (magicOrbWrapper) {
+        magicOrbWrapper.style.opacity = '1';
+        magicOrbWrapper.style.transform = 'scale(1)';
+    }
+    
+    // Hiện lại Dock Gacha Trigger
+    const dockGachaTriggerEl = document.getElementById("dockGachaTrigger");
+    if (dockGachaTriggerEl) {
+        dockGachaTriggerEl.style.opacity = '1';
+        dockGachaTriggerEl.style.transform = 'translateX(-50%) scale(1)';
+        dockGachaTriggerEl.style.pointerEvents = '';
+    }
+    
+    // Hiện lại Guest Helper nếu vẫn ở guest mode
+    if (document.body.classList.contains('guest-mode') && guestHelper && !guestHelper.classList.contains('hidden')) {
+        // Chỉ show lại nếu đang ở gacha-view và state IDLE
+        const gachaView = document.getElementById("gacha-view");
+        if (gachaView && gachaView.classList.contains("active") && !gachaView.classList.contains("hidden") && state === STATE.IDLE) {
+            showGuestHelper();
+        }
+    }
+}
+
+// =====================================================
+// MODAL XÁC NHẬN GACHA CHO GUEST (chưa có Tinh Quang)
+// =====================================================
+const guestGachaConfirmModal = document.getElementById("guestGachaConfirmModal");
+const btnGuestGachaNow = document.getElementById("btnGuestGachaNow");
+const btnGuestGachaLater = document.getElementById("btnGuestGachaLater");
+const closeGuestGachaConfirm = document.getElementById("closeGuestGachaConfirm");
+
+function openGuestGachaConfirm() {
+    if (!guestGachaConfirmModal) return;
+    guestGachaConfirmModal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+    btnGuestGachaNow?.focus();
+}
+
+function closeGuestGachaConfirmModal() {
+    if (!guestGachaConfirmModal) return;
+    guestGachaConfirmModal.classList.add("hidden");
+    document.body.style.overflow = "";
+}
+
+btnGuestGachaNow?.addEventListener("click", () => {
+    closeGuestGachaConfirmModal();
+    // Ẩn Guest Helper Fairy khi gacha trigger
+    hideGuestHelper();
+    // Trigger gacha ngay lập tức
+    if (state === STATE.IDLE) {
+        triggerGachaSummon();
+    }
+});
+
+// =====================================================
+// MODAL ĐĂNG NHẬP CHO USER ĐÃ ĐĂNG KÝ
+// =====================================================
+const returningUserLoginModal = document.getElementById("returningUserLoginModal");
+const returningGoogleBtnContainer = document.getElementById("returningGoogleBtnContainer");
+const btnBackToGuestConfirm = document.getElementById("btnBackToGuestConfirm");
+const closeReturningUserLogin = document.getElementById("closeReturningUserLogin");
+
+function openReturningUserLogin() {
+    if (!returningUserLoginModal) return;
+    returningUserLoginModal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+    
+    // Khởi tạo Google Auth cho modal đăng nhập
+    if (returningGoogleBtnContainer) {
+        returningGoogleBtnContainer.innerHTML = `
+            <div style="font-size: 11px; color: #ffe66d; padding: 10px; display: flex; align-items: center; gap: 6px;">
+                <span>⏳</span> <span>Đang kết nối dịch vụ Google...</span>
+            </div>
+        `;
+        
+        let attempts = 0;
+        const maxAttempts = 35;
+        
+        const checkGoogleInterval = setInterval(() => {
+            attempts++;
+            
+            if (typeof google !== "undefined" && google.accounts && google.accounts.id) {
+                clearInterval(checkGoogleInterval);
+                try {
+                    google.accounts.id.initialize({
+                        client_id: GOOGLE_CLIENT_ID,
+                        callback: handleGoogleSuccess,
+                        auto_select: false
+                    });
+                    
+                    returningGoogleBtnContainer.innerHTML = "";
+                    google.accounts.id.renderButton(returningGoogleBtnContainer, {
+                        type: "standard",
+                        theme: "filled_blue",
+                        size: "large",
+                        text: "signin_with",
+                        shape: "pill",
+                        logo_alignment: "left",
+                        width: 260
+                    });
+                    return;
+                } catch (err) {
+                    console.error("Lỗi Google GIS render:", err);
+                }
+            }
+            
+            if (attempts >= maxAttempts) {
+                clearInterval(checkGoogleInterval);
+                returningGoogleBtnContainer.innerHTML = `
+                    <div style="text-align: center;">
+                        <div style="font-size: 10px; color: #ff99aa; margin-bottom: 6px;">
+                            Không thể kết nối Google (thường do AdBlock hoặc mạng chậm)
+                        </div>
+                        <button type="button" class="btn-action" id="btnBypassGoogleReturning" style="font-size: 10px; padding: 6px 12px;">
+                            ✧ Nhập Gmail để tiếp tục ✧
+                        </button>
+                    </div>
+                `;
+                document.getElementById("btnBypassGoogleReturning")?.addEventListener("click", () => {
+                    const emailInput = prompt("Nhập địa chỉ Gmail của bạn:", "user@gmail.com");
+                    if (emailInput && emailInput.includes("@")) {
+                        handleGoogleSuccess({
+                            mock: true,
+                            profile: {
+                                sub: "AW_G_" + Math.random().toString(36).substring(2, 9),
+                                email: emailInput.trim(),
+                                name: emailInput.split("@")[0],
+                                picture: "https://api.dicebear.com/7.x/adventurer/svg?seed=" + emailInput
+                            }
+                        });
+                    }
+                });
+            }
+        }, 100);
+    }
+}
+
+function closeReturningUserLoginModal() {
+    if (!returningUserLoginModal) return;
+    returningUserLoginModal.classList.add("hidden");
+    document.body.style.overflow = "";
+}
+
+btnGuestGachaLater?.addEventListener("click", () => {
+    closeGuestGachaConfirmModal();
+    openReturningUserLogin();
+});
+
+btnBackToGuestConfirm?.addEventListener("click", () => {
+    closeReturningUserLoginModal();
+    openGuestGachaConfirm();
+});
+
+closeReturningUserLogin?.addEventListener("click", closeReturningUserLoginModal);
+returningUserLoginModal?.addEventListener("click", (e) => {
+    if (e.target === returningUserLoginModal) closeReturningUserLoginModal();
+});
+
+closeGuestGachaConfirm?.addEventListener("click", closeGuestGachaConfirmModal);
+guestGachaConfirmModal?.addEventListener("click", (e) => {
+    if (e.target === guestGachaConfirmModal) closeGuestGachaConfirmModal();
+});
+
 // Bắt sự kiện bấm nút "✧ Đăng Nhập" trực tiếp trên Topbar
 document.getElementById("btnTopLogin")?.addEventListener("click", () => {
+    // Nếu chưa có Tinh Quang (chưa gacha), hiện modal xác nhận
+    if (!currentGemResult) {
+        openGuestGachaConfirm();
+        return;
+    }
     initGoogleAuth();
     onboardingModal.classList.remove("hidden");
 });
@@ -2743,6 +2934,7 @@ btnCompleteRegister.addEventListener("click", async () => {
 
             openBlessingModal(data.blessing, "✧");
             state = STATE.IDLE;
+            showMagicOrb();
             // Trigger helpers sau 3s khi đã đăng ký xong
             triggerHelpersAfterLogin();
         } else {
@@ -2843,7 +3035,8 @@ async function processClaimAfterLoot() {
                         app3dCanvas.style.opacity = "1";
                         // Reset state IDLE ở cuối chain animation
                         state = STATE.IDLE;
-                        
+                        showMagicOrb();
+
                         // Show Guide & Lore Helpers lại khi về IDLE (chỉ non-guest mode)
                         if (!document.body.classList.contains('guest-mode')) {
                             guideHelperShown = false;
@@ -2863,6 +3056,7 @@ async function processClaimAfterLoot() {
         } else {
             toast.error('GACHA THẤT BẠI', data.error || 'Lỗi giao dịch Gacha!');
             state = STATE.IDLE;
+            showMagicOrb();
             // Show helpers again on error
             if (!document.body.classList.contains('guest-mode')) {
                 guideHelperShown = false;
@@ -2887,6 +3081,7 @@ async function processClaimAfterLoot() {
         renderInventoryGems();
         renderInventory5x5();
         state = STATE.IDLE;
+        showMagicOrb();
         // Offline không thể xác thực mốc sưu tầm trên D1 — để lần sync tới sẽ tự nhận.
         checkAndClaimGemMilestones();
         // Show helpers again on offline fallback

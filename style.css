@@ -2070,13 +2070,14 @@ background: url(https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v
 .btn-celtic {
     font-family: "Handjet", sans-serif;
     font-size: large;
-    background: linear-gradient(135deg, #12291e 0%, #08140e 100%);
+    background: url(https://res.cloudinary.com/aurorawoods/image/upload/t_mediumWebP/v1792231312/gqw3idszze3yzfl6wsj9.png) center / 100% 100%;
     border: transparent;
     color: #b7e4c7;
     box-shadow: 0 0 15px rgba(46, 125, 50, 0.3), inset 0 0 10px rgba(74, 222, 128, 0.1);
     position: relative;
     overflow: hidden;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    white-space: preline;
 }
 .btn-celtic::before {
     content: '';
@@ -4827,12 +4828,53 @@ body.guest-mode .dock-btn:not(.center-core) {
 
 .guild-quest-empty {
     grid-column: 1 / -1;
-    margin: 24px 0;
+}
+
+/* ======================================================
+   MODAL XÁC NHẬN GACHA CHO GUEST
+   ====================================================== */
+#guestGachaConfirmModal .modal-box {
+    animation: modalBoxPulse 2s ease-in-out infinite;
+}
+
+#guestGachaConfirmModal .btn-magical {
     font-family: Retro2k, sans-serif;
-    font-size: 10px;
-    text-align: center;
-    color: #f3e5ab;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+    letter-spacing: 1px;
+}
+
+#guestGachaConfirmModal .btn-celtic {
+    font-family: Retro2k, sans-serif;
+    letter-spacing: 0.5px;
+}
+
+@keyframes guestGachaIconFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+#guestGachaConfirmModal .modal-box > div:first-child {
+    animation: guestGachaIconFloat 2s ease-in-out infinite;
+}
+
+/* ======================================================
+   MODAL ĐĂNG NHẬP CHO USER ĐÃ ĐĂNG KÝ
+   ====================================================== */
+#returningUserLoginModal .modal-box {
+    animation: modalBoxPulse 2s ease-in-out infinite;
+}
+
+#returningUserLoginModal .btn-celtic {
+    font-family: Retro2k, sans-serif;
+    letter-spacing: 0.5px;
+}
+
+@keyframes returningUserIconFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+#returningUserLoginModal .modal-box > div:first-child {
+    animation: returningUserIconFloat 2s ease-in-out infinite;
 }
 
 /* Một tờ ảnh ghim trên bảng. --gq-dx/--gq-dy = lệch vị trí, --gq-tilt = độ nghiêng */
