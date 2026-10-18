@@ -445,6 +445,14 @@ async function syncUserDataFromBackend() {
     if (!data) return;
     try {
         if (data.success && data.user) {
+            // Phát hiện admin đã duyệt đổi tên (D1 là nguồn sự thật)
+            const serverName = data.user.full_name;
+            let nameChangedTo = null;
+            if (serverName && serverName !== currentUser.full_name) {
+                currentUser.full_name = serverName;
+                nameChangedTo = serverName;
+            }
+
             // Kiểm tra nếu điểm Tinh Quang từ D1 cao hơn số điểm hiện tại ở máy
             const oldTQ = currentUser.tinh_quang_points || 0;
             const newTQ = data.user.tinh_quang_points || 0;
@@ -469,6 +477,12 @@ async function syncUserDataFromBackend() {
             updateTopBarUI();
             renderInventoryGems();
             renderInventory5x5();
+
+            if (nameChangedTo) {
+                clearPendingNameRequest();
+                updatePendingNameBadge();
+                toast.success('ĐỔI TÊN THÀNH CÔNG', `✧ Hội trưởng đã xác nhận. Tên mới của Nhà Phiêu Lưu là "${nameChangedTo}".`);
+            }
         }
     } catch (e) {
         console.warn("Chưa đồng bộ được với D1:", e);
@@ -1937,6 +1951,9 @@ function updateTopBarUI() {
     
     // Update Gacha Ready Tooltip
     updateGachaReadyTooltip();
+
+    // Chỉ báo "đang chờ Hội trưởng duyệt" đổi tên
+    updatePendingNameBadge();
 }
 
 // ======================================================
@@ -4160,51 +4177,161 @@ document.getElementById("btnSubmitFb")?.addEventListener("click", async () => {
     }
 });
 
-// Yêu cầu đổi tên Nhà Phiêu Lưu
-document.getElementById("btnEditName")?.addEventListener("click", async () => {
+// ======================================================
+// YÊU CẦU ĐỔI TÊN NHÀ PHIÊU LƯU
+// - Xác nhận bằng modal tùy chỉnh (hiện tên cũ → tên mới)
+// - Lưu trạng thái "đang chờ" vào localStorage + badge
+// - Admin duyệt qua Telegram → D1 đổi full_name → sync phát hiện → toast
+// ======================================================
+const PENDING_NAME_KEY = "advenature_pending_name";
+const PENDING_NAME_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 ngày: tự dọn nếu admin bỏ qua
+
+function getPendingNameRequest() {
+    try {
+        const raw = localStorage.getItem(PENDING_NAME_KEY);
+        if (!raw) return null;
+        const p = JSON.parse(raw);
+        if (!p || !p.newName) return null;
+        // Quá hạn -> dọn sạch im lặng (tránh badge treo vĩnh viễn)
+        if (p.requestedAt && Date.now() - p.requestedAt > PENDING_NAME_TTL_MS) {
+            localStorage.removeItem(PENDING_NAME_KEY);
+            return null;
+        }
+        return p;
+    } catch { return null; }
+}
+
+function setPendingNameRequest(newName) {
+    try {
+        localStorage.setItem(PENDING_NAME_KEY, JSON.stringify({ newName, requestedAt: Date.now() }));
+    } catch {}
+}
+
+function clearPendingNameRequest() {
+    try { localStorage.removeItem(PENDING_NAME_KEY); } catch {}
+}
+
+function updatePendingNameBadge() {
+    const badge = document.getElementById("pendingNameBadge");
+    if (!badge) return;
+    const pending = getPendingNameRequest();
+    const awaiting = !!pending && !!currentUser && currentUser.full_name !== pending.newName;
+    badge.classList.toggle("hidden", !awaiting);
+}
+
+// --- Modal xác nhận đổi tên ---
+const changeNameConfirmModal = document.getElementById("changeNameConfirmModal");
+const changeNameOldEl = document.getElementById("changeNameOld");
+const changeNameNewEl = document.getElementById("changeNameNew");
+const btnConfirmChangeName = document.getElementById("btnConfirmChangeName");
+const btnCancelChangeName = document.getElementById("btnCancelChangeName");
+const closeChangeNameConfirm = document.getElementById("closeChangeNameConfirm");
+let changeNameConfirmOpen = false;
+let pendingNewNameValue = "";
+
+function openChangeNameConfirm(newName) {
+    if (!changeNameConfirmModal || changeNameConfirmOpen) return;
+    changeNameConfirmOpen = true;
+    pendingNewNameValue = newName;
+    if (changeNameOldEl) changeNameOldEl.textContent = currentUser.full_name || "Nhà Phiêu Lưu";
+    if (changeNameNewEl) changeNameNewEl.textContent = newName;
+    changeNameConfirmModal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+    btnConfirmChangeName?.focus();
+}
+
+function closeChangeNameConfirmModal() {
+    if (!changeNameConfirmModal || !changeNameConfirmOpen) return;
+    changeNameConfirmOpen = false;
+    pendingNewNameValue = "";
+    changeNameConfirmModal.classList.add("hidden");
+    document.body.style.overflow = "";
+}
+
+// Nhập tên -> mở modal xác nhận
+document.getElementById("btnEditName")?.addEventListener("click", () => {
     if (!currentUser) return;
 
     const currentName = currentUser.full_name || "Nhà Phiêu Lưu";
     const newName = prompt(`Nhập tên mới cho Nhà Phiêu Lưu:\n(Tên hiện tại: ${currentName})`, currentName);
 
-    if (newName === null || newName.trim() === "") {
-        return;
-    }
+    if (newName === null || newName.trim() === "") return;
 
     const trimmedName = newName.trim();
     if (trimmedName.length < 2 || trimmedName.length > 30) {
         toast.warning('TÊN KHÔNG HỢP LỆ', 'Tên phải từ 2-30 ký tự!');
         return;
     }
+    if (trimmedName === currentName) return;
 
-    if (trimmedName === currentName) {
-        return;
-    }
+    openChangeNameConfirm(trimmedName);
+});
+
+// Xác nhận -> gửi yêu cầu tới Worker (Telegram)
+btnConfirmChangeName?.addEventListener("click", async () => {
+    const newName = pendingNewNameValue;
+    closeChangeNameConfirmModal();
+    if (!newName || !currentUser) return;
 
     const btn = document.getElementById("btnEditName");
-    btn.style.pointerEvents = "none";
-    btn.textContent = "⏳";
+    const origText = btn?.textContent || "✍🏻";
+    if (btn) { btn.style.pointerEvents = "none"; btn.textContent = "⏳"; }
+    btnConfirmChangeName.disabled = true;
+    btnConfirmChangeName.textContent = "Đang gửi...";
 
     try {
         const res = await fetch(`${API_URL}/api/user/request-change-name`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                userId: currentUser.id,
-                newName: trimmedName
-            })
+            body: JSON.stringify({ userId: currentUser.id, newName })
         });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
+
         if (data.success) {
-            toast.info('YÊU CẦU ĐÃ ĐƯỢC GHI NHẬN', 'Hội đã ghi nhận yêu cầu của Nhà Phiêu Lưu, hãy đợi Hội trưởng xác nhận nhé!');
+            setPendingNameRequest(newName);
+            updatePendingNameBadge();
+            toast.info('YÊU CẦU ĐÃ ĐƯỢC GHI NHẬN', `Hội đã ghi nhận yêu cầu đổi tên thành "${newName}". Hãy đợi Hội trưởng xác nhận nhé!`);
         } else {
             toast.error('GỬI YÊU CẦU THẤT BẠI', data.error || 'Thử lại sau!');
         }
     } catch (e) {
         toast.error('LỖI KẾT NỐI', 'Không thể kết nối đến máy chủ!');
     } finally {
-        btn.style.pointerEvents = "auto";
-        btn.textContent = "✍🏻";
+        if (btn) { btn.style.pointerEvents = "auto"; btn.textContent = origText; }
+        btnConfirmChangeName.disabled = false;
+        btnConfirmChangeName.textContent = "Xác Nhận";
+    }
+});
+
+// Đóng modal: nút Ở Lại / X / click-ngoài / Esc
+btnCancelChangeName?.addEventListener("click", closeChangeNameConfirmModal);
+closeChangeNameConfirm?.addEventListener("click", closeChangeNameConfirmModal);
+closeChangeNameConfirm?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); closeChangeNameConfirmModal(); }
+});
+changeNameConfirmModal?.addEventListener("click", (e) => {
+    if (e.target === changeNameConfirmModal) closeChangeNameConfirmModal();
+});
+
+// Esc để đóng + focus trap (Tab/Shift+Tab giữ trong modal)
+document.addEventListener("keydown", (e) => {
+    if (!changeNameConfirmOpen) return;
+    if (e.key === "Escape") { closeChangeNameConfirmModal(); return; }
+    if (e.key === "Tab") {
+        const focusables = changeNameConfirmModal.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+        }
     }
 });
 

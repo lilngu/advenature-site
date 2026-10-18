@@ -1752,6 +1752,30 @@ i.ico-back-wind {width: 64px; height: 64px;}
 .passport-name-main { font-size: 15px; color: #ffe66d; font-family: 'Cinzel';}
 .passport-role-tag { font-size: 10px; color: #a8a4c2; margin-bottom: 12px; }
 
+/* Chỉ báo "đang chờ Hội trưởng duyệt" đổi tên */
+.pending-name-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #ffe66d;
+    background: rgba(124, 108, 255, 0.18);
+    border: 1px solid rgba(255, 230, 109, 0.45);
+    border-radius: 10px;
+    padding: 2px 8px;
+    white-space: nowrap;
+    animation: pendingNamePulse 2s ease-in-out infinite;
+}
+.pending-name-badge.hidden { display: none; }
+@keyframes pendingNamePulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .pending-name-badge { animation: none; }
+}
+
 .passport-stats-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
