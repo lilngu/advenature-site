@@ -4164,7 +4164,7 @@ document.getElementById("btnSubmitFb")?.addEventListener("click", async () => {
         });
         const data = await res.json();
         if (data.success) {
-            toast.success('GỬI THÀNH CÔNG', '✧ Đã gửi link bài viết cho Quản trị viên Telegram! Vui lòng chờ duyệt (+1 🔮).');
+            toast.success('GỬI THÀNH CÔNG', '✧ Đã gửi link bài viết cho Trưởng Quản! Vui lòng chờ duyệt (+1 🔮).');
             linkInput.value = "";
         } else {
             toast.error('GỬI THẤT BẠI', data.error || 'Thử lại sau!');
