@@ -84,6 +84,14 @@ if (!currentUser) {
 // app.js: Đặt ngay bên dưới đoạn khai báo currentUser
 const isFirstTimeGuest = !currentUser || !currentUser.adventurer_code || currentUser.adventurer_code === "AW----";
 
+// Kiểm tra guest REALTIME (đọc currentUser ở thời điểm gọi).
+// KHÔNG dùng lại isFirstTimeGuest cho các luồng chạy sau khi user đăng ký trong
+// cùng phiên: nó là const chỉ tính 1 lần lúc load trang -> user đã đăng ký vẫn
+// bị chặn nhầm. Dùng cho nút "Gửi Thông tin đăng ký Quest" trong guildQuestModal.
+function isGuestUserNow() {
+    return !currentUser || !currentUser.adventurer_code || currentUser.adventurer_code === "AW----";
+}
+
 const scrollBanner = document.getElementById("welcomeScrollBanner");
 const guestHelper = document.getElementById("guestHelper");
 const guideHelper = document.getElementById("guideHelper");
@@ -1654,7 +1662,9 @@ async function handleGuildQuestRegister() {
     if (!item) return;
 
     // Chưa có tài khoản thật -> chặn sớm, khỏi gửi tin rác lên Telegram
-    if (isFirstTimeGuest || !currentUser?.id) {
+    // Dùng isGuestUserNow() (realtime) thay vì isFirstTimeGuest (const, chỉ tính
+    // lúc load trang) để không chặn nhầm user đã đăng ký trong cùng phiên.
+    if (isGuestUserNow()) {
         toast.warning('CHƯA THỂ ĐĂNG KÝ QUEST', 'Vui lòng hoàn tất đăng ký Nhà Phiêu Lưu trước khi gửi thông tin nhé!');
         sfxBlink();
         return;
