@@ -434,19 +434,19 @@ const TEXTS = {
         events: [
             {
                 date: "24-25 Tháng 10",
-                title: "PHIÊN CHỢ NHẬP VAI L.A.R.P & LỬA KHỞI NGUYÊN",
+                title: "L.A.R.P & CRAFT: LỬA KHỞI NGUYÊN",
                 location: "Rừng Tinh Linh",
                 slots: "Đã Hoàn Thành",
             },
             {
                 date: "7-8 Tháng 11",
-                title: "PHIÊN CHỢ NHẬP VAI L.A.R.P : LỄ HỘI HOA DÃ QUỲ",
+                title: "L.A.R.P & ART : LỄ HỘI HOA DÃ QUỲ",
                 location: "Rừng Tinh Linh",
                 slots: "0/15 chỗ",
             },
             {
                 date: "21-22 Tháng 11",
-                title: "PHIÊN CHỢ NHẬP VAI L.A.R.P",
+                title: "L.A.R.P & ART : LỄ HỘI HOA DÃ QUỲ",
                 location: "Rừng Tinh Linh",
                 slots: "0/15 chỗ",
             },
