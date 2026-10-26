@@ -4804,6 +4804,12 @@ body.guest-mode .dock-btn:not(.center-core) {
     transform: translateY(-1px);
     filter: drop-shadow(0 0 4px rgba(255, 209, 102, 0.5));
 }
+@media (max-width: 768px) {
+    .help-fab {
+        right: 8px;
+        bottom: 104px;
+    }
+}
 
 /* Lightbox toàn màn hình */
 .help-lightbox {
