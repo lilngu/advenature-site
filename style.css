@@ -123,8 +123,8 @@ body, html {
     background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790707502/heeqfj2kb5gau7fdna1q.png");
 }
 
-/* Data URI SVG cho Sản Phẩm G?�i T?�n Thủ */
-.ico-pkg1 {    box-shadow: #00ff7396 1px 1px 20px 8px;
+/* Data image ico cho Sản Phẩm G?�i T?�n Thủ */
+.ico-pkg1 { box-shadow: #00ff7396 1px 1px 20px 8px;
     background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1790706996/yrkpmpqng4i7oeuys77t.png");
 }
 .ico-pkg2 { box-shadow: #00bbff96 1px 1px 20px 8px;
