@@ -166,7 +166,7 @@ body, html {
 .ico-food4 {
     background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1793018044/brabec8a4qxmqfgbdr5u.png");
 }
-.ico-ticket1 {
+.ico-ticket1 { box-shadow: #fdfa21ec 1px 1px 20px 8px;
     background-image: url("https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v1793018040/uhcylnd29aobhollllzw.png");
 }
 .ico-ticket2 {
