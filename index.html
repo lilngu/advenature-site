@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<meta name="referrer" content="no-referrer">
     <title data-i18n="meta.title">RỪNG TINH LINH ADVENATURE</title>
-    <link rel="stylesheet" href="style.css?v=20261013">
+    <link rel="stylesheet" href="style.css?v=20261027">
     <!-- Set FAV icon -->
     <link rel="icon" type="image/png" sizes="16x16"  href="/favicon-16x16.png">
 <meta name="msapplication-TileColor" content="#ffffff">
@@ -42,7 +42,7 @@
         "imports": {
             "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
             "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
-            "@data": "./data.js?v=20261015",
+            "@data": "./data.js?v=20261027",
             "@toast": "./toast.js?v=20261002",
             "@rollquest": "./rollquest.js?v=20261003",
             "@vfx": "./vfx.js?v=20261002",
@@ -724,6 +724,45 @@
             </div>
 
         </div>
+    </div>
+
+    <!-- ====================================================== -->
+    <!-- BUOC 3: XAC NHAN CUOI CUNG TRUOC KHI DANG KY           -->
+    <!-- Mo khi bam #btnCompleteRegister (sau khi form hop le). -->
+    <!-- Moi cach dong (X / click nen / Esc) = quay ve form.    -->
+    <!-- ====================================================== -->
+    <div id="onboardingConfirmModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="onboardingConfirmTitle">
+        <div class="modal-box rpg-glass-box" style="max-width: 340px; max-height: 90vh; overflow-y: auto; text-align: left;">
+            <span class="close-modal" id="closeOnboardingConfirm" role="button" tabindex="0" aria-label="Đóng" data-i18n-title="common.close">&nbsp;</span>
+            <h3 id="onboardingConfirmTitle" style="color: #ffd166; font-size: 14px; font-family: F08; text-align: center; margin-bottom: 8px;" data-i18n="onboarding.confirm.title"></h3>
+            <p class="onboard-confirm-intro" data-i18n="onboarding.confirm.intro"></p>
+
+            <div class="onboard-confirm-list">
+                <div class="onboard-confirm-row">
+                    <span class="onboard-confirm-key" data-i18n="onboarding.confirm.nameLabel"></span>
+                    <b class="onboard-confirm-val" id="obConfirmName">—</b>
+                </div>
+                <div class="onboard-confirm-row">
+                    <span class="onboard-confirm-key" data-i18n="onboarding.confirm.genderLabel"></span>
+                    <b class="onboard-confirm-val" id="obConfirmGender">—</b>
+                </div>
+                <div class="onboard-confirm-row">
+                    <span class="onboard-confirm-key" data-i18n="onboarding.confirm.classLabel"></span>
+                    <b class="onboard-confirm-val" id="obConfirmClass">—</b>
+                </div>
+                <div class="onboard-confirm-row">
+                    <span class="onboard-confirm-key" data-i18n="onboarding.confirm.tribeLabel"></span>
+                    <b class="onboard-confirm-val" id="obConfirmTribe">—</b>
+                </div>
+            </div>
+
+            <p class="onboard-confirm-outro" data-i18n="onboarding.confirm.outro"></p>
+
+            <div style="display: flex; gap: 8px; margin-top: 14px;">
+                <button type="button" id="btnOnboardRecheck" class="btn-magical" style="flex: 1; padding: 10px;" data-i18n="onboarding.confirm.backBtn"></button>
+                <button type="button" id="btnOnboardConfirm" class="btn-magical btn-claim" style="flex: 1; padding: 10px;" data-i18n="onboarding.confirm.confirmBtn"></button>
+            </div>
+        </div>
     </div>    <!-- MODAL: XÁC NHẬN GACHA CHO GUEST (chưa có Tinh Quang) -->
     <div id="guestGachaConfirmModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="guestGachaConfirmTitle">
         <div class="modal-box rpg-glass-box" style="max-width: 320px; text-align: center;">
@@ -1185,6 +1224,6 @@
     <div class="gql-counter" id="guildQuestLightboxCounter"></div>
 </div>
 
-    <script type="module" src="app.js?v=20261015"></script>
+    <script type="module" src="app.js?v=20261027"></script>
 </body>
 </html>

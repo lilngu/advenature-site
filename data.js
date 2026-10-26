@@ -95,18 +95,11 @@ export const BLESSINGS_DATA = [
     { id: "BLESS_30", name: "Trang Bị Nhà Phiêu Lưu", tier: "legendary", iconClass: "ico-item-30", isBuff: false, desc: "Bộ ba lô, Hood chuyên dụng cho Nhà Phiêu Lưu." }
 ];
 
-// 4. DANH MỤC 12 SẢN PHẨM SHOP LỮ HÀNH
-export const SHOP_ITEMS = [
-    { id: "PKG_1", name: "🎪VÉ THAM GIA LARP - CAMP", tt: 14, vnd: 350000, iconClass: "ico-pkg1", desc: " Bao gồm 1 lều gỗ lưu trú dành cho tối đa 2 mạo hiểm giả. \n( có thể bày hàng trước lều) \nHỗ trợ vật liệu tự nhiên decor\n Tuỳ chọn tham gia Quest nhận thưởng tinh thạch tại Hội." },
-    { id: "PKG_2", name: "🛏️VÉ THAM GIA LARP - DORM", tt: 8, vnd: 200000, iconClass: "ico-pkg2", desc: " 1 bộ nệm/ chăn/ gối tại phòng tập thể dành cho 1 mạo hiểm giả. \n Tuỳ chọn tham gia Quest nhận thưởng tinh thạch tại Hội." },
-    { id: "PKG_3", name: "🏡VÉ THAM GIA LARP - LỮ QUÁN", tt: 16, vnd: 450000, iconClass: "ico-pkg3", desc: " 1 phòng riêng dành cho 2 mạo hiểm giả. \nTuỳ chọn tham gia Quest nhận thưởng tinh thạch tại Hội \n Chỉ có 2 suất dành cho Mạo hiểm giả đăng ký trước." },
-    { id: "PKG_4", name: "🎫VÉ THUÊ KIOSK", tt: 6, vnd: 150000, iconClass: "ico-pkg4", desc: " Dành cho thương nhân chỉ tham gia Phiên Chợ sáng Chủ Nhật, không lưu trú ngày thứ 7." },
-    { id: "Q_1", name: "🌬️ Quest Viễn Chinh Phong Tinh", tt: 10, vnd: 250000, iconClass: "ico-quest2", desc: "🚙 Buff dịch chuyển đến nơi làm 📜 Quest Đồi Cỏ Lang Thang \n 🔮 Nhận thưởng Tinh Thạch" },
-    { id: "Q_2", name: "✨ Quest Viễn Chinh Quang Tinh", tt: 10, vnd: 250000, iconClass: "ico-quest1", desc: "🚙 Buff dịch chuyển đến nơi làm 📜 Quest Suối Thì Thầm Rì Rầm \n 🔮 Nhận thưởng Tinh Thạch " },
-    { id: "PKG_5", name: "🕋 Mystery Box", tt: 10, vnd: 250000, iconClass: "ico-pkg5", desc: "Hộp Vật Phẩm\n Trang bị cơ bản cho Nhà Phiêu Lưu" },
-    { id: "PKG_6", name: "🚙BUFF XE DỊCH CHUYỂN", tt: 12, vnd: 300000, iconClass: "ico-pkg6", desc: "🚙BUFF hỗ trợ dịch chuyển 2 chiều: \n Quảng Trường Bảo Lộc ↔ Rừng Tinh Linh." },
-    { id: "F_1", name: "🧙🏾THỰC ĐƠN TỐI TAVERN", tt: 6, vnd: 150000, iconClass: "ico-food1", desc: "🍖THỊT NƯỚNG LỬA TRẠI HOẶC 🍛 NAI HẦM HIỆP SĨ. \n 🍶 POTION THẢO MỘC \n 🥗 SALAD NHÂN PHẨM ❔" }
-];
+// 4. SHOP LỮ HÀNH — không còn dữ liệu tĩnh ở đây.
+// Nguồn duy nhất: bảng D1 `shop_products`, quản lý qua Admin (/admin → Shop),
+// đọc bởi GET /api/shop-products. Seed gốc nằm ở .worker/migrations/003_shop_products.sql,
+// mô tả nhiều dòng ở .worker/migrations/005_shop_desc_multiline.sql.
+// Frontend KHÔNG fallback về file này nữa: lỗi mạng sẽ hiện state "không tải được shop".
 
 // 5. CÂU HỎI MẬT MÃ RỪNG TINH LINH
 export const QUIZ_LIST = [

@@ -11,7 +11,6 @@ import {
     FACE_TIERS, 
     SHAPE_STYLES, 
     BLESSINGS_DATA, 
-    SHOP_ITEMS, 
     QUIZ_LIST,
     LORE_PAGES_DATA,
     GUIDE_PAGES_DATA,
@@ -1395,6 +1394,25 @@ function escapeHtml(value) {
     return String(value ?? "").replace(/[&<>"']/g, (ch) => ({
         "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
     })[ch]);
+}
+
+/**
+ * Chuẩn hoá text nhiều dòng trước khi đưa vào UI (shop desc, mô tả item...).
+ * - Nhận CẢ newline thật (textarea/DB) LẪN chuỗi "\n" literal do admin gõ tay
+ *   (input 1 dòng cũ, JSON cũ...) vì "\\n" trong JS là 2 ký tự, không xuống dòng.
+ * - Trim từng dòng, gộp dòng trống liên tiếp, bỏ dòng trống đầu/cuối.
+ * Dùng kèm CSS `white-space: pre-line` để <p> hiển thị đúng.
+ */
+function formatMultilineText(value) {
+    const raw = String(value ?? "")
+        .replace(/\\r\\n|\\n|\\r/g, "\n")   // literal "\n" / "\r\n" -> newline thật
+        .replace(/\r\n?/g, "\n");          // CRLF / CR thật -> LF
+    return raw
+        .split("\n")
+        .map((line) => line.trim())
+        .join("\n")
+        .replace(/\n{3,}/g, "\n\n")
+        .trim();
 }
 
 /**
@@ -2901,22 +2919,90 @@ claimBtn.addEventListener("click", () => {
     processClaimAfterLoot();
 });
 
-// BƯỚC 2: HOÀN TẤT & LƯU HỒ SƠ
-btnCompleteRegister.addEventListener("click", async () => {
+// ======================================================
+// BƯỚC 2 -> 3: XÁC NHẬN LẠI DANH TÍNH TRƯỚC KHI ĐĂNG KÝ
+// ======================================================
+const onboardingConfirmModal = document.getElementById("onboardingConfirmModal");
+const btnOnboardConfirm = document.getElementById("btnOnboardConfirm");
+const btnOnboardRecheck = document.getElementById("btnOnboardRecheck");
+const closeOnboardingConfirm = document.getElementById("closeOnboardingConfirm");
+
+let onboardingConfirmOpen = false;
+let onboardingSubmitting = false;
+let pendingOnboardingData = null;
+
+// Đọc + validate form Bước 2. Trả về object dữ liệu, hoặc null nếu thiếu thông tin.
+function readOnboardingForm() {
     const obName = document.getElementById("obName").value.trim();
     const obPhone = document.getElementById("obPhone") ? document.getElementById("obPhone").value.trim() : ""; // Đọc SĐT
     const obBirth = document.getElementById("obBirthYear").value.trim();
     const obClass = document.getElementById("obClass").value.trim();
     const obTribe = document.getElementById("obTribe").value.trim();
 
-    if (!obName) { toast.warning('THIẾU THÔNG TIN', 'Vui lòng nhập Tên Nhà Phiêu Lưu!'); return; }
-    if (!obPhone) { toast.warning('THIẾU THÔNG TIN', 'Vui lòng nhập Số điện thoại / Zalo!'); return; } // Bắt buộc
-    if (!obBirth) { toast.warning('THIẾU THÔNG TIN', 'Vui lòng nhập Năm sinh!'); return; }
-    if (!obClass) { toast.warning('THIẾU THÔNG TIN', 'Vui lòng nhập Chức nghiệp của bạn!'); return; }
-    if (!obTribe) { toast.warning('THIẾU THÔNG TIN', 'Vui lòng nhập Bộ tộc của bạn!'); return; }
+    if (!obName) { toast.warning('THIẾU THÔNG TIN', 'Vui lòng nhập Tên Nhà Phiêu Lưu!'); return null; }
+    if (!obPhone) { toast.warning('THIẾU THÔNG TIN', 'Vui lòng nhập Số điện thoại / Zalo!'); return null; } // Bắt buộc
+    if (!obBirth) { toast.warning('THIẾU THÔNG TIN', 'Vui lòng nhập Năm sinh!'); return null; }
+    if (!obClass) { toast.warning('THIẾU THÔNG TIN', 'Vui lòng nhập Chức nghiệp của bạn!'); return null; }
+    if (!obTribe) { toast.warning('THIẾU THÔNG TIN', 'Vui lòng nhập Chủng tộc của bạn!'); return null; }
 
-    btnCompleteRegister.textContent = "Đang kích hoạt căn cước...";
-    btnCompleteRegister.disabled = true;
+    return {
+        obName,
+        obPhone,
+        obBirth,
+        obClass,
+        obTribe,
+        gender: currentGender,
+        avatarUrl: selectedAvatarUrl
+    };
+}
+
+// Mở modal xác nhận (chỉ hiện 1 lớp modal tại một thời điểm)
+function openOnboardingConfirm(data) {
+    if (!onboardingConfirmModal) return;
+    pendingOnboardingData = data;
+    onboardingConfirmOpen = true;
+
+    const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value || "—";
+    };
+    setText("obConfirmName", data.obName);
+    setText("obConfirmGender", data.gender);
+    setText("obConfirmClass", data.obClass);
+    setText("obConfirmTribe", data.obTribe);
+
+    onboardingModal.classList.add("hidden");
+    onboardingConfirmModal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+    btnOnboardConfirm?.focus();
+}
+
+// backToForm = true (mặc định cho X / click nền / Esc): quay lại form để chỉnh sửa
+function closeOnboardingConfirmModal(backToForm = false) {
+    if (!onboardingConfirmModal || !onboardingConfirmOpen) return;
+    if (onboardingSubmitting) return; // Không cho đóng khi đang gửi hồ sơ
+    onboardingConfirmOpen = false;
+    onboardingConfirmModal.classList.add("hidden");
+    document.body.style.overflow = "";
+
+    if (backToForm) {
+        onboardingModal.classList.remove("hidden");
+        document.getElementById("obName")?.focus();
+        return;
+    }
+    pendingOnboardingData = null;
+}
+
+// Gửi hồ sơ lên Worker. Giữ modal xác nhận mở để hiện trạng thái loading tại nút vừa bấm.
+async function submitOnboardingRegistration() {
+    if (!pendingOnboardingData || onboardingSubmitting) return;
+    const { obName, obPhone, obBirth, obClass, obTribe, gender, avatarUrl } = pendingOnboardingData;
+
+    onboardingSubmitting = true;
+    const originalConfirmText = btnOnboardConfirm.textContent;
+    btnOnboardConfirm.textContent = "Đang kích hoạt căn cước...";
+    btnOnboardConfirm.disabled = true;
+    if (btnOnboardRecheck) btnOnboardRecheck.disabled = true;
 
     try {
         const res = await fetch(`${API_URL}/api/auth/register-first-gacha`, {
@@ -2927,10 +3013,10 @@ btnCompleteRegister.addEventListener("click", async () => {
                 adventurerName: obName,
                 phoneNumber: obPhone, // Gửi SĐT lên Worker
                 birthYear: obBirth,
-                gender: currentGender,
+                gender: gender,
                 className: obClass,
                 tribe: obTribe,
-                avatarUrl: selectedAvatarUrl,
+                avatarUrl: avatarUrl,
                 gemData: currentGemResult
             })
         });
@@ -2940,7 +3026,7 @@ btnCompleteRegister.addEventListener("click", async () => {
             currentUser = {
                 ...data.user,
                 birth_year: obBirth,
-                gender: currentGender,
+                gender: gender,
                 tribe: obTribe,
                 class_name: obClass
             };
@@ -2956,7 +3042,14 @@ btnCompleteRegister.addEventListener("click", async () => {
             initLoreHelper();
             initGemLbHelper();
 
+            // Đóng cả 2 lớp modal (xác nhận + onboarding) sau khi đăng ký thành công
+            onboardingSubmitting = false;
+            onboardingConfirmOpen = false;
+            onboardingConfirmModal.classList.add("hidden");
             onboardingModal.classList.add("hidden");
+            document.body.style.overflow = "";
+            pendingOnboardingData = null;
+
             claimContainer.classList.add("hidden");
             lootText.classList.remove("show");
 
@@ -2971,10 +3064,54 @@ btnCompleteRegister.addEventListener("click", async () => {
     } catch (e) {
         toast.error('LỖI KẾT NỐI', 'Lỗi kết nối máy chủ! Vui lòng thử lại.');
     } finally {
-        btnCompleteRegister.textContent = "✧ HOÀN TẤT & THU THẬP VÀO TÚI ✧";
-        btnCompleteRegister.disabled = false;
+        onboardingSubmitting = false;
+        btnOnboardConfirm.textContent = originalConfirmText || "✦ XÁC NHẬN ✦";
+        btnOnboardConfirm.disabled = false;
+        if (btnOnboardRecheck) btnOnboardRecheck.disabled = false;
+    }
+}
+
+// BƯỚC 2: bấm nút -> validate -> mở modal xác nhận (KHÔNG gửi API ngay)
+btnCompleteRegister.addEventListener("click", () => {
+    const data = readOnboardingForm();
+    if (!data) return;
+    openOnboardingConfirm(data);
+});
+
+// BƯỚC 3: Xác nhận -> tiếp tục luồng đăng ký như cũ
+btnOnboardConfirm?.addEventListener("click", submitOnboardingRegistration);
+
+// Kiểm tra lại -> quay về onboardingModal để chỉnh sửa
+btnOnboardRecheck?.addEventListener("click", () => closeOnboardingConfirmModal(true));
+closeOnboardingConfirm?.addEventListener("click", () => closeOnboardingConfirmModal(true));
+closeOnboardingConfirm?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); closeOnboardingConfirmModal(true); }
+});
+onboardingConfirmModal?.addEventListener("click", (e) => {
+    if (e.target === onboardingConfirmModal) closeOnboardingConfirmModal(true);
+});
+
+// Esc để đóng + focus trap (Tab/Shift+Tab giữ trong modal)
+document.addEventListener("keydown", (e) => {
+    if (!onboardingConfirmOpen) return;
+    if (e.key === "Escape") { closeOnboardingConfirmModal(true); return; }
+    if (e.key === "Tab") {
+        const focusables = onboardingConfirmModal.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+        }
     }
 });
+
 
 // XỬ LÝ THU THẬP CHO CÁC LẦN GACHA SAU (LẦN 2, 3, 4...)
 async function processClaimAfterLoot() {
@@ -3898,32 +4035,59 @@ document.getElementById("closeItemModal").addEventListener("click", () => {
 const selectedShopIds = new Set();
 const shopDetailModal = document.getElementById("shopDetailModal");
 let viewingShopItem = null;
-// Spec shop-order-fulfillment: DB dong + fallback data.js, cache 5p
-let activeShopItems = SHOP_ITEMS;
+// NGUỒN DUY NHẤT: D1 qua /api/shop-products (quản lý ở Admin).
+// Không còn fallback data.js: lỗi mạng → hiện state lỗi + nút Thử lại,
+// tránh bán nhầm giá/tồn kho cũ đã lệch với Hội.
+let activeShopItems = [];
 let shopLoading = false;
+let shopLoadFailed = false;
+
+const SHOP_CHECKOUT_LABEL = {
+    loading: "ĐANG TẢI SHOP…",
+    error: "SHOP ĐANG LỖI",
+    empty: "SHOP ĐANG TẠM ĐÓNG",
+    ready: "ĐẶT TRƯỚC VÉ",
+};
+
+function setShopCheckoutState(mode) {
+    const btn = document.getElementById("btnCheckoutShop");
+    if (!btn) return;
+    btn.disabled = mode !== "ready";
+    btn.textContent = SHOP_CHECKOUT_LABEL[mode] || SHOP_CHECKOUT_LABEL.ready;
+}
 
 async function fetchShopProducts() {
     const container = document.getElementById("shopItemsContainer");
-    // Loading skeleton (Acceptance: skeleton + disable checkout)
+    const hadItems = activeShopItems.length > 0;
     shopLoading = true;
-    if (container) {
+    shopLoadFailed = false;
+    setShopCheckoutState("loading");
+    // Skeleton chỉ khi chưa có dữ liệu; reload ngầm giữ nguyên list để không nháy UI
+    if (container) container.setAttribute("aria-busy", "true");
+    if (container && !hadItems) {
         container.innerHTML = Array.from({ length: 6 }).map(() => `<div class="shop-2col-card skeleton" aria-hidden="true"><div class="shop-2col-title">…</div></div>`).join('');
     }
-    const checkoutBtn = document.getElementById("btnCheckoutShop");
-    if (checkoutBtn) { checkoutBtn.disabled = true; checkoutBtn.textContent = "Đang tải…"; }
     try {
         const res = await fetch(`${API_URL}/api/shop-products`, { headers: { "Content-Type": "application/json" } });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        if (data.success && Array.isArray(data.products) && data.products.length) {
-            activeShopItems = data.products;
-        } else {
-            activeShopItems = SHOP_ITEMS;
+        if (!data || data.success !== true || !Array.isArray(data.products)) {
+            throw new Error((data && data.error) || "Phản hồi danh mục shop không hợp lệ");
         }
+        activeShopItems = data.products;
+        // Bỏ chọn món đã bị ẩn/xoá khỏi D1 để tổng tiền không lệch
+        const validIds = new Set(activeShopItems.map((p) => String(p.id)));
+        Array.from(selectedShopIds).forEach((id) => {
+            if (!validIds.has(String(id))) selectedShopIds.delete(id);
+        });
     } catch (e) {
-        activeShopItems = SHOP_ITEMS;
+        shopLoadFailed = true;
+        // Chưa từng có dữ liệu → state lỗi. Đang có dữ liệu cũ → giữ nguyên + cảnh báo.
+        if (!hadItems) activeShopItems = [];
+        else toast.warning('KHÔNG CẬP NHẬT ĐƯỢC SHOP', 'Đang hiển thị danh mục đã tải trước đó.');
     } finally {
         shopLoading = false;
-        if (checkoutBtn) { checkoutBtn.disabled = false; checkoutBtn.textContent = "ĐẶT TRƯỚC VÉ"; }
+        if (container) container.removeAttribute("aria-busy");
         renderShop();
         updateShopCheckout();
     }
@@ -3933,16 +4097,40 @@ function isOutOfStock(p) {
     return p && p.stock !== undefined && p.stock !== null && Number(p.stock) !== -1 && Number(p.stock) <= 0;
 }
 
+/** State rỗng/lỗi của lưới shop — 1 card chiếm cả hàng, có nút Thử lại. */
+function shopStateMarkup() {
+    const failed = shopLoadFailed;
+    const title = failed ? "KHÔNG TẢI ĐƯỢC SHOP" : "SHOP ĐANG TẠM ĐÓNG";
+    const desc = failed
+        ? "Kết nối tới Hội Ngọc Lục bị gián đoạn. Danh mục gói chưa sẵn sàng — thử lại sau ít phút nhé."
+        : "Hội Ngọc Lục đang chuẩn bị danh mục gói mới. Ghé lại sau nhé!";
+    return `
+        <div class="shop-state ${failed ? 'is-error' : 'is-empty'}" role="${failed ? 'alert' : 'status'}" aria-live="polite">
+            <i class="rpg-ico ${failed ? 'ico-item-unknown' : 'ico-pkg1'} shop-state-ico" aria-hidden="true"></i>
+            <p class="shop-state-title">${title}</p>
+            <p class="shop-state-desc">${desc}</p>
+            <button type="button" class="btn-magical shop-state-retry" id="btnRetryShop">THỬ LẠI</button>
+        </div>`;
+}
+
 function renderShop() {
     const container = document.getElementById("shopItemsContainer");
     if (!container) return;
-    if (shopLoading) return;
+    if (shopLoading && !activeShopItems.length) return; // skeleton đang hiển thị
+
+    if (!activeShopItems.length) {
+        container.innerHTML = shopStateMarkup();
+        const retry = container.querySelector("#btnRetryShop");
+        if (retry) retry.addEventListener("click", () => fetchShopProducts());
+        return;
+    }
 
     container.innerHTML = activeShopItems.map(p => {
         const out = isOutOfStock(p);
         const pid = escapeHtml(String(p.id ?? ""));
+        const label = escapeHtml(`${p.name} — ${Number(p.tt) || 0} Tinh Thạch${out ? ' — hết suất' : ''}`);
         return `
-        <div class="shop-2col-card ${selectedShopIds.has(p.id) ? 'selected' : ''} ${out ? 'out-of-stock' : ''}" data-id="${pid}" ${out ? 'aria-disabled="true"' : 'tabindex="0" role="button"'}>
+        <div class="shop-2col-card ${selectedShopIds.has(p.id) ? 'selected' : ''} ${out ? 'out-of-stock' : ''}" data-id="${pid}" aria-label="${label}" ${out ? 'aria-disabled="true"' : 'tabindex="0" role="button"'}>
             <div class="shop-2col-icon"><i class="rpg-ico ${safeIconClass(p.iconClass, "ico-item-unknown")}" style="width:32px;height:32px;"></i></div>
             <div class="shop-2col-title">${escapeHtml(p.name)}</div>
             <div class="shop-2col-tag">💎 ${Number(p.tt) || 0} Tinh Thạch${out ? ' • HẾT' : ''}</div>
@@ -3952,13 +4140,14 @@ function renderShop() {
     container.querySelectorAll(".shop-2col-card").forEach(c => {
         if (c.classList.contains('out-of-stock')) {
             c.addEventListener("click", () => {
-                toast.warning('HẾT HÀNG', 'Gói này đã hết suất (PKG_3 chỉ 2 phòng). Vui lòng chọn gói khác!');
+                const item = activeShopItems.find(x => String(x.id) === c.dataset.id);
+                toast.warning('HẾT HÀNG', `Gói ${item ? item.name : 'này'} đã hết suất. Vui lòng chọn gói khác!`);
             });
             return;
         }
         const open = () => {
             const id = c.dataset.id;
-            viewingShopItem = activeShopItems.find(x => x.id === id);
+            viewingShopItem = activeShopItems.find(x => String(x.id) === id);
             openShopDetail(viewingShopItem);
         };
         c.addEventListener("click", open);
@@ -3976,8 +4165,8 @@ function openShopDetail(item) {
     }
     document.getElementById("shopModalIconBox").innerHTML = `<i class="rpg-ico ${safeIconClass(item.iconClass, "ico-item-unknown")}" style="width:48px;height:48px;"></i>`;
     document.getElementById("shopModalTitle").textContent = item.name;
-    document.getElementById("shopModalPrice").textContent = `💎 ${item.tt} Tinh Thạch (~${item.vnd.toLocaleString()} đ)`;
-    document.getElementById("shopModalDesc").textContent = item.desc;
+    document.getElementById("shopModalPrice").textContent = `💎 ${Number(item.tt) || 0} Tinh Thạch (~${(Number(item.vnd) || 0).toLocaleString()} đ)`;
+    document.getElementById("shopModalDesc").textContent = formatMultilineText(item.desc);
 
     const btn = document.getElementById("btnToggleCartItem");
     const isSelected = selectedShopIds.has(item.id);
@@ -4010,15 +4199,21 @@ function updateShopCheckout() {
     let totalTT = 0;
     let totalVND = 0;
     selectedShopIds.forEach(id => {
-        const item = activeShopItems.find(x => x.id === id);
+        const item = activeShopItems.find(x => String(x.id) === String(id));
         if (item) {
-            totalTT += item.tt;
-            totalVND += item.vnd;
+            totalTT += Number(item.tt) || 0;
+            totalVND += Number(item.vnd) || 0;
         }
     });
     document.getElementById("cartCount").textContent = selectedShopIds.size;
     document.getElementById("cartTotalTinhThach").textContent = `${totalTT} 💎`;
     document.getElementById("cartTotalVnd").textContent = totalVND.toLocaleString();
+
+    // Checkout chỉ khoá khi đang tải hoặc chưa có danh mục.
+    // Lỗi refresh nhưng vẫn còn list cũ → vẫn cho đặt (đơn được Hội duyệt tay).
+    if (shopLoading) { setShopCheckoutState("loading"); return; }
+    if (!activeShopItems.length) { setShopCheckoutState(shopLoadFailed ? "error" : "empty"); return; }
+    setShopCheckoutState("ready");
 }
 
 // Dot MOI tren dock tui: persist toi khi user mo ve lan dau
@@ -4071,7 +4266,6 @@ document.getElementById("btnCheckoutShop")?.addEventListener("click", async () =
     // (đặt sau 2 lần check ở trên để không phát nhầm khi giỏ rỗng hoặc user bỏ prompt)
     sfxCoin();
 
-    const origText = btn.textContent;
     btn.disabled = true;
     btn.textContent = "Đang gửi...";
 
@@ -4093,8 +4287,7 @@ document.getElementById("btnCheckoutShop")?.addEventListener("click", async () =
         }
     } catch(e) {
         toast.error('GỬI ĐƠN THẤT BẠI', e.message || 'Lỗi kết nối, thử lại sau!');
-        btn.disabled = false;
-        btn.textContent = origText || "ĐẶT TRƯỚC VÉ";
+        updateShopCheckout(); // trả nút về đúng state (ready/error/loading)
         return;
     }
 
@@ -4102,8 +4295,6 @@ document.getElementById("btnCheckoutShop")?.addEventListener("click", async () =
     selectedShopIds.clear();
     renderShop();
     updateShopCheckout();
-    btn.disabled = false;
-    btn.textContent = "ĐẶT TRƯỚC VÉ";
     // Refresh DB de lay stock moi (PKG_3) sau khi dat
     fetchShopProducts();
 });

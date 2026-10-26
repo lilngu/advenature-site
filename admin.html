@@ -45,7 +45,8 @@ th{color:var(--gold);font-size:12px;text-transform:uppercase;letter-spacing:.4px
 .detail{border:1px solid var(--gold);border-radius:10px;background:#14112a;padding:12px;margin-top:10px}
 .detail h3{margin:0 0 8px;color:var(--gold2);font-size:14px}
 .kv{display:grid;grid-template-columns:150px 1fr;gap:6px;font-size:13px;margin-bottom:8px}
-.kv input,.kv select{background:#0c0a1a;border:1px solid #4a3f82;border-radius:6px;color:#fff;font-size:13px;padding:8px 10px;width:100%}
+.kv input,.kv select,.kv textarea{background:#0c0a1a;border:1px solid #4a3f82;border-radius:6px;color:#fff;font-size:13px;padding:8px 10px;width:100%}
+.kv textarea{min-height:84px;resize:vertical;line-height:1.45;font-family:inherit}
 .pill{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:800}
 .pill.pending{background:#4a3200;color:#ffd166}
 .pill.done{background:#003a2e;color:#00f5d4}
@@ -115,7 +116,7 @@ a{color:var(--cyan)}
 <span class="mut">Giá TT + VND</span><div style="display:flex;gap:6px"><input id="s-tt" type="number" value="10" min="0" style="flex:1"><input id="s-vnd" type="number" value="250000" min="0" step="1000" style="flex:2"></div>
 <span class="mut">Icon + Sort</span><div style="display:flex;gap:6px"><input id="s-icon" value="ico-pkg1" style="flex:1" list="iconList"><input id="s-sort" type="number" value="10" min="0" style="max-width:90px"><datalist id="iconList"><option value="ico-pkg1"></option><option value="ico-pkg2"></option><option value="ico-pkg3"></option><option value="ico-pkg4"></option><option value="ico-pkg5"></option><option value="ico-pkg6"></option><option value="ico-food1"></option><option value="ico-quest1"></option><option value="ico-quest2"></option></datalist></div>
 <span class="mut">Stock + Active</span><div style="display:flex;gap:6px"><input id="s-stock" type="number" value="-1" min="-1" style="flex:1"><select id="s-active" style="flex:1"><option value="1">Hiện (1)</option><option value="0">Ẩn (0)</option></select></div>
-<span class="mut">Mô tả</span><input id="s-desc" placeholder="Mô tả cho player...">
+<span class="mut">Mô tả</span><textarea id="s-desc" rows="4" placeholder="Mô tả cho player... (Enter = xuống dòng, hoặc gõ \n)"></textarea>
 </div>
 <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap"><button class="sm ok" onclick="saveShop()">💾 Lưu (tạo/sửa)</button><button class="sm ghost" onclick="resetShopForm()">↩ Mới</button><span class="small" id="shopPreview" style="align-self:center"></span></div>
 </div>

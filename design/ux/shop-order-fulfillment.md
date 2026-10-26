@@ -104,13 +104,13 @@ Giữ nguyên 3 vùng hiện tại, không đập layout:
 | State / Variant | Trigger | What Changes |
 |---|---|---|
 | Default | mở Shop | grid 9 card, giỏ 0 |
-| Loading Shop | mở panel, đang `GET shop-products` | skeleton 6-9 card xám + disable `btnCheckoutShop` |
+| Loading Shop | mở panel, đang `GET shop-products` | skeleton 6-9 card xám + disable `btnCheckoutShop` (`ĐANG TẢI SHOP…`) |
 | Selected | toggle trong modal | card `.selected`, giỏ +1 |
 | Submitting | sau khi nhập SĐT, đang `POST` | `btnCheckoutShop` disabled + text `Đang gửi...`, chặn double-tap |
 | Pending | `POST /api/shop-order` ok | clear giỏ, toast `ĐÃ TIẾP NHẬN — chờ duyệt` |
 | Granted | admin bấm Done | vé mới trong túi + dot `MỚI` |
 | Burned | manager `confirmBurn` | vé `is_used=1`, quét lại → `ĐÃ DÙNG` |
-| Error/Empty | giỏ rỗng bấm checkout / fetch fail | toast warning + fallback `data.js` |
+| Error/Empty | giỏ rỗng bấm checkout / fetch fail / D1 trả 0 sản phẩm | giỏ rỗng → toast warning. Fetch fail (chưa có data) → card state `KHÔNG TẢI ĐƯỢC SHOP` + nút `THỬ LẠI`, checkout khoá (`SHOP ĐANG LỖI`). D1 rỗng → `SHOP ĐANG TẠM ĐÓNG`. **Không còn fallback `data.js`.** Refresh lỗi khi đã có list → giữ list cũ + toast, checkout vẫn bật. |
 | Out of stock | `PKG_3` hết 2 suất (tương lai) | disable card + nhãn `HẾT` |
 
 ---
@@ -155,7 +155,7 @@ Quyết định đã chốt: 1 đơn nhiều món → **tách thành N vé riên
 
 | Data | Source System | Read / Write | Notes |
 |---|---|---|---|
-| SHOP_ITEMS / shop_products | D1 `shop_products` + fallback `data.js` | Read | cache 5p, 9-20 rows/read — dư quota 5M/ngày |
+| shop_products | D1 `shop_products` (single source, quản lý qua Admin) | Read | cache 5p, 9-20 rows/read — dư quota 5M/ngày. Không fallback `data.js`. |
 | shop_orders | D1 | Write | `Pending → Done`, idempotency chống double-click |
 | user_inventory vé | D1 | Write | `qr_token unique, category='shop_ticket'`, tách N vé/đơn |
 | CAMP 2 người | offline | — | 1 người đại diện mua 1 item, không cần logic 2 token |

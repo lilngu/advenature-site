@@ -326,6 +326,17 @@ const TEXTS = {
                 tribe: "Vui lòng nhập Chủng tộc của bạn!",
             },
         },
+        confirm: {
+            title: "✦ XÁC NHẬN DANH TÍNH ✦",
+            intro: "Vậy là nhà phiêu lưu sẽ đăng ký với danh tính:",
+            nameLabel: "Tên:",
+            genderLabel: "Giới tính:",
+            classLabel: "Chức nghiệp:",
+            tribeLabel: "Chủng tộc:",
+            outro: "Hãy kiểm tra lại xem đúng không nhé!",
+            confirmBtn: "✦ XÁC NHẬN ✦",
+            backBtn: "✧ KIỂM TRA LẠI ✧",
+        },
     },
 
     // ======================================================

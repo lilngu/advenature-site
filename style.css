@@ -1679,6 +1679,46 @@ i.ico-back-wind {width: 64px; height: 64px;}
 .shop-2col-title { font-size: 10px; font-weight: bold; color: #fff; }
 .shop-2col-tag { font-size: 8px; color: #4cc9f0; margin-top: 1px; }
 
+/* State rỗng/lỗi của lưới shop — KHÔNG còn fallback data.js:
+   lỗi mạng thì hiện card này + nút Thử lại, checkout bị khoá. */
+.shop-state {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 24px 12px;
+    text-align: center;
+}
+.shop-state-ico { width: 40px; height: 40px; opacity: 0.9; }
+.shop-state-title {
+    margin: 0;
+    font-family: "Handjet", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    color: #ffe66d;
+}
+.shop-state-desc {
+    margin: 0;
+    max-width: 280px;
+    font-size: 11px;
+    line-height: 1.45;
+    color: #c9c3ff;
+}
+.shop-state-retry { margin-top: 6px; padding: 8px 18px; font-size: 12px; }
+.shop-state.is-error .shop-state-title { color: #ff8fa3; }
+.shop-state.is-error .shop-state-ico { filter: drop-shadow(0 0 8px rgba(255, 51, 85, 0.55)); }
+#btnCheckoutShop:disabled,
+#btnCheckoutShop:disabled:hover {
+    opacity: 0.55;
+    cursor: not-allowed;
+    filter: grayscale(0.5);
+    box-shadow: none;
+    transform: none;
+    text-shadow: none;
+}
+
 .shop-checkout-bar {
     position: sticky;
     bottom: -80px;
@@ -2008,7 +2048,19 @@ background: url(https://res.cloudinary.com/aurorawoods/image/upload/t_iconWebP/v
 
 /* Modal Shop Chi Tiết */
 .shop-modal-ico-box { font-size: 40px; margin-bottom: 4px; }
-.shop-modal-desc { font-size: 12px; color: #fcffc2; text-align: center; line-height: 1.4; white-space:pre-line; }
+p.shop-modal-desc {
+    font-size: 12px;
+    color: #fcffc2;
+    text-align: center;
+    line-height: 1.4;
+    /* pre-line: giữ \n thành xuống dòng, vẫn collapse khoảng trắng thừa
+       (ổn định hơn pre-wrap vì không lệch chữ khi text-align:center) */
+    white-space: pre-line;
+    /* Chống tràn ngang khi gặp chuỗi dài không có khoảng trắng */
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    max-width: 100%;
+}
 
 /* Quiz Answers */
 .quiz-answers-box { display: flex; flex-direction: column; gap: 6px; }
@@ -2670,6 +2722,54 @@ input.hidden {display: none;}
     border-color: #ffd166;
     box-shadow: 0 0 12px rgba(255, 209, 102, 0.6);
     transform: scale(1.06);
+}
+
+/* --- BUOC 3: Modal xac nhan cuoi cung truoc khi dang ky --- */
+.onboard-confirm-intro {
+    font-size: 11px;
+    color: #c9c3ff;
+    line-height: 1.45;
+    margin-bottom: 8px;
+    font-family: Retro2k;
+}
+
+.onboard-confirm-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.onboard-confirm-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 11px;
+    font-family: Retro2k;
+}
+
+.onboard-confirm-key {
+    flex: 0 0 82px;
+    color: #8e8aab;
+    font-size: 10px;
+}
+
+.onboard-confirm-val {
+    flex: 1;
+    min-width: 0;
+    color: #fff;
+    word-break: break-word;
+}
+
+.onboard-confirm-outro {
+    font-size: 11px;
+    color: #ffe66d;
+    text-align: center;
+    margin-top: 10px;
+    font-family: Retro2k;
 }
 
 /* ======================================================
