@@ -4696,7 +4696,7 @@ body.guest-mode .dock-btn:not(.center-core) {
    ====================================================== */
 .upcoming-fab {
     position: fixed;
-    right: 10px;
+    left: 10px;
     bottom: 14px;
     /* Cao hơn panel (40) + dock (30) nhưng thấp hơn modal (50) để không nổi lên trên popup */
     z-index: 45;
@@ -4752,6 +4752,118 @@ body.guest-mode .dock-btn:not(.center-core) {
 @keyframes upcomingFabPulse {
     0%, 100% { opacity: 1; transform: translateY(-1px) scale(1); }
     50%      { opacity: 0.72; transform: translateY(-1px) scale(0.9); }
+}
+
+/* ======================================================
+   NÚT "❔" GÓC DƯỚI BÊN PHẢI + LIGHTBOX TOÀN MÀN HÌNH
+   ====================================================== */
+.help-fab {
+    position: fixed;
+    right: 14px;
+    bottom: 14px;
+    /* Cao hơn panel (40) + dock (30) nhưng thấp hơn modal (50) để không nổi lên trên popup */
+    z-index: 45;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+
+    background: linear-gradient(160deg, #2a2140 0%, #120d20 100%);
+    border: 1px solid rgba(212, 192, 132, 0.55);
+    border-radius: 50%;
+    color: var(--gold-cp);
+    box-shadow: 0 0 12px rgba(212, 192, 132, 0.35), inset 0 0 8px rgba(255, 209, 102, 0.12);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.help-fab:hover {
+    color: #fff7d6;
+    border-color: var(--gold-cp);
+    box-shadow: 0 0 20px rgba(255, 209, 102, 0.6), inset 0 0 12px rgba(255, 209, 102, 0.25);
+    transform: scale(1.08);
+}
+
+.help-fab:active { transform: scale(0.94); }
+
+.help-fab:focus-visible {
+    outline: 2px solid var(--gold-cp);
+    outline-offset: 2px;
+}
+
+.help-fab-ico {
+    font-family: 'Cinzel', 'Handjet', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1;
+    display: block;
+    transform: translateY(-1px);
+    filter: drop-shadow(0 0 4px rgba(255, 209, 102, 0.5));
+}
+
+/* Lightbox toàn màn hình */
+.help-lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(6px);
+    z-index: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+.help-lightbox.hidden { display: none; }
+
+.help-lightbox-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.help-lightbox-img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    border-radius: 4px;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+}
+
+.help-lightbox-close {
+    position: fixed;
+    top: 16px;
+    right: 20px;
+    z-index: 610;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    color: #fff;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.help-lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--gold-cp);
+    color: var(--gold-cp);
+    transform: scale(1.1);
 }
 
 /* --- Modal CHỜ MỞ KHOÁ --- */

@@ -2680,6 +2680,9 @@ async function handleGoogleSuccess(response) {
             if (claimContainer) claimContainer.classList.add("hidden");
             lootText.classList.remove("show");
 
+            // Đóng modal đăng nhập user đã đăng ký
+            closeReturningUserLoginModal();
+
             toast.magic('CHÀO MỪNG QUAY LẠI', `🎉 CHÀO MỪNG QUAY TRỞ LẠI, ${currentUser.full_name}!\nĐã khôi phục Danh tính [${currentUser.adventurer_code}] và kho đồ của bạn.`);
             // VOICE: chào mừng user đăng nhập trở lại (chạy trong gesture Google login nên qua được autoplay policy)
             sfxWelcomeBack();
@@ -4163,7 +4166,7 @@ function openShopDetail(item) {
         toast.warning('HẾT HÀNG', 'Gói này đã hết suất. Vui lòng chọn gói khác!');
         return;
     }
-    document.getElementById("shopModalIconBox").innerHTML = `<i class="rpg-ico ${safeIconClass(item.iconClass, "ico-item-unknown")}" style="width:48px;height:48px;"></i>`;
+    document.getElementById("shopModalIconBox").innerHTML = `<i class="rpg-ico ${safeIconClass(item.iconClass, "ico-item-unknown")}" style="width:110px;height:110px;"></i>`;
     document.getElementById("shopModalTitle").textContent = item.name;
     document.getElementById("shopModalPrice").textContent = `💎 ${Number(item.tt) || 0} Tinh Thạch (~${(Number(item.vnd) || 0).toLocaleString()} đ)`;
     document.getElementById("shopModalDesc").textContent = formatMultilineText(item.desc);
@@ -4919,6 +4922,36 @@ upcomingModal?.addEventListener("click", (e) => {
 document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && upcomingModal && !upcomingModal.classList.contains("hidden")) {
         closeUpcomingModal();
+    }
+});
+
+// ======================================================
+// NÚT "❔" GÓC DƯỚI BÊN PHẢI + LIGHTBOX XEM HÌNH ẢNH TOÀN MÀN HÌNH
+// ======================================================
+const helpLightbox = document.getElementById("helpLightbox");
+const btnHelpLightbox = document.getElementById("btnHelpLightbox");
+const closeHelpLightboxBtn = document.getElementById("closeHelpLightbox");
+
+function openHelpLightbox() {
+    if (!helpLightbox) return;
+    helpLightbox.classList.remove("hidden");
+    if (typeof sfxBlink === "function") sfxBlink();
+}
+
+function closeHelpLightboxFn() {
+    helpLightbox?.classList.add("hidden");
+}
+
+btnHelpLightbox?.addEventListener("click", openHelpLightbox);
+closeHelpLightboxBtn?.addEventListener("click", closeHelpLightboxFn);
+// Bấm ra ngoài vùng ảnh (trừ nút đóng) cũng đóng lightbox
+helpLightbox?.addEventListener("click", (e) => {
+    if (e.target === helpLightbox) closeHelpLightboxFn();
+});
+// Nhấn ESC để đóng
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && helpLightbox && !helpLightbox.classList.contains("hidden")) {
+        closeHelpLightboxFn();
     }
 });
 

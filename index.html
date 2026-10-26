@@ -1067,7 +1067,13 @@
 <!-- NÚT "?" NHỎ Ở GÓC DƯỚI BÊN PHẢI — MỞ MODAL "CHỜ MỞ KHOÁ" -->
 <button id="btnUpcomingFeatures" class="upcoming-fab" type="button"
         aria-label="Xem các tính năng chờ mở khoá" title="Chờ mở khoá" aria-haspopup="dialog">
-    <span class="upcoming-fab-ico" aria-hidden="true">?</span>
+    <span class="upcoming-fab-ico" aria-hidden="true">🔓</span>
+</button>
+
+<!-- NÚT "❔" NHỎ Ở GÓC DƯỚI BÊN PHẢI — MỞ LIGHTBOX XEM HÌNH ẢNH TOÀN MÀN HÌNH -->
+<button id="btnHelpLightbox" class="help-fab" type="button"
+        aria-label="Xem hình ảnh hướng dẫn" title="Hình ảnh hướng dẫn" aria-haspopup="dialog">
+    <span class="help-fab-ico" aria-hidden="true">❔</span>
 </button>
 
 <!-- VFX CANVAS FOR BUTTON PARTICLE EFFECTS -->
@@ -1081,6 +1087,18 @@
         <p class="upcoming-modal-sub" id="upcomingModalSub"></p>
         <div class="upcoming-list" id="upcomingFeatureList"></div>
         <p class="upcoming-modal-note" id="upcomingModalNote"></p>
+    </div>
+</div>
+
+<!-- LIGHTBOX: XEM HÌNH ẢNH TOÀN MÀN HÌNH (mở từ nút "❔" góc dưới bên phải) -->
+<div id="helpLightbox" class="help-lightbox hidden" role="dialog" aria-modal="true" aria-label="Xem hình ảnh hướng dẫn">
+    <button type="button" id="closeHelpLightbox" class="help-lightbox-close close-panel-btn" aria-label="Đóng">&times;</button>
+    <div class="help-lightbox-inner">
+        <img id="helpLightboxImg"
+             src="https://res.cloudinary.com/aurorawoods/image/upload/t_optimzeWebP/v1793023145/qqpcjycnnbmihfzpfrti.png"
+             alt="Hình ảnh hướng dẫn"
+             class="help-lightbox-img"
+             loading="lazy">
     </div>
 </div>
 
