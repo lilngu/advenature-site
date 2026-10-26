@@ -217,6 +217,23 @@ export const EVENT3_PAGES_DATA = [
     }
 ];
 
+// 7e. CẤU HÌNH GLOW XANH CHO EVENT (class dùng chung .glow-green)
+// Muốn event nào phát sáng xanh chỉ cần sửa file này — không chạm CSS/HTML.
+// - key   : id phần tử trong index.html (vd "scheduleEvent1"), dùng được cho BẤT KỲ id nào
+// - value : true  = bật glow xanh mặc định
+//           false = tắt
+//           { rgb: "76, 201, 240", speed: "2.2s" } = bật + đổi màu xanh/tốc độ nhịp thở riêng
+// Ví dụ đổi event đang phát sáng sang event2:
+//   scheduleEvent1: false, scheduleEvent2: true
+export const GLOW_GREEN_CONFIG = {
+    enabled: true, // công tắc tổng: false = tắt glow toàn bộ (giữ nguyên cấu hình bên dưới)
+    targets: {
+        scheduleEvent1: false,
+        scheduleEvent2: true,
+        scheduleEvent3: true,
+    },
+};
+
 // 8. ẢNH MINH HOẠ TRONG MODAL (dễ thay thế link ảnh, không cần sửa index.html)
 // Key khớp với thuộc tính data-modal-img của thẻ <img> trong index.html
 export const MODAL_IMAGES = {

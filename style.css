@@ -35,6 +35,9 @@
     --purple-light: #c77dff;
     --cyan-crystal: #4cc9f0;
     --gold-cp: #ffd166;
+    /* Glow xanh dùng chung cho class .glow-green (đổi 1 chỗ là đổi toàn bộ) */
+    --glow-green-rgb: 0, 255, 73;
+    --glow-green-speed: 2.8s;
 }
 
 * {
@@ -3775,11 +3778,54 @@ body.guest-mode .dock-btn:not(.center-core) {
 .sch-slots { font-size: 9px; font-weight: bold; color: #00f5d4; background: rgba(0,0,0,0.5); padding: 4px 6px; border-radius: 6px; }
 
 /* EVENT1/2/3: gợi ý có thể chạm để xem ảnh hành trình (mở chung eventReaderModal) */
-/* Glow xanh chỉ dành cho event1; event2/3 chỉ đổi viền/nền khi hover/focus. */
-.schedule-item.event1, .schedule-item.event2, .schedule-item.event3 { cursor: pointer; border-color: rgba(255, 209, 102, 0.45); transition: border-color 0.2s ease, background 0.2s ease; }
-.schedule-item.event1 { box-shadow: 1px 1px 15px 2px #00ff49; }
+/* Glow xanh KHÔNG còn hard-code theo event1 nữa: dùng class dùng chung .glow-green,
+   bật/tắt theo data.js -> GLOW_GREEN_CONFIG (xem khối GLOW GREEN bên dưới). */
+.schedule-item.event1, .schedule-item.event2, .schedule-item.event3 { cursor: pointer; border-color: rgba(255, 209, 102, 0.45); transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease; }
 .schedule-item.event1:hover, .schedule-item.event2:hover, .schedule-item.event3:hover, .schedule-item.event1:focus-visible, .schedule-item.event2:focus-visible, .schedule-item.event3:focus-visible { border-color: #ffd166; background: rgba(255, 209, 102, 0.08); outline: none; }
 .sch-view-hint { font-size: 8px; color: #ffd166; display: block; margin-top: 2px; }
+
+/* ======================================================
+   GLOW GREEN — quầng sáng xanh dùng chung
+   Gắn được cho BẤT KỲ event/phần tử nào, không chỉ event1/2/3:
+       <div class="schedule-item glow-green">
+   Tuỳ biến tại chỗ (không cần sửa CSS):
+       style="--glow-green-rgb: 76, 201, 240; --glow-green-speed: 2s"
+   Bật/tắt theo dữ liệu: data.js -> GLOW_GREEN_CONFIG
+   Kỹ thuật: quầng sáng nằm ở ::after và chỉ animate opacity
+   (compositor-friendly) thay vì animate box-shadow mỗi frame.
+====================================================== */
+:where(.glow-green) { position: relative; }
+.glow-green {
+    box-shadow:
+        0 0 0 1px rgba(var(--glow-green-rgb), 0.30),
+        0 0 10px 1px rgba(var(--glow-green-rgb), 0.28);
+    transition: box-shadow 0.2s ease;
+}
+.glow-green::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: 0 0 16px 3px rgba(var(--glow-green-rgb), 0.55);
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+    animation: glowGreenBreath var(--glow-green-speed) ease-in-out infinite;
+    will-change: opacity;
+}
+.glow-green:hover,
+.glow-green:focus-visible {
+    box-shadow:
+        0 0 0 1px rgba(var(--glow-green-rgb), 0.55),
+        0 0 16px 3px rgba(var(--glow-green-rgb), 0.45);
+}
+@keyframes glowGreenBreath {
+    0%, 100% { opacity: 0.45; }
+    50% { opacity: 0.9; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .glow-green::after { animation: none; opacity: 0.65; }
+}
 
 /* 2 BANNER PROFILE */
 .guild-action-banners { display: flex; flex-direction: row;   justify-content: center; gap: 8px; margin-top: 14px; }

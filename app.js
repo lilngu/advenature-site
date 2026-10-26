@@ -18,6 +18,7 @@ import {
     EVENT1_PAGES_DATA,
     EVENT2_PAGES_DATA,
     EVENT3_PAGES_DATA,
+    GLOW_GREEN_CONFIG,
     MODAL_IMAGES,
     GUILD_QUEST_DATA,
     GUILD_QUEST_META,
@@ -4568,6 +4569,53 @@ document.getElementById("btnOpenScheduleModal")?.addEventListener("click", () =>
 document.getElementById("closeScheduleModal")?.addEventListener("click", () => {
     document.getElementById("scheduleModal").classList.add("hidden");
 });
+
+// ======================================================
+// GLOW XANH CHO EVENT — class .glow-green (cấu hình tại data.js)
+// Không hard-code event nào trong CSS nữa: bật/tắt theo GLOW_GREEN_CONFIG.
+// Gọi runtime khi cần (vd: chỉ glow event sắp diễn ra):
+//     setGlowGreen("scheduleEvent2", true)
+// Cũng dùng được cho phần tử bất kỳ: setGlowGreen(el, true)
+// ======================================================
+function setGlowGreen(target, enabled = true) {
+    const el = typeof target === "string" ? document.getElementById(target) : target;
+    if (!el) return;
+    el.classList.toggle("glow-green", !!enabled);
+    if (!enabled) {
+        // Trả về màu/tốc độ mặc định trong :root khi tắt
+        el.style.removeProperty("--glow-green-rgb");
+        el.style.removeProperty("--glow-green-speed");
+    }
+}
+
+function applyGlowGreenConfig(config = GLOW_GREEN_CONFIG) {
+    if (!config) return;
+    if (config.enabled === false) {
+        // Công tắc tổng: gỡ glow khỏi mọi phần tử đang có class
+        document.querySelectorAll(".glow-green").forEach((el) => setGlowGreen(el, false));
+        return;
+    }
+    Object.entries(config.targets || {}).forEach(([id, option]) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        // false = tắt rõ ràng (kể cả khi class được gắn tay trong HTML)
+        if (!option) {
+            setGlowGreen(el, false);
+            return;
+        }
+        el.classList.add("glow-green");
+        // Cho phép tuỳ biến riêng từng event: { rgb, speed }
+        if (typeof option === "object") {
+            if (option.rgb) el.style.setProperty("--glow-green-rgb", option.rgb);
+            if (option.speed) el.style.setProperty("--glow-green-speed", option.speed);
+        }
+    });
+}
+
+applyGlowGreenConfig();
+// Expose để admin/debug hoặc code khác bật tắt mà không phải sửa data.js + reload
+window.setGlowGreen = setGlowGreen;
+window.applyGlowGreenConfig = applyGlowGreenConfig;
 
 // Click event1/2/3 trong Lịch Trình -> mở CHUNG eventReaderModal với bộ ảnh riêng.
 // Bind 1 lần ở top-level (openEventReaderModal đã hoisted) để không nhân bản listener.
