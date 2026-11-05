@@ -54,6 +54,19 @@ th{color:var(--gold);font-size:12px;text-transform:uppercase;letter-spacing:.4px
 .toast div{background:#0c0a1a;border:1px solid var(--gold);padding:10px 14px;border-radius:8px;font-size:13px;max-width:340px}
 .small{font-size:12px;color:var(--mut)}
 a{color:var(--cyan)}
+/* Shop drag-drop list */
+.shop-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.shop-item{background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:12px;cursor:grab}
+.shop-item:active{cursor:grabbing}
+.shop-item.dragging{opacity:.6;border-color:var(--acc)}
+.shop-item.drag-over{border-color:var(--gold);background:#1a1633}
+.shop-item .drag-handle{color:var(--mut);font-size:14px;margin-right:8px;user-select:none}
+.shop-item .drag-handle:active{cursor:grabbing}
+.shop-item .item-info{flex:1;min-width:0}
+.shop-item .item-id{font-family:monospace;color:var(--cyan);font-size:12px}
+.shop-item .item-name{color:var(--txt);font-weight:bold;font-size:13px}
+.shop-item .item-meta{color:var(--mut);font-size:12px}
+.shop-item .item-actions{display:flex;gap:6px;flex-shrink:0}
 </style>
 </head>
 <body>
@@ -120,7 +133,7 @@ a{color:var(--cyan)}
 </div>
 <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap"><button class="sm ok" onclick="saveShop()">💾 Lưu (tạo/sửa)</button><button class="sm ghost" onclick="resetShopForm()">↩ Mới</button><span class="small" id="shopPreview" style="align-self:center"></span></div>
 </div>
-<div class="toolbar"><input type="text" id="searchShop" placeholder="Tìm ID / Tên..." oninput="renderShopAdmin()"><button onclick="loadShopAdmin()">🔄 Tải Shop</button></div>
+<div class="toolbar"><input type="text" id="searchShop" placeholder="Tìm ID / Tên..." oninput="renderShopAdmin()"><button onclick="loadShopAdmin()">🔄 Tải Shop</button> <button class="sm ok" onclick="commitShopToD1()">💾 Lưu toàn bộ lên D1</button> <span id="shopDirtyBadge" class="small" style="color:var(--gold)">0 sản phẩm trong bản nháp</span></div>
 <div id="shopList"><div class="small">Chưa tải.</div></div>
 </div>
 
@@ -408,24 +421,74 @@ async function delOrder(id){
 
 // ---- SHOP ADMIN (Full CRUD) ----
 let allShopProducts = [];
+const SHOP_DRAFT_KEY = "advenature_shop_draft";
+let shopDeletedIds = [];
+
+function saveShopDraft(){
+  try{
+    localStorage.setItem(SHOP_DRAFT_KEY, JSON.stringify({products: allShopProducts, deletedIds: shopDeletedIds}));
+    updateDirtyBadge();
+  }catch(e){/* ignore storage errors */}
+}
+
+function loadShopDraft(){
+  try{
+    const raw = localStorage.getItem(SHOP_DRAFT_KEY);
+    if(!raw) return null;
+    return JSON.parse(raw);
+  }catch(e){ return null; }
+}
+
+function clearShopDraft(){
+  try{ localStorage.removeItem(SHOP_DRAFT_KEY); }catch(e){}
+  shopDeletedIds = [];
+  updateDirtyBadge();
+}
+
+function updateDirtyBadge(){
+  const draft = loadShopDraft();
+  const count = draft ? draft.products.length : 0;
+  const el = $("shopDirtyBadge");
+  if(el) el.textContent = count + " sản phẩm trong bản nháp";
+}
+
 async function loadShopAdmin(){
   const box = $("shopList");
   box.innerHTML = `<div class="small">⏳ Đang tải Shop...</div>`;
   try{
     const d = await adminFetch("/api/admin/shop-products-all");
     allShopProducts = d.products || [];
+    shopDeletedIds = [];
+    clearShopDraft();
+    saveShopDraft();
     renderShopAdmin();
   }catch(e){ box.innerHTML = `<div style="color:#ff3366">❌ ${esc(e.message)} (cần key WRITE để xem full? thử key WRITE)</div>`; }
 }
 function renderShopAdmin(){
   const kw = ($("searchShop").value || "").trim().toLowerCase();
-  const list = allShopProducts.filter(p => !kw || (p.id||"").toLowerCase().includes(kw) || (p.name||"").toLowerCase().includes(kw));
+  let list = allShopProducts.filter(p => !kw || (p.id||"").toLowerCase().includes(kw) || (p.name||"").toLowerCase().includes(kw));
+  list.sort((a,b) => (a.sort_order||0) - (b.sort_order||0));
   if(!list.length){ $("shopList").innerHTML = `<div class="small">Chưa có sản phẩm.</div>`; return; }
-  $("shopList").innerHTML = `<table><tr><th>ID</th><th>Tên / Giá</th><th>Stock</th><th>Active</th><th></th></tr>` + list.map(p=>{
+  $("shopList").innerHTML = `<div class="shop-list">` + list.map(p=>{
     const st = Number(p.active)===1 ? `<span class="pill done">Hiện</span>` : `<span class="pill pending">Ẩn</span>`;
     const stockTxt = Number(p.stock)===-1 ? "∞" : esc(p.stock);
-    return `<tr><td class="mono">${esc(p.id)}</td><td><b>${esc(p.name)}</b><br><span class="small">💎 ${p.tt} • ₫ ${Number(p.vnd||0).toLocaleString('vi-VN')} • sort ${p.sort_order||0} • <span class="mono">${esc(p.iconClass||'')}</span></span></td><td><b>${stockTxt}</b></td><td>${st}</td><td style="white-space:nowrap"><button class="sm ghost" onclick="editShop('${esc(p.id)}')">Sửa</button> <button class="sm ${Number(p.active)===1?'':'ok'}" onclick="toggleShopActive('${esc(p.id)}')">${Number(p.active)===1?'Ẩn':'Hiện'}</button> <button class="sm danger" onclick="delShop('${esc(p.id)}')">Xóa</button></td></tr>`;
-  }).join("") + `</table>`;
+    return `<div class="shop-item" draggable="true" data-id="${esc(p.id)}"
+      ondragstart="onDragStart(event)" ondragover="onDragOver(event)"
+      ondragenter="onDragEnter(event)" ondragleave="onDragLeave(event)"
+      ondrop="onDrop(event)" ondragend="onDragEnd(event)">
+      <span class="drag-handle">⋮⋮</span>
+      <div class="item-info">
+        <div class="item-id">${esc(p.id)}</div>
+        <div class="item-name">${esc(p.name)}</div>
+        <div class="item-meta">💎 ${p.tt||0} • ₫ ${Number(p.vnd||0).toLocaleString('vi-VN')} • stock ${stockTxt} • ${st} • sort ${p.sort_order||0}</div>
+      </div>
+      <div class="item-actions">
+        <button class="sm ghost" onclick="editShop('${esc(p.id)}')">Sửa</button>
+        <button class="sm ${Number(p.active)===1?'':'ok'}" onclick="toggleShopActive('${esc(p.id)}')">${Number(p.active)===1?'Ẩn':'Hiện'}</button>
+        <button class="sm danger" onclick="delShop('${esc(p.id)}')">Xóa</button>
+      </div>
+    </div>`;
+  }).join("") + `</div>`;
 }
 function editShop(id){
   const p = allShopProducts.find(x=>x.id===id);
@@ -445,26 +508,142 @@ function resetShopForm(){
   $("s-sort").value = 10; $("s-stock").value = -1; $("s-active").value = "1";
   $("shopPreview").textContent = "";
 }
-async function saveShop(){
+function saveShop(){
   const body = {id:$("s-id").value.trim().toUpperCase(), name:$("s-name").value.trim(), tt:Number($("s-tt").value||0), vnd:Number($("s-vnd").value||0), iconClass:$("s-icon").value.trim(), desc:$("s-desc").value.trim(), active:Number($("s-active").value), stock:Number($("s-stock").value), sort_order:Number($("s-sort").value||0)};
   if(!body.id || !body.name){ toast("Nhập ID + Tên!", false); return; }
-  try{ await adminFetch("/api/admin/shop-product-upsert",{method:"POST",body:JSON.stringify(body)}); toast("Đã lưu "+body.id); resetShopForm(); loadShopAdmin(); }
-  catch(e){ toast(e.message,false); }
+  const idx = allShopProducts.findIndex(p => p.id === body.id);
+  if(idx === -1){
+    allShopProducts.push(body);
+  } else {
+    allShopProducts[idx] = body;
+  }
+  saveShopDraft();
+  renderShopAdmin();
+  resetShopForm();
+  toast("Đã lưu vào bản nháp (localStorage): " + body.id);
 }
-async function toggleShopActive(id){
+function toggleShopActive(id){
   const p = allShopProducts.find(x=>x.id===id);
   if(!p) return;
-  try{ await adminFetch("/api/admin/shop-product-upsert",{method:"POST",body:JSON.stringify({id:p.id, name:p.name, tt:p.tt, vnd:p.vnd, iconClass:p.iconClass, desc:p.desc, active:Number(p.active)===1?0:1, stock:p.stock, sort_order:p.sort_order})}); toast("Đã đổi trạng thái "+id); loadShopAdmin(); }
-  catch(e){ toast(e.message,false); }
+  p.active = Number(p.active)===1 ? 0 : 1;
+  saveShopDraft();
+  renderShopAdmin();
+  toast("Đã thay đổi trạng thái vào bản nháp: " + id);
 }
-async function delShop(id){
-  const soft = confirm(`Ẩn "${id}" khỏi Shop (giữ data, khuyên dùng)?\nOK = Ẩn (active=0) • Cancel = mở tiếp chọn Xóa cứng.`);
-  try{
-    if(soft){ await adminFetch("/api/admin/shop-product-delete",{method:"POST",body:JSON.stringify({id})}); toast("Đã ẩn "+id); }
-    else if(confirm(`XÓA CỨNG "${id}"? Đơn cũ giữ package_type string nên không vỡ, nhưng không khôi phục được!`)){ await adminFetch("/api/admin/shop-product-delete",{method:"POST",body:JSON.stringify({id, hard:true})}); toast("Đã xóa cứng "+id); }
-    else return;
-    loadShopAdmin();
-  }catch(e){ toast(e.message,false); }
+function delShop(id){
+  const p = allShopProducts.find(x=>x.id===id);
+  if(!p) return;
+  if(!confirm(`XÓA "${id}" khỏi bản nháp Shop?\nSản phẩm sẽ bị loại khỏi danh sách commit lên D1.`)) return;
+  allShopProducts = allShopProducts.filter(x=>x.id!==id);
+  if(!shopDeletedIds.includes(id)) shopDeletedIds.push(id);
+  saveShopDraft();
+  renderShopAdmin();
+  toast("Đã xóa khỏi bản nháp: " + id);
+}
+
+// ---- SHOP DRAG-DROP REORDER ----
+let dragSrcEl = null;
+
+function onDragStart(e){
+  dragSrcEl = e.currentTarget;
+  e.currentTarget.classList.add("dragging");
+  e.dataTransfer.effectAllowed = "move";
+  e.dataTransfer.setData("text/plain", e.currentTarget.dataset.id);
+}
+function onDragOver(e){
+  e.preventDefault();
+  e.dataTransfer.dropEffect = "move";
+  if(e.currentTarget !== dragSrcEl) e.currentTarget.classList.add("drag-over");
+}
+function onDragEnter(e){
+  e.preventDefault();
+  if(e.currentTarget !== dragSrcEl) e.currentTarget.classList.add("drag-over");
+}
+function onDragLeave(e){
+  if(e.currentTarget !== dragSrcEl) e.currentTarget.classList.remove("drag-over");
+}
+function onDrop(e){
+  e.preventDefault();
+  const target = e.currentTarget;
+  target.classList.remove("drag-over");
+  if(target === dragSrcEl) return;
+  const id = dragSrcEl.dataset.id;
+  const idxSrc = allShopProducts.findIndex(p => p.id === id);
+  const idxTarget = allShopProducts.findIndex(p => p.id === target.dataset.id);
+  if(idxSrc === -1 || idxTarget === -1) return;
+  const before = {};
+  allShopProducts.forEach(p => { before[p.id] = p.sort_order; });
+  const [moved] = allShopProducts.splice(idxSrc, 1);
+  allShopProducts.splice(idxTarget, 0, moved);
+  allShopProducts.forEach((p, i) => { p.sort_order = i + 1; });
+  persistShopOrder(before);
+}
+function onDragEnd(e){
+  e.currentTarget.classList.remove("dragging");
+  document.querySelectorAll(".shop-item").forEach(el => el.classList.remove("drag-over"));
+  dragSrcEl = null;
+}
+
+function persistShopOrder(before){
+  saveShopDraft();
+  renderShopAdmin();
+  toast("Đã lưu thứ tự vào bản nháp");
+}
+
+// ---- COMMIT SHOP DRAFT TO D1 ----
+async function commitShopToD1(){
+  const draft = loadShopDraft();
+  if(!draft || !draft.products.length){
+    toast("Không có bản nháp shop để lưu lên D1", false);
+    return;
+  }
+  if(!confirm("CẢNH BÁO: Việc này sẽ gọi API nhiều lần (1 lần cho mỗi sản phẩm). Bạn có chắc muốn commit toàn bộ bản nháp shop lên D1?")) return;
+
+  const products = draft.products;
+  const deletedIds = draft.deletedIds || [];
+  let success = 0, fail = 0;
+  const errs = [];
+
+  // Upsert all products (including soft-deleted active=0)
+  for(const p of products){
+    try{
+      await adminFetch("/api/admin/shop-product-upsert", {
+        method: "POST",
+        body: JSON.stringify({
+          id: p.id, name: p.name || "", tt: Number(p.tt||0), vnd: Number(p.vnd||0),
+          iconClass: p.iconClass || "", desc: p.desc || "",
+          active: Number(p.active||1), stock: Number(p.stock||-1), sort_order: Number(p.sort_order||0)
+        })
+      });
+      success++;
+    }catch(err){
+      fail++;
+      errs.push(p.id + ": " + err.message);
+    }
+  }
+
+  // Hard delete removed products
+  for(const id of deletedIds){
+    try{
+      await adminFetch("/api/admin/shop-product-delete", {
+        method: "POST",
+        body: JSON.stringify({id, hard: true})
+      });
+      success++;
+    }catch(err){
+      fail++;
+      errs.push(id + " (xóa): " + err.message);
+    }
+  }
+
+  if(fail === 0){
+    clearShopDraft();
+    toast("✓ Đã commit " + success + " thay đổi shop lên D1");
+    await loadShopAdmin();
+  } else {
+    toast("⚠ Commit hoàn thành một phần: " + success + " thành công, " + fail + " lỗi", false);
+    console.error(errs.join("\n"));
+  }
 }
 
 // ---- GUILD QUEST ADMIN (DB dong, clone pattern Shop) ----
