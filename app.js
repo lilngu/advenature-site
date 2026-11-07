@@ -81,6 +81,44 @@ if (!currentUser) {
     saveUserData();
 }
 
+// ======================================================
+// DETECT PAGE RELOAD & SHOW BETA TOAST
+// ======================================================
+// Hiện toast thông báo Beta mỗi khi user mở trang MỚI (tab/windows mới)
+// hoặc sau khi reload thực sự. Sử dụng sessionStorage để tránh spam.
+// - Nếu là tab/windows mới -> sessionStorage rỗng -> toast HIỂN
+// - Nếu reload tab cũ -> sessionStorage vẫn có flag -> toast KO hiển thị (tránh spam)
+// - Cách này hoạt động 100% mọi browser, không phụ thuộc performance.type
+console.log('[UI] === BETA TOAST (SIMPLE) START ===');
+
+// Kiểm tra sessionStorage: đã từng hiện toast trong session này chưa?
+const hasSeenToast = sessionStorage.getItem('beta_toast_shown') === 'true';
+
+console.log('[UI] Đã từng hiện toast trong session:', hasSeenToast);
+
+// Nếu CHƯA từng hiện toast -> hiển thị (người dùng mới hoặc tab mới)
+// Ngược lại -> không hiển thị (đã thấy rồi, tránh spam)
+if (!hasSeenToast && typeof toast?.info === 'function') {
+    // Ghi nhận đã hiển thị (luôn set ngay lập tức)
+    sessionStorage.setItem('beta_toast_shown', 'true');
+
+    // Chờ DOM sẵn trước khi hiện toast (50ms)
+    setTimeout(() => {
+        toast.info(
+            'Cảnh báo',
+            'Cổng Linh Cảnh Rừng Tinh Linh vẫn còn trong giai đoạn Beta và tiếp tục phát triển. Các Tính năng mới sẽ được cập nhật trong thời gian tới.',
+            10000
+        );
+        console.log('[UI] Toast Beta đã hiển thị cho session mới!');
+    }, 50);
+} else if (hasSeenToast) {
+    console.log('[UI] Đã từng hiện toast trong session này -> Không hiện lại (tránh spam)');
+} else {
+    console.warn('[UI] toast.info chưa sẵn sàng!');
+}
+
+console.log('[UI] === BETA TOAST (SIMPLE) END ===');
+
 // app.js: Đặt ngay bên dưới đoạn khai báo currentUser
 const isFirstTimeGuest = !currentUser || !currentUser.adventurer_code || currentUser.adventurer_code === "AW----";
 
